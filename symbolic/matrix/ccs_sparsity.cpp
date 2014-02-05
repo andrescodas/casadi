@@ -34,26 +34,26 @@ namespace CasADi{
   class EmptySparsity : public CCSSparsity{  
   public:
     EmptySparsity(){
-      vector<int> row,colind(1,0);
-      assignNode(new CCSSparsityInternal(0,0,row,colind));
+      vector<int> colind(1,0), row;
+      assignNode(new CCSSparsityInternal(0,0,colind,row));
     }
   };
 
   class ScalarSparsity : public CCSSparsity{  
   public:
     ScalarSparsity(){
-      vector<int> row(1,0),colind(2);
+      vector<int> colind(2),row(1,0);
       colind[0] = 0;
       colind[1] = 1;
-      assignNode(new CCSSparsityInternal(1,1,row,colind));
+      assignNode(new CCSSparsityInternal(1,1,colind,row));
     }
   };
 
   class ScalarSparseSparsity : public CCSSparsity{  
   public:
     ScalarSparseSparsity(){
-      vector<int> row,colind(2,0);
-      assignNode(new CCSSparsityInternal(1,1,row,colind));
+      vector<int> colind(2,0), row;
+      assignNode(new CCSSparsityInternal(1,1,colind,row));
     }
   };
   
@@ -608,7 +608,7 @@ namespace CasADi{
             if(h_ref!=h){ // The sparsity pattern has changed (the most likely event)
 
               // Create a new pattern
-              assignNode(new CCSSparsityInternal(ncol, nrow, row, colind));
+              assignNode(new CCSSparsityInternal(nrow, ncol, colind, row));
 
               // Cache this pattern instead of the old one
               wref = *this;
@@ -641,7 +641,7 @@ namespace CasADi{
           }
 
           // The cached entry has been deleted, create a new one
-          assignNode(new CCSSparsityInternal(ncol, nrow, row, colind));
+          assignNode(new CCSSparsityInternal(nrow, ncol, colind, row));
         
           // Cache this pattern
           wref = *this;
@@ -657,7 +657,7 @@ namespace CasADi{
 #endif // USE_CXX11
 
     // No matching sparsity pattern could be found, create a new one
-    assignNode(new CCSSparsityInternal(ncol, nrow, row, colind));
+    assignNode(new CCSSparsityInternal(nrow, ncol, colind, row));
 
     // Cache this pattern
     //cache.insert(eq.second,std::pair<std::size_t,WeakRef>(h,ret));

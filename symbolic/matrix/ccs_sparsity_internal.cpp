@@ -43,15 +43,15 @@ namespace CasADi{
   }
     
   void CCSSparsityInternal::repr(ostream &stream) const{
-    stream << "Compressed Col Storage: " << ncol_ << "-by-" << nrow_ << " matrix, " << row_.size() << " structural non-zeros";
+    stream << "Compressed Column Storage: " << ncol_ << "-by-" << nrow_ << " matrix, " << row_.size() << " structural non-zeros";
   }
 
   void CCSSparsityInternal::sanityCheck(bool complete) const{
-    casadi_assert_message(ncol_>=0 ,"CCSSparsityInternal: number of cols must be positive, but got " << ncol_ << ".");
     casadi_assert_message(nrow_ >=0,"CCSSparsityInternal: number of rows must be positive, but got " << nrow_ << ".");
+    casadi_assert_message(ncol_>=0 ,"CCSSparsityInternal: number of cols must be positive, but got " << ncol_ << ".");
     if (colind_.size() != ncol_+1) {
       std::stringstream s;
-      s << "CCSSparsityInternal:Compressed Col Storage is not sane. The following must hold:" << std::endl;
+      s << "CCSSparsityInternal:Compressed Column Storage is not sane. The following must hold:" << std::endl;
       s << "  colind.size() = ncol + 1, but got   colind.size() = " << colind_.size() << "   and   ncol = "  << ncol_ << std::endl;
       s << "  Note that the signature is as follows: CCSSparsity (ncol, nrow, row, colind)." << std::endl;
       casadi_error(s.str());
@@ -60,31 +60,31 @@ namespace CasADi{
   
       if (colind_.size()>0) {
         for (int k=1;k<colind_.size();k++) {
-          casadi_assert_message(colind_[k]>=colind_[k-1], "CCSSparsityInternal:Compressed Col Storage is not sane. colind must be monotone. Note that the signature is as follows: CCSSparsity (ncol, nrow, row, colind).");
+          casadi_assert_message(colind_[k]>=colind_[k-1], "CCSSparsityInternal:Compressed Column Storage is not sane. colind must be monotone. Note that the signature is as follows: CCSSparsity (nrow, ncol, colind, row).");
         }
       
-        casadi_assert_message(colind_[0]==0, "CCSSparsityInternal:Compressed Col Storage is not sane. First element of colind must be zero. Note that the signature is as follows: CCSSparsity (ncol, nrow, row, colind).");
+        casadi_assert_message(colind_[0]==0, "CCSSparsityInternal:Compressed Column Storage is not sane. First element of colind must be zero. Note that the signature is as follows: CCSSparsity (nrow, ncol, colind, row).");
         if (colind_[(colind_.size()-1)]!=row_.size()) {
           std::stringstream s;
-          s << "CCSSparsityInternal:Compressed Col Storage is not sane. The following must hold:" << std::endl;
+          s << "CCSSparsityInternal:Compressed Column Storage is not sane. The following must hold:" << std::endl;
           s << "  colind[lastElement] = row.size(), but got   colind[lastElement] = " << colind_[(colind_.size()-1)] << "   and   row.size() = "  << row_.size() << std::endl;
-          s << "  Note that the signature is as follows: CCSSparsity (ncol, nrow, row, colind)." << std::endl;
+          s << "  Note that the signature is as follows: CCSSparsity (nrow, ncol, colind, row)." << std::endl;
           casadi_error(s.str());
         }
         if (row_.size()>ncol_*nrow_) {
           std::stringstream s;
-          s << "CCSSparsityInternal:Compressed Col Storage is not sane. The following must hold:" << std::endl;
-          s << "  row.size() <= ncol * nrow, but got   row.size()  = " << row_.size() << "   and   ncol * nrow = "  << ncol_*nrow_ << std::endl;
-          s << "  Note that the signature is as follows: CCSSparsity (ncol, nrow, row, colind)." << std::endl;
+          s << "CCSSparsityInternal:Compressed Column Storage is not sane. The following must hold:" << std::endl;
+          s << "  row.size() <= nrow * ncol, but got   row.size()  = " << row_.size() << "   and   ncol * nrow = "  << nrow_*ncol_ << std::endl;
+          s << "  Note that the signature is as follows: CCSSparsity (nrow, ncol, colind, row)." << std::endl;
           casadi_error(s.str());
         }
       }
       for (int k=0;k<row_.size();k++) {
         if (row_[k]>=nrow_ || row_[k] < 0) {
           std::stringstream s;
-          s << "CCSSparsityInternal:Compressed Col Storage is not sane. The following must hold:" << std::endl;
+          s << "CCSSparsityInternal:Compressed Column Storage is not sane. The following must hold:" << std::endl;
           s << "  0 <= row[i] < nrow for each i, but got   row[i] = " << row_[k] << "   and   nrow = "  << nrow_ << std::endl;
-          s << "  Note that the signature is as follows: CCSSparsity (ncol, nrow, row, colind)." << std::endl;
+          s << "  Note that the signature is as follows: CCSSparsity (nrow, ncol, colind, row)." << std::endl;
           casadi_error(s.str());
         }
       }

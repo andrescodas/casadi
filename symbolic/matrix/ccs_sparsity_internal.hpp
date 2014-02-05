@@ -30,7 +30,7 @@ namespace CasADi{
   class CCSSparsityInternal : public SharedObjectNode{
   public:    
     /// Construct a sparsity pattern from vectors
-    CCSSparsityInternal(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind) : ncol_(ncol), nrow_(nrow), row_(row), colind_(colind) { sanityCheck(false); }
+    CCSSparsityInternal(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row) : nrow_(nrow), ncol_(ncol), colind_(colind), row_(row) { sanityCheck(false); }
     
     /// Check if the dimensions and colind,row vectors are compatible
     void sanityCheck(bool complete=false) const;
@@ -257,18 +257,18 @@ namespace CasADi{
     /// Print description
     virtual void print(std::ostream &stream) const;
 
-    /// Number of cols
-    int ncol_;
-    
     /// Number of rows
     int nrow_;
-    
-    /// vector of length nnz containing the rows for all the indices of the non-zero elements
-    std::vector<int> row_;
-    
+
+    /// Number of cols
+    int ncol_;
+
     /// vector of length n+1 containing the index of the last non-zero element up till each col 
     std::vector<int> colind_;
-    
+
+    /// vector of length nnz containing the rows for all the indices of the non-zero elements
+    std::vector<int> row_;
+        
     /// Perform a unidirectional coloring: A greedy distance-2 coloring algorithm (Algorithm 3.1 in A. H. GEBREMEDHIN, F. MANNE, A. POTHEN) 
     CCSSparsity unidirectionalColoring(const CCSSparsity& AT, int cutoff) const;
 
