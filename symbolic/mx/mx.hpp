@@ -81,10 +81,10 @@ namespace CasADi{
     MX(const Matrix<double> &x);
 
     /** \brief  Matrix with all zeros */
-    MX(int nrow, int ncol);
+    MX(int ncol, int nrow);
     
     /** \brief  Dense matrix filled with value val */
-    MX(int nrow, int ncol, const MX& val);
+    MX(int ncol, int nrow, const MX& val);
     
     /** \brief  Destructor */
     virtual ~MX();
@@ -205,8 +205,8 @@ namespace CasADi{
     void erase(const std::vector<int>& ii, const std::vector<int>& jj);
 
     /** \brief Enlarge matrix
-        Make the matrix larger by inserting empty rows and columns, keeping the existing non-zeros */
-    void enlarge(int nrow, int ncol, const std::vector<int>& ii, const std::vector<int>& jj);
+        Make the matrix larger by inserting empty cols and rows, keeping the existing non-zeros */
+    void enlarge(int ncol, int nrow, const std::vector<int>& ii, const std::vector<int>& jj);
 
 
     MX operator-() const;
@@ -311,46 +311,46 @@ namespace CasADi{
 
     //@{
     /** \brief  Sparse matrix of all zeros */
-    static MX sparse(int nrow, int ncol=1);
+    static MX sparse(int ncol, int nrow=1);
     static MX sparse(const std::pair<int, int> &nm);
     //@}
   
     //@{
     /** \brief  Dense matrix of all zeros */
     static MX zeros(const CCSSparsity& sp);
-    static MX zeros(int nrow, int ncol=1); 
+    static MX zeros(int ncol, int nrow=1); 
     static MX zeros(const std::pair<int, int> &nm);
     //@}
 
     //@{
     /** \brief  Matrix of all ones */  
     static MX ones(const CCSSparsity& sp);
-    static MX ones(int nrow, int ncol=1); 
+    static MX ones(int ncol, int nrow=1); 
     static MX ones(const std::pair<int, int> &nm);
     //@}
 
     //@{
     /** \brief  create a matrix with all inf */
     static MX inf(const CCSSparsity& sp);
-    static MX inf(int nrow=1, int ncol=1);
+    static MX inf(int ncol=1, int nrow=1);
     static MX inf(const std::pair<int,int>& nm);
     //@}
   
     //@{
     /** \brief  create a matrix with all nan */
     static MX nan(const CCSSparsity& sp);
-    static MX nan(int nrow=1, int ncol=1);
+    static MX nan(int ncol=1, int nrow=1);
     static MX nan(const std::pair<int,int>& nm);
     //@}
   
     //@{
     /** \brief  create a matrix by repeating an existing matrix */
-    static MX repmat(const MX& x, int nrow, int ncol=1);
+    static MX repmat(const MX& x, int ncol, int nrow=1);
     static MX repmat(const MX& x, const std::pair<int, int> &nm);
     //@}
 
     /** \brief  Identity matrix */  
-    static MX eye(int nrow);
+    static MX eye(int ncol);
   
     const MX sub(int i, int j) const;
     const MX sub(int i, const std::vector<int>& j) const;

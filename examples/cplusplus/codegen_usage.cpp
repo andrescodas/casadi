@@ -92,7 +92,7 @@ int usage_c_unknown_signature(){
   /* Signature of the entry point */
   typedef int (*evaluateWrapPtr)(const double** x, double** r);
   typedef int (*initPtr)(int *n_in_, int *n_out_);
-  typedef int (*getSparsityPtr)(int n_in, int *n_row, int *n_col, int **rowind, int **col);
+  typedef int (*getSparsityPtr)(int n_in, int *n_col, int *n_row, int **colind, int **row);
   
   /* Handle to the dll */
   void* handle;
@@ -142,20 +142,20 @@ int usage_c_unknown_signature(){
       printf("Output %d\n",ind-n_in);
     }
 
-    int nrow,ncol;
-    int *rowind, *col;
-    getSparsity(ind,&nrow,&ncol,&rowind,&col);
+    int ncol,nrow;
+    int *colind, *row;
+    getSparsity(ind,&ncol,&nrow,&colind,&row);
 
-    printf("  Dimension: %d-by-%d\n",nrow,ncol);
+    printf("  Dimension: %d-by-%d\n",ncol,nrow);
     printf("  Nonzeros: {");
     int i,j,el;
-    for(i=0; i<nrow; ++i){ /* loop over rows */
-      for(el=rowind[i]; el<rowind[i+1]; ++el){ /* loop over nonzeros */
+    for(i=0; i<ncol; ++i){ /* loop over cols */
+      for(el=colind[i]; el<colind[i+1]; ++el){ /* loop over nonzeros */
         /* Separate the entries */
         if(el!=0) printf(", ");
 
-        /* Get the column */
-        j = col[el]; 
+        /* Get the row */
+        j = row[el]; 
         
         /* Print the nonzero */
         printf("{%d,%d}",i,j);

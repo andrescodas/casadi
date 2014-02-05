@@ -105,12 +105,12 @@ void DSDPInternal::init(){
       pattern_[i][j].resize(CAij.sizeL());
       values_[i][j].resize(pattern_[i][j].size());
       int nz=0;
-      vector<int> rowind,col;
-      CAij.getSparsityCCS(rowind,col);
-      for(int r=0; r<rowind.size()-1; ++r) {
-        for(int el=rowind[r]; el<rowind[r+1]; ++el){
-         if(r>=col[el]){
-           pattern_[i][j][nz++] = r*(r + 1)/2 + col[el];
+      vector<int> colind,row;
+      CAij.getSparsityCCS(colind,row);
+      for(int r=0; r<colind.size()-1; ++r) {
+        for(int el=colind[r]; el<colind[r+1]; ++el){
+         if(r>=row[el]){
+           pattern_[i][j][nz++] = r*(r + 1)/2 + row[el];
          }
         }
       }
@@ -188,7 +188,7 @@ void DSDPInternal::evaluate() {
   }
   if (nc_>0) {
     info = DSDPCreateLPCone( dsdp_, &lpcone_);
-    info = LPConeSetData(lpcone_, nc_*2, &mappingA_.output(0).rowind()[0], &mappingA_.output(0).col()[0], &mappingA_.output(0).data()[0]);
+    info = LPConeSetData(lpcone_, nc_*2, &mappingA_.output(0).colind()[0], &mappingA_.output(0).row()[0], &mappingA_.output(0).data()[0]);
   }
   
   info = DSDPCreateBCone( dsdp_, &bcone_);

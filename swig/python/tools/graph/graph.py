@@ -74,7 +74,7 @@ def dependencyGraph(s,dep = {},invdep = {}):
   return (dep,invdep)
   
 class DotArtist:
-  sparsitycol = "#eeeeee"
+  sparsityrow = "#eeeeee"
   def __init__(self,s,dep={},invdep={},graph=None,artists={}):
     self.s = s
     self.dep = dep
@@ -98,10 +98,10 @@ class DotArtist:
       nzlabels = map(str,range(sp.size()))
     nzlabelcounter = 0
     if s.size()==s.numel():
-      graph.add_node(pydot.Node(id,label="%d x %d" % (s.size1(),s.size2()),shape='rectangle',color=self.sparsitycol,style="filled"))
+      graph.add_node(pydot.Node(id,label="%d x %d" % (s.size1(),s.size2()),shape='rectangle',color=self.sparsityrow,style="filled"))
     else:
       label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">'
-      label+="<TR><TD COLSPAN='%d'><font color='#666666'>%s</font></TD></TR>" % (s.size2(), s.dimString())
+      label+="<TR><TD ROWSPAN='%d'><font color='#666666'>%s</font></TD></TR>" % (s.size2(), s.dimString())
       for i in range(s.size1()):
         label+="<TR>"
         for j in range(s.size2()):
@@ -109,7 +109,7 @@ class DotArtist:
           if k==-1:
             label+="<TD>.</TD>"
           else:
-            label+="<TD PORT='f%d' BGCOLOR='%s'>%s</TD>" % (k,self.sparsitycol,nzlabels[nzlabelcounter])
+            label+="<TD PORT='f%d' BGCOLOR='%s'>%s</TD>" % (k,self.sparsityrow,nzlabels[nzlabelcounter])
             nzlabelcounter +=1
         label+="</TR>"
       label+="</TABLE>>"
@@ -124,15 +124,15 @@ class MXSymbolicArtist(DotArtist):
     s = self.s
     graph = self.graph
     sp = s.sparsity()
-    row = sp.getRow()
-    col = "#990000"
+    col = sp.getCol()
+    row = "#990000"
     if s.size() == s.numel() and s.size()==1:
       # The Matrix grid is represented by a html table with 'ports'
-      graph.add_node(pydot.Node(str(self.s.__hash__())+":f0",label=s.getName(),shape='rectangle',color=col))
+      graph.add_node(pydot.Node(str(self.s.__hash__())+":f0",label=s.getName(),shape='rectangle',color=row))
     else:
        # The Matrix grid is represented by a html table with 'ports'
-      label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % col
-      label+="<TR><TD COLSPAN='%d'>%s: <font color='#666666'>%s</font></TD></TR>" % (s.size2(),s.getName(), s.dimString())
+      label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % row
+      label+="<TR><TD ROWSPAN='%d'>%s: <font color='#666666'>%s</font></TD></TR>" % (s.size2(),s.getName(), s.dimString())
       for i in range(s.size1()):
         label+="<TR>"
         for j in range(s.size2()):
@@ -150,7 +150,7 @@ class MXSymbolicArtist(DotArtist):
 #     s = self.s
 #     graph = self.graph
 #     sp = s.sparsity()
-#     row = sp.getRow()
+#     col = sp.getCol()
     
     
 #     # Note: due to Mapping restructuring, this is no longer efficient code
@@ -181,7 +181,7 @@ class MXSymbolicArtist(DotArtist):
 #       if candidates[0] == hash(s):
 #         label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="#0000aa">'
 #         if not(d.numel()==1 and d.numel()==d.size()): 
-#           label+="<TR><TD COLSPAN='%d' BGCOLOR='#dddddd'><font>%s</font></TD></TR>" % (d.size2(), d.dimString())
+#           label+="<TR><TD ROWSPAN='%d' BGCOLOR='#dddddd'><font>%s</font></TD></TR>" % (d.size2(), d.dimString())
 #         for i in range(d.size1()):
 #           label+="<TR>"
 #           for j in range(d.size2()):
@@ -198,7 +198,7 @@ class MXSymbolicArtist(DotArtist):
 #     # The Matrix grid is represented by a html table with 'ports'
 #     label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">'
 #     if not(s.numel()==1 and s.numel()==s.size()): 
-#       label+="<TR><TD COLSPAN='%d'><font color='#666666'>%s</font></TD></TR>" % (s.size2(), s.dimString())
+#       label+="<TR><TD ROWSPAN='%d'><font color='#666666'>%s</font></TD></TR>" % (s.size2(), s.dimString())
 #     for i in range(s.size1()):
 #       label+="<TR>"
 #       for j in range(s.size2()):
@@ -217,7 +217,7 @@ class MXEvaluationArtist(DotArtist):
     s = self.s
     graph = self.graph
     sp = s.sparsity()
-    row = sp.getRow()
+    col = sp.getCol()
     
     
     deps = getDeps(s)
@@ -244,15 +244,15 @@ class MXConstantArtist(DotArtist):
     s = self.s
     graph = self.graph
     sp = s.sparsity()
-    row = sp.getRow()
+    col = sp.getCol()
     M = s.getMatrixValue()
-    col = "#009900"
+    row = "#009900"
     if s.size() == s.numel() and s.size() == 1:
-      graph.add_node(pydot.Node(str(self.s.__hash__())+":f0",label=M[0,0],shape='rectangle',color=col))
+      graph.add_node(pydot.Node(str(self.s.__hash__())+":f0",label=M[0,0],shape='rectangle',color=row))
     else:
       # The Matrix grid is represented by a html table with 'ports'
-      label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % col
-      label+="<TR><TD COLSPAN='%d'><font color='#666666'>%s</font></TD></TR>" % (s.size2(), s.dimString())
+      label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % row
+      label+="<TR><TD ROWSPAN='%d'><font color='#666666'>%s</font></TD></TR>" % (s.size2(), s.dimString())
       for i in range(s.size1()):
         label+="<TR>"
         for j in range(s.size2()):
@@ -311,15 +311,15 @@ class MXGetNonzerosArtist(DotArtist):
       op = ""
       
     sp = s.sparsity()
-    row = sp.getRow()
+    col = sp.getCol()
     M = s.mapping()
-    col = "#333333"
+    row = "#333333"
     if s.size() == s.numel() and s.size() == 1:
       graph.add_node(pydot.Node(op+str(s.__hash__())+":f0",label="[%s]" % str(M[0,0]),shape='rectangle',style="filled",fillcolor='#eeeeff'))
     else:
       # The Matrix grid is represented by a html table with 'ports'
-      label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % col
-      label+="<TR><TD COLSPAN='%d' PORT='entry'>getNonzeros</TD></TR>" % (s.size2())
+      label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % row
+      label+="<TR><TD ROWSPAN='%d' PORT='entry'>getNonzeros</TD></TR>" % (s.size2())
       for i in range(s.size1()):
         label+="<TR>"
         for j in range(s.size2()):
@@ -350,14 +350,14 @@ class MXSetNonzerosArtist(DotArtist):
       op = ""
       
     sp = target.sparsity()
-    row = sp.getRow()
+    col = sp.getCol()
     M = list(s.mapping())
     Mk = 0 
-    col = "#333333"
+    row = "#333333"
 
     # The Matrix grid is represented by a html table with 'ports'
-    label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % col
-    label+="<TR><TD COLSPAN='%d' PORT='entry'>setNonzeros</TD></TR>" % (s.size2())
+    label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % row
+    label+="<TR><TD ROWSPAN='%d' PORT='entry'>setNonzeros</TD></TR>" % (s.size2())
     for i in range(s.size1()):
       label+="<TR>"
       for j in range(s.size2()):
@@ -391,14 +391,14 @@ class MXAddNonzerosArtist(DotArtist):
       op = ""
       
     sp = target.sparsity()
-    row = sp.getRow()
+    col = sp.getCol()
     M = list(s.mapping())
     Mk = 0 
-    col = "#333333"
+    row = "#333333"
 
     # The Matrix grid is represented by a html table with 'ports'
-    label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % col
-    label+="<TR><TD COLSPAN='%d' PORT='entry'>addNonzeros</TD></TR>" % (s.size2())
+    label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % row
+    label+="<TR><TD ROWSPAN='%d' PORT='entry'>addNonzeros</TD></TR>" % (s.size2())
     for i in range(s.size1()):
       label+="<TR>"
       for j in range(s.size2()):
@@ -514,7 +514,7 @@ class SXMatrixArtist(DotArtist):
     s = self.s
     graph = self.graph
     sp = s.sparsity()
-    row = sp.getRow()
+    col = sp.getCol()
       
     # The Matrix grid is represented by a html table with 'ports'
     label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">'

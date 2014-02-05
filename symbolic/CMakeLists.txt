@@ -25,7 +25,7 @@ SET(CASADI_SRCS
   functor_internal.hpp        functor_internal.cpp     
   polynomial.hpp              polynomial.cpp            # Helper class for differentiating and integrating simple polynomials
 
-  # Template class Matrix<>, implements a sparse Matrix with row compressed storage, designed to work well with symbolic data types (SX)
+  # Template class Matrix<>, implements a sparse Matrix with col compressed storage, designed to work well with symbolic data types (SX)
   matrix/generic_expression.hpp                         # Base class for SX MX and Matrix<>
   matrix/generic_expression_tools.hpp                   # Tools for SX MX and Matrix<>
   matrix/generic_matrix.hpp                             # Base class for Matrix<> and MX

@@ -76,17 +76,17 @@ namespace CasADi{
     //@}
 
     // Dulmage-Mendelsohn decomposition
-    std::vector<int> rowperm_, colperm_, rowblock_, colblock_;
+    std::vector<int> colperm_, rowperm_, colblock_, rowblock_;
 
     // Is prepared
     bool prepared_;
 
     // Get sparsity pattern
-    int nrow() const{ return input(LINSOL_A).size1();}
-    int ncol() const{ return input(LINSOL_A).size2();}
+    int ncol() const{ return input(LINSOL_A).size1();}
+    int nrow() const{ return input(LINSOL_A).size2();}
     int nnz() const{ return input(LINSOL_A).size();}
-    const std::vector<int>& col() const{ return input(LINSOL_A).col();}
-    const std::vector<int>& rowind() const{ return input(LINSOL_A).rowind();}    
+    const std::vector<int>& row() const{ return input(LINSOL_A).row();}
+    const std::vector<int>& colind() const{ return input(LINSOL_A).colind();}    
   };
 
 

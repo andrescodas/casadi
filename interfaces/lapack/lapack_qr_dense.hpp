@@ -120,7 +120,7 @@ namespace CasADi{
     std::vector<double> work_; 
     
     // Dimensions
-    int nrow_, ncol_;
+    int ncol_, nrow_;
 
   };
 

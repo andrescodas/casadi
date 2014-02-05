@@ -846,7 +846,7 @@ class MXtests(casadiTestCase):
 
      s=y.sparsity()
      for k in kl:
-       r[s.getRow()[k],s.col()[k]]=1.0
+       r[s.getCol()[k],s.row()[k]]=1.0
      
      y[kl]=MX(1)
      fy = MXFunction([x],[y])
@@ -860,7 +860,7 @@ class MXtests(casadiTestCase):
      sx=x.sparsity()
      cnt=0
      for k in kl:
-       r[s.getRow()[k],s.col()[k]]=xn[sx.getRow()[cnt],sx.col()[cnt]]
+       r[s.getCol()[k],s.row()[k]]=xn[sx.getCol()[cnt],sx.row()[cnt]]
        cnt+=1
      fy = MXFunction([x],[y])
      fy.init()

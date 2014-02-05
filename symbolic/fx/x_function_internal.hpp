@@ -603,16 +603,16 @@ namespace CasADi{
   
     // Get the sparsity of the Jacobian block
     const CCSSparsity& jsp = jacSparsity(iind,oind,true,symmetric);
-    const std::vector<int>& jsp_rowind = jsp.rowind();
-    const std::vector<int>& jsp_col = jsp.col();
+    const std::vector<int>& jsp_colind = jsp.colind();
+    const std::vector<int>& jsp_row = jsp.row();
   
     // Input sparsity
-    std::vector<int> input_row = input(iind).sparsity().getRow();
-    const std::vector<int>& input_col = input(iind).col();
+    std::vector<int> input_col = input(iind).sparsity().getCol();
+    const std::vector<int>& input_row = input(iind).row();
 
     // Output sparsity
-    std::vector<int> output_row = output(oind).sparsity().getRow();
-    const std::vector<int>& output_col = output(oind).col();
+    std::vector<int> output_col = output(oind).sparsity().getCol();
+    const std::vector<int>& output_row = output(oind).row();
 
     // Get transposes and mappings for jacobian sparsity pattern if we are using forward mode
     if(verbose())   std::cout << "XFunctionInternal::jac transposes and mapping" << std::endl;
@@ -643,7 +643,7 @@ namespace CasADi{
     if(verbose())   std::cout << "XFunctionInternal::jac " << nsweep << " sweeps needed for " << nfdir << " forward and " << nadir << " adjoint directions"  << std::endl;
   
     // Sparsity of the seeds
-    vector<int> seed_row, seed_col;
+    vector<int> seed_col, seed_row;
 
     // Evaluate until everything has been determinated
     for(int s=0; s<nsweep; ++s){
@@ -665,28 +665,28 @@ namespace CasADi{
       fseed.resize(nfdir_batch);
       for(int d=0; d<nfdir_batch; ++d){
         // Nonzeros of the seed matrix
-        seed_row.clear();
         seed_col.clear();
+        seed_row.clear();
 
         // For all the directions
-        for(int el = D1.rowind(offset_nfdir+d); el<D1.rowind(offset_nfdir+d+1); ++el){
+        for(int el = D1.colind(offset_nfdir+d); el<D1.colind(offset_nfdir+d+1); ++el){
         
           // Get the direction
-          int c = D1.col(el);
+          int c = D1.row(el);
 
           // Give a seed in the direction
-          seed_row.push_back(input_row[c]);
           seed_col.push_back(input_col[c]);
+          seed_row.push_back(input_row[c]);
         }
 
         // initialize to zero
         fseed[d].resize(getNumInputs());
         for(int ind=0; ind<fseed[d].size(); ++ind){
-          int nrow = input(ind).size1(), ncol = input(ind).size2(); // Input dimensions
+          int ncol = input(ind).size1(), nrow = input(ind).size2(); // Input dimensions
           if(ind==iind){
-            fseed[d][ind] = MatType::ones(sp_triplet(nrow,ncol,seed_row,seed_col));
+            fseed[d][ind] = MatType::ones(sp_triplet(ncol,nrow,seed_col,seed_row));
           } else {
-            fseed[d][ind] = MatType::sparse(nrow,ncol);
+            fseed[d][ind] = MatType::sparse(ncol,nrow);
           }
         }
       }
@@ -695,28 +695,28 @@ namespace CasADi{
       aseed.resize(nadir_batch);
       for(int d=0; d<nadir_batch; ++d){
         // Nonzeros of the seed matrix
-        seed_row.clear();
         seed_col.clear();
+        seed_row.clear();
 
         // For all the directions
-        for(int el = D2.rowind(offset_nadir+d); el<D2.rowind(offset_nadir+d+1); ++el){
+        for(int el = D2.colind(offset_nadir+d); el<D2.colind(offset_nadir+d+1); ++el){
         
           // Get the direction
-          int c = D2.col(el);
+          int c = D2.row(el);
 
           // Give a seed in the direction
-          seed_row.push_back(output_row[c]);
           seed_col.push_back(output_col[c]);
+          seed_row.push_back(output_row[c]);
         }
 
         //initialize to zero
         aseed[d].resize(getNumOutputs());
         for(int ind=0; ind<aseed[d].size(); ++ind){
-          int nrow = output(ind).size1(), ncol = output(ind).size2(); // Output dimensions
+          int ncol = output(ind).size1(), nrow = output(ind).size2(); // Output dimensions
           if(ind==oind){
-            aseed[d][ind] = MatType::ones(sp_triplet(nrow,ncol,seed_row,seed_col));
+            aseed[d][ind] = MatType::ones(sp_triplet(ncol,nrow,seed_col,seed_row));
           } else {
-            aseed[d][ind] = MatType::sparse(nrow,ncol);
+            aseed[d][ind] = MatType::sparse(ncol,nrow);
           }
         }
       }
@@ -755,14 +755,14 @@ namespace CasADi{
           fill(hits.begin(),hits.end(),0);
 
           // "Multiply" Jacobian sparsity by seed vector
-          for(int el = D1.rowind(offset_nfdir+d); el<D1.rowind(offset_nfdir+d+1); ++el){
+          for(int el = D1.colind(offset_nfdir+d); el<D1.colind(offset_nfdir+d+1); ++el){
           
             // Get the input nonzero
-            int c = D1.col(el);
+            int c = D1.row(el);
           
             // Propagate dependencies
-            for(int el_jsp=jsp_rowind[c]; el_jsp<jsp_rowind[c+1]; ++el_jsp){
-              hits[jsp_col[el_jsp]]++;
+            for(int el_jsp=jsp_colind[c]; el_jsp<jsp_colind[c+1]; ++el_jsp){
+              hits[jsp_row[el_jsp]]++;
             }
           }
         }
@@ -785,20 +785,20 @@ namespace CasADi{
         }
       
         // For all the input nonzeros treated in the sweep
-        for(int el = D1.rowind(offset_nfdir+d); el<D1.rowind(offset_nfdir+d+1); ++el){
+        for(int el = D1.colind(offset_nfdir+d); el<D1.colind(offset_nfdir+d+1); ++el){
 
           // Get the input nonzero
-          int c = D1.col(el);
+          int c = D1.row(el);
           int f2_out;
           if(symmetric){
             f2_out = nzmap2[c];
           }
         
           // Loop over the output nonzeros corresponding to this input nonzero
-          for(int el_out = jsp_trans.rowind(c); el_out<jsp_trans.rowind(c+1); ++el_out){
+          for(int el_out = jsp_trans.colind(c); el_out<jsp_trans.colind(c+1); ++el_out){
           
             // Get the output nonzero
-            int r_out = jsp_trans.col(el_out);
+            int r_out = jsp_trans.row(el_out);
           
             // Get the forward sensitivity nonzero
             int f_out = nzmap[r_out];
@@ -834,16 +834,16 @@ namespace CasADi{
         asens[d][iind].sparsity().getNZInplace(nzmap);
       
         // For all the output nonzeros treated in the sweep
-        for(int el = D2.rowind(offset_nadir+d); el<D2.rowind(offset_nadir+d+1); ++el){
+        for(int el = D2.colind(offset_nadir+d); el<D2.colind(offset_nadir+d+1); ++el){
 
           // Get the output nonzero
-          int r = D2.col(el);
+          int r = D2.row(el);
 
           // Loop over the input nonzeros that influences this output nonzero
-          for(int elJ = jsp.rowind(r); elJ<jsp.rowind(r+1); ++elJ){
+          for(int elJ = jsp.colind(r); elJ<jsp.colind(r+1); ++elJ){
           
             // Get the input nonzero
-            int inz = jsp.col(elJ);
+            int inz = jsp.row(elJ);
           
             // Get the corresponding adjoint sensitivity nonzero
             int anz = nzmap[inz];

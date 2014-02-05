@@ -419,7 +419,7 @@ namespace CasADi{
     int progress = -10;
 
     // Temporary vectors
-    std::vector<int> jrow, jcol;
+    std::vector<int> jcol, jrow;
     
     // Loop over the variables, ndir variables at a time
     for(int s=0; s<nsweep; ++s){
@@ -467,8 +467,8 @@ namespace CasADi{
             // If dependents on the variable
             if((bvec_t(1) << i) & spsens){
               // Add to pattern
-              jrow.push_back(el);
-              jcol.push_back(i+offset);
+              jcol.push_back(el);
+              jrow.push_back(i+offset);
             }
           }
         }
@@ -485,7 +485,7 @@ namespace CasADi{
     for(int ind=0; ind<getNumOutputs(); ++ind) output(ind).setZero();
 
     // Construct sparsity pattern
-    CCSSparsity ret = sp_triplet(nz_out, nz_in,use_fwd ? jrow : jcol, use_fwd ? jcol : jrow);
+    CCSSparsity ret = sp_triplet(nz_out, nz_in,use_fwd ? jcol : jrow, use_fwd ? jrow : jcol);
     
     casadi_log("Formed Jacobian sparsity pattern (dimension " << ret.shape() << ", " << ret.size() << " nonzeros, " << 100*double(ret.size())/double(ret.size1())/double(ret.size2()) << " \% nonzeros).");
     casadi_log("FXInternal::getJacSparsity end ");
@@ -513,12 +513,12 @@ namespace CasADi{
     }
 
     // Sparsity triplet accumulator
-    std::vector<int> jrow, jcol;
+    std::vector<int> jcol, jrow;
     
-    // Rows/cols of the coarse blocks
+    // Cols/rows of the coarse blocks
     std::vector<int> coarse(2,0); coarse[1] = nz;
     
-    // Rows/cols of the fine blocks
+    // Cols/rows of the fine blocks
     std::vector<int> fine;
     
     // In each iteration, subdivide each coarse block in this many fine blocks
@@ -537,8 +537,8 @@ namespace CasADi{
       casadi_log("Block size: " << granularity);
     
       // Clear the sparsity triplet acccumulator
-      jrow.clear();
       jcol.clear();
+      jrow.clear();
       
       // Clear the fine block structure
       fine.clear();
@@ -578,8 +578,8 @@ namespace CasADi{
       std::vector<int> fine_lookup = lookupvector(fine,nz+1);
       
       // Triplet data used as a lookup table
-      std::vector<int> lookup_row;
       std::vector<int> lookup_col;
+      std::vector<int> lookup_row;
       std::vector<int> lookup_value;
       
       // Loop over all coarse seed directions from the coloring
@@ -596,11 +596,11 @@ namespace CasADi{
         // Loop while not finished
         while(!f_finished) {
     
-          // Loop over all coarse columns that are found in the coloring for this coarse seed direction
-          for(int k=D.rowind()[csd]; k<D.rowind()[csd+1]; ++k){
-            int cci = D.col()[k];
+          // Loop over all coarse rows that are found in the coloring for this coarse seed direction
+          for(int k=D.colind()[csd]; k<D.colind()[csd+1]; ++k){
+            int cci = D.row()[k];
              
-            // The first and last columns of the fine block
+            // The first and last rows of the fine block
             int fci_start = fine_lookup[coarse[cci]];
             int fci_end   = fine_lookup[coarse[cci+1]];
              
@@ -611,13 +611,13 @@ namespace CasADi{
              
             //casadi_assert(value>=0);
              
-            // Loop over the columns of the fine block
+            // Loop over the rows of the fine block
             for (int fci = fci_offset;fci<min(fci_end-fci_start,fci_cap);++fci) {
              
-              // Loop over the coarse block rows that appear in the coloring for the current coarse seed direction
-              for (int cri=r.rowind()[cci];cri<r.rowind()[cci+1];++cri) {
-                lookup_row.push_back(r.col()[cri]);
-                lookup_col.push_back(bvec_i+bvec_i_mod);
+              // Loop over the coarse block cols that appear in the coloring for the current coarse seed direction
+              for (int cri=r.colind()[cci];cri<r.colind()[cci+1];++cri) {
+                lookup_col.push_back(r.row()[cri]);
+                lookup_row.push_back(bvec_i+bvec_i_mod);
                 lookup_value.push_back(value);
               }
 
@@ -638,12 +638,12 @@ namespace CasADi{
             nsweeps+=1;
               
             // Construct lookup table
-            IMatrix lookup = IMatrix::sparse(lookup_row,lookup_col,lookup_value,coarse.size(),bvec_size);
+            IMatrix lookup = IMatrix::sparse(lookup_col,lookup_row,lookup_value,coarse.size(),bvec_size);
 
-            std::reverse(lookup_row.begin(),lookup_row.end());
             std::reverse(lookup_col.begin(),lookup_col.end());
+            std::reverse(lookup_row.begin(),lookup_row.end());
             std::reverse(lookup_value.begin(),lookup_value.end());
-            IMatrix duplicates = IMatrix::sparse(lookup_row,lookup_col,lookup_value,coarse.size(),bvec_size) - lookup;
+            IMatrix duplicates = IMatrix::sparse(lookup_col,lookup_row,lookup_value,coarse.size(),bvec_size) - lookup;
             makeSparse(duplicates);
             SubMatrix<Matrix<int>,CCSSparsity,int> temp(lookup,duplicates.sparsity(),0);
             temp = -bvec_size;
@@ -654,10 +654,10 @@ namespace CasADi{
             // Temporary bit work vector
             bvec_t spsens;
               
-            // Loop over the rows of coarse blocks
+            // Loop over the cols of coarse blocks
             for (int cri=0;cri<coarse.size()-1;++cri) {
 
-              // Loop over the rows of fine blocks within the current coarse block
+              // Loop over the cols of fine blocks within the current coarse block
               for (int fri=fine_lookup[coarse[cri]];fri<fine_lookup[coarse[cri+1]];++fri) {
                 // Lump individual sensitivities together into fine block
                 bvec_or(sens_v,spsens,fine[fri],fine[fri+1]);
@@ -668,10 +668,10 @@ namespace CasADi{
                     // if dependency is found, add it to the new sparsity pattern
                     int lk = lookup.elem(cri,bvec_i);
                     if (lk>-bvec_size) {
-                      jcol.push_back(bvec_i+lk);
-                      jrow.push_back(fri);
-                      jcol.push_back(fri);
                       jrow.push_back(bvec_i+lk);
+                      jcol.push_back(fri);
+                      jrow.push_back(fri);
+                      jcol.push_back(bvec_i+lk);
                     }
                   }
                 }
@@ -691,8 +691,8 @@ namespace CasADi{
             }
               
             // Clean lookup table
-            lookup_row.clear();
             lookup_col.clear();
+            lookup_row.clear();
             lookup_value.clear();
           }
            
@@ -709,7 +709,7 @@ namespace CasADi{
       }
 
       // Construct fine sparsity pattern
-      r = sp_triplet(fine.size()-1, fine.size()-1, jrow, jcol);
+      r = sp_triplet(fine.size()-1, fine.size()-1, jcol, jrow);
       coarse = fine;
       hasrun = true;
     }
@@ -740,18 +740,18 @@ namespace CasADi{
     }
 
     // Sparsity triplet accumulator
-    std::vector<int> jrow, jcol;
+    std::vector<int> jcol, jrow;
     
-    // Rows of the coarse blocks
-    std::vector<int> coarse_row(2,0); coarse_row[1] = nz_out;
     // Cols of the coarse blocks
-    std::vector<int> coarse_col(2,0); coarse_col[1] = nz_in;
-    
-    // Rows of the fine blocks
-    std::vector<int> fine_row;
+    std::vector<int> coarse_col(2,0); coarse_col[1] = nz_out;
+    // Rows of the coarse blocks
+    std::vector<int> coarse_row(2,0); coarse_row[1] = nz_in;
     
     // Cols of the fine blocks
     std::vector<int> fine_col;
+    
+    // Rows of the fine blocks
+    std::vector<int> fine_row;
     
     // In each iteration, subdivide each coarse block in this many fine blocks
     int subdivision = bvec_size;
@@ -759,8 +759,8 @@ namespace CasADi{
     CCSSparsity r = sp_dense(1,1);
     
     // The size of a block
-    int granularity_col = nz_in;
-    int granularity_row = nz_out;
+    int granularity_row = nz_in;
+    int granularity_col = nz_out;
     
     bool use_fwd = true;
     
@@ -775,16 +775,16 @@ namespace CasADi{
       bvec_lookup.push_back(bvec_t(1) << i);
     }
     
-    while (!hasrun || coarse_row.size()!=nz_out+1 || coarse_col.size()!=nz_in+1) {
-      casadi_log("Block size: " << granularity_row << " x " << granularity_col);
+    while (!hasrun || coarse_col.size()!=nz_out+1 || coarse_row.size()!=nz_in+1) {
+      casadi_log("Block size: " << granularity_col << " x " << granularity_row);
     
       // Clear the sparsity triplet acccumulator
-      jrow.clear();
       jcol.clear();
+      jrow.clear();
       
       // Clear the fine block structure
-      fine_col.clear();
       fine_row.clear();
+      fine_col.clear();
     
       // r transpose will be needed in the algorithm
       CCSSparsity rT = r.transpose();
@@ -801,8 +801,8 @@ namespace CasADi{
       // Adjoint mode penalty factor (adjoint mode is usually more expensive to calculate)
       int adj_penalty = 2;
       
-      int fwd_cost = use_fwd ? granularity_col: granularity_row;
-      int adj_cost = use_fwd ? granularity_row: granularity_col;
+      int fwd_cost = use_fwd ? granularity_row: granularity_col;
+      int adj_cost = use_fwd ? granularity_col: granularity_row;
       
       // Use whatever required less colors if we tried both (with preference to forward mode)
       if((D1.size1()*fwd_cost <= adj_penalty*D2.size1()*adj_cost)){
@@ -843,11 +843,19 @@ namespace CasADi{
       
       // Adjoint mode amounts to swapping
       if (!use_fwd) {
-        std::swap(coarse_row,coarse_col);
-        std::swap(granularity_row,granularity_col);
+        std::swap(coarse_col,coarse_row);
+        std::swap(granularity_col,granularity_row);
         std::swap(r,rT);
       }
       
+      // Subdivide the coarse block cols
+      for (int k=0;k<coarse_col.size()-1;++k) {
+        int diff = coarse_col[k+1]-coarse_col[k];
+        int new_diff = diff/subdivision;
+        if(diff%subdivision>0) new_diff++;
+        std::vector<int> temp = range(coarse_col[k],coarse_col[k+1],new_diff);
+        fine_col.insert(fine_col.end(),temp.begin(),temp.end());
+      }
       // Subdivide the coarse block rows
       for (int k=0;k<coarse_row.size()-1;++k) {
         int diff = coarse_row[k+1]-coarse_row[k];
@@ -856,37 +864,29 @@ namespace CasADi{
         std::vector<int> temp = range(coarse_row[k],coarse_row[k+1],new_diff);
         fine_row.insert(fine_row.end(),temp.begin(),temp.end());
       }
-      // Subdivide the coarse block columns
-      for (int k=0;k<coarse_col.size()-1;++k) {
-        int diff = coarse_col[k+1]-coarse_col[k];
-        int new_diff = diff/subdivision;
-        if(diff%subdivision>0) new_diff++;
-        std::vector<int> temp = range(coarse_col[k],coarse_col[k+1],new_diff);
-        fine_col.insert(fine_col.end(),temp.begin(),temp.end());
-      }
-      if (fine_col.back()!=coarse_col.back()) fine_col.push_back(coarse_col.back());
       if (fine_row.back()!=coarse_row.back()) fine_row.push_back(coarse_row.back());
+      if (fine_col.back()!=coarse_col.back()) fine_col.push_back(coarse_col.back());
 
-      granularity_row = fine_row[1] - fine_row[0];
       granularity_col = fine_col[1] - fine_col[0];
+      granularity_row = fine_row[1] - fine_row[0];
       
       // The index into the bvec bit vector
       int bvec_i = 0;
       
       // Create lookup tables for the fine blocks
-      std::vector<int> fine_row_lookup = lookupvector(fine_row,nz_sens+1);
-      std::vector<int> fine_col_lookup = lookupvector(fine_col,nz_seed+1);
+      std::vector<int> fine_col_lookup = lookupvector(fine_col,nz_sens+1);
+      std::vector<int> fine_row_lookup = lookupvector(fine_row,nz_seed+1);
       
       // Triplet data used as a lookup table
-      std::vector<int> lookup_row;
       std::vector<int> lookup_col;
+      std::vector<int> lookup_row;
       std::vector<int> lookup_value;
       
       // Loop over all coarse seed directions from the coloring
       for(int csd=0; csd<D.size1(); ++csd) {
       
         // The maximum number of fine blocks contained in one coarse block
-        int n_fine_blocks_max = fine_col_lookup[coarse_col[1]]-fine_col_lookup[coarse_col[0]];
+        int n_fine_blocks_max = fine_row_lookup[coarse_row[1]]-fine_row_lookup[coarse_row[0]];
          
         int fci_offset = 0;
         int fci_cap = bvec_size-bvec_i;
@@ -897,31 +897,31 @@ namespace CasADi{
         // Loop while not finished
         while(!f_finished) {
     
-          // Loop over all coarse columns that are found in the coloring for this coarse seed direction
-          for(int k=D.rowind()[csd]; k<D.rowind()[csd+1]; ++k){
-            int cci = D.col()[k];
+          // Loop over all coarse rows that are found in the coloring for this coarse seed direction
+          for(int k=D.colind()[csd]; k<D.colind()[csd+1]; ++k){
+            int cci = D.row()[k];
 
-            // The first and last columns of the fine block
-            int fci_start = fine_col_lookup[coarse_col[cci]];
-            int fci_end   = fine_col_lookup[coarse_col[cci+1]];
+            // The first and last rows of the fine block
+            int fci_start = fine_row_lookup[coarse_row[cci]];
+            int fci_end   = fine_row_lookup[coarse_row[cci+1]];
              
             // Local counter that modifies index into bvec
             int bvec_i_mod = 0;
              
             int value = -bvec_i + fci_offset + fci_start;
              
-            // Loop over the columns of the fine block
+            // Loop over the rows of the fine block
             for (int fci = fci_offset;fci<min(fci_end-fci_start,fci_cap);++fci) {
              
-              // Loop over the coarse block rows that appear in the coloring for the current coarse seed direction
-              for (int cri=rT.rowind()[cci];cri<rT.rowind()[cci+1];++cri) {
-                lookup_row.push_back(rT.col()[cri]);
-                lookup_col.push_back(bvec_i+bvec_i_mod);
+              // Loop over the coarse block cols that appear in the coloring for the current coarse seed direction
+              for (int cri=rT.colind()[cci];cri<rT.colind()[cci+1];++cri) {
+                lookup_col.push_back(rT.row()[cri]);
+                lookup_row.push_back(bvec_i+bvec_i_mod);
                 lookup_value.push_back(value);
               }
 
               // Toggle on seeds
-              bvec_toggle(seed_v,fine_col[fci+fci_start],fine_col[fci+fci_start+1],bvec_i+bvec_i_mod);
+              bvec_toggle(seed_v,fine_row[fci+fci_start],fine_row[fci+fci_start+1],bvec_i+bvec_i_mod);
               bvec_i_mod++;
             }
           }
@@ -937,7 +937,7 @@ namespace CasADi{
             nsweeps+=1; 
               
             // Construct lookup table
-            IMatrix lookup = IMatrix::sparse(lookup_row,lookup_col,lookup_value,coarse_row.size(),bvec_size);
+            IMatrix lookup = IMatrix::sparse(lookup_col,lookup_row,lookup_value,coarse_col.size(),bvec_size);
 
             // Propagate the dependencies
             spEvaluate(use_fwd);
@@ -945,13 +945,13 @@ namespace CasADi{
             // Temporary bit work vector
             bvec_t spsens;
               
-            // Loop over the rows of coarse blocks
-            for (int cri=0;cri<coarse_row.size()-1;++cri) {
+            // Loop over the cols of coarse blocks
+            for (int cri=0;cri<coarse_col.size()-1;++cri) {
 
-              // Loop over the rows of fine blocks within the current coarse block
-              for (int fri=fine_row_lookup[coarse_row[cri]];fri<fine_row_lookup[coarse_row[cri+1]];++fri) {
+              // Loop over the cols of fine blocks within the current coarse block
+              for (int fri=fine_col_lookup[coarse_col[cri]];fri<fine_col_lookup[coarse_col[cri+1]];++fri) {
                 // Lump individual sensitivities together into fine block
-                bvec_or(sens_v,spsens,fine_row[fri],fine_row[fri+1]);
+                bvec_or(sens_v,spsens,fine_col[fri],fine_col[fri+1]);
                 
                 // Next iteration if no sparsity
                 if (!spsens) continue;
@@ -960,8 +960,8 @@ namespace CasADi{
                 for (int bvec_i=0;bvec_i<bvec_size;++bvec_i) {
                   if (spsens & bvec_lookup[bvec_i]) {
                     // if dependency is found, add it to the new sparsity pattern
-                    jcol.push_back(bvec_i+lookup.elem(cri,bvec_i));
-                    jrow.push_back(fri);
+                    jrow.push_back(bvec_i+lookup.elem(cri,bvec_i));
+                    jcol.push_back(fri);
                   }
                 }
               }
@@ -980,8 +980,8 @@ namespace CasADi{
             }
               
             // Clean lookup table
-            lookup_row.clear();
             lookup_col.clear();
+            lookup_row.clear();
             lookup_value.clear();
           }
            
@@ -1000,14 +1000,14 @@ namespace CasADi{
       // Swap results if adjoint mode was used
       if (use_fwd) {
         // Construct fine sparsity pattern
-        r = sp_triplet(fine_row.size()-1, fine_col.size()-1, jrow, jcol);
-        coarse_row = fine_row;
+        r = sp_triplet(fine_col.size()-1, fine_row.size()-1, jcol, jrow);
         coarse_col = fine_col;
+        coarse_row = fine_row;
       } else {
         // Construct fine sparsity pattern
-        r = sp_triplet( fine_col.size()-1,fine_row.size()-1, jcol, jrow);
-        coarse_row = fine_col;
+        r = sp_triplet( fine_row.size()-1,fine_col.size()-1, jrow, jcol);
         coarse_col = fine_row;
+        coarse_row = fine_col;
       }
       hasrun = true;
     }
@@ -1068,22 +1068,22 @@ namespace CasADi{
         if(output(oind).numel()!=sp.size1()){
           casadi_assert(sp.size1()==output(oind).size());
         
-          // New row for each old row 
-          vector<int> row_map = output(oind).sparsity().getElements();
+          // New col for each old col 
+          vector<int> col_map = output(oind).sparsity().getElements();
     
-          // Insert rows 
-          sp.enlargeRows(output(oind).numel(),row_map);
+          // Insert cols 
+          sp.enlargeColumns(output(oind).numel(),col_map);
         }
   
         // Enlarge if sparse input 
         if(input(iind).numel()!=sp.size2()){
           casadi_assert(sp.size2()==input(iind).size());
         
-          // New column for each old column
-          vector<int> col_map = input(iind).sparsity().getElements();
+          // New row for each old row
+          vector<int> row_map = input(iind).sparsity().getElements();
         
-          // Insert columns
-          sp.enlargeColumns(input(iind).numel(),col_map);
+          // Insert rows
+          sp.enlargeRows(input(iind).numel(),row_map);
         }
       
         // Save
@@ -1397,17 +1397,17 @@ namespace CasADi{
           continue; // Skip if zero
         const int d1 = sp.size1();
         //const int d2 = sp.size2();
-        const vector<int>& rowind = sp.rowind();
-        const vector<int>& col = sp.col();
+        const vector<int>& colind = sp.colind();
+        const vector<int>& row = sp.row();
 
         // Get data array for output
         bvec_t *outputd = get_bvec_t(output(oind).data());
 
         // Carry out the sparse matrix-vector multiplication
         for (int i = 0; i < d1; ++i) {
-          for (int el = rowind[i]; el < rowind[i + 1]; ++el) {
-            // Get column
-            int j = col[el];
+          for (int el = colind[i]; el < colind[i + 1]; ++el) {
+            // Get row
+            int j = row[el];
             
             // Propagate dependencies
             if (fwd) {
@@ -1686,7 +1686,7 @@ namespace CasADi{
 
     // Forward derivatives
     if(nfwd>0){
-      // Get row offsets for the vertsplit
+      // Get col offsets for the vertsplit
       vector<int> offset(1,0);
       for(int i=0; i<n_out; ++i){
         offset.push_back(offset.back()+res[i].numel());
@@ -1723,7 +1723,7 @@ namespace CasADi{
       // Transpose of J
       MX JT = trans(J);
 
-      // Get row offsets for the vertsplit
+      // Get col offsets for the vertsplit
       vector<int> offset(1,0);
       for(int i=0; i<n_in; ++i){
         offset.push_back(offset.back()+arg[i].numel());
@@ -1901,18 +1901,18 @@ namespace CasADi{
       // Sparsity pattern for the symbolic input
       CCSSparsity sp_arg(0,1);
 
-      // Append the sparsity patterns, keep track of row offsets
-      vector<int> row_offset(1,0);
+      // Append the sparsity patterns, keep track of col offsets
+      vector<int> col_offset(1,0);
       for(int i=0; i<getNumInputs(); ++i){
         sp_arg.append(input(i).sparsity().reshape(input(i).numel(),1));
-        row_offset.push_back(sp_arg.numel());
+        col_offset.push_back(sp_arg.numel());
       }
       
       // Create symbolic primitive
       arg = msym("x",sp_arg);
 
       // Split up and fix shape
-      argv = vertsplit(arg,row_offset);
+      argv = vertsplit(arg,col_offset);
       for(int i=0; i<getNumInputs(); ++i){
         argv[i] = reshape(argv[i],input(i).sparsity());
       }
@@ -2165,7 +2165,7 @@ namespace CasADi{
     }
 
     // Function that returns the sparsity pattern
-    s << "int getSparsity(int i, int *nrow, int *ncol, int **rowind, int **col){" << endl;
+    s << "int getSparsity(int i, int *ncol, int *nrow, int **colind, int **row){" << endl;
     
     // Get the sparsity index using a switch
     s << "  int* sp;" << endl;
@@ -2192,10 +2192,10 @@ namespace CasADi{
     s << "  }" << endl << endl;
     
     // Decompress the sparsity pattern
-    s << "  *nrow = sp[0];" << endl;
-    s << "  *ncol = sp[1];" << endl;
-    s << "  *rowind = sp + 2;" << endl;
-    s << "  *col = sp + 2 + (*nrow + 1);" << endl;
+    s << "  *ncol = sp[0];" << endl;
+    s << "  *nrow = sp[1];" << endl;
+    s << "  *colind = sp + 2;" << endl;
+    s << "  *row = sp + 2 + (*ncol + 1);" << endl;
     s << "  return 0;" << endl;
     s << "}" << endl << endl;
   }

@@ -257,8 +257,8 @@ class FXtests(casadiTestCase):
     def test(sp):
       x = ssym("x",sp.size2())
       sp2 = jacobian(mul(DMatrix(sp,1),x),x).sparsity()
-      self.checkarray(sp.col(),sp2.col());
-      self.checkarray(sp.rowind(),sp2.rowind());   
+      self.checkarray(sp.row(),sp2.row());
+      self.checkarray(sp.colind(),sp2.colind());   
 
     for i in range(5):
       test(sp_tril(i))
@@ -270,10 +270,10 @@ class FXtests(casadiTestCase):
       d = sp_diag(i)
       test(d)
       
-      test(d + sp_rowcol([0],[5],i,i))
+      test(d + sp_colrow([0],[5],i,i))
       
       b = sp_band(i,-1) + sp_band(i,1)
-      test(b + sp_rowcol([0],[5],i,i))
+      test(b + sp_colrow([0],[5],i,i))
       
     m = IMatrix(sp_diag(129),1)
     m[:50,0] = 1
@@ -352,8 +352,8 @@ class FXtests(casadiTestCase):
       J = f.hessian()
       J.init()
       sp2 = J.output().sparsity()
-      self.checkarray(sp.col(),sp2.col())
-      self.checkarray(sp.rowind(),sp2.rowind())
+      self.checkarray(sp.row(),sp2.row())
+      self.checkarray(sp.colind(),sp2.colind())
       
     A = IMatrix([[1,1,0,0,0,0],[1,1,1,0,1,1],[0,1,1,1,0,0],[0,0,1,1,0,1],[0,1,0,0,1,0],[0,1,0,1,0,1]])
     makeSparse(A)
@@ -390,11 +390,11 @@ class FXtests(casadiTestCase):
       d = sp_diag(i)
       test(d)
       
-      test(d + sp_rowcol([0],[5],i,i) + sp_rowcol([5],[0],i,i))
+      test(d + sp_colrow([0],[5],i,i) + sp_colrow([5],[0],i,i))
       
       b = sp_band(i,-1) + sp_band(i,1)
       test(b)
-      test(b + sp_rowcol([0],[5],i,i) + sp_rowcol([5],[0],i,i))
+      test(b + sp_colrow([0],[5],i,i) + sp_colrow([5],[0],i,i))
       
       d = sp_dense(i,i)
       test(d)

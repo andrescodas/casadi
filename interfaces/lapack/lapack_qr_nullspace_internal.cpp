@@ -89,7 +89,7 @@ namespace CasADi{
     
     int nm = n_-m_;
     
-    // Obtain the last nm columns of Q
+    // Obtain the last nm rows of Q
     output(0).setAll(0.0);
     for (int i=0;i<nm;++i) {
       output(0).data()[nm*(i+m_)+i]=1;

@@ -847,14 +847,14 @@ void SymbolicOCP::scaleEquations(){
   J.setInput(getStart(u,true),U);
   J.evaluate();
   
-  // Get the maximum of every row
+  // Get the maximum of every col
   Matrix<double> &J0 = J.output();
   vector<double> scale(J0.size1(),0.0); // scaling factors
   for(int i=0; i<J0.size1(); ++i){
-    // Loop over non-zero entries of the row
-    for(int el=J0.rowind(i); el<J0.rowind(i+1); ++el){
-      // Column
-      //int j=J0.col(el);
+    // Loop over non-zero entries of the col
+    for(int el=J0.colind(i); el<J0.colind(i+1); ++el){
+      // Row
+      //int j=J0.row(el);
       
       // The scaling factor is the maximum norm, ignoring not-a-number entries
       if(!isnan(J0.at(el))){
@@ -889,20 +889,20 @@ void SymbolicOCP::sortODE(){
   CCSSparsity sp = f.jacSparsity();
   
   // BLT transformation
-  vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
+  sp.dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
 
   // Permute equations
   vector<SX> ode_new(ode.size());
   for(int i=0; i<ode.size(); ++i){
-    ode_new[i] = ode.at(rowperm[i]);
+    ode_new[i] = ode.at(colperm[i]);
   }
   ode_new.swap(ode.data());
   
   // Permute variables
   vector<Variable> x_new(x.size());
   for(int i=0; i<x.size(); ++i){
-    x_new[i]= x[colperm[i]];
+    x_new[i]= x[rowperm[i]];
   }
   x_new.swap(x);
 }
@@ -917,20 +917,20 @@ void SymbolicOCP::sortALG(){
   CCSSparsity sp = f.jacSparsity();
   
   // BLT transformation
-  vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
+  sp.dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
 
   // Permute equations
   vector<SX> alg_new(alg.size());
   for(int i=0; i<alg.size(); ++i){
-    alg_new[i] = alg.at(rowperm[i]);
+    alg_new[i] = alg.at(colperm[i]);
   }
   alg_new.swap(alg.data());
   
   // Permute variables
   vector<Variable> z_new(z.size());
   for(int i=0; i<z.size(); ++i){
-    z_new[i]= z[colperm[i]];
+    z_new[i]= z[rowperm[i]];
   }
   z_new.swap(z);
 }
@@ -946,13 +946,13 @@ void SymbolicOCP::sortDependentParameters(){
   CCSSparsity sp = f.jacSparsity();
   
   // BLT transformation
-  vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
+  sp.dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
 
   // Permute variables
   vector<Variable> pd_new(pd.size());
   for(int i=0; i<pd.size(); ++i){
-    pd_new[i]= pd[colperm[i]];
+    pd_new[i]= pd[rowperm[i]];
   }
   pd_new.swap(pd);  
 }
@@ -975,13 +975,13 @@ void SymbolicOCP::makeExplicit(){
   CCSSparsity sp = f.jacSparsity();
 
   // BLT transformation
-  vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  int nb = sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
+  int nb = sp.dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
 
   // Permute equations
   vector<SX> ode_new(ode.size());
   for(int i=0; i<ode.size(); ++i){
-    ode_new[i] = ode.at(rowperm[i]);
+    ode_new[i] = ode.at(colperm[i]);
   }
   ode_new.swap(ode.data());
   ode_new.clear();
@@ -989,7 +989,7 @@ void SymbolicOCP::makeExplicit(){
   // Permute variables
   vector<Variable> x_new(x.size());
   for(int i=0; i<x.size(); ++i){
-    x_new[i]= x[colperm[i]];
+    x_new[i]= x[rowperm[i]];
   }
   x_new.swap(x);
   x_new.clear();
@@ -1012,21 +1012,21 @@ void SymbolicOCP::makeExplicit(){
   for(int b=0; b<nb; ++b){
     
     // Block size
-    int bs = rowblock[b+1] - rowblock[b];
+    int bs = colblock[b+1] - colblock[b];
     
     // Get variables in the block
     xb.clear();
-    for(int i=colblock[b]; i<colblock[b+1]; ++i){
+    for(int i=rowblock[b]; i<rowblock[b+1]; ++i){
       xb.push_back(x[i]);
     }
 
     // Get equations in the block
     fb.clear();
-    for(int i=rowblock[b]; i<rowblock[b+1]; ++i)
+    for(int i=colblock[b]; i<colblock[b+1]; ++i)
       fb.push_back(ode.at(i));
 
     // Get local Jacobian
-    SXMatrix Jb = J(range(rowblock[b],rowblock[b+1]),range(colblock[b],colblock[b+1]));
+    SXMatrix Jb = J(range(colblock[b],colblock[b+1]),range(rowblock[b],rowblock[b+1]));
 
     // If Jb depends on xb, then the state derivative does not enter linearly in the ODE and we cannot solve for the state derivative
     casadi_assert_message(!dependsOn(Jb,der(xb)),"Cannot find an explicit expression for variable(s) " << xb);
@@ -1067,13 +1067,13 @@ void SymbolicOCP::eliminateAlgebraic(){
   CCSSparsity sp = f.jacSparsity();
 
   // BLT transformation
-  vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  int nb = sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
+  int nb = sp.dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
 
   // Permute equations
   vector<SX> alg_new(alg.size());
   for(int i=0; i<alg.size(); ++i){
-    alg_new[i] = alg.at(rowperm[i]);
+    alg_new[i] = alg.at(colperm[i]);
   }
   alg_new.swap(alg.data());
   alg_new.clear();
@@ -1081,7 +1081,7 @@ void SymbolicOCP::eliminateAlgebraic(){
   // Permute variables
   vector<Variable> z_new(z.size());
   for(int i=0; i<z.size(); ++i){
-    z_new[i]= z[colperm[i]];
+    z_new[i]= z[rowperm[i]];
   }
   z_new.swap(z);
   z_new.clear();
@@ -1107,21 +1107,21 @@ void SymbolicOCP::eliminateAlgebraic(){
   for(int b=0; b<nb; ++b){
     
     // Block size
-    int bs = rowblock[b+1] - rowblock[b];
+    int bs = colblock[b+1] - colblock[b];
     
     // Get local variables
     zb.clear();
-    for(int i=colblock[b]; i<colblock[b+1]; ++i){
+    for(int i=rowblock[b]; i<rowblock[b+1]; ++i){
       zb.push_back(z[i]);
     }
 
     // Get local equations
     fb.clear();
-    for(int i=rowblock[b]; i<rowblock[b+1]; ++i)
+    for(int i=colblock[b]; i<colblock[b+1]; ++i)
       fb.push_back(alg.at(i));
 
     // Get local Jacobian
-    SXMatrix Jb = J(range(rowblock[b],rowblock[b+1]),range(colblock[b],colblock[b+1]));
+    SXMatrix Jb = J(range(colblock[b],colblock[b+1]),range(rowblock[b],rowblock[b+1]));
 
     // If Jb depends on zb, then we cannot (currently) solve for it explicitly
     if(dependsOn(Jb,var(zb))){

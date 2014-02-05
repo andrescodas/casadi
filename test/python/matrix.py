@@ -38,8 +38,8 @@ class Matrixtests(casadiTestCase):
   def test_sum(self):
     self.message("sum")
     D=DMatrix([[1,2,3],[4,5,6],[7,8,9]])
-    self.checkarray(c.sumRows(D),array([[12,15,18]]),'sum()')
-    self.checkarray(c.sumCols(D),array([[6,15,24]]).T,'sum()')
+    self.checkarray(c.sumCols(D),array([[12,15,18]]),'sum()')
+    self.checkarray(c.sumRows(D),array([[6,15,24]]).T,'sum()')
     
   def test_inv(self):
     self.message("Matrix inverse")
@@ -587,11 +587,11 @@ class Matrixtests(casadiTestCase):
     
     A = DMatrix(B)
     A.remove([],[1])
-    self.checkarray(A, DMatrix([[1,3,4],[5,7,8],[9,11,12],[13,15,16],[17,19,20]]),"remove a column")
+    self.checkarray(A, DMatrix([[1,3,4],[5,7,8],[9,11,12],[13,15,16],[17,19,20]]),"remove a row")
    
     A = DMatrix(B)
     A.remove([0,3],[1])
-    self.checkarray(A, DMatrix([[5,7,8],[9,11,12],[17,19,20]]),"remove a column and two rows ")
+    self.checkarray(A, DMatrix([[5,7,8],[9,11,12],[17,19,20]]),"remove a row and two cols ")
     
   def test_comparisons(self):
     for m in [DMatrix,IMatrix]:
@@ -694,14 +694,14 @@ class Matrixtests(casadiTestCase):
     self.assertRaises(Exception, lambda : bool(DMatrix()))
     
   def test_listslice(self):
-    def check(d,rowbase,colbase):
-      for col in permutations(colbase):
-        for row in permutations(rowbase):
-          r = IMatrix.zeros(len(row),len(col))
-          for i,ii in enumerate(row):
-            for j,jj in enumerate(col):
+    def check(d,colbase,rowbase):
+      for row in permutations(rowbase):
+        for col in permutations(colbase):
+          r = IMatrix.zeros(len(col),len(row))
+          for i,ii in enumerate(col):
+            for j,jj in enumerate(row):
               r[i,j] = d[ii,jj]
-          self.checkarray(d[row,col],r,"%s[%s,%s]" % (repr(d),str(row),str(col)))
+          self.checkarray(d[col,row],r,"%s[%s,%s]" % (repr(d),str(col),str(row)))
           
     
     # getSub1
@@ -716,7 +716,7 @@ class Matrixtests(casadiTestCase):
     check(d,[0,1,3],[0,2,3])
     check(d.T,[0,1,3],[0,2,3])
 
-    sp = sp_rowcol([0,1,2],[0,1],4,4)
+    sp = sp_colrow([0,1,2],[0,1],4,4)
     d = IMatrix(sp,range(sp.size()))
     check(d,[0,3],[0,2])
     
@@ -731,7 +731,7 @@ class Matrixtests(casadiTestCase):
     check(d,[0,1,2],[0,1,2])
     check(d.T,[0,1,2],[0,1,2])
     
-    sp = sp_rowcol([0,2],[0,1],4,4)
+    sp = sp_colrow([0,2],[0,1],4,4)
     d = IMatrix(sp,range(sp.size()))
     check(d,[0,1,3],[0,2,3])
 
@@ -765,8 +765,8 @@ class Matrixtests(casadiTestCase):
       M = c.diag(D)
       makeSparse(M)
       
-      self.checkarray(m.sparsity().rowind(),M.sparsity().rowind())
-      self.checkarray(m.sparsity().col(),M.sparsity().col())
+      self.checkarray(m.sparsity().colind(),M.sparsity().colind())
+      self.checkarray(m.sparsity().row(),M.sparsity().row())
 
   def test_sprank(self):
     self.message("sprank")
@@ -963,8 +963,8 @@ class Matrixtests(casadiTestCase):
         blkdiag([sp_diag(n),sp_tril(n)]),
         blkdiag([sp_diag(n),sp_tril(n).T]),
         blkdiag([sp_tril(n),sp_tril(n).T]),
-        sp_diag(n)+sp_rowcol([0],[n-1],n,n),
-        sp_diag(n)+sp_rowcol([0,n-1],[n-1,0],n,n),
+        sp_diag(n)+sp_colrow([0],[n-1],n,n),
+        sp_diag(n)+sp_colrow([0,n-1],[n-1,0],n,n),
         sp_diag(n)+sp_triplet(n,n,[0],[n-1]),
         sp_diag(n)+sp_triplet(n,n,[0,n-1],[n-1,0]),
       ]

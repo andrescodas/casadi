@@ -147,12 +147,12 @@ namespace CasADi{
       stream << "  for(i=0; i<" << this->size() << "; ++i) " << res.front() << "[i]=" << arg.at(0) << "[i];" << endl;
     }
 
-    int nrow_x = this->dep(1).size1();
-    int ncol_x = this->dep(1).size2();
-    int nrow_y = this->dep(2).size1();
-    stream << "  for(i=0, rr=" << res.front() <<"; i<" << nrow_x << "; ++i)";
-    stream << " for(j=0; j<" << nrow_y << "; ++j, ++rr)";
-    stream << " for(k=0, ss=" << arg.at(1) << "+i*" << ncol_x << ", tt=" << arg.at(2) << "+j*" << ncol_x << "; k<" << ncol_x << "; ++k)";
+    int ncol_x = this->dep(1).size1();
+    int nrow_x = this->dep(1).size2();
+    int ncol_y = this->dep(2).size1();
+    stream << "  for(i=0, rr=" << res.front() <<"; i<" << ncol_x << "; ++i)";
+    stream << " for(j=0; j<" << ncol_y << "; ++j, ++rr)";
+    stream << " for(k=0, ss=" << arg.at(1) << "+i*" << nrow_x << ", tt=" << arg.at(2) << "+j*" << nrow_x << "; k<" << nrow_x << "; ++k)";
     stream << " *rr += *ss++**tt++;" << endl;
   }
 

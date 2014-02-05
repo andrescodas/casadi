@@ -51,7 +51,7 @@ class Sparsitytests(casadiTestCase):
     c=a.patternUnion(b,w)
     self.assertEquals(w.size(),len(nza.union(nzb)))
     for k in range(w.size()):
-      ind = (c.getRow()[k],c.col(k))
+      ind = (c.getCol()[k],c.row(k))
       if (ind in nza and ind in nzb):
         self.assertEquals(w[k],1 | 2)
       elif (ind in nza):
@@ -62,7 +62,7 @@ class Sparsitytests(casadiTestCase):
     c = a + b
     self.assertEquals(c.size(),len(nza.union(nzb)))
     for k in range(c.size()):
-      ind = (c.getRow()[k],c.col(k))
+      ind = (c.getCol()[k],c.row(k))
       self.assertTrue(ind in nza or ind in nzb)
 
   def test_intersection(self):
@@ -87,13 +87,13 @@ class Sparsitytests(casadiTestCase):
     
     c=a.patternIntersection(b)
     for k in range(c.size()):
-      ind = (c.getRow()[k],c.col(k))
+      ind = (c.getCol()[k],c.row(k))
       self.assertTrue(ind in nza and ind in nzb)
         
     c = a * b
     self.assertEquals(c.size(),len(nza.intersection(nzb)))
     for k in range(c.size()):
-      ind = (c.getRow()[k],c.col(k))
+      ind = (c.getCol()[k],c.row(k))
       self.assertTrue(ind in nza and ind in nzb)
        
   def test_getNZDense(self):
@@ -116,13 +116,13 @@ class Sparsitytests(casadiTestCase):
     #sp = CCSSparsity(3,4,[1,2,1],[0,2,2,3])
     sp = CCSSparsity(3,4,True)
     
-    col = [1,2,4]
-    row = [0,3,4,6]
-    sp.enlarge(7,8,col,row)
+    row = [1,2,4]
+    col = [0,3,4,6]
+    sp.enlarge(7,8,row,col)
     
     z = numpy.zeros((7,8))
-    for i in col:
-      for j in row:
+    for i in row:
+      for j in col:
         z[i,j]=1
 
     self.checkarray(DMatrix(sp,1),z,"enlarge")
@@ -132,7 +132,7 @@ class Sparsitytests(casadiTestCase):
     z = numpy.zeros((7,8))
     for i in range(3):
       for j in range(4):
-          z[col[i],row[j]]= n[i,j]
+          z[row[i],col[j]]= n[i,j]
     sp.enlarge(7,8,[1,2,4],[0,3,4,6])
     
     self.checkarray(DMatrix(sp,1),z,"enlarge")
@@ -157,10 +157,10 @@ class Sparsitytests(casadiTestCase):
       a.getNZ(i[0],i[1])
       
     b = sp_triplet(4,5,[i[0] for i in nza],[i[1] for i in nza])
-    self.checkarray(self.tomatrix(a),self.tomatrix(b),"rowcol")
+    self.checkarray(self.tomatrix(a),self.tomatrix(b),"colrow")
 
-  def test_rowcol(self):
-    self.message("rowcol constructor")
+  def test_colrow(self):
+    self.message("colrow constructor")
     
     r = [0,1,3]
     c = [1,4]
@@ -169,8 +169,8 @@ class Sparsitytests(casadiTestCase):
       for j in c:
         a.getNZ(i,j)
       
-    b = sp_rowcol(r,c,4,5)
-    self.checkarray(self.tomatrix(a),self.tomatrix(b),"rowcol")
+    b = sp_colrow(r,c,4,5)
+    self.checkarray(self.tomatrix(a),self.tomatrix(b),"colrow")
      
   def test_reshape(self):
     self.message("Reshape")
@@ -400,9 +400,9 @@ class Sparsitytests(casadiTestCase):
       AP = A[perm,perm]
       #AP.sparsity().spy()
 
-      ret, rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock = AP.sparsity().dulmageMendelsohn()
+      ret, colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock = AP.sparsity().dulmageMendelsohn()
 
-      Ar = AP[rowperm,colperm]
+      Ar = AP[colperm,rowperm]
       
       ST = Ar.T.sparsity()
       
@@ -410,7 +410,7 @@ class Sparsitytests(casadiTestCase):
       acc = -1
       mc = 0
       for i in range(0,Ar.size1()):
-        mc = max(ST.col()[ST.rowind()[i+1]-1],mc)
+        mc = max(ST.row()[ST.colind()[i+1]-1],mc)
         if mc==i:
           blocks.append(i-acc)
           acc = i
@@ -450,7 +450,7 @@ class Sparsitytests(casadiTestCase):
       acc = -1
       mc = 0
       for i in range(0,Ar.size1()):
-        mc = max(ST.col()[ST.rowind()[i+1]-1],mc)
+        mc = max(ST.row()[ST.colind()[i+1]-1],mc)
         if mc==i:
           blocks.append(i-acc)
           acc = i
@@ -469,16 +469,16 @@ class Sparsitytests(casadiTestCase):
     A[2,2] = 1
     A[5,3] = 1
 
-    ret, rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock = A.sparsity().dulmageMendelsohn()
+    ret, colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock = A.sparsity().dulmageMendelsohn()
 
     # Checked with CSparse
     self.checkarray(DMatrix([ret]),DMatrix([4]))
-    self.checkarray(rowperm,DMatrix([2, 3, 4, 1, 0, 5]).T)
-    self.checkarray(colperm,DMatrix([ 2,0,3,1]).T)
-    self.checkarray(rowblock,DMatrix([ 0, 4,5,6,6]).T)
-    self.checkarray(colblock,DMatrix([ 0, 1,2,3,4]).T)
-    self.checkarray(coarse_rowblock,DMatrix([ 0, 3,4,6,6]).T)
-    self.checkarray(coarse_colblock,DMatrix([ 0, 1,3,3,4]).T)
+    self.checkarray(colperm,DMatrix([2, 3, 4, 1, 0, 5]).T)
+    self.checkarray(rowperm,DMatrix([ 2,0,3,1]).T)
+    self.checkarray(colblock,DMatrix([ 0, 4,5,6,6]).T)
+    self.checkarray(rowblock,DMatrix([ 0, 1,2,3,4]).T)
+    self.checkarray(coarse_colblock,DMatrix([ 0, 3,4,6,6]).T)
+    self.checkarray(coarse_rowblock,DMatrix([ 0, 1,3,3,4]).T)
     
     
     A = DMatrix(6,4)
@@ -491,16 +491,16 @@ class Sparsitytests(casadiTestCase):
 
     A.sparsity().spy()
 
-    ret, rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock = A.sparsity().dulmageMendelsohn()
+    ret, colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock = A.sparsity().dulmageMendelsohn()
 
     # Checked with CSparse
     self.checkarray(DMatrix([ret]),DMatrix([3]))
-    self.checkarray(rowperm,DMatrix([2,3,0,1,4,5]).T)
-    self.checkarray(colperm,DMatrix([ 0, 2, 1, 3]).T)
-    self.checkarray(rowblock,DMatrix([ 0, 4,5,6]).T)
-    self.checkarray(colblock,DMatrix([ 0, 2,3,4]).T)
-    self.checkarray(coarse_rowblock,DMatrix([ 0, 2, 4,6,6]).T)
-    self.checkarray(coarse_colblock,DMatrix([ 0, 2,4,4,4]).T)
+    self.checkarray(colperm,DMatrix([2,3,0,1,4,5]).T)
+    self.checkarray(rowperm,DMatrix([ 0, 2, 1, 3]).T)
+    self.checkarray(colblock,DMatrix([ 0, 4,5,6]).T)
+    self.checkarray(rowblock,DMatrix([ 0, 2,3,4]).T)
+    self.checkarray(coarse_colblock,DMatrix([ 0, 2, 4,6,6]).T)
+    self.checkarray(coarse_rowblock,DMatrix([ 0, 2,4,4,4]).T)
     
     A = DMatrix(6,4)
     A[0,0] = 1
@@ -513,16 +513,16 @@ class Sparsitytests(casadiTestCase):
 
     A.sparsity().spy()
 
-    ret, rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock = A.sparsity().dulmageMendelsohn()
+    ret, colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock = A.sparsity().dulmageMendelsohn()
 
     # Checked with CSparse
     self.checkarray(DMatrix([ret]),DMatrix([1]))
-    self.checkarray(rowperm,DMatrix([4, 5, 0, 1, 2, 3]).T)
-    self.checkarray(colperm,DMatrix([ 0, 1, 2, 3]).T)
-    self.checkarray(rowblock,DMatrix([ 0, 6]).T)
-    self.checkarray(colblock,DMatrix([ 0, 4]).T)
-    self.checkarray(coarse_rowblock,DMatrix([ 0, 2, 6,6,6]).T)
-    self.checkarray(coarse_colblock,DMatrix([ 0, 4,4,4,4]).T)
+    self.checkarray(colperm,DMatrix([4, 5, 0, 1, 2, 3]).T)
+    self.checkarray(rowperm,DMatrix([ 0, 1, 2, 3]).T)
+    self.checkarray(colblock,DMatrix([ 0, 6]).T)
+    self.checkarray(rowblock,DMatrix([ 0, 4]).T)
+    self.checkarray(coarse_colblock,DMatrix([ 0, 2, 6,6,6]).T)
+    self.checkarray(coarse_rowblock,DMatrix([ 0, 4,4,4,4]).T)
 
     
   def test_jacsparsityHierarchical(self):
@@ -559,12 +559,12 @@ class Sparsitytests(casadiTestCase):
     
     self.assertTrue(J.output()[:X.size(),:].sparsity()==sp_diag(100))
     
-  def test_sp_rowcol(self):
+  def test_sp_colrow(self):
     n = 3
     
-    s = sp_rowcol([0,n-1],[n-1,0],n,n)
-    self.checkarray(IMatrix(s.rowind()),IMatrix([0,2,2,4]))
-    self.checkarray(IMatrix(s.col()),IMatrix([0,2,0,2]))
+    s = sp_colrow([0,n-1],[n-1,0],n,n)
+    self.checkarray(IMatrix(s.colind()),IMatrix([0,2,2,4]))
+    self.checkarray(IMatrix(s.row()),IMatrix([0,2,0,2]))
 
   def test_inverse(self):
     numpy.random.seed(0)

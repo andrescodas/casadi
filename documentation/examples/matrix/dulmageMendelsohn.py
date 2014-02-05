@@ -40,15 +40,15 @@ S = A[p1,:]
 
 print "randomly permuted: "
 S.printMatrix()
-nb, rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock = S.sparsity().dulmageMendelsohn()
+nb, colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock = S.sparsity().dulmageMendelsohn()
 
 print "number of blocks: ", nb
-print "rowperm: ", rowperm
 print "colperm: ", colperm
+print "rowperm: ", rowperm
 print "restored:"
-S[rowperm,colperm].printMatrix()
-print "rowblock: ", rowblock
+S[colperm,rowperm].printMatrix()
 print "colblock: ", colblock
-print "coarse_rowblock: ", coarse_rowblock
+print "rowblock: ", rowblock
 print "coarse_colblock: ", coarse_colblock
+print "coarse_rowblock: ", coarse_rowblock
 

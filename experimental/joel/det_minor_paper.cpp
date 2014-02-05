@@ -47,7 +47,7 @@ M det(const M& a){
   if(n==n_min) return det_n_min.call(a)[0]; // Quick return
   if(n==1) return a; // Quick return
   
-  // Expand along the first column
+  // Expand along the first row
   M ret = 0;
   for(int i=0; i<n; ++i){
     int sign = i % 2 == 1 ? 1 : -1;
@@ -61,7 +61,7 @@ template<class M>
 M getMinor(const M& x, int i, int j){
   int n = x.size1(); // Dimension
 
-  // Remove row i and column j from x
+  // Remove col i and row j from x
   M m(n-1,n-1); // (n-1)-by-(n-1) matrix
   for(int i1=0; i1<n; ++i1){
     for(int j1=0; j1<n; ++j1){

@@ -111,7 +111,7 @@ namespace CasADi{
 
   /** \brief  make a vector
       Reshapes/vectorizes the Matrix<T> such that the shape becomes (expr.numel(),1).
-      Columns are stacked on top of each other.
+      Rows are stacked on top of each other.
       Same as reshape(trans(expr), expr.numel(),1)
   
       a b \n
@@ -130,7 +130,7 @@ namespace CasADi{
 
   /** \brief  make a vector
       Flattens the Matrix<T> such that the shape becomes (expr.numel(),1).
-      Transposed rows are stacked on top of each other.
+      Transposed cols are stacked on top of each other.
       Same as reshape(expr, expr.numel(),1)
   
       a b \n
@@ -177,17 +177,17 @@ namespace CasADi{
   template<class T>
   Matrix<T> vertcat(const std::vector<Matrix<T> > &v);
 
-  /** \brief  split vertically, retaining groups of rows
-   * \param offset List of all start rows for each group
-   *      the last row group will run to the end.
+  /** \brief  split vertically, retaining groups of cols
+   * \param offset List of all start cols for each group
+   *      the last col group will run to the end.
    *
    *   vertcat(vertsplit(x,...)) = x
    */
   template<class T>
   std::vector<Matrix<T> > vertsplit(const Matrix<T> &v, const std::vector<int>& offset);
 
-  /** \brief  split vertically, retaining fixed-sized groups of rows
-   * \param incr Size of each group of rows
+  /** \brief  split vertically, retaining fixed-sized groups of cols
+   * \param incr Size of each group of cols
    *
    *   vertcat(vertsplit(x,...)) = x
    */
@@ -202,17 +202,17 @@ namespace CasADi{
   template<class T>
   Matrix<T> horzcat(const std::vector<Matrix<T> > &v);
 
-  /** \brief  split horizontally, retaining groups of columns
-   * \param output_offset List of all start columns for each group
-   *      the last column group will run to the end.
+  /** \brief  split horizontally, retaining groups of rows
+   * \param output_offset List of all start rows for each group
+   *      the last row group will run to the end.
    *
    *   horzcat(horzsplit(x,...)) = x
    */
   template<class T>
   std::vector<Matrix<T> > horzsplit(const Matrix<T> &v, const std::vector<int>& offset);
 
-  /** \brief  split horizontally, retaining fixed-sized groups of columns
-   * \param incr Size of each group of columns
+  /** \brief  split horizontally, retaining fixed-sized groups of rows
+   * \param incr Size of each group of rows
    *
    *   horzcat(horzsplit(x,...)) = x
    */
@@ -221,8 +221,8 @@ namespace CasADi{
 
 
   /** \brief  chop up into blocks
-   * \brief vert_offset Defines the boundaries of the block rows
-   * \brief horz_offset Defines the boundaries of the block columns
+   * \brief vert_offset Defines the boundaries of the block cols
+   * \brief horz_offset Defines the boundaries of the block rows
    *
    *   blockcat(blocksplit(x,...,...)) = x
    */
@@ -230,8 +230,8 @@ namespace CasADi{
   std::vector< std::vector< Matrix<T> > > blocksplit(const Matrix<T>& x, const std::vector<int>& vert_offset, const std::vector<int>& horz_offset);
 
   /** \brief  chop up into blocks
-   * \brief vert_incr Defines the increment for block boundaries in row dimension
-   * \brief horz_incr Defines the increment for block boundaries in column dimension
+   * \brief vert_incr Defines the increment for block boundaries in col dimension
+   * \brief horz_incr Defines the increment for block boundaries in row dimension
    *
    *   blockcat(blocksplit(x,...,...)) = x
    */
@@ -284,7 +284,7 @@ namespace CasADi{
   Matrix<T> outer_prod(const Matrix<T> &x, const Matrix<T> &y);
 
   /** \brief  QR factorization using the modified Gram-Schmidt algorithm 
-   * More stable than the classical Gram-Schmidt, but may break down if the columns of A are nearly linearly dependent
+   * More stable than the classical Gram-Schmidt, but may break down if the rows of A are nearly linearly dependent
    * See J. Demmel: Applied Numerical Linear Algebra (algorithm 3.1.). 
    * Note that in SWIG, Q and R are returned by value. */
   template<class T>
@@ -406,13 +406,13 @@ namespace CasADi{
   template<class T>
   Matrix<T> sumAll(const Matrix<T> &x); 
 
+  /** \brief Return a col-wise summation of elements */
+  template<class T>
+  Matrix<T> sumCols(const Matrix<T> &x);
+
   /** \brief Return a row-wise summation of elements */
   template<class T>
   Matrix<T> sumRows(const Matrix<T> &x);
-
-  /** \brief Return a column-wise summation of elements */
-  template<class T>
-  Matrix<T> sumCols(const Matrix<T> &x);
 
 #ifdef SWIG
   /// Returns true only if every element in the matrix is true
@@ -445,10 +445,10 @@ namespace CasADi{
 #ifndef SWIG
   /** \brief  Get the sparsity in sparse triplet format */
   template<class T>
-  void getSparseTriplet(const Matrix<T>& A, std::vector<int>& row, std::vector<int>& col);
+  void getSparseTriplet(const Matrix<T>& A, std::vector<int>& col, std::vector<int>& row);
 #endif // SWIG
 
-  /** \brief  Get the sparsity in sparse triplet format - Python style: [row,col] =  getSparseTriplet(A) */
+  /** \brief  Get the sparsity in sparse triplet format - Python style: [col,row] =  getSparseTriplet(A) */
   template<class T>
   std::vector<std::vector<int> > getSparseTriplet(const Matrix<T>& A);
 
@@ -580,34 +580,34 @@ namespace CasADi{
   template<class T>
   bool isTril(const Matrix<T> &A){
     // TODO: Move implementation to CCSSparsity as it does not depend on the matrix entries 
-    // loop over rows
+    // loop over cols
     for(int i=0; i<A.size1(); ++i){
-      if(A.rowind(i) != A.rowind(i+1)){ // if there are any elements of the row
-        // check column of the right-most element of the row
-        int col = A.col(A.rowind(i+1)-1);
+      if(A.colind(i) != A.colind(i+1)){ // if there are any elements of the col
+        // check row of the right-most element of the col
+        int row = A.row(A.colind(i+1)-1);
 
-        // not lower triangular if col>i
-        if(col>i) return false;
+        // not lower triangular if row>i
+        if(row>i) return false;
       }
     }
-    // all rows ok
+    // all cols ok
     return true;
   }
 
   template<class T>
   bool isTriu(const Matrix<T> &A){
     // TODO: Move implementation to CCSSparsity as it does not depend on the matrix entries 
-    // loop over rows
+    // loop over cols
     for(int i=0; i<A.size1(); ++i){
-      if(A.rowind(i) != A.rowind(i+1)){ // if there are any elements of the row
-        // check column of the left-most element of the row
-        int col = A.col(A.rowind(i));
+      if(A.colind(i) != A.colind(i+1)){ // if there are any elements of the col
+        // check row of the left-most element of the col
+        int row = A.row(A.colind(i));
 
-        // not lower triangular if col>i
-        if(col<i) return false;
+        // not lower triangular if row>i
+        if(row<i) return false;
       }
     }
-    // all rows ok
+    // all cols ok
     return true;
   }
 
@@ -630,45 +630,45 @@ namespace CasADi{
     // Build up an IMatrix with ones on the non-zeros
     Matrix<int> sp = IMatrix(a.sparsity(),1);
   
-    // Have a count of the nonzeros for each column
-    Matrix<int> col_count = sumRows(sp);
-  
-    // A blank column? determinant is structurally zero
-    if (!col_count.dense()) return 0;
-
     // Have a count of the nonzeros for each row
-    Matrix<int> row_count = trans(sumCols(sp));
+    Matrix<int> row_count = sumCols(sp);
   
     // A blank row? determinant is structurally zero
-    if (!col_count.dense()) return 0;
+    if (!row_count.dense()) return 0;
+
+    // Have a count of the nonzeros for each col
+    Matrix<int> col_count = trans(sumRows(sp));
   
-    int min_col = std::distance(col_count.data().begin(), std::min_element(col_count.data().begin(),col_count.data().end()));
+    // A blank col? determinant is structurally zero
+    if (!row_count.dense()) return 0;
+  
     int min_row = std::distance(row_count.data().begin(), std::min_element(row_count.data().begin(),row_count.data().end()));
+    int min_col = std::distance(col_count.data().begin(), std::min_element(col_count.data().begin(),col_count.data().end()));
   
-    if (min_col <= min_row) {
-      // Expand along column j
-      int j = col_count.sparsity().col(min_col);
+    if (min_row <= min_col) {
+      // Expand along row j
+      int j = row_count.sparsity().row(min_row);
     
-      Matrix<T> col = a(range(n),j);
+      Matrix<T> row = a(range(n),j);
 
-      std::vector< int > row_i = col.sparsity().getRow();
-
-      for(int k=0; k<col.size(); ++k) {
-        // Sum up the cofactors
-        ret += col.at(k)*cofactor(a,row_i.at(k),j);
-      }
-      return ret.toScalar();
-    } else {
-      // Expand along row i
-      int i = row_count.sparsity().col(min_row);
-
-      Matrix<T> row = a(i,range(n));
-    
-      const std::vector< int > &col_i = row.sparsity().col();
+      std::vector< int > col_i = row.sparsity().getCol();
 
       for(int k=0; k<row.size(); ++k) {
         // Sum up the cofactors
-        ret += row.at(k)*cofactor(a,i,col_i.at(k));
+        ret += row.at(k)*cofactor(a,col_i.at(k),j);
+      }
+      return ret.toScalar();
+    } else {
+      // Expand along col i
+      int i = col_count.sparsity().row(min_col);
+
+      Matrix<T> col = a(i,range(n));
+    
+      const std::vector< int > &row_i = col.sparsity().row();
+
+      for(int k=0; k<col.size(); ++k) {
+        // Sum up the cofactors
+        ret += col.at(k)*cofactor(a,i,row_i.at(k));
       }
       return ret.toScalar();
     }
@@ -683,15 +683,15 @@ namespace CasADi{
     // Trivial return if scalar
     if(n==1) return 1;
 
-    // Remove row i and column j
+    // Remove col i and row j
     Matrix<T> M(n-1,n-1);
   
-    std::vector<int> row = x.sparsity().getRow();
-    const std::vector<int> &col = x.sparsity().col();
+    std::vector<int> col = x.sparsity().getCol();
+    const std::vector<int> &row = x.sparsity().row();
 
     for(int k=0;k<x.size();++k) {
-      int i1 = row[k];
-      int j1 = col[k];
+      int i1 = col[k];
+      int j1 = row[k];
 
       if(i1 == i || j1 == j)
         continue;
@@ -824,33 +824,33 @@ namespace CasADi{
     // Consistency check
     casadi_assert(offset.size()>=1);
     casadi_assert(offset.front()==0);
-    casadi_assert_message(offset.back()<=v.size1(),"vertsplit(const Matrix<T> &v, const std::vector<int>& offset): Last elements of offset (" << offset.back() << ") must be at maximum the number of rows in v (" << v.size1() << ")");
+    casadi_assert_message(offset.back()<=v.size1(),"vertsplit(const Matrix<T> &v, const std::vector<int>& offset): Last elements of offset (" << offset.back() << ") must be at maximum the number of cols in v (" << v.size1() << ")");
     casadi_assert(isMonotone(offset));
   
     std::vector<Matrix<T> > ret;
   
     // Obtain sparsity pattern
-    const std::vector<int> & rowind = v.sparsity().rowind();
-    const std::vector<int> & col = v.sparsity().col();
+    const std::vector<int> & colind = v.sparsity().colind();
+    const std::vector<int> & row = v.sparsity().row();
   
     for(int i=0; i<offset.size(); ++i) {
       int start = offset[i];
       int stop = i+1 < offset.size() ? offset[i+1] : v.size1(); 
   
-      // rowind for the submatrix: a portion of the original rowind, 
-      // but with a common offset substracted such that rowind_s[0]==0
-      std::vector<int> rowind_s(stop-start+1,-rowind[start]);
-      std::transform(rowind.begin()+start,rowind.begin()+stop+1,rowind_s.begin(),rowind_s.begin(),std::plus<int>());
+      // colind for the submatrix: a portion of the original colind, 
+      // but with a common offset substracted such that colind_s[0]==0
+      std::vector<int> colind_s(stop-start+1,-colind[start]);
+      std::transform(colind.begin()+start,colind.begin()+stop+1,colind_s.begin(),colind_s.begin(),std::plus<int>());
     
-      // col for the submatrix: a portion of the original col
-      std::vector<int> col_s(rowind[stop]-rowind[start]);
-      std::copy(col.begin()+rowind[start],col.begin()+rowind[stop],col_s.begin());
+      // row for the submatrix: a portion of the original row
+      std::vector<int> row_s(colind[stop]-colind[start]);
+      std::copy(row.begin()+colind[start],row.begin()+colind[stop],row_s.begin());
     
-      CCSSparsity s(stop-start,v.size2(),col_s,rowind_s);
+      CCSSparsity s(stop-start,v.size2(),row_s,colind_s);
       Matrix<T> r(s);
     
       // data for the submatrix: a portion of the original data
-      std::copy(v.begin()+rowind[start],v.begin()+rowind[stop],r.begin());
+      std::copy(v.begin()+colind[start],v.begin()+colind[stop],r.begin());
     
       // Append submatrix to list
       ret.push_back(r);
@@ -889,10 +889,10 @@ namespace CasADi{
 
   template<class T>
   std::vector< std::vector< Matrix<T> > > blocksplit(const Matrix<T>& x, const std::vector<int>& vert_offset, const std::vector<int>& horz_offset) {
-    std::vector< Matrix<T> > rows = vertsplit(x,vert_offset);
+    std::vector< Matrix<T> > cols = vertsplit(x,vert_offset);
     std::vector< std::vector< Matrix<T> > > ret;
-    for (int i=0;i<rows.size();++i) {
-      ret.push_back(horzsplit(rows[i],horz_offset));
+    for (int i=0;i<cols.size();++i) {
+      ret.push_back(horzsplit(cols[i],horz_offset));
     }
     return ret;
   }
@@ -965,12 +965,12 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> sumRows(const Matrix<T> &x) {
+  Matrix<T> sumCols(const Matrix<T> &x) {
     return mul(Matrix<T>::ones(1,x.size1()),x);
   }
 
   template<class T>
-  Matrix<T> sumCols(const Matrix<T> &x) {
+  Matrix<T> sumRows(const Matrix<T> &x) {
     return mul(x,Matrix<T>::ones(x.size2(),1));
   }
 
@@ -1030,7 +1030,7 @@ namespace CasADi{
     // The following algorithm is taken from J. Demmel: Applied Numerical Linear Algebra (algorithm 3.1.)
     int m = A.size1();
     int n = A.size2();
-    casadi_assert_message(m>=n, "qr: fewer rows than columns");
+    casadi_assert_message(m>=n, "qr: fewer cols than rows");
 
     // Transpose of A
     Matrix<T> AT = trans(A);
@@ -1038,18 +1038,18 @@ namespace CasADi{
     // Transposes of the output matrices
     Matrix<T> QT, RT;
 
-    // compute Q and R column by column
+    // compute Q and R row by row
     for(int i=0; i<n; ++i){
-      // Initialize qi to be the i-th column of A
+      // Initialize qi to be the i-th row of A
       Matrix<T> ai = AT(i,ALL);
       Matrix<T> qi = ai;
-      // The i-th column of R
+      // The i-th row of R
       Matrix<T> ri(1,n);
   
       // subtract the projection of qi in the previous directions from ai
       for(int j=0; j<i; ++j){
       
-        // Get the j-th column of Q
+        // Get the j-th row of Q
         Matrix<T> qj = QT(j,ALL);
 
         ri(0,j) = mul(qj,trans(qi)); // Modified Gram-Schmidt
@@ -1081,7 +1081,7 @@ namespace CasADi{
     
     Matrix<T> X = A;
     
-    casadi_assert_message(m>=n,"nullspace(A): expecting a flat matrix (more columns than rows), but got " << A.dimString() << ".");
+    casadi_assert_message(m>=n,"nullspace(A): expecting a flat matrix (more rows than cols), but got " << A.dimString() << ".");
     
     Matrix<T> seed = DMatrix::eye(m)(range(m),range(n,m));
 
@@ -1093,7 +1093,7 @@ namespace CasADi{
     for (int i=0;i<n;++i) {
       Matrix<T> x = X(i,range(i,m));
       Matrix<T> u = Matrix<T>(x);
-      Matrix<T> sigma = sqrt(sumCols(x*x));
+      Matrix<T> sigma = sqrt(sumRows(x*x));
       const Matrix<T>& x0 = x(0,0);
       u(0,0) = 1;
       
@@ -1118,19 +1118,19 @@ namespace CasADi{
   template<class T>
   Matrix<T> solve(const Matrix<T>& A, const Matrix<T>& b){
     // check dimensions
-    casadi_assert_message(A.size1() == b.size1(),"solve Ax=b: dimension mismatch: b has " << b.size1() << " rows while A has " << A.size1() << ".");
+    casadi_assert_message(A.size1() == b.size1(),"solve Ax=b: dimension mismatch: b has " << b.size1() << " cols while A has " << A.size1() << ".");
     casadi_assert_message(A.size1() == A.size2(),"solve: A not square but " << A.dimString());
   
     if(isTril(A)){
       // forward substitution if lower triangular
       Matrix<T> x = b;
-      const std::vector<int> & Acol = A.col();
-      const std::vector<int> & Arowind = A.rowind();
+      const std::vector<int> & Arow = A.row();
+      const std::vector<int> & Acolind = A.colind();
       const std::vector<T> & Adata = A.data();
-      for(int i=0; i<A.size1(); ++i){ // loop over rows
+      for(int i=0; i<A.size1(); ++i){ // loop over cols
         for(int k=0; k<b.size2(); ++k){ // for every right hand side
-          for(int kk=Arowind[i]; kk<Arowind[i+1] && Acol[kk]<i; ++kk){ 
-            int j = Acol[kk];
+          for(int kk=Acolind[i]; kk<Acolind[i+1] && Arow[kk]<i; ++kk){ 
+            int j = Arow[kk];
             if (x.hasNZ(j,k))
               x(i,k) -= Adata[kk]*x(j,k);
           }
@@ -1142,13 +1142,13 @@ namespace CasADi{
     } else if(isTriu(A)){
       // backward substitution if upper triangular
       Matrix<T> x = b;
-      const std::vector<int> & Acol = A.col();
-      const std::vector<int> & Arowind = A.rowind();
+      const std::vector<int> & Arow = A.row();
+      const std::vector<int> & Acolind = A.colind();
       const std::vector<T> & Adata = A.data();
-      for(int i=A.size1()-1; i>=0; --i){ // loop over rows from the back
+      for(int i=A.size1()-1; i>=0; --i){ // loop over cols from the back
         for(int k=0; k<b.size2(); ++k){ // for every right hand side
-          for(int kk=Arowind[i+1]-1; kk>=Arowind[i] && Acol[kk]>i; --kk){
-            int j = Acol[kk]; 
+          for(int kk=Acolind[i+1]-1; kk>=Acolind[i] && Arow[kk]>i; --kk){
+            int j = Arow[kk]; 
             if (x.hasNZ(j,k))
               x(i,k) -= Adata[kk]*x(j,k);
           }
@@ -1167,20 +1167,20 @@ namespace CasADi{
     } else {
     
       // Make a BLT transformation of A
-      std::vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-      A.sparsity().dulmageMendelsohn(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock);
+      std::vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
+      A.sparsity().dulmageMendelsohn(colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock);
 
-      // Get the inverted column permutation
-      std::vector<int> inv_colperm(colperm.size());
-      for(int k=0; k<colperm.size(); ++k)
-        inv_colperm[colperm[k]] = k;
+      // Get the inverted row permutation
+      std::vector<int> inv_rowperm(rowperm.size());
+      for(int k=0; k<rowperm.size(); ++k)
+        inv_rowperm[rowperm[k]] = k;
     
       // Permute the right hand side
       Matrix<T> bperm(0,b.size2());
       for(int i=0; i<b.size1(); ++i){
         bperm.resize(i+1,b.size2());
-        for(int el=b.rowind(rowperm[i]); el<b.rowind(rowperm[i]+1); ++el){
-          bperm(i,b.col(el)) = b[el];
+        for(int el=b.colind(colperm[i]); el<b.colind(colperm[i]+1); ++el){
+          bperm(i,b.row(el)) = b[el];
         }
       }
 
@@ -1188,8 +1188,8 @@ namespace CasADi{
       Matrix<T> Aperm(0,A.size2());
       for(int i=0; i<A.size1(); ++i){
         Aperm.resize(i+1,A.size2());
-        for(int el=A.rowind(rowperm[i]); el<A.rowind(rowperm[i]+1); ++el){
-          Aperm(i,inv_colperm[A.col(el)]) = A[el];
+        for(int el=A.colind(colperm[i]); el<A.colind(colperm[i]+1); ++el){
+          Aperm(i,inv_rowperm[A.row(el)]) = A[el];
         }
       }
     
@@ -1221,8 +1221,8 @@ namespace CasADi{
       Matrix<T> x(0,xperm.size2());
       for(int i=0; i<xperm.size1(); ++i){
         x.resize(i+1,xperm.size2());
-        for(int el=xperm.rowind(inv_colperm[i]); el<xperm.rowind(inv_colperm[i]+1); ++el){
-          x(i,xperm.col(el)) = xperm[el];
+        for(int el=xperm.colind(inv_rowperm[i]); el<xperm.colind(inv_rowperm[i]+1); ++el){
+          x(i,xperm.row(el)) = xperm[el];
         }
       }
       return x;
@@ -1317,11 +1317,11 @@ namespace CasADi{
   template<class T>
   int nnz_sym(const Matrix<T>& ex) {
     int nz = 0; // number of non-zeros  
-    for(int row=0; row<ex.size1(); ++row)
+    for(int col=0; col<ex.size1(); ++col)
       {
-        // Loop over the elements in the row
-        for(int el=ex.rowind(row); el<ex.rowind(row+1); ++el){ // loop over the non-zero elements
-          if(ex.col(el) > row) break; // break inner loop (only lower triangular part is used)
+        // Loop over the elements in the col
+        for(int el=ex.colind(col); el<ex.colind(col+1); ++el){ // loop over the non-zero elements
+          if(ex.row(el) > col) break; // break inner loop (only lower triangular part is used)
           nz++;
         }
       }
@@ -1338,10 +1338,10 @@ namespace CasADi{
   template<class T>
   Matrix<T> repmat(const Matrix<T> &A, int n, int m){
     // First concatenate horizontally
-    Matrix<T> row = horzcat(std::vector<Matrix<T> >(m, A));
+    Matrix<T> col = horzcat(std::vector<Matrix<T> >(m, A));
   
     // Then vertically
-    return vertcat(std::vector<Matrix<T> >(n, row));
+    return vertcat(std::vector<Matrix<T> >(n, col));
   }
 
   template<class T>
@@ -1373,9 +1373,9 @@ namespace CasADi{
   }
 
   template<class T>
-  void getSparseTriplet(const Matrix<T>& A, std::vector<int>& row, std::vector<int>& col){
-    col = A.sparsity().col();
-    row = A.sparsity().getRow();
+  void getSparseTriplet(const Matrix<T>& A, std::vector<int>& col, std::vector<int>& row){
+    row = A.sparsity().row();
+    col = A.sparsity().getCol();
   }
 
   template<class T>
@@ -1435,22 +1435,22 @@ namespace CasADi{
     if(!hasNonStructuralZeros(A) && tol==0)
       return;
   
-    // Start with a matrix with no rows
+    // Start with a matrix with no cols
     Matrix<T> Asp(0,A.size2());
 
-    // Loop over the rows
+    // Loop over the cols
     for(int i=0; i<A.size1(); ++i){
-      // Resize the matrix to accomodate the row
+      // Resize the matrix to accomodate the col
       Asp.resize(i+1,A.size2());
     
       // Loop over the existing, possible nonzeros
-      for(int el=A.rowind(i); el<A.rowind(i+1); ++el){
+      for(int el=A.colind(i); el<A.colind(i+1); ++el){
       
         // If it is not known to be a zero
         if(!casadi_limits<T>::isAlmostZero(A.at(el),tol)){
         
-          // Get the column
-          int j=A.col(el);
+          // Get the row
+          int j=A.row(el);
       
           // Save to new, sparse matrix
           Asp(i,j) = A.at(el);
@@ -1498,8 +1498,8 @@ namespace CasADi{
   void addMultiple(const Matrix<T>& A, const std::vector<T>& v, std::vector<T>& res, bool trans_A){
     // Get dimension and sparsity
     int d1=A.size1(), d2=A.size2();
-    const std::vector<int> &rowind=A.rowind();
-    const std::vector<int> &col=A.col();
+    const std::vector<int> &colind=A.colind();
+    const std::vector<int> &row=A.row();
     const std::vector<T>& data = A.data();
 
     // Assert consistent dimensions
@@ -1512,9 +1512,9 @@ namespace CasADi{
     }
 
     // Carry out multiplication
-    for(int i=0; i<d1; ++i){ // loop over rows
-      for(int el=rowind[i]; el<rowind[i+1]; ++el){ // loop over the non-zero elements
-        int j=col[el];  // column
+    for(int i=0; i<d1; ++i){ // loop over cols
+      for(int el=colind[i]; el<colind[i+1]; ++el){ // loop over the non-zero elements
+        int j=row[el];  // row
         // Add scalar product
         if(trans_A){
           res[j] += v[i]*data[el];
@@ -1637,8 +1637,8 @@ namespace CasADi{
   MTT_INST(T,repmat)                            \
   MTT_INST(T,getSparseTriplet)                  \
   MTT_INST(T,unite)                             \
-  MTT_INST(T,sumCols)                           \
   MTT_INST(T,sumRows)                           \
+  MTT_INST(T,sumCols)                           \
   MTT_INST(T,sumAll)                            \
   MTT_INST(T,trace)                             \
   MTT_INST(T,makeDense)                         \

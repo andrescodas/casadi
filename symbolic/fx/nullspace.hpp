@@ -30,7 +30,7 @@
       Constructs a basis for the null-space of a fat matrix A.
       i.e. finds Z such that AZ = 0 holds.
 
-      The nullspace is also known as the orthogonal complement of the rowspace of a matrix.
+      The nullspace is also known as the orthogonal complement of the colspace of a matrix.
       
       It is assumed that the matrix A is of full rank.
       

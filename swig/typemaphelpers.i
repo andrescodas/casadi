@@ -51,7 +51,7 @@
 #ifdef  SWIGOCTAVE
 /** Check if Guest object is of a particular SWIG type */
 bool istype(GUESTOBJECT, swig_type_info *type) {
-  if (p.is_cell() && p.rows() == 1 && p.columns() == 1)
+  if (p.is_cell() && p.cols() == 1 && p.rows() == 1)
     return istype(p.cell_value()(0),type);
   if (!p.is_defined())
     return false;
@@ -142,9 +142,9 @@ class meta {
    #ifdef SWIGOCTAVE
     static bool couldbe_sequence(const octave_value& p) {
       if (!p.is_cell()) return false;
+      int ncol = p.cols();
       int nrow = p.rows();
-      int ncol = p.columns();
-      if (nrow!=1 && ncol!=1) return false;
+      if (ncol!=1 && nrow!=1) return false;
       for(int i=0; i<p.length(); ++i){
         if (!meta< T >::couldbe(p.cell_value()(i))) return false;
       }
@@ -176,9 +176,9 @@ class meta {
     #ifdef SWIGOCTAVE
     static int as_vector(const octave_value& p , std::vector<T> &m) {
       if (!p.is_cell()) return false;
+      int ncol = p.cols();
       int nrow = p.rows();
-      int ncol = p.columns();
-      if (nrow!=1 && ncol!=1) return false;
+      if (ncol!=1 && nrow!=1) return false;
       m.resize(p.length());
       
       Cell c = p.cell_value();

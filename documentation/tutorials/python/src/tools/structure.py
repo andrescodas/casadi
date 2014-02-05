@@ -53,7 +53,7 @@ print states["y"]
 #! To obtain aliases, use the Ellipsis index:
 x,y,z = states[...]
 
-#! The cat attribute will return the concatenated version of the struct. This will always be a column vector
+#! The cat attribute will return the concatenated version of the struct. This will always be a row vector
 print states.cat
 
 #! This structure is of size:
@@ -261,7 +261,7 @@ print init["X",blockcat,:,:,"q",0,0]
 #! shapeStruct and delegated indexing
 #! -----------------------------------
 
-#! When working with covariance matrices, both the rows and columns relate to states
+#! When working with covariance matrices, both the cols and rows relate to states
 
 states = struct(["x","y",entry("q",repeat=2)])
 V = struct_ssym([

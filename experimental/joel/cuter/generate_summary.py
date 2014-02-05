@@ -98,7 +98,7 @@ for fullname in glob.glob('cuter_nl/*.nl'):
               # Save the output until the end of the line 
               summary.write('"' + t[index:].split('\n')[0] + '"')
 
-          # Next column
+          # Next row
           summary.write(', ')
         
     # Next file

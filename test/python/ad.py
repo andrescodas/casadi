@@ -51,10 +51,10 @@ class ADtests(casadiTestCase):
     spT = CCSSparsity(1,6,[0, 2, 4, 5],[0, 4])
     
     self.sxinputs = {
-       "column" : {
+       "row" : {
             "dense": [vertcat([x,y,z,w])],
             "sparse": [inp] }
-        , "row": {
+        , "col": {
             "dense":  [SXMatrix([x,y,z,w]).T],
             "sparse": [inp.T]
        }, "matrix": {
@@ -64,11 +64,11 @@ class ADtests(casadiTestCase):
     }
 
     self.mxinputs = {
-       "column" : {
+       "row" : {
             "dense": [MX("xyzw",4,1)],
             "sparse": [MX("xyzw",sp)]
         },
-        "row" : {
+        "col" : {
             "dense": [MX("xyzw",1,4)],
             "sparse": [MX("xyzw",spT)]
         },
@@ -98,10 +98,10 @@ class ADtests(casadiTestCase):
       print vertcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]]).shape
       
     self.mxoutputs = {
-       "column": {
+       "row": {
         "dense":  lambda xyz: [vertcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]])],
         "sparse": temp1
-        }, "row": {
+        }, "col": {
         "dense": lambda xyz: [horzcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]])],
         "sparse": temp2
        },
@@ -113,10 +113,10 @@ class ADtests(casadiTestCase):
 
 
     self.sxoutputs = {
-       "column": {
+       "row": {
         "dense": [vertcat([x,x+2*y**2,x+2*y**3+3*z**4,w])],
         "sparse": [out]
-        }, "row": {
+        }, "col": {
           "dense":  [SXMatrix([x,x+2*y**2,x+2*y**3+3*z**4,w]).T],
           "sparse": [out.T]
       }, "matrix" : {
@@ -139,8 +139,8 @@ class ADtests(casadiTestCase):
                 
   def test_SXevalSX(self):
     n=array([1.2,2.3,7,1.4])
-    for inputshape in ["column","row","matrix"]:
-      for outputshape in ["column","row","matrix"]:
+    for inputshape in ["row","col","matrix"]:
+      for outputshape in ["row","col","matrix"]:
         for inputtype in ["dense","sparse"]:
           for outputtype in ["dense","sparse"]:
             self.message("evalSX on SX. Input %s %s, Output %s %s" % (inputtype,inputshape,outputtype,outputshape) )
@@ -185,8 +185,8 @@ class ADtests(casadiTestCase):
               
   def test_MXevalMX(self):
     n=array([1.2,2.3,7,1.4])
-    for inputshape in ["column","row","matrix"]:
-      for outputshape in ["column","row","matrix"]:
+    for inputshape in ["row","col","matrix"]:
+      for outputshape in ["row","col","matrix"]:
         for inputtype in ["dense","sparse"]:
           for outputtype in ["dense","sparse"]:
             self.message("evalMX on MX. Input %s %s, Output %s %s" % (inputtype,inputshape,outputtype,outputshape) )
@@ -232,8 +232,8 @@ class ADtests(casadiTestCase):
   @known_bug()  # Not implemented
   def test_MXevalSX(self):
     n=array([1.2,2.3,7,1.4])
-    for inputshape in ["column","row","matrix"]:
-      for outputshape in ["column","row","matrix"]:
+    for inputshape in ["row","col","matrix"]:
+      for outputshape in ["row","col","matrix"]:
         for inputtype in ["dense","sparse"]:
           for outputtype in ["dense","sparse"]:
             self.message("evalSX on MX. Input %s %s, Output %s %s" % (inputtype,inputshape,outputtype,outputshape) )
@@ -278,8 +278,8 @@ class ADtests(casadiTestCase):
 
   def test_MXevalSX_reduced(self):
     n=array([1.2,2.3,7,1.4])
-    for inputshape in ["column","row","matrix"]:
-      for outputshape in ["column","row","matrix"]:
+    for inputshape in ["row","col","matrix"]:
+      for outputshape in ["row","col","matrix"]:
         for inputtype in ["dense","sparse"]:
           for outputtype in ["dense","sparse"]:
             self.message("evalSX on MX. Input %s %s, Output %s %s" % (inputtype,inputshape,outputtype,outputshape) )
@@ -304,8 +304,8 @@ class ADtests(casadiTestCase):
                 
   def test_Jacobian(self):
     n=array([1.2,2.3,7,4.6])
-    for inputshape in ["column","row","matrix"]:
-      for outputshape in ["column","row","matrix"]:
+    for inputshape in ["row","col","matrix"]:
+      for outputshape in ["row","col","matrix"]:
         for inputtype in ["dense","sparse"]:
           for outputtype in ["dense","sparse"]:
             for mode in ["forward","reverse"]:
@@ -322,8 +322,8 @@ class ADtests(casadiTestCase):
               
   def test_jacobianSX(self):
     n=array([1.2,2.3,7,4.6])
-    for inputshape in ["column","row","matrix"]:
-      for outputshape in ["column","row","matrix"]:
+    for inputshape in ["row","col","matrix"]:
+      for outputshape in ["row","col","matrix"]:
         for inputtype in ["dense","sparse"]:
           for outputtype in ["dense","sparse"]:
             self.message("jacobian on SX (SCT). Input %s %s, Output %s %s" % (inputtype,inputshape,outputtype,outputshape) )
@@ -344,8 +344,8 @@ class ADtests(casadiTestCase):
                           
   def test_jacsparsity(self):
     n=array([1.2,2.3,7,4.6])
-    for inputshape in ["column","row","matrix"]:
-      for outputshape in ["column","row","matrix"]:
+    for inputshape in ["row","col","matrix"]:
+      for outputshape in ["row","col","matrix"]:
         for inputtype in ["dense","sparse"]:
           for outputtype in ["dense","sparse"]:
             self.message("jacsparsity on SX. Input %s %s, Output %s %s" % (inputtype,inputshape,outputtype,outputshape) )
@@ -356,8 +356,8 @@ class ADtests(casadiTestCase):
               
   def test_JacobianMX(self):
     n=array([1.2,2.3,7,4.6])
-    for inputshape in ["column","row","matrix"]:
-      for outputshape in ["column","row","matrix"]:
+    for inputshape in ["row","col","matrix"]:
+      for outputshape in ["row","col","matrix"]:
         for inputtype in ["dense","sparse"]:
           for outputtype in ["dense","sparse"]:
             for mode in ["forward","reverse"]:
@@ -374,8 +374,8 @@ class ADtests(casadiTestCase):
                    
   def test_jacsparsityMX(self):
     n=array([1.2,2.3,7,4.6])
-    for inputshape in ["column","row","matrix"]:
-      for outputshape in ["column","row","matrix"]:
+    for inputshape in ["row","col","matrix"]:
+      for outputshape in ["row","col","matrix"]:
         for inputtype in ["dense","sparse"]:
           for outputtype in ["dense","sparse"]:
             for mode in ["forward","reverse"]:
@@ -771,8 +771,8 @@ class ADtests(casadiTestCase):
                 
       # Scalarized
       if out.empty(): continue
-      s_i  = out.sparsity().getRow()[0]
-      s_j  = out.sparsity().col()[0]
+      s_i  = out.sparsity().getCol()[0]
+      s_j  = out.sparsity().row()[0]
       s_k = s_i*out.size2()+s_j
       fun = MXFunction(inputs,[out[s_i,s_j],jac[s_k,:].T])
       fun.init()

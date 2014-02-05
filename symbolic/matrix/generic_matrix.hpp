@@ -46,9 +46,9 @@ namespace CasADi{
 
   Index starts with 0.\n
   Index flatten happens as follows: (i,j) -> k = j+i*size2()\n
-  Vectors are considered to be column vectors.\n
+  Vectors are considered to be row vectors.\n
   
-  The storage format is a (modified) compressed row storage (CCS) format. This way, a vector element can always be accessed in constant time.\n
+  The storage format is a (modified) compressed col storage (CCS) format. This way, a vector element can always be accessed in constant time.\n
   
   The sparsity can be accessed with CCSSparsity& sparsity()\n
   
@@ -84,7 +84,7 @@ class GenericMatrix{
     int size(Sparsity sp) const;
     
     /** \brief Get string representation of dimensions.
-    The representation is (nrow x ncol = numel | size)
+    The representation is (ncol x nrow = numel | size)
     */
     std::string dimString() const;
     

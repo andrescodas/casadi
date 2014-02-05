@@ -53,14 +53,14 @@ namespace CasADi{
       Using \f$\vec{w} \in \mathbf{R}^p\f$ as a forward seed:  setAdjSeed(w,j)\n
       Retrieving \f$\vec{s}_a \in \mathbf{R}^n \f$ from:        getAdjSens(sa,i)\n
   
-      We have the following relationships for function mapping from a column vector to a column vector:
+      We have the following relationships for function mapping from a row vector to a row vector:
   
       \f$ \vec{s}_f = \nabla f_{i,j} . \vec{v}\f$ \n
       \f$ \vec{s}_a = (\nabla f_{i,j})^T . \vec{w}\f$
   
       Some quantities is these formulas must be transposed: \n 
-      input  row: transpose \f$ \vec{v} \f$ and \f$\vec{s}_a\f$ \n
-      output row: transpose \f$ \vec{w} \f$ and \f$\vec{s}_f\f$ \n
+      input  col: transpose \f$ \vec{v} \f$ and \f$\vec{s}_a\f$ \n
+      output col: transpose \f$ \vec{w} \f$ and \f$\vec{s}_f\f$ \n
     
       NOTE: FX's are allowed to modify their input arguments when evaluating: implicitFunction, IDAS solver
       Futher releases may disallow this.

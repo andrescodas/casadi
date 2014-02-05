@@ -30,9 +30,9 @@ namespace CasADi{
   class CCSSparsityInternal : public SharedObjectNode{
   public:    
     /// Construct a sparsity pattern from vectors
-    CCSSparsityInternal(int nrow, int ncol, const std::vector<int>& col, const std::vector<int>& rowind) : nrow_(nrow), ncol_(ncol), col_(col), rowind_(rowind) { sanityCheck(false); }
+    CCSSparsityInternal(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind) : ncol_(ncol), nrow_(nrow), row_(row), colind_(colind) { sanityCheck(false); }
     
-    /// Check if the dimensions and rowind,col vectors are compatible
+    /// Check if the dimensions and colind,row vectors are compatible
     void sanityCheck(bool complete=false) const;
 
     /// Get the diagonal of the matrix/create a diagonal matrix (mapping will contain the nonzero mapping)
@@ -59,20 +59,20 @@ namespace CasADi{
     /// Breadth-first search for coarse decomposition: see cs_bfs in CSparse
     void breadthFirstSearch(int n, std::vector<int>& wi, std::vector<int>& wj, std::vector<int>& queue, const std::vector<int>& imatch, const std::vector<int>& jmatch, int mark) const;
     
-    /// Collect matched rows and columns into p and q: see cs_matched in CSparse
+    /// Collect matched cols and rows into p and q: see cs_matched in CSparse
     static void matched(int n, const std::vector<int>& wj, const std::vector<int>& imatch, std::vector<int>& p, std::vector<int>& q, std::vector<int>& cc, std::vector<int>& rr, int set, int mark);
     
-    /// Collect unmatched rows into the permutation vector p : see cs_unmatched in CSparse
+    /// Collect unmatched cols into the permutation vector p : see cs_unmatched in CSparse
     static void unmatched(int m, const std::vector<int>& wi, std::vector<int>& p, std::vector<int>& rr, int set);
     
-    /// return 1 if row i is in R2 : see cs_rprune in CSparse
+    /// return 1 if col i is in R2 : see cs_rprune in CSparse
     static int rprune (int i, int j, double aij, void *other);
 
     /// drop entries for which fkeep(A(i,j)) is false; return nz if OK, else -1: : see cs_fkeep in CSparse
     int drop(int (*fkeep) (int, int, double, void *), void *other);
 
     /// Compute the Dulmage-Mendelsohn decomposition : see cs_dmperm in CSparse
-    int dulmageMendelsohn(std::vector<int>& rowperm, std::vector<int>& colperm, std::vector<int>& rowblock, std::vector<int>& colblock, std::vector<int>& coarse_rowblock, std::vector<int>& coarse_colblock, int seed) const;
+    int dulmageMendelsohn(std::vector<int>& colperm, std::vector<int>& rowperm, std::vector<int>& colblock, std::vector<int>& rowblock, std::vector<int>& coarse_colblock, std::vector<int>& coarse_rowblock, int seed) const;
     
     /// Compute the maximum transversal (maximum matching): see cs_maxtrans in CSparse
     void maxTransversal(std::vector<int>& imatch, std::vector<int>& jmatch, CCSSparsity& trans, int seed) const;
@@ -89,7 +89,7 @@ namespace CasADi{
     /// C = A(p,q) where p and q are permutations of 0..m-1 and 0..n-1.: see cs_permute in CSparse
     CCSSparsity permute(const std::vector<int>& pinv, const std::vector<int>& q, int values) const;
 
-    /// consider A(i,j), node j in ith row subtree and return lca(jprev,j): See cs_leaf in CSparse
+    /// consider A(i,j), node j in ith col subtree and return lca(jprev,j): See cs_leaf in CSparse
     static int leaf (int i, int j, const int *first, int *maxfirst, int *prevleaf, int *ancestor, int *jleaf);
     
     /// compute nnz(V) = S->lnz, S->pinv, S->leftmost, S->m2 from A and S->parent: See cs_vcount in CSparse
@@ -101,10 +101,10 @@ namespace CasADi{
     /// Depth-first search and postorder of a tree rooted at node j: See cs_tdfs in CSparse
     static int depthFirstSearchAndPostorder(int j, int k, int *head, const int *next, int *post, int *stack);
 
-    /// column counts of LL'=A or LL'=A'A, given parent & post ordering: see init_ata in CSparse
+    /// row counts of LL'=A or LL'=A'A, given parent & post ordering: see init_ata in CSparse
     void init_ata(const int *post, int *w, int **head, int **next) const;
     
-    /// Column counts: See cs_counts in CSparse
+    /// Row counts: See cs_counts in CSparse
     std::vector<int> counts(const int *parent, const int *post, int ata) const;
 
     /// Approximate minimal degree, p = amd(A+A') if symmetric is true, or amd(A'A) otherwise. order 0:natural, 1:Chol, 2:LU, 3:QR. See cs_amd in CSparse
@@ -125,11 +125,11 @@ namespace CasADi{
     /// x = x + beta * A(:,j), where x is a dense vector and A(:,j) is sparse: See cs_scatter in CSparse
     int scatter(int j, std::vector<int>& w, int mark, CCSSparsity& C, int nz) const;
     
-    /// Get the row for each nonzero
-    std::vector<int> getRow() const;
+    /// Get the col for each nonzero
+    std::vector<int> getCol() const;
 
     /// Resize
-    void resize(int nrow, int ncol);
+    void resize(int ncol, int nrow);
     
     /// Reshape a sparsity, order of nonzeros remains the same
     CCSSparsity reshape(int n, int m) const;
@@ -201,25 +201,25 @@ namespace CasADi{
     bool isEqual(const CCSSparsity& y) const;
 
     /// Check if two sparsity patterns are the same
-    bool isEqual(int nrow, int ncol, const std::vector<int>& col, const std::vector<int>& rowind) const;
+    bool isEqual(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind) const;
 
-    /// Enlarge the matrix along the first dimension (i.e. insert rows)
-    void enlargeRows(int nrow, const std::vector<int>& ii);
+    /// Enlarge the matrix along the first dimension (i.e. insert cols)
+    void enlargeColumns(int ncol, const std::vector<int>& ii);
 
-    /// Enlarge the matrix along the second dimension (i.e. insert columns)
-    void enlargeColumns(int ncol, const std::vector<int>& jj);
+    /// Enlarge the matrix along the second dimension (i.e. insert rows)
+    void enlargeRows(int nrow, const std::vector<int>& jj);
     
     /// Make a patten dense
     CCSSparsity makeDense(std::vector<int>& mapping) const;
 
-    /// Erase rows and/or columns - does bounds checking
+    /// Erase cols and/or rows - does bounds checking
     std::vector<int> erase(const std::vector<int>& ii, const std::vector<int>& jj);
 
     /// Append another sparsity patten vertically
     void append(const CCSSparsity& sp);
 
     /// Reserve space
-    void reserve(int nnz, int nrow);
+    void reserve(int nnz, int ncol);
     
     /** \brief Get a submatrix
     * Does bounds checking
@@ -236,14 +236,14 @@ namespace CasADi{
     /// Get the nonzero index for a set of elements (see descripion in public class)
     void getNZInplace(std::vector<int>& indices) const;
     
-    /// Does the columns appear sequentially on each row
-    bool columnsSequential(bool strictly) const;
+    /// Does the rows appear sequentially on each col
+    bool rowsSequential(bool strictly) const;
     
     /// Remove duplicate entries: The same indices will be removed from the mapping vector, which must have the same length as the number of nonzeros
     void removeDuplicates(std::vector<int>& mapping);
   
     /// Get element index for each nonzero
-    void getElements(std::vector<int>& loc, bool row_major) const;
+    void getElements(std::vector<int>& loc, bool col_major) const;
     
     /// Hash the sparsity pattern
     std::size_t hash() const;
@@ -257,17 +257,17 @@ namespace CasADi{
     /// Print description
     virtual void print(std::ostream &stream) const;
 
+    /// Number of cols
+    int ncol_;
+    
     /// Number of rows
     int nrow_;
     
-    /// Number of columns
-    int ncol_;
+    /// vector of length nnz containing the rows for all the indices of the non-zero elements
+    std::vector<int> row_;
     
-    /// vector of length nnz containing the columns for all the indices of the non-zero elements
-    std::vector<int> col_;
-    
-    /// vector of length n+1 containing the index of the last non-zero element up till each row 
-    std::vector<int> rowind_;
+    /// vector of length n+1 containing the index of the last non-zero element up till each col 
+    std::vector<int> colind_;
     
     /// Perform a unidirectional coloring: A greedy distance-2 coloring algorithm (Algorithm 3.1 in A. H. GEBREMEDHIN, F. MANNE, A. POTHEN) 
     CCSSparsity unidirectionalColoring(const CCSSparsity& AT, int cutoff) const;
@@ -278,18 +278,18 @@ namespace CasADi{
     /// Perform a star coloring of a symmetric matrix: An improved distance-2 coloring algorithm (Algorithm 4.1 in A. H. GEBREMEDHIN, A. TARAFDAR, F. MANNE, A. POTHEN)
     CCSSparsity starColoring2(int ordering, int cutoff) const;
 
-    /// Order the rows by decreasing degree
+    /// Order the cols by decreasing degree
     std::vector<int> largestFirstOrdering() const;
 
-    /// Permute rows and/or columns
-    CCSSparsity pmult(const std::vector<int>& p, bool permute_rows=true, bool permute_columns=true, bool invert_permutation=false) const;
+    /// Permute cols and/or rows
+    CCSSparsity pmult(const std::vector<int>& p, bool permute_cols=true, bool permute_rows=true, bool invert_permutation=false) const;
     
     /// Generate a script for Matlab or Octave which visualizes the sparsity using the spy command
     void spyMatlab(const std::string& mfile) const;
  private: 
     /// Time complexity: O(ii.size()*jj.size())
     CCSSparsity sub1(const std::vector<int>& ii, const std::vector<int>& jj, std::vector<int>& mapping) const;
-    /// Time complexity: O(ii.size()*(nnz per row))
+    /// Time complexity: O(ii.size()*(nnz per col))
     CCSSparsity sub2(const std::vector<int>& ii, const std::vector<int>& jj, std::vector<int>& mapping) const;
 };
 

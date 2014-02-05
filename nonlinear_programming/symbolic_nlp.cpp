@@ -337,21 +337,21 @@ void SymbolicNLP::parseNL(const std::string& filename, const Dictionary& options
         break;
       }
       
-      // Jacobian column counts
+      // Jacobian row counts
       case 'k':
       {
-        // Get column offsets
-        vector<int> colind(n_var+1);
+        // Get row offsets
+        vector<int> rowind(n_var+1);
         
         // Get the number of offsets
         int k;
         nlfile >> k;
         casadi_assert(k==n_var-1);
         
-        // Get the column offsets
-        colind[0]=0;
+        // Get the row offsets
+        rowind[0]=0;
         for(int i=0; i<k; ++i){
-          nlfile >> colind[i+1];
+          nlfile >> rowind[i+1];
         }
         break;
       }

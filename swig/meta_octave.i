@@ -30,12 +30,12 @@ int meta< std::vector<double> >::as(const octave_value& p, std::vector<double> &
   NATIVERETURN(std::vector<double>, m);
   if(p.is_real_matrix() && p.is_numeric_type()){
     const Matrix &mat = p.matrix_value();
-    if (mat.cols()==1) {
-      m.resize(mat.rows());
-      for(int i=0; i<mat.cols(); ++i) m[i] = mat(i,0);
-    } else if (mat.rows()==1) {
+    if (mat.rows()==1) {
       m.resize(mat.cols());
-      for(int j=0; j<mat.cols(); ++j) m[j] = mat(0,j);
+      for(int i=0; i<mat.rows(); ++i) m[i] = mat(i,0);
+    } else if (mat.cols()==1) {
+      m.resize(mat.rows());
+      for(int j=0; j<mat.rows(); ++j) m[j] = mat(0,j);
     } else {
       return false;
     }
@@ -47,7 +47,7 @@ template <> bool meta< std::vector<double> >::couldbe(const octave_value& p) {
   if (meta< std::vector<double> >::isa(p)) return true; 
   if(p.is_real_matrix() && p.is_numeric_type()){
     const Matrix &mat = p.matrix_value();
-    return (mat.rows()==1 || mat.cols()==1);
+    return (mat.cols()==1 || mat.rows()==1);
   } else {
     return false;
   }
@@ -61,12 +61,12 @@ int meta< std::vector<int> >::as(const octave_value& p, std::vector<int> &m) {
   NATIVERETURN(std::vector<int>, m);
   if(p.is_real_matrix()  && p.is_numeric_type()){
     const Matrix &mat = p.matrix_value();
-    if (mat.cols()==1) {
-      m.resize(mat.rows());
-      for(int i=0; i<mat.cols(); ++i) m[i] = mat(i,0);
-    } else if (mat.rows()==1) {
+    if (mat.rows()==1) {
       m.resize(mat.cols());
-      for(int j=0; j<mat.cols(); ++j) m[j] = mat(0,j);
+      for(int i=0; i<mat.rows(); ++i) m[i] = mat(i,0);
+    } else if (mat.cols()==1) {
+      m.resize(mat.rows());
+      for(int j=0; j<mat.rows(); ++j) m[j] = mat(0,j);
     } else {
       return false;
     }
@@ -78,7 +78,7 @@ template <> bool meta< std::vector<int> >::couldbe(const octave_value& p) {
   if (meta< std::vector<int> >::isa(p)) return true; 
   if(p.is_real_matrix() && p.is_numeric_type()) {
     const Matrix &mat = p.matrix_value();
-    return (mat.rows()==1 || mat.cols()==1);
+    return (mat.cols()==1 || mat.rows()==1);
   } else {
     return false;
   }
@@ -123,7 +123,7 @@ template <>
 int meta< CasADi::Matrix<double> >::as(const octave_value& p,CasADi::Matrix<double> &m) {
   NATIVERETURN(CasADi::Matrix<double>,m)
   if((p.is_real_matrix() && p.is_numeric_type() && p.is_sparse_type())){
-    // Note: octave uses column-major storage
+    // Note: octave uses row-major storage
     SparseMatrix mat = p.sparse_matrix_value();
     
     int size = mat.nnz();
@@ -131,12 +131,12 @@ int meta< CasADi::Matrix<double> >::as(const octave_value& p,CasADi::Matrix<doub
     std::vector<double> data(size);
     for (int k=0;k<data.size();k++) data[k]=mat.data(k);
 
-    std::vector<int> cidx(mat.cols()+1);
+    std::vector<int> cidx(mat.rows()+1);
     std::vector<int> ridx(size);
     for (int k=0;k<cidx.size();k++) cidx[k]=mat.cidx(k);
     for (int k=0;k<ridx.size();k++) ridx[k]=mat.ridx(k);
     
-    CasADi::CCSSparsity A = CasADi::CCSSparsity(mat.cols(),mat.rows(),ridx,cidx);
+    CasADi::CCSSparsity A = CasADi::CCSSparsity(mat.rows(),mat.cols(),ridx,cidx);
     CasADi::Matrix<double> ret = CasADi::Matrix<double>(A,data);
     
     m = ret.trans();
@@ -145,9 +145,9 @@ int meta< CasADi::Matrix<double> >::as(const octave_value& p,CasADi::Matrix<doub
   }
   if((p.is_real_matrix() && p.is_numeric_type())){
     Matrix mat = p.matrix_value();
-    m = CasADi::DMatrix(mat.rows(),mat.cols(),0);
-    for(int i=0; i<mat.rows(); ++i){
-      for(int j=0; j<mat.cols(); ++j){
+    m = CasADi::DMatrix(mat.cols(),mat.rows(),0);
+    for(int i=0; i<mat.cols(); ++i){
+      for(int j=0; j<mat.rows(); ++j){
         m(i,j) = mat(i,j);
       }
     }
@@ -211,9 +211,9 @@ int meta< CasADi::Matrix<CasADi::SX> >::as(const octave_value& p,CasADi::Matrix<
   NATIVERETURN(CasADi::SX, m)
   if((p.is_real_matrix() && p.is_numeric_type())){
     Matrix mat = p.matrix_value();
-    m = CasADi::SXMatrix(mat.rows(),mat.cols(),0);
-    for(int i=0; i<mat.rows(); ++i){
-      for(int j=0; j<mat.cols(); ++j){
+    m = CasADi::SXMatrix(mat.cols(),mat.rows(),0);
+    for(int i=0; i<mat.cols(); ++i){
+      for(int j=0; j<mat.rows(); ++j){
         m(i,j) = mat(i,j);
       }
     }

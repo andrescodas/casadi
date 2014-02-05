@@ -66,8 +66,8 @@ namespace CasADi{
     assignNode(new SymbolicMX(name,sp));
   }
 
-  MX::MX(int nrow, int ncol){
-    assignNode(new Constant<CompiletimeConst<0> >(CCSSparsity(nrow,ncol)));
+  MX::MX(int ncol, int nrow){
+    assignNode(new Constant<CompiletimeConst<0> >(CCSSparsity(ncol,nrow)));
   }
 
   MX::MX(const CCSSparsity& sp, const MX& val){
@@ -147,7 +147,7 @@ namespace CasADi{
   }
 
   const MX MX::sub(const std::vector<int>& ii, const Matrix<int>& k) const{
-    std::vector< int > cols = range(size2());
+    std::vector< int > rows = range(size2());
     std::vector< MX > temp;
 
     for (int i=0;i<ii.size();++i) {
@@ -163,7 +163,7 @@ namespace CasADi{
   }
 
   const MX MX::sub(const Matrix<int>& k, const std::vector<int>& jj) const{
-    std::vector< int > rows = range(size1());
+    std::vector< int > cols = range(size1());
     std::vector< MX > temp;
 
     for (int j=0;j<jj.size();++j) {
@@ -498,25 +498,25 @@ namespace CasADi{
     return repmat(x,nm.first,nm.second);
   }
 
-  MX MX::repmat(const MX& x, int nrow, int ncol){
+  MX MX::repmat(const MX& x, int ncol, int nrow){
     if(x.scalar()){
-      return MX(nrow,ncol,x);
+      return MX(ncol,nrow,x);
     } else {
       casadi_assert_message(0,"not implemented");
       return MX();
     }
   }
 
-  MX MX::sparse(int nrow, int ncol){
-    return MX(nrow,ncol);
+  MX MX::sparse(int ncol, int nrow){
+    return MX(ncol,nrow);
   }
 
   MX MX::sparse(const std::pair<int, int> &nm){
     return sparse(nm.first,nm.second);
   }
 
-  MX MX::zeros(int nrow, int ncol){
-    return zeros(sp_dense(nrow,ncol));
+  MX MX::zeros(int ncol, int nrow){
+    return zeros(sp_dense(ncol,nrow));
   }
 
   MX MX::zeros(const std::pair<int, int> &nm){
@@ -531,16 +531,16 @@ namespace CasADi{
     return create(ConstantMX::create(sp,1));
   }
 
-  MX MX::ones(int nrow, int ncol){
-    return ones(sp_dense(nrow,ncol));
+  MX MX::ones(int ncol, int nrow){
+    return ones(sp_dense(ncol,nrow));
   }
 
   MX MX::ones(const std::pair<int, int> &nm){
     return ones(nm.first,nm.second);
   }
 
-  MX MX::inf(int nrow, int ncol){
-    return inf(sp_dense(nrow,ncol));
+  MX MX::inf(int ncol, int nrow){
+    return inf(sp_dense(ncol,nrow));
   }
 
   MX MX::inf(const std::pair<int, int> &nm){
@@ -551,8 +551,8 @@ namespace CasADi{
     return create(ConstantMX::create(sp,numeric_limits<double>::infinity()));
   }
 
-  MX MX::nan(int nrow, int ncol){
-    return nan(sp_dense(nrow,ncol));
+  MX MX::nan(int ncol, int nrow){
+    return nan(sp_dense(ncol,nrow));
   }
 
   MX MX::nan(const std::pair<int, int> &nm){
@@ -608,20 +608,20 @@ namespace CasADi{
     }
   }
 
-  void MX::enlarge(int nrow, int ncol, const vector<int>& ii, const vector<int>& jj){
+  void MX::enlarge(int ncol, int nrow, const vector<int>& ii, const vector<int>& jj){
     CCSSparsity sp = sparsity();
-    sp.enlarge(nrow,ncol,ii,jj);
+    sp.enlarge(ncol,nrow,ii,jj);
   
     MX ret = (*this)->getGetNonzeros(sp,range(size()));
     *this = ret;
   }
 
-  MX::MX(int nrow, int ncol, const MX& val){
+  MX::MX(int ncol, int nrow, const MX& val){
     // Make sure that val is scalar
     casadi_assert(val.scalar());
     casadi_assert(val.dense());
   
-    CCSSparsity sp(nrow,ncol,true);
+    CCSSparsity sp(ncol,nrow,true);
     *this = val->getGetNonzeros(sp,vector<int>(sp.size(),0));
   }
 

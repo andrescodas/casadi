@@ -700,7 +700,7 @@ class CasadiStructure(Structure,CasadiStructureDerivable):
       k += sp.size()
       it = tuple(i)
       self.map[it] = m
-      self.lookuptable+=[(it,kk,p) for kk,p in enumerate(zip(sp.col(),sp.getRow()))]
+      self.lookuptable+=[(it,kk,p) for kk,p in enumerate(zip(sp.row(),sp.getCol()))]
       for a in canonicalIndexAncestors(it)[1:]:
         if a in hmap:
           hmap[a].append(m)

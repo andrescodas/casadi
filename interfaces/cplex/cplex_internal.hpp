@@ -81,9 +81,9 @@ protected:
   /// Accuracy
   double tol_;
   /// Number of variables
-  int NUMCOLS_;
-  /// Number of constrains (altogether)
   int NUMROWS_;
+  /// Number of constrains (altogether)
+  int NUMCOLS_;
   /// Nature of problem (always minimization)
   int objsen_;
   

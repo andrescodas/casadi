@@ -56,9 +56,9 @@ QCQPSolverInternal::QCQPSolverInternal(const std::vector<CCSSparsity> &st) : st_
     "We need H square & symmetric" << std::endl
   );
   
-  casadi_assert_message(P.size2()==n_,"Got incompatible dimensions. Number of colums in P (" << P.size2() << ") must match n (" << n_ << ").");
+  casadi_assert_message(P.size2()==n_,"Got incompatible dimensions. Number of rowums in P (" << P.size2() << ") must match n (" << n_ << ").");
 
-  casadi_assert_message(P.size1() % n_ == 0,"Got incompatible dimensions. Number of rows in P (" << P.size1() << ") must be a multiple of n (" << n_ << ").");
+  casadi_assert_message(P.size1() % n_ == 0,"Got incompatible dimensions. Number of cols in P (" << P.size1() << ") must be a multiple of n (" << n_ << ").");
   
   
   nq_ = P.size1() / n_;

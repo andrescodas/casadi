@@ -77,10 +77,10 @@ namespace CasADi{
   }
   
   std::vector< std::vector<MX > > blocksplit(const MX& x, const std::vector<int>& vert_offset, const std::vector<int>& horz_offset) {
-    std::vector<MX > rows = vertsplit(x,vert_offset);
+    std::vector<MX > cols = vertsplit(x,vert_offset);
     std::vector< std::vector<MX > > ret;
-    for (int i=0;i<rows.size();++i) {
-      ret.push_back(horzsplit(rows[i],horz_offset));
+    for (int i=0;i<cols.size();++i) {
+      ret.push_back(horzsplit(cols[i],horz_offset));
     }
     return ret;
   }
@@ -330,10 +330,10 @@ namespace CasADi{
       return A;
   
     // First concatenate horizontally
-    MX row = horzcat(std::vector<MX >(m, A));
+    MX col = horzcat(std::vector<MX >(m, A));
   
     // Then vertically
-    return vertcat(std::vector<MX >(n, row));
+    return vertcat(std::vector<MX >(n, col));
   }
 
   /**
@@ -446,22 +446,22 @@ namespace CasADi{
   
   MX blkdiag(const std::vector<MX> &A) {
     // This implementation does not pretend to be efficient
-    int row=0;
     int col=0;
+    int row=0;
     for (int i=0;i<A.size();++i) {
-      row+=A[i].size1();
-      col+=A[i].size2();
+      col+=A[i].size1();
+      row+=A[i].size2();
     }
     
-    MX ret = MX(row,col);
+    MX ret = MX(col,row);
     
-    row = 0;
     col = 0;
+    row = 0;
     
     for (int i=0;i<A.size();++i) {
-      ret(range(row,row+A[i].size1()),range(col,col+A[i].size2())) = A[i];
-      row+=A[i].size1();
-      col+=A[i].size2();
+      ret(range(col,col+A[i].size1()),range(row,row+A[i].size2())) = A[i];
+      col+=A[i].size1();
+      row+=A[i].size2();
     }
     
     return ret;
@@ -480,16 +480,16 @@ namespace CasADi{
     return f.countNodes();
   }
 
-  MX sumRows(const MX &x) {
+  MX sumCols(const MX &x) {
     return mul(MX::ones(1,x.size1()),x);
   }
 
-  MX sumCols(const MX &x) {
+  MX sumRows(const MX &x) {
     return mul(x,MX::ones(x.size2(),1));
   }
 
   MX sumAll(const MX &x) {
-    return sumCols(sumRows(x));
+    return sumRows(sumCols(x));
   }
 
 

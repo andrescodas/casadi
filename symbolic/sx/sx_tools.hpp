@@ -222,18 +222,18 @@ SXMatrix blockmatrix(SXMatrix array[n][m]){
 /** \brief  Return matrix */
   SXMatrix ret;
 
-/** \brief  loop over rows */
+/** \brief  loop over cols */
   for(int i=0; i<n; ++i){
-/** \brief  Create a row */
-    SXMatrix row;
+/** \brief  Create a col */
+    SXMatrix col;
     
-/** \brief  append components to the row */
+/** \brief  append components to the col */
     for(int j=0; j<m; ++j){
-      row.append(array[i][j]);
+      col.append(array[i][j]);
     }
     
-/** \brief  append row to matrix */
-    ret.append(trans(row));
+/** \brief  append col to matrix */
+    ret.append(trans(col));
   }
 
   return ret;
@@ -245,7 +245,7 @@ SXMatrix blockmatrix(SXMatrix array[n]){
 /** \brief  Return matrix */
   SXMatrix ret;
 
-/** \brief  loop over rows */
+/** \brief  loop over cols */
   for(int i=0; i<n; ++i){
 /** \brief  append components */
     ret.append(array[i]);
@@ -299,7 +299,7 @@ void hessian(const SXMatrix &ex, const SXMatrix &arg, SXMatrix &H, SXMatrix &g);
 /** \brief Calculate the Jacobian and multiply by a vector from the left
     This is equivalent to mul(jacobian(ex,arg),v) or mul(jacobian(ex,arg).T,v) for transpose_jacobian set to false and
     true respectively. If contrast to these expressions, it will use directional derivatives which is typically (but
-    not necessarily) more efficient if the complete Jacobian is not needed and v has few columns.
+    not necessarily) more efficient if the complete Jacobian is not needed and v has few rows.
  */
 SXMatrix jacobianTimesVector(const SXMatrix &ex, const SXMatrix &arg, const SXMatrix &v, bool transpose_jacobian=false);
 

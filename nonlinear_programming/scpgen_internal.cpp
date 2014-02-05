@@ -902,12 +902,12 @@ namespace CasADi{
 
     // Calculate the gradient of the lagrangian
     const vector<double> &qpA_data = qpA_.data();
-    const vector<int> &qpA_rowind = qpA_.rowind();
-    const vector<int> &qpA_col = qpA_.col();
+    const vector<int> &qpA_colind = qpA_.colind();
+    const vector<int> &qpA_row = qpA_.row();
     for(int i=0; i<nx_; ++i)  gL_[i] = gf_[i] + x_lam_[i];
     for(int i=0; i<ng_; ++i){
-      for(int el=qpA_rowind[i]; el<qpA_rowind[i+1]; ++el){
-        gL_[qpA_col[el]] += qpA_data[el]*g_lam_[i];
+      for(int el=qpA_colind[i]; el<qpA_colind[i+1]; ++el){
+        gL_[qpA_row[el]] += qpA_data[el]*g_lam_[i];
       }
     }
 

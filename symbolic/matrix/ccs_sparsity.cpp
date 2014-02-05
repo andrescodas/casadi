@@ -34,26 +34,26 @@ namespace CasADi{
   class EmptySparsity : public CCSSparsity{  
   public:
     EmptySparsity(){
-      vector<int> col,rowind(1,0);
-      assignNode(new CCSSparsityInternal(0,0,col,rowind));
+      vector<int> row,colind(1,0);
+      assignNode(new CCSSparsityInternal(0,0,row,colind));
     }
   };
 
   class ScalarSparsity : public CCSSparsity{  
   public:
     ScalarSparsity(){
-      vector<int> col(1,0),rowind(2);
-      rowind[0] = 0;
-      rowind[1] = 1;
-      assignNode(new CCSSparsityInternal(1,1,col,rowind));
+      vector<int> row(1,0),colind(2);
+      colind[0] = 0;
+      colind[1] = 1;
+      assignNode(new CCSSparsityInternal(1,1,row,colind));
     }
   };
 
   class ScalarSparseSparsity : public CCSSparsity{  
   public:
     ScalarSparseSparsity(){
-      vector<int> col,rowind(2,0);
-      assignNode(new CCSSparsityInternal(1,1,col,rowind));
+      vector<int> row,colind(2,0);
+      assignNode(new CCSSparsityInternal(1,1,row,colind));
     }
   };
   
@@ -67,27 +67,27 @@ namespace CasADi{
     return ret;
   }
 
-  CCSSparsity::CCSSparsity(int nrow, int ncol, bool dense){
-    vector<int> col, rowind(nrow+1,0);
+  CCSSparsity::CCSSparsity(int ncol, int nrow, bool dense){
+    vector<int> row, colind(ncol+1,0);
     if(dense){
-      col.resize(nrow*ncol);
-      rowind.resize(nrow+1);
-      for(int i=0; i<nrow+1; ++i)
-        rowind[i] = i*ncol;
-      for(int i=0; i<nrow; ++i)
-        for(int j=0; j<ncol; ++j)
-          col[j+i*ncol] = j;
+      row.resize(ncol*nrow);
+      colind.resize(ncol+1);
+      for(int i=0; i<ncol+1; ++i)
+        colind[i] = i*nrow;
+      for(int i=0; i<ncol; ++i)
+        for(int j=0; j<nrow; ++j)
+          row[j+i*nrow] = j;
     }
  
-    assignCached(nrow, ncol, col, rowind);
+    assignCached(ncol, nrow, row, colind);
   }
 
-  CCSSparsity::CCSSparsity(int nrow, int ncol, const vector<int>& col, const vector<int>& rowind){
-    assignCached(nrow, ncol, col, rowind);
+  CCSSparsity::CCSSparsity(int ncol, int nrow, const vector<int>& row, const vector<int>& colind){
+    assignCached(ncol, nrow, row, colind);
   }
 
   void CCSSparsity::reCache(){
-    assignCached(size1(),size2(),col(),rowind());
+    assignCached(size1(),size2(),row(),colind());
   }
  
   CCSSparsityInternal* CCSSparsity::operator->(){
@@ -104,11 +104,11 @@ namespace CasADi{
   }
 
   int CCSSparsity::size1() const{
-    return (*this)->nrow_;
+    return (*this)->ncol_;
   }
     
   int CCSSparsity::size2() const{
-    return (*this)->ncol_;
+    return (*this)->nrow_;
   }
     
   int CCSSparsity::numel() const{
@@ -131,39 +131,39 @@ namespace CasADi{
     return (*this)->shape();
   }
     
-  const vector<int>& CCSSparsity::col() const{
-    return (*this)->col_;
+  const vector<int>& CCSSparsity::row() const{
+    return (*this)->row_;
   }
     
-  const vector<int>& CCSSparsity::rowind() const{
-    return (*this)->rowind_;
+  const vector<int>& CCSSparsity::colind() const{
+    return (*this)->colind_;
   }
     
-  vector<int>& CCSSparsity::colRef(){
+  vector<int>& CCSSparsity::rowRef(){
     makeUnique();
-    return (*this)->col_;
+    return (*this)->row_;
   }
     
-  vector<int>& CCSSparsity::rowindRef(){
+  vector<int>& CCSSparsity::colindRef(){
     makeUnique();
-    return (*this)->rowind_;
+    return (*this)->colind_;
   }
     
-  int CCSSparsity::col(int el) const{
-    return col().at(el);
+  int CCSSparsity::row(int el) const{
+    return row().at(el);
   }
     
-  int CCSSparsity::rowind(int row) const{
-    return rowind().at(row);
+  int CCSSparsity::colind(int col) const{
+    return colind().at(col);
   }
 
   void CCSSparsity::sanityCheck(bool complete) const { 
     (*this)->sanityCheck(complete);
   }
     
-  void CCSSparsity::resize(int nrow, int ncol){
+  void CCSSparsity::resize(int ncol, int nrow){
     makeUnique();
-    (*this)->resize(nrow,ncol);
+    (*this)->resize(ncol,nrow);
   }
 
   int CCSSparsity::getNZ(int i, int j){
@@ -177,22 +177,22 @@ namespace CasADi{
       return j+i*size2();
   
     // Quick return if we are adding an element to the end
-    if(rowind(i)==size() || (rowind(i+1)==size() && col().back()<j)){
-      vector<int>& colv = colRef();
-      vector<int>& rowindv = rowindRef();
-      colv.push_back(j);
+    if(colind(i)==size() || (colind(i+1)==size() && row().back()<j)){
+      vector<int>& rowv = rowRef();
+      vector<int>& colindv = colindRef();
+      rowv.push_back(j);
       for(int ii=i; ii<size1(); ++ii){
-        rowindv[ii+1]++;
+        colindv[ii+1]++;
       }
-      return colv.size()-1;
+      return rowv.size()-1;
     }
 
     // go to the place where the element should be
     int ind;
-    for(ind=rowind(i); ind<rowind(i+1); ++ind){ // better: loop from the back to the front
-      if(col(ind) == j){
+    for(ind=colind(i); ind<colind(i+1); ++ind){ // better: loop from the back to the front
+      if(row(ind) == j){
         return ind; // element exists
-      } else if(col(ind) > j)
+      } else if(row(ind) > j)
         break;                // break at the place where the element should be added
     }
   
@@ -200,9 +200,9 @@ namespace CasADi{
     makeUnique();
   
     // insert the element
-    colRef().insert(colRef().begin()+ind,j);
-    for(int row=i+1; row<size1()+1; ++row)
-      rowindRef()[row]++;
+    rowRef().insert(rowRef().begin()+ind,j);
+    for(int col=i+1; col<size1()+1; ++col)
+      colindRef()[col]++;
   
     // Return the location of the new element
     return ind;
@@ -298,23 +298,23 @@ namespace CasADi{
     return (*this)->sizeD();
   }
 
-  std::vector<int> CCSSparsity::getRow() const{
-    return (*this)->getRow();
+  std::vector<int> CCSSparsity::getCol() const{
+    return (*this)->getCol();
   }
 
-  void CCSSparsity::getSparsityCCS(vector<int>& rowind, vector<int> &col) const{
-    rowind = this->rowind();
-    col = this->col();
+  void CCSSparsity::getSparsityCCS(vector<int>& colind, vector<int> &row) const{
+    colind = this->colind();
+    row = this->row();
   }
 
-  void CCSSparsity::getSparsityCRS(std::vector<int>& row, std::vector<int> &colind) const {
-    transpose().getSparsityCCS(colind,row);
+  void CCSSparsity::getSparsityCRS(std::vector<int>& col, std::vector<int> &rowind) const {
+    transpose().getSparsityCCS(rowind,col);
   }
     
 
-  void CCSSparsity::getSparsity(vector<int>& row, vector<int> &col) const{
-    row = this->getRow();
-    col = this->col();
+  void CCSSparsity::getSparsity(vector<int>& col, vector<int> &row) const{
+    col = this->getCol();
+    row = this->row();
   }
 
   CCSSparsity CCSSparsity::transpose(vector<int>& mapping, bool invert_mapping) const{
@@ -361,8 +361,8 @@ namespace CasADi{
     return (*this)->isEqual(y);
   }
 
-  bool CCSSparsity::isEqual(int nrow, int ncol, const std::vector<int>& col, const std::vector<int>& rowind) const{
-    return (*this)->isEqual(nrow,ncol,col,rowind);
+  bool CCSSparsity::isEqual(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind) const{
+    return (*this)->isEqual(ncol,nrow,row,colind);
   }
 
   CCSSparsity CCSSparsity::operator+(const CCSSparsity& b) const {
@@ -378,9 +378,9 @@ namespace CasADi{
     return (*this)->patternInverse();
   }
 
-  void CCSSparsity::reserve(int nnz, int nrow){
+  void CCSSparsity::reserve(int nnz, int ncol){
     makeUnique();
-    (*this)->reserve(nnz,nrow);
+    (*this)->reserve(nnz,ncol);
   }
 
   void CCSSparsity::append(const CCSSparsity& sp){
@@ -409,19 +409,19 @@ namespace CasADi{
     return ret;
   }
 
-  void CCSSparsity::enlarge(int nrow, int ncol, const vector<int>& ii, const vector<int>& jj){
-    enlargeRows(nrow,ii);
-    enlargeColumns(ncol,jj);
+  void CCSSparsity::enlarge(int ncol, int nrow, const vector<int>& ii, const vector<int>& jj){
+    enlargeColumns(ncol,ii);
+    enlargeRows(nrow,jj);
   }
 
-  void CCSSparsity::enlargeRows(int nrow, const std::vector<int>& ii){
+  void CCSSparsity::enlargeColumns(int ncol, const std::vector<int>& ii){
     makeUnique();
-    (*this)->enlargeRows(nrow,ii);
+    (*this)->enlargeColumns(ncol,ii);
   }
 
-  void CCSSparsity::enlargeColumns(int ncol, const std::vector<int>& jj){
+  void CCSSparsity::enlargeRows(int nrow, const std::vector<int>& jj){
     makeUnique();
-    (*this)->enlargeColumns(ncol,jj);
+    (*this)->enlargeRows(nrow,jj);
   }
 
   CCSSparsity CCSSparsity::createDiagonal(int n){
@@ -431,14 +431,14 @@ namespace CasADi{
   CCSSparsity CCSSparsity::createDiagonal(int n, int m){
     CCSSparsity ret(n,m);
   
-    // Set columns
-    vector<int> &c = ret.colRef();
+    // Set rows
+    vector<int> &c = ret.rowRef();
     c.resize(min(n,m));
     for(int i=0; i<c.size(); ++i)
       c[i] = i;
   
-    // Set row indices
-    vector<int> &r = ret.rowindRef();
+    // Set col indices
+    vector<int> &r = ret.colindRef();
     for(int i=0; i<n && i<m; ++i)
       r[i] = i;
   
@@ -472,12 +472,12 @@ namespace CasADi{
     return (*this)->stronglyConnectedComponents(p,r);
   }
 
-  int CCSSparsity::dulmageMendelsohn(std::vector<int>& rowperm, std::vector<int>& colperm, std::vector<int>& rowblock, std::vector<int>& colblock, std::vector<int>& coarse_rowblock, std::vector<int>& coarse_colblock, int seed) const{
-    return (*this)->dulmageMendelsohn(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock, seed);
+  int CCSSparsity::dulmageMendelsohn(std::vector<int>& colperm, std::vector<int>& rowperm, std::vector<int>& colblock, std::vector<int>& rowblock, std::vector<int>& coarse_colblock, std::vector<int>& coarse_rowblock, int seed) const{
+    return (*this)->dulmageMendelsohn(colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock, seed);
   }
 
-  bool CCSSparsity::columnsSequential(bool strictly) const{
-    return (*this)->columnsSequential(strictly);
+  bool CCSSparsity::rowsSequential(bool strictly) const{
+    return (*this)->rowsSequential(strictly);
   }
 
   void CCSSparsity::removeDuplicates(std::vector<int>& mapping){
@@ -485,14 +485,14 @@ namespace CasADi{
     (*this)->removeDuplicates(mapping);
   }
 
-  std::vector<int> CCSSparsity::getElements(bool row_major) const{
+  std::vector<int> CCSSparsity::getElements(bool col_major) const{
     std::vector<int> loc;
-    getElements(loc,row_major);
+    getElements(loc,col_major);
     return loc;
   }
 
-  void CCSSparsity::getElements(std::vector<int>& loc, bool row_major) const{
-    (*this)->getElements(loc,row_major);
+  void CCSSparsity::getElements(std::vector<int>& loc, bool col_major) const{
+    (*this)->getElements(loc,col_major);
   }
 
   void CCSSparsity::getNZInplace(std::vector<int>& indices) const{
@@ -519,8 +519,8 @@ namespace CasADi{
     return (*this)->largestFirstOrdering();
   }
 
-  CCSSparsity CCSSparsity::pmult(const std::vector<int>& p, bool permute_rows, bool permute_columns, bool invert_permutation) const{
-    return (*this)->pmult(p,permute_rows,permute_columns,invert_permutation);
+  CCSSparsity CCSSparsity::pmult(const std::vector<int>& p, bool permute_cols, bool permute_rows, bool invert_permutation) const{
+    return (*this)->pmult(p,permute_cols,permute_rows,invert_permutation);
   }
 
   void CCSSparsity::spyMatlab(const std::string& mfile) const{
@@ -544,15 +544,15 @@ namespace CasADi{
     return (*this)->hash();
   }
 
-  void CCSSparsity::assignCached(int nrow, int ncol, const std::vector<int>& col, const std::vector<int>& rowind){
+  void CCSSparsity::assignCached(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind){
 
     // Scalars and empty patterns are handled separately
-    if(nrow==0 && ncol==0){
+    if(ncol==0 && nrow==0){
       // If empty    
       *this = getEmpty();
       return;
-    } else if(nrow==1 && ncol==1){
-      if(col.empty()){        
+    } else if(ncol==1 && nrow==1){
+      if(row.empty()){        
         // If sparse scalar
         *this = getScalarSparse();
         return;
@@ -564,7 +564,7 @@ namespace CasADi{
     }
 
     // Hash the pattern
-    std::size_t h = hash_sparsity(nrow,ncol,col,rowind);
+    std::size_t h = hash_sparsity(ncol,nrow,row,colind);
 
     // Get a reference to the cache
     CachingMap& cache = getCache();
@@ -595,7 +595,7 @@ namespace CasADi{
           CCSSparsity ref = shared_cast<CCSSparsity>(wref.shared());
         
           // Check if the pattern matches
-          if(ref.isEqual(nrow,ncol,col,rowind)){
+          if(ref.isEqual(ncol,nrow,row,colind)){
           
             // Found match!
             assignNode(ref.get());
@@ -608,7 +608,7 @@ namespace CasADi{
             if(h_ref!=h){ // The sparsity pattern has changed (the most likely event)
 
               // Create a new pattern
-              assignNode(new CCSSparsityInternal(nrow, ncol, col, rowind));
+              assignNode(new CCSSparsityInternal(ncol, nrow, row, colind));
 
               // Cache this pattern instead of the old one
               wref = *this;
@@ -617,7 +617,7 @@ namespace CasADi{
               // TODO: recache "ref"
               return;
 
-            } else { // There is a hash colision (unlikely, but possible)
+            } else { // There is a hash rowision (unlikely, but possible)
               // Leave the pattern alone, continue to the next matching pattern
               continue; 
             }
@@ -633,7 +633,7 @@ namespace CasADi{
               CCSSparsity ref = shared_cast<CCSSparsity>(j->second.shared());
             
               // Match found if sparsity matches
-              if(ref.isEqual(nrow,ncol,col,rowind)){
+              if(ref.isEqual(ncol,nrow,row,colind)){
                 assignNode(ref.get());
                 return;
               }
@@ -641,7 +641,7 @@ namespace CasADi{
           }
 
           // The cached entry has been deleted, create a new one
-          assignNode(new CCSSparsityInternal(nrow, ncol, col, rowind));
+          assignNode(new CCSSparsityInternal(ncol, nrow, row, colind));
         
           // Cache this pattern
           wref = *this;
@@ -657,7 +657,7 @@ namespace CasADi{
 #endif // USE_CXX11
 
     // No matching sparsity pattern could be found, create a new one
-    assignNode(new CCSSparsityInternal(nrow, ncol, col, rowind));
+    assignNode(new CCSSparsityInternal(ncol, nrow, row, colind));
 
     // Cache this pattern
     //cache.insert(eq.second,std::pair<std::size_t,WeakRef>(h,ret));

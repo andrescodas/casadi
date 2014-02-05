@@ -124,7 +124,7 @@ namespace CasADi{
     std::vector<double> getMinorT() const; 
          
     /** \brief Get the controls, sampled on the minor timescale.
-     * Number of rows is (ns-1)*nf
+     * Number of cols is (ns-1)*nf
      */
     Matrix<double> getMinorU() const; 
          

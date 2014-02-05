@@ -473,19 +473,19 @@ namespace CasADi{
     }
   }
 
-  bool IpoptInternal::eval_h(const double* x, bool new_x, double obj_factor, const double* lambda,bool new_lambda, int nele_hess, int* iRow,int* jCol, double* values){
+  bool IpoptInternal::eval_h(const double* x, bool new_x, double obj_factor, const double* lambda,bool new_lambda, int nele_hess, int* iCol,int* jRow, double* values){
     try{
       log("eval_h started");
       double time1 = clock();
       if (values == NULL) {
         int nz=0;
-        vector<int> rowind,col;
-        hessLag_.output().sparsity().getSparsityCCS(rowind,col);
-        for(int r=0; r<rowind.size()-1; ++r)
-          for(int el=rowind[r]; el<rowind[r+1]; ++el){
-            if(col[el]<=r){
-              iRow[nz] = r;
-              jCol[nz] = col[el];
+        vector<int> colind,row;
+        hessLag_.output().sparsity().getSparsityCCS(colind,row);
+        for(int r=0; r<colind.size()-1; ++r)
+          for(int el=colind[r]; el<colind[r+1]; ++el){
+            if(row[el]<=r){
+              iCol[nz] = r;
+              jRow[nz] = row[el];
               nz++;
             }
           }
@@ -516,7 +516,7 @@ namespace CasADi{
     }
   }
 
-  bool IpoptInternal::eval_jac_g(int n, const double* x, bool new_x,int m, int nele_jac, int* iRow, int *jCol,double* values){
+  bool IpoptInternal::eval_jac_g(int n, const double* x, bool new_x,int m, int nele_jac, int* iCol, int *jRow,double* values){
     try{
       log("eval_jac_g started");
     
@@ -532,12 +532,12 @@ namespace CasADi{
       double time1 = clock();
       if (values == NULL) {
         int nz=0;
-        vector<int> rowind,col;
-        jacG.output().sparsity().getSparsityCCS(rowind,col);
-        for(int r=0; r<rowind.size()-1; ++r)
-          for(int el=rowind[r]; el<rowind[r+1]; ++el){
-            iRow[nz] = r;
-            jCol[nz] = col[el];
+        vector<int> colind,row;
+        jacG.output().sparsity().getSparsityCCS(colind,row);
+        for(int r=0; r<colind.size()-1; ++r)
+          for(int el=colind[r]; el<colind[r+1]; ++el){
+            iCol[nz] = r;
+            jRow[nz] = row[el];
             nz++;
           }
       } else {
@@ -767,12 +767,12 @@ namespace CasADi{
         // Number of variables that appear nonlinearily
         int nv = 0;
       
-        // Loop over the rows
+        // Loop over the cols
         const CCSSparsity& spHessLag = this->spHessLag();
-        const vector<int>& rowind = spHessLag.rowind();
-        for(int i=0; i<rowind.size()-1; ++i){
-          // If the row contains any non-zeros, the corresponding variable appears nonlinearily
-          if(rowind[i]!=rowind[i+1])
+        const vector<int>& colind = spHessLag.colind();
+        for(int i=0; i<colind.size()-1; ++i){
+          // If the col contains any non-zeros, the corresponding variable appears nonlinearily
+          if(colind[i]!=colind[i+1])
             nv++;
         }
       
@@ -790,12 +790,12 @@ namespace CasADi{
       // Running index
       int el = 0;
     
-      // Loop over the rows
+      // Loop over the cols
       const CCSSparsity& spHessLag = this->spHessLag();
-      const vector<int>& rowind = spHessLag.rowind();
-      for(int i=0; i<rowind.size()-1; ++i){
-        // If the row contains any non-zeros, the corresponding variable appears nonlinearily
-        if(rowind[i]!=rowind[i+1]){
+      const vector<int>& colind = spHessLag.colind();
+      for(int i=0; i<colind.size()-1; ++i){
+        // If the col contains any non-zeros, the corresponding variable appears nonlinearily
+        if(colind[i]!=colind[i+1]){
           pos_nonlin_vars[el++] = i;
         }
       }

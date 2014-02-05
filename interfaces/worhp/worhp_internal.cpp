@@ -348,13 +348,13 @@ namespace CasADi{
 
       // Get the sparsity pattern of the Hessian
       const CCSSparsity& spHessLag = this->spHessLag();
-      const vector<int>& rowind = spHessLag.rowind();
-      const vector<int>& col = spHessLag.col();
+      const vector<int>& colind = spHessLag.colind();
+      const vector<int>& row = spHessLag.row();
 
       // Get number of nonzeros in the lower triangular part of the Hessian including full diagonal
       worhp_w_.HM.nnz = nx_; // diagonal entries
       for(int r=0; r<nx_; ++r){
-        for(int el=rowind[r]; el<rowind[r+1] && col[el]<r; ++el){
+        for(int el=colind[r]; el<colind[r+1] && row[el]<r; ++el){
           worhp_w_.HM.nnz++; // strictly lower triangular part
         }
       }
@@ -370,20 +370,20 @@ namespace CasADi{
 
     if (worhp_w_.DF.NeedStructure){
       for(int i=0; i<nx_; ++i){
-        worhp_w_.DF.row[i] = i + 1; // Index-1 based    
+        worhp_w_.DF.col[i] = i + 1; // Index-1 based    
       }
     }
   
     if (worhp_o_.m>0 && worhp_w_.DG.NeedStructure) {    
-      // Get sparsity pattern of the transpose since WORHP is column major
+      // Get sparsity pattern of the transpose since WORHP is row major
       int nz=0;
-      const vector<int>& rowind = spJacG_T_.rowind();
-      const vector<int>& col = spJacG_T_.col();
+      const vector<int>& colind = spJacG_T_.colind();
+      const vector<int>& row = spJacG_T_.row();
       for(int r=0; r<nx_; ++r){
-        for(int el=rowind[r]; el<rowind[r+1]; ++el){
-          int c = col[el];
-          worhp_w_.DG.col[nz] = r + 1; // Index-1 based
-          worhp_w_.DG.row[nz] = c + 1;
+        for(int el=colind[r]; el<colind[r+1]; ++el){
+          int c = row[el];
+          worhp_w_.DG.row[nz] = r + 1; // Index-1 based
+          worhp_w_.DG.col[nz] = c + 1;
           nz++;
         }
       }
@@ -392,17 +392,17 @@ namespace CasADi{
     if (worhp_w_.HM.NeedStructure) {
       // Get the sparsity pattern of the Hessian
       const CCSSparsity& spHessLag = this->spHessLag();
-      const vector<int>& rowind = spHessLag.rowind();
-      const vector<int>& col = spHessLag.col();
+      const vector<int>& colind = spHessLag.colind();
+      const vector<int>& row = spHessLag.row();
 
       int nz=0;
       
       // Upper triangular part of the Hessian (note CCS -> CCS format change)
       for(int r=0; r<nx_; ++r){
-        for(int el=rowind[r]; el<rowind[r+1]; ++el){
-          if(col[el]>r){
-            worhp_w_.HM.row[nz] = col[el] + 1;
-            worhp_w_.HM.col[nz] = r + 1;
+        for(int el=colind[r]; el<colind[r+1]; ++el){
+          if(row[el]>r){
+            worhp_w_.HM.col[nz] = row[el] + 1;
+            worhp_w_.HM.row[nz] = r + 1;
             nz++;
           }
         }
@@ -410,8 +410,8 @@ namespace CasADi{
       
       // Diagonal always included
       for(int r=0; r<nx_; ++r){
-        worhp_w_.HM.row[nz] = r + 1;
         worhp_w_.HM.col[nz] = r + 1;
+        worhp_w_.HM.row[nz] = r + 1;
         nz++;
       }
     }
@@ -838,8 +838,8 @@ namespace CasADi{
 
       // Get results
       const DMatrix& H = hessLag.output();
-      const vector<int>& rowind = H.rowind();
-      const vector<int>& col = H.col();
+      const vector<int>& colind = H.colind();
+      const vector<int>& row = H.row();
       const vector<double>& data = H.data();
 
       // The Hessian values are divided into strictly upper (in WORHP lower) triangular and diagonal
@@ -853,11 +853,11 @@ namespace CasADi{
 
       // Upper triangular part of the Hessian (note CCS -> CCS format change)
       for(int r=0; r<nx_; ++r){
-        for(int el=rowind[r]; el<rowind[r+1]; ++el){
-          if(col[el]>r){
+        for(int el=colind[r]; el<colind[r+1]; ++el){
+          if(row[el]>r){
             // Strictly upper triangular
             *values_upper++ = data[el];
-          } else if(col[el]==r){
+          } else if(row[el]==r){
             // Diagonal separartely
             values_diagonal[r] = data[el];
           }
@@ -912,10 +912,10 @@ namespace CasADi{
       // Transpose the result
       const DMatrix& J = jacG.output(JACG_JAC);
       const vector<double>& J_data = J.data();
-      const vector<int>& J_rowind = J.rowind();
-      const vector<int>& JT_col = spJacG_T_.col();
-      copy(J_rowind.begin(),J_rowind.end(),jacG_tmp_.begin());
-      for(vector<int>::const_iterator i=JT_col.begin(); i!=JT_col.end(); ++i){
+      const vector<int>& J_colind = J.colind();
+      const vector<int>& JT_row = spJacG_T_.row();
+      copy(J_colind.begin(),J_colind.end(),jacG_tmp_.begin());
+      for(vector<int>::const_iterator i=JT_row.begin(); i!=JT_row.end(); ++i){
         *values++ = J_data[jacG_tmp_[*i]++];
       }
     

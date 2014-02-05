@@ -359,7 +359,7 @@ for (i,x0) in enumerate([0.08]):
     viol_gmin = sum(max(i,0)**2 for i in g_min-f2_k)
     norm_viol = sqrt(viol_umax + viol_umin + viol_gmax + viol_gmin)
 
-    # Print progress (including the header every 10 rows)
+    # Print progress (including the header every 10 cols)
     if k % 10 == 0:
       print " %4s" % "iter", " %20s" % "norm_res", " %20s" % "norm_step", " %20s" % "norm_viol"
     print   " %4d" %  k,     " %20e" %  norm_res,  " %20e" %  norm_step,  " %20e" %  norm_viol

@@ -311,7 +311,7 @@ namespace CasADi{
         if(verbose()){
           ss << "u = " << f_.input(iin_) << endl;
                 
-          // Print the expression for f[Jrow] if f is an SXFunction instance
+          // Print the expression for f[Jcol] if f is an SXFunction instance
           SXFunction f_sx = shared_cast<SXFunction>(f_);
           if(!f_sx.isNull()){
             f_sx.print(ss);
@@ -370,16 +370,16 @@ namespace CasADi{
     }
   
     // Get sparsity and non-zero elements
-    const vector<int>& rowind = jac_.output().rowind();
-    const vector<int>& col = jac_.output().col();
+    const vector<int>& colind = jac_.output().colind();
+    const vector<int>& row = jac_.output().row();
     const vector<double>& val = jac_.output().data();
 
-    // Loop over rows
-    for(int i=0; i<rowind.size()-1; ++i){
+    // Loop over cols
+    for(int i=0; i<colind.size()-1; ++i){
       // Loop over non-zero entries
-      for(int el=rowind[i]; el<rowind[i+1]; ++el){
-        // Get column
-        int j = col[el];
+      for(int el=colind[i]; el<colind[i+1]; ++el){
+        // Get row
+        int j = row[el];
       
         // Set the element
         DENSE_ELEM(J,i,j) = val[el];
@@ -421,16 +421,16 @@ namespace CasADi{
     jac_.evaluate();
   
     // Get sparsity and non-zero elements
-    const vector<int>& rowind = jac_.output().rowind();
-    const vector<int>& col = jac_.output().col();
+    const vector<int>& colind = jac_.output().colind();
+    const vector<int>& row = jac_.output().row();
     const vector<double>& val = jac_.output().data();
 
-    // Loop over rows
-    for(int i=0; i<rowind.size()-1; ++i){
+    // Loop over cols
+    for(int i=0; i<colind.size()-1; ++i){
       // Loop over non-zero entries
-      for(int el=rowind[i]; el<rowind[i+1]; ++el){
-        // Get column
-        int j = col[el];
+      for(int el=colind[i]; el<colind[i+1]; ++el){
+        // Get row
+        int j = row[el];
       
         // Set the element
         if(i-j>=-mupper && i-j<=mlower)
@@ -521,26 +521,26 @@ namespace CasADi{
           // Print inputs
           ss << "Input vector is " << jac_.input().data() << endl;
                 
-          // Get the row
-          int Jrow = jac_.output().sparsity().getRow().at(k);
+          // Get the col
+          int Jcol = jac_.output().sparsity().getCol().at(k);
 
-          // Get the column
-          int Jcol = jac_.output().sparsity().col(k);
+          // Get the row
+          int Jrow = jac_.output().sparsity().row(k);
                 
           // Which equation
-          ss << "This corresponds to the derivative of equation " << Jrow << " with respect to the variable " << Jcol << "." << endl;
+          ss << "This corresponds to the derivative of equation " << Jcol << " with respect to the variable " << Jrow << "." << endl;
                 
-          // Print the expression for f[Jrow] if f is an SXFunction instance
+          // Print the expression for f[Jcol] if f is an SXFunction instance
           SXFunction f_sx = shared_cast<SXFunction>(f_);
           if(!f_sx.isNull()){
-            ss << "Variable " << Jcol << " = " << f_sx.inputExpr(0).at(Jcol) << endl;
-            ss << "Equation " << Jrow << " = " << f_sx.outputExpr(0).at(Jrow) << endl;
+            ss << "Variable " << Jrow << " = " << f_sx.inputExpr(0).at(Jrow) << endl;
+            ss << "Equation " << Jcol << " = " << f_sx.outputExpr(0).at(Jcol) << endl;
           }
                 
           // Print the expression for J[k] if J is an SXFunction instance
           SXFunction jac_sx = shared_cast<SXFunction>(jac_);
           if(!jac_sx.isNull()){
-            ss << "J[" << Jrow << "," << Jcol << "] = " << jac_sx.outputExpr(0).at(k) << endl;
+            ss << "J[" << Jcol << "," << Jrow << "] = " << jac_sx.outputExpr(0).at(k) << endl;
           }
         }
 

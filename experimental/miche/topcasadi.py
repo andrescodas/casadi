@@ -80,7 +80,7 @@ class mbb2d:
 		
 		F[0,0] = -1;
 
-		#Filter matrix (row compressed format)
+		#Filter matrix (col compressed format)
 
 		crmin = int(ceil(rmin))
 		nh =  (2 * (crmin-1)+1)*(2 * (crmin-1)+1)

@@ -111,17 +111,17 @@ namespace CasADi{
     // Quick return?
     if(nadj==0) return;
 
-    // Get offsets for each row
-    vector<int> row_offset(ndep()+1,0);
+    // Get offsets for each col
+    vector<int> col_offset(ndep()+1,0);
     for(int i=0; i<ndep(); ++i){
-      int nrow = dep(i).sparsity().size1();
-      row_offset[i+1] = row_offset[i] + nrow;
+      int ncol = dep(i).sparsity().size1();
+      col_offset[i+1] = col_offset[i] + ncol;
     }
 
     // Adjoint sensitivities
     for(int d=0; d<nadj; ++d){
       MX& aseed = *adjSeed[d][0];
-      vector<MX> s = vertsplit(aseed,row_offset);
+      vector<MX> s = vertsplit(aseed,col_offset);
       aseed = MX();
       for(int i=0; i<ndep(); ++i){
         *adjSens[d][i] += s[i];

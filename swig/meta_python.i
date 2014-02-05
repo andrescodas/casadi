@@ -55,7 +55,7 @@ PyObject * getReturnType(PyObject* p) {
     Py_DECREF(func_annotations);
     return 0;
   }
-  PyObject * return_type = PyDict_GetItemString(func_annotations, "return"); // Borrowed
+  PyObject * return_type = PyDict_GetItemString(func_annotations, "return"); // Borcoled
   Py_INCREF(return_type); // Make a new reference
   Py_DECREF(func_annotations);
   if (return_type==0) {
@@ -75,10 +75,10 @@ PyObject * getCasadiObject(const std::string &s) {
   PyObject* pObjectModule = PyImport_Import(pPyObjectModuleName);
   Py_DECREF(pPyObjectModuleName);
   if (!pObjectModule) { PyErr_Clear(); return 0; }
-  PyObject* pObjectDict = PyModule_GetDict(pObjectModule); // Borrowed
+  PyObject* pObjectDict = PyModule_GetDict(pObjectModule); // Borcoled
   Py_DECREF(pObjectModule);
   if (!pObjectDict) { PyErr_Clear(); return 0; }
-  PyObject* ret = PyDict_GetItemString(pObjectDict,  s.c_str()); // Borrowed
+  PyObject* ret = PyDict_GetItemString(pObjectDict,  s.c_str()); // Borcoled
   if (!ret) { PyErr_Clear(); return 0; }
   Py_INCREF(ret); // New reference
   return ret;
@@ -714,11 +714,11 @@ int meta< CasADi::Matrix<double> >::as(PyObject * p,CasADi::Matrix<double> &m) {
       const char* cstr = tmp.c_str();
       SWIG_Error_return(SWIG_TypeError,  cstr);
     }
-    int nrows = array_size(p,0); // 1D array is cast into column vector
-    int ncols  = 1;
+    int ncols = array_size(p,0); // 1D array is cast into row vector
+    int nrows  = 1;
     if (array_numdims(p)==2)
-      ncols=array_size(p,1); 
-    int size=nrows*ncols; // number of elements in the dense matrix
+      nrows=array_size(p,1); 
+    int size=ncols*nrows; // number of elements in the dense matrix
     if (!array_is_native(p))
       SWIG_Error_return(SWIG_TypeError, "asMatrixDouble: array byte order should be native.");
     // Make sure we have a contigous array with double datatype
@@ -729,7 +729,7 @@ int meta< CasADi::Matrix<double> >::as(PyObject * p,CasADi::Matrix<double> &m) {
     double* d=(double*) array_data(array);
     std::vector<double> v(d,d+size);
     
-    m = CasADi::Matrix<double>(v, nrows, ncols);
+    m = CasADi::Matrix<double>(v, ncols, nrows);
                   
     // Free memory
     if (array_is_new_object)
@@ -747,25 +747,25 @@ int meta< CasADi::Matrix<double> >::as(PyObject * p,CasADi::Matrix<double> &m) {
 
     // Get the dimensions of the csr_matrix
     PyObject * shape = PyObject_GetAttrString( p, "shape"); // need's to be decref'ed
-    int nrows=PyInt_AsLong(PyTuple_GetItem(shape,0));
-    int ncols=PyInt_AsLong(PyTuple_GetItem(shape,1));
+    int ncols=PyInt_AsLong(PyTuple_GetItem(shape,0));
+    int nrows=PyInt_AsLong(PyTuple_GetItem(shape,1));
 		
-    // Construct the 'col' vector needed for initialising the correct sparsity
-    PyObject * col = PyObject_GetAttrString(p,"indices"); // need's to be decref'ed
-    if (!(is_array(col) && array_numdims(col)==1 && array_type(col)==NPY_INT)) { PyErr_Print(); SWIG_Error_return(SWIG_TypeError, "asMatrixDouble: data.indices should be numpy array");}
+    // Construct the 'row' vector needed for initialising the correct sparsity
+    PyObject * row = PyObject_GetAttrString(p,"indices"); // need's to be decref'ed
+    if (!(is_array(row) && array_numdims(row)==1 && array_type(row)==NPY_INT)) { PyErr_Print(); SWIG_Error_return(SWIG_TypeError, "asMatrixDouble: data.indices should be numpy array");}
     
-    int* cold=(int*) array_data(col);
-    std::vector<int> colv(cold,cold+size);
+    int* rowd=(int*) array_data(row);
+    std::vector<int> rowv(rowd,rowd+size);
     
-    // Construct the 'rowind' vector needed for initialising the correct sparsity
-    PyObject * rowind = PyObject_GetAttrString(p,"indptr"); // need's to be decref'ed
-    if (!(is_array(rowind) && array_numdims(rowind)==1 && array_type(rowind)==NPY_INT)) { PyErr_Print();   SWIG_Error_return(SWIG_TypeError, "asMatrixDouble: data.indptr should be numpy array");}
-    int* rowindd=(int*) array_data(rowind);
-    std::vector<int> rowindv(rowindd,rowindd+(nrows+1));
+    // Construct the 'colind' vector needed for initialising the correct sparsity
+    PyObject * colind = PyObject_GetAttrString(p,"indptr"); // need's to be decref'ed
+    if (!(is_array(colind) && array_numdims(colind)==1 && array_type(colind)==NPY_INT)) { PyErr_Print();   SWIG_Error_return(SWIG_TypeError, "asMatrixDouble: data.indptr should be numpy array");}
+    int* colindd=(int*) array_data(colind);
+    std::vector<int> colindv(colindd,colindd+(ncols+1));
     
-    m = CasADi::Matrix<double>(nrows,ncols,colv,rowindv, v);
+    m = CasADi::Matrix<double>(ncols,nrows,rowv,colindv, v);
     
-    Py_DECREF(narray);Py_DECREF(shape);Py_DECREF(col);Py_DECREF(rowind);
+    Py_DECREF(narray);Py_DECREF(shape);Py_DECREF(row);Py_DECREF(colind);
     
     if (array_is_new_object)
       Py_DECREF(array);
@@ -828,11 +828,11 @@ int meta< CasADi::Matrix<CasADi::SX> >::as(PyObject * p,CasADi::Matrix<CasADi::S
 			SWIG_Error(SWIG_TypeError, "asSXMatrix: Number of dimensions must be 1 or 2.");
 			return false;
 		}
-		int nrows = array_size(p,0); // 1D array is cast into column vector
-		int ncols  = 1;
+		int ncols = array_size(p,0); // 1D array is cast into row vector
+		int nrows  = 1;
 		if (array_numdims(p)==2)
-			ncols=array_size(p,1); 
-		int size=nrows*ncols; // number of elements in the dense matrix
+			nrows=array_size(p,1); 
+		int size=ncols*nrows; // number of elements in the dense matrix
 		std::vector<CasADi::SX> v(size);
     PyArrayIterObject* it = (PyArrayIterObject*)PyArray_IterNew(p);
     PyObject *pe;
@@ -845,7 +845,7 @@ int meta< CasADi::Matrix<CasADi::SX> >::as(PyObject * p,CasADi::Matrix<CasADi::S
 		  PyArray_ITER_NEXT(it);
 		}
     Py_DECREF(it);
-		m = CasADi::Matrix< CasADi::SX >(v, nrows, ncols);
+		m = CasADi::Matrix< CasADi::SX >(v, ncols, nrows);
   } else if (PyObject_HasAttrString(p,"__SXMatrix__")) {
     char name[] = "__SXMatrix__";
     PyObject *cr = PyObject_CallMethod(p, name,0);

@@ -42,4 +42,4 @@ A(11,10) = 1;
 A = A+A';
 
 % Get the elimination tree
-etr = etree(A,'col')
+etr = etree(A,'row')

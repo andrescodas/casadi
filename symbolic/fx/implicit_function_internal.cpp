@@ -164,7 +164,7 @@ namespace CasADi{
     if(nfwd==0 && nadj==0) return;
 
     // Temporaries
-    vector<int> row_offset(1,0);
+    vector<int> col_offset(1,0);
     vector<MX> rhs;
     vector<int> rhs_loc;
 
@@ -194,7 +194,7 @@ namespace CasADi{
           if(aseed[d][i]!=0){
             if(i==iout_){
               rhs.push_back(trans(*aseed[d][i]));
-              row_offset.push_back(row_offset.back()+1);
+              col_offset.push_back(col_offset.back()+1);
               rhs_loc.push_back(v.size()); // where to store it
               v.push_back(MX());
             } else {
@@ -206,11 +206,11 @@ namespace CasADi{
       }
 
       // Solve for all right-hand-sides at once
-      rhs = vertsplit(J->getSolve(vertcat(rhs),false,linsol_),row_offset);
+      rhs = vertsplit(J->getSolve(vertcat(rhs),false,linsol_),col_offset);
       for(int d=0; d<rhs.size(); ++d){
         v[rhs_loc[d]] = trans(rhs[d]);
       }
-      row_offset.resize(1);
+      col_offset.resize(1);
       rhs.clear();
     }
   
@@ -228,7 +228,7 @@ namespace CasADi{
           if(i==iout_){
             // Collect the arguments
             rhs.push_back(trans(*v_it++));
-            row_offset.push_back(row_offset.back()+1);        
+            col_offset.push_back(col_offset.back()+1);        
           } else {
             // Auxiliary output
             if(fsens[d][i]!=0){
@@ -239,14 +239,14 @@ namespace CasADi{
       }
         
       // Solve for all the forward derivatives at once
-      rhs = vertsplit(J->getSolve(vertcat(rhs),true,linsol_),row_offset);
+      rhs = vertsplit(J->getSolve(vertcat(rhs),true,linsol_),col_offset);
       for(int d=0; d<nfwd; ++d){
         if(fsens[d][iout_]!=0){
           *fsens[d][iout_] = -trans(rhs[d]);
         }
       }
       
-      row_offset.resize(1);
+      col_offset.resize(1);
       rhs.clear();
     }
 

@@ -42,32 +42,32 @@ namespace CasADi{
     }
 
     // Get the sparsity of the input
-    const vector<int>& rowind_x = x.sparsity().rowind();
-    const vector<int>& col_x = x.sparsity().col();
+    const vector<int>& colind_x = x.sparsity().colind();
+    const vector<int>& row_x = x.sparsity().row();
     
     // Sparsity pattern as vectors
-    vector<int> rowind, col;
-    int nrow, ncol = x.size2();
+    vector<int> colind, row;
+    int ncol, nrow = x.size2();
 
     // Get the sparsity patterns of the outputs
     int nx = offset_.size()-1;
     output_sparsity_.clear();
     output_sparsity_.reserve(nx);
     for(int i=0; i<nx; ++i){
-      int first_row = offset_[i];
-      int last_row = offset_[i+1];
-      nrow = last_row - first_row;
+      int first_col = offset_[i];
+      int last_col = offset_[i+1];
+      ncol = last_col - first_col;
 
       // Construct the sparsity pattern
-      rowind.resize(nrow+1);
-      copy(rowind_x.begin()+first_row, rowind_x.begin()+last_row+1, rowind.begin());
-      for(vector<int>::iterator it=rowind.begin()+1; it!=rowind.end(); ++it) *it -= rowind[0];
-      rowind[0] = 0;
+      colind.resize(ncol+1);
+      copy(colind_x.begin()+first_col, colind_x.begin()+last_col+1, colind.begin());
+      for(vector<int>::iterator it=colind.begin()+1; it!=colind.end(); ++it) *it -= colind[0];
+      colind[0] = 0;
 
-      col.resize(rowind.back());
-      copy(col_x.begin()+rowind_x[first_row],col_x.begin()+rowind_x[last_row],col.begin());
+      row.resize(colind.back());
+      copy(row_x.begin()+colind_x[first_col],row_x.begin()+colind_x[last_col],row.begin());
       
-      CCSSparsity sp(nrow,ncol,col,rowind);
+      CCSSparsity sp(ncol,nrow,row,colind);
       output_sparsity_.push_back(sp);
     }
   }
@@ -88,13 +88,13 @@ namespace CasADi{
   void Vertsplit::evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp){
     // Number of derivatives
     int nx = offset_.size()-1;
-    const vector<int>& x_rowind = dep().sparsity().rowind();
+    const vector<int>& x_colind = dep().sparsity().colind();
 
     const MatV& arg = input;
     MatV& res = output;
     for(int i=0; i<nx; ++i){
-      int nz_first = x_rowind[offset_[i]];
-      int nz_last = x_rowind[offset_[i+1]];
+      int nz_first = x_colind[offset_[i]];
+      int nz_last = x_colind[offset_[i+1]];
       if(res[i]!=0){
         copy(arg[0]->begin()+nz_first, arg[0]->begin()+nz_last, res[i]->begin());
       }
@@ -103,10 +103,10 @@ namespace CasADi{
 
   void Vertsplit::propagateSparsity(DMatrixPtrV& input, DMatrixPtrV& output, bool fwd){
     int nx = offset_.size()-1;
-    const vector<int>& x_rowind = dep().sparsity().rowind();
+    const vector<int>& x_colind = dep().sparsity().colind();
     for(int i=0; i<nx; ++i){
       if(output[i]!=0){
-        bvec_t *arg_ptr = get_bvec_t(input[0]->data()) + x_rowind[offset_[i]];
+        bvec_t *arg_ptr = get_bvec_t(input[0]->data()) + x_colind[offset_[i]];
         vector<double>& res_i = output[i]->data();
         bvec_t *res_i_ptr = get_bvec_t(res_i);
         for(int k=0; k<res_i.size(); ++k){
@@ -158,9 +158,9 @@ namespace CasADi{
             v.push_back(*x_i);
             *x_i = MX();
           } else {
-            int first_row = offset_[i];
-            int last_row = offset_[i+1];
-            v.push_back(MX::sparse(last_row-first_row,dep().size2()));
+            int first_col = offset_[i];
+            int last_col = offset_[i+1];
+            v.push_back(MX::sparse(last_col-first_col,dep().size2()));
           }
         }
         *adjSens[d][0] += vertcat(v);
@@ -170,10 +170,10 @@ namespace CasADi{
 
   void Vertsplit::generateOperation(std::ostream &stream, const std::vector<std::string>& arg, const std::vector<std::string>& res, CodeGenerator& gen) const{
     int nx = res.size();
-    const vector<int>& x_rowind = dep().sparsity().rowind();
+    const vector<int>& x_colind = dep().sparsity().colind();
     for(int i=0; i<nx; ++i){
-      int nz_first = x_rowind[offset_[i]];
-      int nz_last = x_rowind[offset_[i+1]];
+      int nz_first = x_colind[offset_[i]];
+      int nz_last = x_colind[offset_[i+1]];
       int nz = nz_last-nz_first;
       if(res.at(i).compare("0")!=0){
         stream << "  for(i=0; i<" << nz << "; ++i) " << res.at(i) << "[i] = " << arg.at(0) << "[i+" << nz_first << "];" << endl;

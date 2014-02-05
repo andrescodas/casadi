@@ -100,19 +100,19 @@ bool IpoptUserClass::eval_g(Index n, const Number* x, bool new_x, Index m, Numbe
 
 // return the structure or values of the jacobian
 bool IpoptUserClass::eval_jac_g(Index n, const Number* x, bool new_x,
-                           Index m, Index nele_jac, Index* iRow, Index *jCol,
+                           Index m, Index nele_jac, Index* iCol, Index *jRow,
                            Number* values)
 {
-  return solver->eval_jac_g(n,x,new_x,m,nele_jac,iRow,jCol,values);
+  return solver->eval_jac_g(n,x,new_x,m,nele_jac,iCol,jRow,values);
 }
 
 
 bool IpoptUserClass::eval_h(Index n, const Number* x, bool new_x,
                        Number obj_factor, Index m, const Number* lambda,
-                       bool new_lambda, Index nele_hess, Index* iRow,
-                       Index* jCol, Number* values)
+                       bool new_lambda, Index nele_hess, Index* iCol,
+                       Index* jRow, Number* values)
 {  
-  return solver->eval_h(x,new_x,obj_factor,lambda,new_lambda,nele_hess,iRow,jCol,values);
+  return solver->eval_h(x,new_x,obj_factor,lambda,new_lambda,nele_hess,iCol,jRow,values);
 }
 
 
@@ -172,7 +172,7 @@ bool IpoptUserClass::intermediate_callback(AlgorithmMode mode, Index iter, Numbe
   // Copied from Ipopt source: To Ipopt, the equality constraints are presented with right
   // hand side zero, so we correct for the original right hand side.
   const Index* c_pos = tnlp_adapter->P_c_g_->ExpandedPosIndices();
-  Index n_c_no_fixed = tnlp_adapter->P_c_g_->NCols();
+  Index n_c_no_fixed = tnlp_adapter->P_c_g_->NRows();
   for (Index i=0; i<n_c_no_fixed; i++) {
     g_[c_pos[i]] += tnlp_adapter->c_rhs_[i];
   }

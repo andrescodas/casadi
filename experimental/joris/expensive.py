@@ -749,8 +749,8 @@ tscf.init()
 
 # Memory consumption blows up when building up g
 
-C = sumRows(states["q"]**2) - 1
-Cmx = sumRows(optvar["X",0,0,"q"]**2) - 1
+C = sumCols(states["q"]**2) - 1
+Cmx = sumCols(optvar["X",0,0,"q"]**2) - 1
 J = jacobian(C,states)
 J = SXFunction([states],[J])
 J.init()

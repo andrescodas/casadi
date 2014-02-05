@@ -68,25 +68,25 @@ namespace CasADi{
     SXMatrix A = ssym("A",input(0).sparsity());
 
     // Make a BLT transformation of A
-    std::vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-    A.sparsity().dulmageMendelsohn(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock);
+    std::vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
+    A.sparsity().dulmageMendelsohn(colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock);
+
+    // Get the inverted col permutation
+    std::vector<int> inv_colperm(colperm.size());
+    for(int k=0; k<colperm.size(); ++k)
+      inv_colperm[colperm[k]] = k;
 
     // Get the inverted row permutation
     std::vector<int> inv_rowperm(rowperm.size());
     for(int k=0; k<rowperm.size(); ++k)
       inv_rowperm[rowperm[k]] = k;
-
-    // Get the inverted column permutation
-    std::vector<int> inv_colperm(colperm.size());
-    for(int k=0; k<colperm.size(); ++k)
-      inv_colperm[colperm[k]] = k;
     
     // Permute the linear system
     SXMatrix Aperm(0,A.size2());
     for(int i=0; i<A.size1(); ++i){
       Aperm.resize(i+1,A.size2());
-      for(int el=A.rowind(rowperm[i]); el<A.rowind(rowperm[i]+1); ++el){
-        Aperm(i,inv_colperm[A.col(el)]) = A[el];
+      for(int el=A.colind(colperm[i]); el<A.colind(colperm[i]+1); ++el){
+        Aperm(i,inv_rowperm[A.row(el)]) = A[el];
       }
     }
 
@@ -120,8 +120,8 @@ namespace CasADi{
     SXMatrix bperm(0,b.size2());
     for(int i=0; i<b.size1(); ++i){
       bperm.resize(i+1,b.size2());
-      for(int el=b.rowind(rowperm[i]); el<b.rowind(rowperm[i]+1); ++el){
-        bperm(i,b.col(el)) = b[el];
+      for(int el=b.colind(colperm[i]); el<b.colind(colperm[i]+1); ++el){
+        bperm(i,b.row(el)) = b[el];
       }
     }
 
@@ -132,8 +132,8 @@ namespace CasADi{
     SXMatrix x(0,xperm.size2());
     for(int i=0; i<xperm.size1(); ++i){
       x.resize(i+1,xperm.size2());
-      for(int el=xperm.rowind(inv_colperm[i]); el<xperm.rowind(inv_colperm[i]+1); ++el){
-        x(i,xperm.col(el)) = xperm[el];
+      for(int el=xperm.colind(inv_rowperm[i]); el<xperm.colind(inv_rowperm[i]+1); ++el){
+        x(i,xperm.row(el)) = xperm[el];
       }
     }
 
@@ -164,8 +164,8 @@ namespace CasADi{
     bperm = SXMatrix(0,b.size2());
     for(int i=0; i<b.size1(); ++i){
       bperm.resize(i+1,b.size2());
-      for(int el=b.rowind(colperm[i]); el<b.rowind(colperm[i]+1); ++el){
-        bperm(i,b.col(el)) = b[el];
+      for(int el=b.colind(rowperm[i]); el<b.colind(rowperm[i]+1); ++el){
+        bperm(i,b.row(el)) = b[el];
       }
     }
 
@@ -176,8 +176,8 @@ namespace CasADi{
     x = SXMatrix(0,xperm.size2());
     for(int i=0; i<xperm.size1(); ++i){
       x.resize(i+1,xperm.size2());
-      for(int el=xperm.rowind(inv_rowperm[i]); el<xperm.rowind(inv_rowperm[i]+1); ++el){
-        x(i,xperm.col(el)) = xperm[el];
+      for(int el=xperm.colind(inv_colperm[i]); el<xperm.colind(inv_colperm[i]+1); ++el){
+        x(i,xperm.row(el)) = xperm[el];
       }
     }
 

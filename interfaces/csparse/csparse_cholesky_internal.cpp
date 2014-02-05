@@ -48,12 +48,12 @@ namespace CasADi{
     LinearSolverInternal::init();
 
     AT_.nzmax = input().size();  // maximum number of entries 
-    AT_.m = input().size2(); // number of rows
-    AT_.n = input().size1(); // number of columns
-    AT_.p = const_cast<int*>(&input().rowind().front()); // column pointers (size n+1) or col indices (size nzmax)
-    AT_.i = const_cast<int*>(&input().col().front()); // row indices, size nzmax
-    AT_.x = &input().front(); // row indices, size nzmax
-    AT_.nz = -1; // of entries in triplet matrix, -1 for compressed-col 
+    AT_.m = input().size2(); // number of cols
+    AT_.n = input().size1(); // number of rows
+    AT_.p = const_cast<int*>(&input().colind().front()); // row pointers (size n+1) or row indices (size nzmax)
+    AT_.i = const_cast<int*>(&input().row().front()); // col indices, size nzmax
+    AT_.x = &input().front(); // col indices, size nzmax
+    AT_.nz = -1; // of entries in triplet matrix, -1 for compressed-row 
 
     // Temporary
     temp_.resize(AT_.n);
@@ -73,11 +73,11 @@ namespace CasADi{
     casadi_assert(S_);
     int n = AT_.n;
     int nzmax = S_->cp[n];
-    std::vector< int > col(n+1);
-    std::copy(S_->cp,S_->cp+n+1,col.begin());
-    std::vector< int > rowind(nzmax);
-    int *Li = &rowind.front();
-    int *Lp = &col.front();
+    std::vector< int > row(n+1);
+    std::copy(S_->cp,S_->cp+n+1,row.begin());
+    std::vector< int > colind(nzmax);
+    int *Li = &colind.front();
+    int *Lp = &row.front();
     const cs* C;
     C = S_->pinv ? cs_symperm (&AT_, S_->pinv, 1) : &AT_;
     std::vector< int > temp(2*n);
@@ -90,13 +90,13 @@ namespace CasADi{
         {
           int i = s [top] ;               /* s [top..n-1] is pattern of L(k,:) */
           int p = c [i]++ ;
-          Li [p] = k ;                /* store L(k,i) in column i */
+          Li [p] = k ;                /* store L(k,i) in row i */
         }
       int p = c [k]++ ;
       Li [p] = k ;    
     }
     Lp [n] = S_->cp [n] ; 
-    CCSSparsity ret(n, n, rowind, col);
+    CCSSparsity ret(n, n, colind, row);
 
     return transpose? ret : trans(ret);
   
@@ -106,15 +106,15 @@ namespace CasADi{
     casadi_assert(L_);
     cs *L = L_->L;
     int nz = L->nzmax;
-    int m = L->m; // number of rows
-    int n = L->n; // number of columns
-    std::vector< int > rowind(m+1);
-    std::copy(L->p,L->p+m+1,rowind.begin());
-    std::vector< int > col(nz);
-    std::copy(L->i,L->i+nz,col.begin());
+    int m = L->m; // number of cols
+    int n = L->n; // number of rows
+    std::vector< int > colind(m+1);
+    std::copy(L->p,L->p+m+1,colind.begin());
+    std::vector< int > row(nz);
+    std::copy(L->i,L->i+nz,row.begin());
     std::vector< double > data(nz);
     std::copy(L->x,L->x+nz,data.begin());
-    DMatrix ret(CCSSparsity(m, n, col, rowind),data); 
+    DMatrix ret(CCSSparsity(m, n, row, colind),data); 
     
     return transpose? ret : trans(ret);
   }
@@ -178,7 +178,7 @@ namespace CasADi{
       cs_lsolve (L_->L, t) ;               // t = L\t 
       cs_ltsolve (L_->L, t) ;              // t = U\t 
       cs_ipvec (S_->q, t, x, AT_.n) ;      // x = P2\t 
-      x += nrow();
+      x += ncol();
     }
   }
 
@@ -193,7 +193,7 @@ namespace CasADi{
       if (transpose) cs_lsolve (L_->L, t) ; // t = L\t 
       if (!transpose) cs_ltsolve (L_->L, t) ; // t = U\t 
       cs_ipvec (S_->q, t, x, AT_.n) ;      // x = P2\t 
-      x += nrow();
+      x += ncol();
     }
   }
 

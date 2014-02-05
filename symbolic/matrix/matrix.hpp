@@ -37,8 +37,8 @@ namespace CasADi{
   template<class T>
   struct NonZero {
     int k; // Non-zero index into matrix
-    int i; // Column into matrix
-    int j; // Row into matrix
+    int i; // Row into matrix
+    int j; // Col into matrix
     T el;  // Element
   };
 
@@ -80,9 +80,9 @@ namespace CasADi{
 
       Index starts with 0.\n
       Index flatten happens as follows: (i,j) -> k = j+i*size2()\n
-      Vectors are considered to be column vectors.\n
+      Vectors are considered to be row vectors.\n
   
-      The storage format is a (modified) compressed row storage (CCS) format. This way, a vector element can always be accessed in constant time.\n
+      The storage format is a (modified) compressed col storage (CCS) format. This way, a vector element can always be accessed in constant time.\n
   
       Matrix<T> is polymorphic with a std::vector<T> that contain all non-identical-zero elements.\n
       The sparsity can be accessed with CCSSparsity& sparsity()\n
@@ -113,7 +113,7 @@ namespace CasADi{
     Matrix(int n, int m, const T& val);
 
     /// sparse n-by-m matrix filled with given sparsity
-    Matrix(int n, int m, const std::vector<int>& col, const std::vector<int>& rowind, const std::vector<T>& d=std::vector<T>());
+    Matrix(int n, int m, const std::vector<int>& row, const std::vector<int>& colind, const std::vector<T>& d=std::vector<T>());
 
     /// dense matrix constructor with data given as vector of vectors
     explicit Matrix(const std::vector< std::vector<T> >& m);
@@ -124,7 +124,7 @@ namespace CasADi{
     /// sparse matrix with a given sparsity and non-zero elements.
     Matrix(const CCSSparsity& sparsity, const std::vector<T>& d);
     
-    /** \brief Check if the dimensions and rowind,col vectors are compatible.
+    /** \brief Check if the dimensions and colind,row vectors are compatible.
      * \param complete  set to true to also check elementwise
      * throws an error as possible result
      */
@@ -140,7 +140,7 @@ namespace CasADi{
      */
     Matrix(const std::vector<T>& x);
     
-    /// Construct dense matrix from a vector with the elements in column major ordering
+    /// Construct dense matrix from a vector with the elements in row major ordering
     Matrix(const std::vector<T>& x, int n, int m);
 
     /// Convert to scalar type
@@ -541,33 +541,33 @@ namespace CasADi{
 #endif
     static std::string className(); // name of the class
     void printScalar(std::ostream &stream=std::cout) const; // print scalar
-    void printVector(std::ostream &stream=std::cout) const; // print one row vector-style
-    void printMatrix(std::ostream &stream=std::cout) const; // print one row, matrix-style
+    void printVector(std::ostream &stream=std::cout) const; // print one col vector-style
+    void printMatrix(std::ostream &stream=std::cout) const; // print one col, matrix-style
     void printSparse(std::ostream &stream=std::cout) const; // print sparse matrix style
     void printDense(std::ostream &stream=std::cout) const; // Print dense matrix stype
     //@}
   
     // Get the sparsity pattern
-    const std::vector<int>& col() const;
-    const std::vector<int>& rowind() const;
-    int col(int el) const;
-    int rowind(int row) const;
+    const std::vector<int>& row() const;
+    const std::vector<int>& colind() const;
+    int row(int el) const;
+    int colind(int col) const;
     void clear();
     void resize(int n, int m);
     void reserve(int nnz);
-    void reserve(int nnz, int nrow);
+    void reserve(int nnz, int ncol);
     
     /** \brief Erase a submatrix
-        Erase rows and/or columns of a matrix */
+        Erase cols and/or rows of a matrix */
     void erase(const std::vector<int>& ii, const std::vector<int>& jj);
     
-    /** \brief Remove rows or columns
-        Rremove/delete rows and/or columns of a matrix */
+    /** \brief Remove cols or rows
+        Rremove/delete cols and/or rows of a matrix */
     void remove(const std::vector<int>& ii, const std::vector<int>& jj);
     
     /** \brief Enlarge matrix
-        Make the matrix larger by inserting empty rows and columns, keeping the existing non-zeros */
-    void enlarge(int nrow, int ncol, const std::vector<int>& ii, const std::vector<int>& jj);
+        Make the matrix larger by inserting empty cols and rows, keeping the existing non-zeros */
+    void enlarge(int ncol, int nrow, const std::vector<int>& ii, const std::vector<int>& jj);
     
     /// Access the non-zero elements
     std::vector<T>& data();
@@ -664,57 +664,57 @@ namespace CasADi{
     
     //@{
     /** \brief  create a sparse matrix with all zeros */
-    static Matrix<T> sparse(int nrow, int ncol=1);
+    static Matrix<T> sparse(int ncol, int nrow=1);
     static Matrix<T> sparse(const std::pair<int,int>& nm);
     //@}
     
     /* \brief Construct a sparse matrix from triplet form
-     * Matrix size will be max(row) x max(col)
+     * Matrix size will be max(col) x max(row)
      */
-    static Matrix<T> sparse(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d);
+    static Matrix<T> sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d);
     
     //@{
     /// \brief Construct a sparse matrix from triplet form
-    static Matrix<T> sparse(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d, int n, int m);
-    static Matrix<T> sparse(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d, const std::pair<int,int>& nm);
+    static Matrix<T> sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d, int n, int m);
+    static Matrix<T> sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d, const std::pair<int,int>& nm);
     //@}
     
     //@{
     /** \brief  create a dense matrix with all zeros */
     static Matrix<T> zeros(const CCSSparsity& sp);
-    static Matrix<T> zeros(int nrow, int ncol=1);
+    static Matrix<T> zeros(int ncol, int nrow=1);
     static Matrix<T> zeros(const std::pair<int,int>& nm);
     //@}
 
     //@{
     /** \brief  create a matrix with all ones */
     static Matrix<T> ones(const CCSSparsity& sp);
-    static Matrix<T> ones(int nrow, int ncol=1);
+    static Matrix<T> ones(int ncol, int nrow=1);
     static Matrix<T> ones(const std::pair<int,int>& nm);
     //@}
 
     //@{
     /** \brief  create a matrix with all inf */
     static Matrix<T> inf(const CCSSparsity& sp);
-    static Matrix<T> inf(int nrow=1, int ncol=1);
+    static Matrix<T> inf(int ncol=1, int nrow=1);
     static Matrix<T> inf(const std::pair<int,int>& nm);
     //@}
     
     //@{
     /** \brief  create a matrix with all nan */
     static Matrix<T> nan(const CCSSparsity& sp);
-    static Matrix<T> nan(int nrow=1, int ncol=1);
+    static Matrix<T> nan(int ncol=1, int nrow=1);
     static Matrix<T> nan(const std::pair<int,int>& nm);
     //@}
 
     //@{
     /** \brief  create a matrix by repeating an existing matrix */
-    static Matrix<T> repmat(const Matrix<T>& x, int nrow, int ncol=1);
+    static Matrix<T> repmat(const Matrix<T>& x, int ncol, int nrow=1);
     static Matrix<T> repmat(const Matrix<T>& x, const std::pair<int,int>& nm);
     //@}
 
     /** \brief  create an n-by-n identity matrix */
-    static Matrix<T> eye(int nrow);
+    static Matrix<T> eye(int ncol);
 
     /** \brief  The following function is used to ensure similarity to MX, which is reference counted */
     bool isNull() const{ return false;}
@@ -727,7 +727,7 @@ namespace CasADi{
     // @}
     
   private:
-    /// Sparsity of the matrix in a compressed row storage (CCS) format
+    /// Sparsity of the matrix in a compressed col storage (CCS) format
     CCSSparsity sparsity_;
     
     /// Nonzero elements

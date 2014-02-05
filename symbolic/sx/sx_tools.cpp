@@ -802,34 +802,34 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
   fcn = SXFunction();
   
   // Make a BLT sorting of the Jacobian (a Dulmage-Mendelsohn decomposition)
-  std::vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  Jsp.dulmageMendelsohn(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock);
+  std::vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
+  Jsp.dulmageMendelsohn(colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock);
   
   // Make sure that the Jacobian is full rank
-  casadi_assert(coarse_rowblock[0]==0);
-  casadi_assert(coarse_rowblock[1]==0);
-  casadi_assert(coarse_rowblock[2]==0);
-  casadi_assert(coarse_rowblock[3]==coarse_rowblock[4]);
-
   casadi_assert(coarse_colblock[0]==0);
   casadi_assert(coarse_colblock[1]==0);
-  casadi_assert(coarse_colblock[2]==coarse_colblock[3]);
+  casadi_assert(coarse_colblock[2]==0);
   casadi_assert(coarse_colblock[3]==coarse_colblock[4]);
+
+  casadi_assert(coarse_rowblock[0]==0);
+  casadi_assert(coarse_rowblock[1]==0);
+  casadi_assert(coarse_rowblock[2]==coarse_rowblock[3]);
+  casadi_assert(coarse_rowblock[3]==coarse_rowblock[4]);
 
   // Permuted equations
   vector<SX> fp(f.size());
   for(int i=0; i<fp.size(); ++i){
-    fp[i] = f.elem(rowperm[i]);
+    fp[i] = f.elem(colperm[i]);
   }
   
   // Permuted variables
   vector<SX> xp(x.size());
   for(int i=0; i<xp.size(); ++i){
-    xp[i]= x.elem(colperm[i]);
+    xp[i]= x.elem(rowperm[i]);
   }
   
   // Number of blocks
-  int nb = rowblock.size()-1;
+  int nb = colblock.size()-1;
 
   // Block equations
   vector<SX> fb;
@@ -848,13 +848,13 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
     
     // Get the local equations
     fb.clear();
-    for(int i=rowblock[b]; i<rowblock[b+1]; ++i){
+    for(int i=colblock[b]; i<colblock[b+1]; ++i){
       fb.push_back(fp[i]);
     }
     
     // Get the local variables
     xb.clear();
-    for(int i=colblock[b]; i<colblock[b+1]; ++i){
+    for(int i=rowblock[b]; i<rowblock[b+1]; ++i){
       xb.push_back(xp[i]);
     }
 
@@ -876,7 +876,7 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
     // Get the subsets of variables that appear nonlinearily
     vector<bool> nonlin(sp_nonlin.size2(),false);
     for(int el=0; el<sp_nonlin.size(); ++el){
-      nonlin[sp_nonlin.col(el)] = true;
+      nonlin[sp_nonlin.row(el)] = true;
     }
 /*    cout << "nonlin = " << nonlin << endl;*/
     
@@ -929,8 +929,8 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
       } else { // There are both linear and nonlinear variables
         
         // Make a Dulmage-Mendelsohn decomposition
-        std::vector<int> rowpermb, colpermb, rowblockb, colblockb, coarse_rowblockb, coarse_colblockb;
-        Jb.sparsity().dulmageMendelsohn(rowpermb, colpermb, rowblockb, colblockb, coarse_rowblockb, coarse_colblockb);
+        std::vector<int> colpermb, rowpermb, colblockb, rowblockb, coarse_colblockb, coarse_rowblockb;
+        Jb.sparsity().dulmageMendelsohn(colpermb, rowpermb, colblockb, rowblockb, coarse_colblockb, coarse_rowblockb);
         
         Matrix<int>(Jb.sparsity(),1).printDense();
         Jb.printDense();
@@ -940,12 +940,12 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
 
         
 
-        cout << rowpermb << endl;
         cout << colpermb << endl;
-        cout << rowblockb << endl;
+        cout << rowpermb << endl;
         cout << colblockb << endl;
-        cout << coarse_rowblockb << endl;
+        cout << rowblockb << endl;
         cout << coarse_colblockb << endl;
+        cout << coarse_rowblockb << endl;
 
         casadi_warning("tearing not implemented");
         
@@ -1259,7 +1259,7 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
   }
   
   SXMatrix poly_roots(const SXMatrix& p) {
-    casadi_assert_message(p.size2()==1,"poly_root(): supplied paramter must be column vector but got " << p.dimString() << ".");
+    casadi_assert_message(p.size2()==1,"poly_root(): supplied paramter must be row vector but got " << p.dimString() << ".");
     casadi_assert(p.dense());
     if (p.size1()==2) { // a*x + b
       SXMatrix a = p(0);

@@ -51,9 +51,9 @@ CplexInternal::CplexInternal(const std::vector<CCSSparsity>& st) : QPSolverInter
   
   // Initializing members
   // Number of vars
-  NUMCOLS_ = H.size1();
+  NUMROWS_ = H.size1();
   // Number of constraints
-  NUMROWS_ = A.size1();
+  NUMCOLS_ = A.size1();
   // Setting warm-start flag
   is_warm_ = false;
 
@@ -134,14 +134,14 @@ void CplexInternal::init(){
 
   // Allocation of data
   // Type of constraint
-  sense_.resize(NUMROWS_);
+  sense_.resize(NUMCOLS_);
   // Right-hand side of constraints
-  rhs_.resize(NUMROWS_);
+  rhs_.resize(NUMCOLS_);
   // Range value for lower AND  upper bounded constraints
-  rngval_.resize(NUMROWS_);
+  rngval_.resize(NUMCOLS_);
   // Basis for primal variables
-  cstat_.resize(NUMCOLS_);
-  rstat_.resize(NUMROWS_);
+  cstat_.resize(NUMROWS_);
+  rstat_.resize(NUMCOLS_);
 
   // Matrix A (Cplex reqests its transpose)
   CCSSparsity AT_sparsity = input(QP_SOLVER_A).sparsity().transpose(AT_nonzero_mapping_);
@@ -188,7 +188,7 @@ void CplexInternal::evaluate(){
   ub_ = input(QP_SOLVER_UBX).ptr();
 
   // Looping over constraints
-  for(int i = 0; i < NUMROWS_; ++i){
+  for(int i = 0; i < NUMCOLS_; ++i){
     // CPX_INFBOUND
   
     // Equality
@@ -225,7 +225,7 @@ void CplexInternal::evaluate(){
   }
   
   // Copying objective, constraints, and bounds.
-  status = CPXcopylp (env_, lp_, NUMCOLS_, NUMROWS_, objsen_, obj_, rhs_.data(),
+  status = CPXcopylp (env_, lp_, NUMROWS_, NUMCOLS_, objsen_, obj_, rhs_.data(),
        sense_.data(), matbeg_.data(), matcnt_.data(), matind_.data(), matval_.data(), lb_, ub_, rngval_.data()); 
 
   // Preparing coefficient matrix Q
@@ -256,7 +256,7 @@ void CplexInternal::evaluate(){
   int solstat; 
   
   std::vector<double> slack;
-  slack.resize(NUMROWS_);
+  slack.resize(NUMCOLS_);
   status = CPXsolution (env_, lp_, &solstat,
    output(QP_SOLVER_COST).ptr(), 
    output(QP_SOLVER_X).ptr(), 
@@ -359,22 +359,22 @@ void CplexInternal::freeCplex(){
 
 void CplexInternal::toCplexSparsity(const CCSSparsity& sp_trans, vector<int> &matbeg, vector<int>& matcnt, vector<int>& matind){
   // Get sparsity
-  int ncol = sp_trans.size1();
-  //int nrow = sp_trans.size2();
-  const std::vector<int>& colind = sp_trans.rowind();
-  const std::vector<int>& row = sp_trans.col();
+  int nrow = sp_trans.size1();
+  //int ncol = sp_trans.size2();
+  const std::vector<int>& rowind = sp_trans.colind();
+  const std::vector<int>& col = sp_trans.row();
 
-  // The row for each nonzero
-  matind.resize(row.size());
-  copy(row.begin(),row.end(),matind.begin());
+  // The col for each nonzero
+  matind.resize(col.size());
+  copy(col.begin(),col.end(),matind.begin());
   
-  // The beginning of each column
-  matbeg.resize(ncol);
-  copy(colind.begin(),colind.begin()+ncol,matbeg.begin());
+  // The beginning of each row
+  matbeg.resize(nrow);
+  copy(rowind.begin(),rowind.begin()+nrow,matbeg.begin());
   
-  // The number of elements in each column
-  matcnt.resize(ncol);
-  transform(colind.begin()+1,colind.end(),colind.begin(),matcnt.begin(),minus<int>());
+  // The number of elements in each row
+  matcnt.resize(nrow);
+  transform(rowind.begin()+1,rowind.end(),rowind.begin(),matcnt.begin(),minus<int>());
 }
 
 } // end namespace CasADi

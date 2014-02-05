@@ -518,13 +518,13 @@ class SXtests(casadiTestCase):
     y[kl]=1.0
     s=y.sparsity()
     for k in kl:
-      z[s.getRow()[k],s.col()[k]]=1.0
+      z[s.getCol()[k],s.row()[k]]=1.0
     self.checkarray(y,z,"nonzero scalar assignment")
     y[kl]=DMatrix(kl)
     
     cnt=0
     for k in kl:
-      z[s.getRow()[k],s.col()[k]]=kl[cnt]
+      z[s.getCol()[k],s.row()[k]]=kl[cnt]
       cnt+=1
     self.checkarray(y,z,"nonzero range assignment")
     

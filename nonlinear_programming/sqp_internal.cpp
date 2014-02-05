@@ -484,12 +484,12 @@ namespace CasADi{
         // BFGS with careful updates and restarts
         if (iter % lbfgs_memory_ == 0){
           // Reset Hessian approximation by dropping all off-diagonal entries
-          const vector<int>& rowind = Bk_.rowind();      // Access sparsity (row offset)
-          const vector<int>& col = Bk_.col();            // Access sparsity (column)
+          const vector<int>& colind = Bk_.colind();      // Access sparsity (col offset)
+          const vector<int>& row = Bk_.row();            // Access sparsity (row)
           vector<double>& data = Bk_.data();             // Access nonzero elements
-          for(int i=0; i<rowind.size()-1; ++i){          // Loop over the rows of the Hessian
-            for(int el=rowind[i]; el<rowind[i+1]; ++el){ // Loop over the nonzero elements of the row
-              if(i!=col[el]) data[el] = 0;               // Remove if off-diagonal entries
+          for(int i=0; i<colind.size()-1; ++i){          // Loop over the cols of the Hessian
+            for(int el=colind[i]; el<colind[i+1]; ++el){ // Loop over the nonzero elements of the col
+              if(i!=row[el]) data[el] = 0;               // Remove if off-diagonal entries
             }
           }
         }
@@ -604,19 +604,19 @@ namespace CasADi{
     casadi_assert(x.size()==A.size1() && x.size()==A.size2());
   
     // Access the internal data of A
-    const std::vector<int> &A_rowind = A.rowind();
-    const std::vector<int> &A_col = A.col();
+    const std::vector<int> &A_colind = A.colind();
+    const std::vector<int> &A_row = A.row();
     const std::vector<double> &A_data = A.data();
   
     // Return value
     double ret=0;
 
-    // Loop over the rows of A
+    // Loop over the cols of A
     for(int i=0; i<x.size(); ++i){
       // Loop over the nonzeros of A
-      for(int el=A_rowind[i]; el<A_rowind[i+1]; ++el){
-        // Get column
-        int j = A_col[el];
+      for(int el=A_colind[i]; el<A_colind[i+1]; ++el){
+        // Get row
+        int j = A_row[el];
       
         // Add contribution
         ret += x[i]*A_data[el]*x[j];
@@ -640,14 +640,14 @@ namespace CasADi{
   }
 
   double SQPInternal::getRegularization(const Matrix<double>& H){
-    const vector<int>& rowind = H.rowind();
-    const vector<int>& col = H.col();
+    const vector<int>& colind = H.colind();
+    const vector<int>& row = H.row();
     const vector<double>& data = H.data();
     double reg_param = 0;
-    for(int i=0; i<rowind.size()-1; ++i){
+    for(int i=0; i<colind.size()-1; ++i){
       double mineig = 0;
-      for(int el=rowind[i]; el<rowind[i+1]; ++el){
-        int j = col[el];
+      for(int el=colind[i]; el<colind[i+1]; ++el){
+        int j = row[el];
         if(i == j){
           mineig += data[el];
         } else {
@@ -660,13 +660,13 @@ namespace CasADi{
   }
   
   void SQPInternal::regularize(Matrix<double>& H, double reg){
-    const vector<int>& rowind = H.rowind();
-    const vector<int>& col = H.col();
+    const vector<int>& colind = H.colind();
+    const vector<int>& row = H.row();
     vector<double>& data = H.data();
     
-    for(int i=0; i<rowind.size()-1; ++i){
-      for(int el=rowind[i]; el<rowind[i+1]; ++el){
-        int j = col[el];
+    for(int i=0; i<colind.size()-1; ++i){
+      for(int el=colind[i]; el<colind[i+1]; ++el){
+        int j = row[el];
         if(i==j){
           data[el] += reg;
         }

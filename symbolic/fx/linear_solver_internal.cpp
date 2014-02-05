@@ -40,8 +40,8 @@ namespace CasADi{
     casadi_assert_message(!isSingular(sparsity),"LinearSolverInternal::init: singularity - the matrix is structurally rank-deficient. sprank(J)=" << rank(sparsity) << " (in stead of "<< sparsity.size1() << ")");
 
     // Calculate the Dulmage-Mendelsohn decomposition
-    std::vector<int> coarse_rowblock, coarse_colblock;
-    sparsity.dulmageMendelsohn(rowperm_, colperm_, rowblock_, colblock_, coarse_rowblock, coarse_colblock);
+    std::vector<int> coarse_colblock, coarse_rowblock;
+    sparsity.dulmageMendelsohn(colperm_, rowperm_, colblock_, rowblock_, coarse_colblock, coarse_rowblock);
 
     // Allocate inputs
     setNumInputs(LINSOL_NUM_IN);
@@ -130,7 +130,7 @@ namespace CasADi{
     // Forward sensitivities, collect the right hand sides
     std::vector<int> rhs_ind;
     std::vector<MX> rhs;
-    std::vector<int> row_offset(1,0);
+    std::vector<int> col_offset(1,0);
     for(int d=0; d<nfwd; ++d){
       const MX& B_hat = *fwdSeed[d][0];
       const MX& A_hat = *fwdSeed[d][1];
@@ -149,13 +149,13 @@ namespace CasADi{
       } else {
         rhs.push_back(rhs_d);
         rhs_ind.push_back(d);
-        row_offset.push_back(row_offset.back()+rhs_d.size1());
+        col_offset.push_back(col_offset.back()+rhs_d.size1());
       }
     }
     
     if(!rhs.empty()){
       // Solve for all directions at once
-      rhs = vertsplit(solve(A,vertcat(rhs),tr),row_offset);
+      rhs = vertsplit(solve(A,vertcat(rhs),tr),col_offset);
     
       // Save result
       for(int i=0; i<rhs.size(); ++i){
@@ -166,7 +166,7 @@ namespace CasADi{
     // Adjoint sensitivities, collect right hand sides
     rhs.resize(0);
     rhs_ind.resize(0);
-    row_offset.resize(1);
+    col_offset.resize(1);
     for(int d=0; d<nadj; ++d){
       MX& X_bar = *adjSeed[d][0];
       
@@ -179,7 +179,7 @@ namespace CasADi{
       } else {
         rhs.push_back(X_bar);
         rhs_ind.push_back(d);
-        row_offset.push_back(row_offset.back()+X_bar.size1());
+        col_offset.push_back(col_offset.back()+X_bar.size1());
 
         // Delete seed
         X_bar = MX();
@@ -188,7 +188,7 @@ namespace CasADi{
 
     if(!rhs.empty()){
       // Solve for all directions at once
-      rhs = vertsplit(solve(A,vertcat(rhs),!tr),row_offset);
+      rhs = vertsplit(solve(A,vertcat(rhs),!tr),col_offset);
     
       for(int i=0; i<rhs.size(); ++i){
         int d = rhs_ind[i];
@@ -215,8 +215,8 @@ namespace CasADi{
     // Sparsities
     const CCSSparsity& r_sp = input[0]->sparsity();
     const CCSSparsity& A_sp = input[1]->sparsity();
-    const std::vector<int>& A_rowind = A_sp.rowind();
-    const std::vector<int>& A_col = A_sp.col();
+    const std::vector<int>& A_colind = A_sp.colind();
+    const std::vector<int>& A_row = A_sp.row();
     int nrhs = r_sp.size1();
     int n = r_sp.size2();
     int nnz = A_sp.size();
@@ -237,8 +237,8 @@ namespace CasADi{
 
         // Add A_hat contribution to tmp
         for(int i=0; i<n; ++i){
-          for(int k=A_rowind[i]; k<A_rowind[i+1]; ++k){
-            int j = A_col[k];
+          for(int k=A_colind[i]; k<A_colind[i+1]; ++k){
+            int j = A_row[k];
             tmp_ptr[transpose ? i : j] |= A_ptr[k];
           }
         }
@@ -263,8 +263,8 @@ namespace CasADi{
 
         // Propagate to A_ptr
         for(int i=0; i<n; ++i){
-          for(int k=A_rowind[i]; k<A_rowind[i+1]; ++k){
-            int j = A_col[k];
+          for(int k=A_colind[i]; k<A_colind[i+1]; ++k){
+            int j = A_row[k];
             A_ptr[k] |= tmp_ptr[transpose ? i : j];
           }
         }
@@ -284,53 +284,53 @@ namespace CasADi{
 
   void LinearSolverInternal::spSolve(bvec_t* X, bvec_t* B, bool transpose) const{
     const CCSSparsity& A_sp = input(LINSOL_A).sparsity();
-    const std::vector<int>& A_rowind = A_sp.rowind();
-    const std::vector<int>& A_col = A_sp.col();
+    const std::vector<int>& A_colind = A_sp.colind();
+    const std::vector<int>& A_row = A_sp.row();
 
     if(transpose){
-      int nb = colblock_.size()-1; // number of blocks
+      int nb = rowblock_.size()-1; // number of blocks
       for(int b=0; b<nb; ++b){ // loop over the blocks
 
         // Get dependencies ...
         bvec_t block_dep = 0;
-        for(int el=rowblock_[b]; el<rowblock_[b+1]; ++el){
+        for(int el=colblock_[b]; el<colblock_[b+1]; ++el){
           // ... from all right-hand-sides in the block ...
-          int i = rowperm_[el];
+          int i = colperm_[el];
           block_dep |= B[i];
 
           // ... as well as from all dependent variables
-          for(int k=A_rowind[i]; k<A_rowind[i+1]; ++k){
-            int j=A_col[k];
+          for(int k=A_colind[i]; k<A_colind[i+1]; ++k){
+            int j=A_row[k];
             block_dep |= X[j];
           }
         }
 
         // Propagate to all variables in the block
-        for(int el=colblock_[b]; el<colblock_[b+1]; ++el){
-          int j = colperm_[el];
+        for(int el=rowblock_[b]; el<rowblock_[b+1]; ++el){
+          int j = rowperm_[el];
           X[j] = block_dep;
         }
       }
     } else {
-      int nb = colblock_.size()-1; // number of blocks
+      int nb = rowblock_.size()-1; // number of blocks
       for(int b=nb-1; b>=0; --b){ // loop over the blocks
             
         // Get dependencies from all right-hand-sides
         bvec_t block_dep = 0;
-        for(int el=colblock_[b]; el<colblock_[b+1]; ++el){
-          int j = colperm_[el];
+        for(int el=rowblock_[b]; el<rowblock_[b+1]; ++el){
+          int j = rowperm_[el];
           block_dep |= B[j];
         }
 
         // Propagate ...
-        for(int el=rowblock_[b]; el<rowblock_[b+1]; ++el){
+        for(int el=colblock_[b]; el<colblock_[b+1]; ++el){
           // ... to all variables in the block
-          int i = rowperm_[el];
+          int i = colperm_[el];
           X[i] = block_dep;
 
           // ... as well as to all other right-hand-sides
-          for(int k=A_rowind[i]; k<A_rowind[i+1]; ++k){
-            int j=A_col[k];
+          for(int k=A_colind[i]; k<A_colind[i+1]; ++k){
+            int j=A_row[k];
             B[j] |= block_dep;
           }
         }

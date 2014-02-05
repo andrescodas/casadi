@@ -53,11 +53,11 @@ SDQPSolverInternal::SDQPSolverInternal(const std::vector<CCSSparsity> &st) : st_
   nc_ = A.size1();
   n_ = H.size1();
   
-  casadi_assert_message(F.size2()==m_,"SDQPSolverInternal: Supplied F sparsity: number of columns (" << F.size2() <<  ")  must match m (" << m_ << ")");
+  casadi_assert_message(F.size2()==m_,"SDQPSolverInternal: Supplied F sparsity: number of rows (" << F.size2() <<  ")  must match m (" << m_ << ")");
   
-  casadi_assert_message(A.size2()==n_,"SDQPSolverInternal: Supplied A sparsity: number of columns (" << A.size2() <<  ")  must match n (" << n_ << ")");
+  casadi_assert_message(A.size2()==n_,"SDQPSolverInternal: Supplied A sparsity: number of rows (" << A.size2() <<  ")  must match n (" << n_ << ")");
   
-  casadi_assert_message(F.size1()%n_==0,"SDQPSolverInternal: Supplied F sparsity: number of rows (" << F.size2() <<  ")  must be an integer multiple of n (" << n_ << "), but got remainder " << F.size1()%n_);
+  casadi_assert_message(F.size1()%n_==0,"SDQPSolverInternal: Supplied F sparsity: number of cols (" << F.size2() <<  ")  must be an integer multiple of n (" << n_ << "), but got remainder " << F.size1()%n_);
   
   // Input arguments
   setNumInputs(SDQP_SOLVER_NUM_IN);

@@ -43,7 +43,7 @@ namespace CasADi{
   }
 
   /** \brief Hash a sparsity pattern */
-  std::size_t hash_sparsity(int nrow, int ncol, const std::vector<int>& col, const std::vector<int>& rowind);
+  std::size_t hash_sparsity(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind);
 
   /**
      \brief Create a dense rectangular sparsity pattern
@@ -101,10 +101,10 @@ namespace CasADi{
      **/
   CCSSparsity sp_banded(int n, int p);
   
-  /** \brief Construct a block sparsity pattern from (row,col) vectors
+  /** \brief Construct a block sparsity pattern from (col,row) vectors
       
    */
-  CCSSparsity sp_rowcol(const std::vector<int>& row, const std::vector<int>& col,int nrow, int ncol);
+  CCSSparsity sp_colrow(const std::vector<int>& col, const std::vector<int>& row,int ncol, int nrow);
   
   
   /** \brief Get the indices of all non-zero elements as they would appear in a Dense matrix  
@@ -142,13 +142,13 @@ namespace CasADi{
   /**
      \brief Create a sparsity pattern given the nonzeros in sparse triplet form
   **/
-  CCSSparsity sp_triplet(int n, int m, const std::vector<int>& row, const std::vector<int>& col, std::vector<int>& mapping, bool invert_mapping=false);
+  CCSSparsity sp_triplet(int n, int m, const std::vector<int>& col, const std::vector<int>& row, std::vector<int>& mapping, bool invert_mapping=false);
   
   /**
      \brief Create a sparsity pattern given the nonzeros in sparse triplet form (no nonzero mapping)
-     columns_are_sorted==true means that the column entries already in increasing order for each row and without any duplicates
+     rows_are_sorted==true means that the row entries already in increasing order for each col and without any duplicates
   **/
-  CCSSparsity sp_triplet(int n, int m, const std::vector<int>& row, const std::vector<int>& col);
+  CCSSparsity sp_triplet(int n, int m, const std::vector<int>& col, const std::vector<int>& row);
   
   
   /** \brief Get the sparsity resulting from a matrix multiplication
@@ -178,9 +178,9 @@ namespace CasADi{
   
   /** \brief Represent a sparsity pattern as an array of integers, the most compact way of representing a sparsity pattern
       The format:
-      * The first two entries are the number of rows (nrow) and columns (ncol)
-      * The next nrow+1 entries are the row offsets (rowind). Note that the last element rowind[nrow] gives the number of nonzeros
-      * The last rowind[nrow] entries are the column indices
+      * The first two entries are the number of cols (ncol) and rows (nrow)
+      * The next ncol+1 entries are the col offsets (colind). Note that the last element colind[ncol] gives the number of nonzeros
+      * The last colind[ncol] entries are the row indices
       **/
   /// @{
   

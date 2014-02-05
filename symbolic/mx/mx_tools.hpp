@@ -37,16 +37,16 @@ namespace CasADi{
   */
   MX vertcat(const std::vector<MX>& x);
 
-  /** \brief  split vertically, retaining groups of rows
-  * \param output_offset List of all start rows for each group
-  *      the last row group will run to the end.
+  /** \brief  split vertically, retaining groups of cols
+  * \param output_offset List of all start cols for each group
+  *      the last col group will run to the end.
   * 
   *   vertcat(vertsplit(x,...)) = x
   */
   std::vector<MX> vertsplit(const MX& x, const std::vector<int>& output_offset);
 
-  /** \brief  split vertically, retaining fixed-sized groups of rows
-  * \param incr Size of each group of rows
+  /** \brief  split vertically, retaining fixed-sized groups of cols
+  * \param incr Size of each group of cols
   *
   *  vertcat(vertsplit(x,...)) = x
   */
@@ -58,16 +58,16 @@ namespace CasADi{
   */
   MX horzcat(const std::vector<MX>& comp);
   
-  /** \brief  split horizontally, retaining groups of columns
-  * \param output_offset List of all start columns for each group
-  *      the last column group will run to the end.
+  /** \brief  split horizontally, retaining groups of rows
+  * \param output_offset List of all start rows for each group
+  *      the last row group will run to the end.
   *
   *   horzcat(horzsplit(x,...)) = x
   */
   std::vector<MX> horzsplit(const MX& x, const std::vector<int>& output_offset);
 
-  /** \brief  split horizontally, retaining fixed-sized groups of columns
-  * \param incr Size of each group of columns
+  /** \brief  split horizontally, retaining fixed-sized groups of rows
+  * \param incr Size of each group of rows
   *
   *   horzcat(horzsplit(x,...)) = x
   */
@@ -80,16 +80,16 @@ namespace CasADi{
   MX blockcat(const std::vector< std::vector<MX > > &v);
   
   /** \brief  chop up into blocks
-  * \brief vert_offset Defines the boundaries of the block rows
-  * \brief horz_offset Defines the boundaries of the block columns
+  * \brief vert_offset Defines the boundaries of the block cols
+  * \brief horz_offset Defines the boundaries of the block rows
   *
   *   blockcat(blocksplit(x,...,...)) = x
   */
   std::vector< std::vector<MX > > blocksplit(const MX& x, const std::vector<int>& vert_offset, const std::vector<int>& horz_offset);
 
   /** \brief  chop up into blocks
-  * \brief vert_incr Defines the increment for block boundaries in row dimension
-  * \brief horz_incr Defines the increment for block boundaries in column dimension
+  * \brief vert_incr Defines the increment for block boundaries in col dimension
+  * \brief horz_incr Defines the increment for block boundaries in row dimension
   *
   *   blockcat(blocksplit(x,...,...)) = x
   */
@@ -315,11 +315,11 @@ namespace CasADi{
   MX blkdiag(const MX &A, const MX& B);
 #endif // SWIG
 
+  /** \brief Return a col-wise summation of elements */
+  MX sumCols(const MX &x);
+
   /** \brief Return a row-wise summation of elements */
   MX sumRows(const MX &x);
-
-  /** \brief Return a column-wise summation of elements */
-  MX sumCols(const MX &x);
 
   /// Return summation of all elements
   MX sumAll(const MX &x); 

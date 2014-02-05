@@ -87,7 +87,7 @@ void SimulatorInternal::init(){
   for(int i=0; i<getNumOutputs(); ++i) {
     output(i) = Matrix<double>(grid_.size(),output_fcn_.output(i).numel(),0);
     if (!output_fcn_.output(i).empty()) {
-      casadi_assert_message(output_fcn_.output(i).size2()==1,"SimulatorInternal::init: Output function output #" << i << " has shape " << output_fcn_.output(i).dimString() << ", while a column-matrix shape is expected.");
+      casadi_assert_message(output_fcn_.output(i).size2()==1,"SimulatorInternal::init: Output function output #" << i << " has shape " << output_fcn_.output(i).dimString() << ", while a row-matrix shape is expected.");
     }
   }
   

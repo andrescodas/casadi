@@ -93,7 +93,7 @@ namespace CasADi{
 
   template<class T>
   const Matrix<T> Matrix<T>::sub(const std::vector<int>& ii, const Matrix<int>& k) const{
-    std::vector< int > cols = range(size2());
+    std::vector< int > rows = range(size2());
     std::vector< Matrix<T> > temp;
   
     if (!inBounds(ii,size1())) {
@@ -113,7 +113,7 @@ namespace CasADi{
 
   template<class T>
   const Matrix<T> Matrix<T>::sub(const Matrix<int>& k, const std::vector<int>& jj) const{
-    std::vector< int > rows = range(size1());
+    std::vector< int > cols = range(size1());
     std::vector< Matrix<T> > temp;
 
     if (!inBounds(jj,size2())) {
@@ -299,9 +299,9 @@ namespace CasADi{
       elm = m.sub(sp);
     }
 
-    for(int i=0; i<sp.rowind().size()-1; ++i){
-      for(int k=sp.rowind()[i]; k<sp.rowind()[i+1]; ++k){
-        int j=sp.col()[k];
+    for(int i=0; i<sp.colind().size()-1; ++i){
+      for(int k=sp.colind()[i]; k<sp.colind()[i+1]; ++k){
+        int j=sp.row()[k];
         elem(i,j)=elm.data()[k];
       }
     }
@@ -367,11 +367,11 @@ namespace CasADi{
         setNZ(kk.at(k),m);
       }
     } else if (kk.dense() && !m.dense() && kk.size1()==m.size1() && kk.size2()==m.size2()) {
-      const std::vector<int>& col = m.sparsity().col();
-      const std::vector<int>& rowind = m.sparsity().rowind();
-      for(int i=0; i<rowind.size()-1; ++i){
-        for(int k=rowind[i]; k<rowind[i+1]; ++k){
-          int j=col[k];
+      const std::vector<int>& row = m.sparsity().row();
+      const std::vector<int>& colind = m.sparsity().colind();
+      for(int i=0; i<colind.size()-1; ++i){
+        for(int k=colind[i]; k<colind[i+1]; ++k){
+          int j=row[k];
           setNZ(kk.elem(i,j),m[k]);
         }
       }
@@ -398,12 +398,12 @@ namespace CasADi{
       // Create a new data vector
       data().resize(n*m,val);
     
-      // Loop over the rows in reverse order
+      // Loop over the cols in reverse order
       for(int i=n-1; i>=0; --i){
         // Loop over nonzero elements in reverse order
-        for(int el=rowind(i+1)-1; el>=rowind(i); --el){
-          // Column
-          int j = col(el);
+        for(int el=colind(i+1)-1; el>=colind(i); --el){
+          // Row
+          int j = row(el);
         
           // Swap the old position with the new position
           if(el!=j+i*m){
@@ -505,16 +505,16 @@ namespace CasADi{
   
     stream << "[";
   
-    // Loop over rows
+    // Loop over cols
     for(int i=0; i<size1(); ++i){
       // Add delimitor
       if(i!=0) stream << ",";
     
       // Check if nonzero
-      if(rowind(i)==rowind(i+1)){
+      if(colind(i)==colind(i+1)){
         stream << "00";
       } else {
-        stream << data()[rowind(i)];
+        stream << data()[colind(i)];
       }
     }
     stream << "]"; 
@@ -547,9 +547,9 @@ namespace CasADi{
       int j=0;
       int maxj=size2()-1;
     
-      for(int el=rowind(i); el<rowind(i+1); ++el){
+      for(int el=colind(i); el<colind(i+1); ++el){
         // Print leading zeros
-        for(;j<col(el); ++j)
+        for(;j<row(el); ++j)
           stream << "00" << (j==maxj? " " : ",  ");
       
         // Print element
@@ -561,7 +561,7 @@ namespace CasADi{
       for(;j<size2(); ++j)
         stream << "00" << (j==maxj? " " : ",  ");
     
-      // New row
+      // New col
       if(i==size1()-1)
         stream << "]]" << std::endl;
       else
@@ -576,18 +576,18 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::printDense(std::ostream &stream) const{
-    stream << className() << "(rows = " << size1() << ", cols = " << size2() << "):" << std::endl;
+    stream << className() << "(cols = " << size1() << ", rows = " << size2() << "):" << std::endl;
     printMatrix(stream);
   }
 
 
   template<class T>
   void Matrix<T>::printSparse(std::ostream &stream) const {
-    stream << className() << "(rows = " << size1() << ", cols = " << size2() << ", nnz = " << size() << ")";
+    stream << className() << "(cols = " << size1() << ", rows = " << size2() << ", nnz = " << size() << ")";
     if (size()>0) stream << ":" << std::endl;
     for(int i=0; i<size1(); ++i)
-      for(int el=rowind(i); el<rowind(i+1); ++el){
-        int j=col(el);
+      for(int el=colind(i); el<colind(i+1); ++el){
+        int j=row(el);
         stream << "[" << i << "," << j << "] -> " << data()[el] << std::endl;
       }
   }
@@ -624,23 +624,23 @@ namespace CasADi{
   }
 
   template<class T>
-  const std::vector<int>& Matrix<T>::col() const{
-    return sparsity().col();
+  const std::vector<int>& Matrix<T>::row() const{
+    return sparsity().row();
   }
 
   template<class T>
-  const std::vector<int>& Matrix<T>::rowind() const{
-    return sparsity_.rowind();
+  const std::vector<int>& Matrix<T>::colind() const{
+    return sparsity_.colind();
   }
 
   template<class T>
-  int Matrix<T>::col(int el) const{
-    return sparsity_.col(el);
+  int Matrix<T>::row(int el) const{
+    return sparsity_.row(el);
   }
 
   template<class T>
-  int Matrix<T>::rowind(int row) const{
-    return sparsity_.rowind(row);
+  int Matrix<T>::colind(int col) const{
+    return sparsity_.colind(col);
   }
 
   template<class T>
@@ -649,9 +649,9 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::reserve(int nnz, int nrow){
+  void Matrix<T>::reserve(int nnz, int ncol){
     data().reserve(nnz);
-    sparsity_.reserve(nnz,nrow);
+    sparsity_.reserve(nnz,ncol);
   }
 
   template<class T>
@@ -670,7 +670,7 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T>::Matrix(int n, int m, const std::vector<int>& col, const std::vector<int>& rowind, const std::vector<T>& d) : sparsity_(CCSSparsity(n,m,col,rowind)), data_(d){
+  Matrix<T>::Matrix(int n, int m, const std::vector<int>& row, const std::vector<int>& colind, const std::vector<T>& d) : sparsity_(CCSSparsity(n,m,row,colind)), data_(d){
     if(data_.size() != sparsity_.size())
       data_.resize(sparsity_.size()); // Why not throw an error?
     sanityCheck(true);
@@ -814,16 +814,16 @@ namespace CasADi{
   template<class T>
   void Matrix<T>::getBand(int kl, int ku, int ldres, T *res) const{
     // delete the content of the matrix
-    for(int j=0; j<size2(); ++j) // loop over columns
+    for(int j=0; j<size2(); ++j) // loop over rows
       for(int s=0; s<kl+ku+1; ++s) // loop over the subdiagonals
         res[s + ldres*j] = 0;
   
-    // loop over rows
+    // loop over cols
     for(int i=0; i<size1(); ++i){ 
     
       // loop over the non-zero elements
-      for(int el=rowind(i); el<rowind(i+1); ++el){ 
-        int j=col(el);  // column
+      for(int el=colind(i); el<colind(i+1); ++el){ 
+        int j=row(el);  // row
       
         // Check if we have not yet inside the band
         if(j<i-kl) continue;
@@ -938,9 +938,9 @@ namespace CasADi{
                             "I am a dense matrix of shape " << size1() << " x " << size2() << " ready to fill something up with " << numel() << " elements," << std::endl <<
                             "but you supplied something with " << len << " elements."); 
       int k=0; // index of the result
-      for(int i=0; i<size1(); ++i) // loop over rows
-        for(int el=rowind(i); el<rowind(i+1); ++el){ // loop over the non-zero elements
-          int j=col(el);  // column
+      for(int i=0; i<size1(); ++i) // loop over cols
+        for(int el=colind(i); el<colind(i+1); ++el){ // loop over the non-zero elements
+          int j=row(el);  // row
           for(; k<i*size2()+j; ++k)
             val[k] = 0; // add zeros before the non-zero element
 
@@ -954,10 +954,10 @@ namespace CasADi{
     } else if(sp==SPARSESYM){
       // copy to the result vector
       int nz = 0;
-      for(int row=0; row<size1(); ++row){
-        // Loop over the elements in the row
-        for(int el=rowind(row); el<rowind(row+1); ++el){ // loop over the non-zero elements
-          if(col(el) > row) break; // break inner loop (only lower triangular part is used)
+      for(int col=0; col<size1(); ++col){
+        // Loop over the elements in the col
+        for(int el=colind(col); el<colind(col+1); ++el){ // loop over the non-zero elements
+          if(row(el) > col) break; // break inner loop (only lower triangular part is used)
           val[nz++] = v[el];
         }
       }
@@ -1007,10 +1007,10 @@ namespace CasADi{
                             "Matrix<T>::setArray: Dimension mismatch." << std::endl <<
                             "I am a dense matrix of shape " << size1() << " x " << size2() << " ready to be filled up with " << numel() << " elements," << std::endl <<
                             "but you supplied something with " << len << " elements."); 
-      for(int i=0; i<size1(); ++i) // loop over rows
-        for(int el=rowind(i); el<rowind(i+1); ++el){ // loop over the non-zero elements
-          // column
-          int j=col(el);
+      for(int i=0; i<size1(); ++i) // loop over cols
+        for(int el=colind(i); el<colind(i+1); ++el){ // loop over the non-zero elements
+          // row
+          int j=row(el);
         
           // Set the element
           v[el] = val[i*size2()+j];
@@ -1020,10 +1020,10 @@ namespace CasADi{
       sparsity().transpose(mapping,false);
       // copy to the result vector
       int nz = 0;
-      for(int row=0; row<size1(); ++row){
-        // Loop over the elements in the row
-        for(int el=rowind(row); el<rowind(row+1); ++el){ // loop over the non-zero elements
-          if(col(el) > row) break; // break inner loop (only lower triangular part is used)
+      for(int col=0; col<size1(); ++col){
+        // Loop over the elements in the col
+        for(int el=colind(col); el<colind(col+1); ++el){ // loop over the non-zero elements
+          if(row(el) > col) break; // break inner loop (only lower triangular part is used)
           v[el] = val[nz++];
           v[mapping[el]] = v[el];
         }
@@ -1252,19 +1252,19 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::enlarge(int nrow, int ncol, const std::vector<int>& ii, const std::vector<int>& jj){
-    sparsityRef().enlarge(nrow,ncol,ii,jj);
+  void Matrix<T>::enlarge(int ncol, int nrow, const std::vector<int>& ii, const std::vector<int>& jj){
+    sparsityRef().enlarge(ncol,nrow,ii,jj);
   }
 
   template<class T>
   void Matrix<T>::sanityCheck(bool complete) const {
     sparsity_.sanityCheck(complete);
   
-    if (data_.size()!=sparsity_.col().size()) {
+    if (data_.size()!=sparsity_.row().size()) {
       std::stringstream s;
-      s << "Matrix:Compressed Row Storage is not sane. The following must hold:" << std::endl;
-      s << "  data.size() = ncol, but got   col.size()  = " << data_.size() << "   and   ncol = "  << sparsity_.col().size() << std::endl;
-      s << "  Note that the signature is as follows: DMatrix (nrow, ncol, col, rowind, data)." << std::endl;
+      s << "Matrix:Compressed Col Storage is not sane. The following must hold:" << std::endl;
+      s << "  data.size() = nrow, but got   row.size()  = " << data_.size() << "   and   nrow = "  << sparsity_.row().size() << std::endl;
+      s << "  Note that the signature is as follows: DMatrix (ncol, nrow, row, colind, data)." << std::endl;
       casadi_error(s.str());
     }
   }
@@ -1311,25 +1311,25 @@ namespace CasADi{
     casadi_assert_message(x.size2()==y.size1(),"Dimension error. Got x=" << x.dimString() << " and y=" << y.dimString() << ".");
   
     // Direct access to the arrays
-    const std::vector<int> &x_rowind = x.rowind();
-    const std::vector<int> &x_col = x.col();
+    const std::vector<int> &x_colind = x.colind();
+    const std::vector<int> &x_row = x.row();
     const std::vector<T> &x_data = x.data();
-    const std::vector<int> &y_rowind = y.rowind();
-    const std::vector<int> &y_col = y.col();
+    const std::vector<int> &y_colind = y.colind();
+    const std::vector<int> &y_row = y.row();
     const std::vector<T> &y_data = y.data();
-    const std::vector<int> &z_rowind = z.rowind();
-    const std::vector<int> &z_col = z.col();
+    const std::vector<int> &z_colind = z.colind();
+    const std::vector<int> &z_row = z.row();
     std::vector<T> &z_data = z.data();
 
-    // loop over the rows of the first argument
-    for(int i=0; i<x_rowind.size()-1; ++i){
-      for(int el=x_rowind[i]; el<x_rowind[i+1]; ++el){ // loop over the non-zeros of the first argument
-        int j = x_col[el];
-        int el1 = z_rowind[i];
-        int el2 = y_rowind[j];
-        while(el1 < z_rowind[i+1] && el2 < y_rowind[j+1]){ // loop over matching non-zero elements
-          int j1 = z_col[el1];
-          int i2 = y_col[el2];      
+    // loop over the cols of the first argument
+    for(int i=0; i<x_colind.size()-1; ++i){
+      for(int el=x_colind[i]; el<x_colind[i+1]; ++el){ // loop over the non-zeros of the first argument
+        int j = x_row[el];
+        int el1 = z_colind[i];
+        int el2 = y_colind[j];
+        while(el1 < z_colind[i+1] && el2 < y_colind[j+1]){ // loop over matching non-zero elements
+          int j1 = z_row[el1];
+          int i2 = y_row[el2];      
           if(j1==i2){
             z_data[el1++] += x_data[el]*y_data[el2++];
           } else if(j1<i2) {
@@ -1349,14 +1349,14 @@ namespace CasADi{
     casadi_assert_message(x.size2()==y.size(),"Dimension error. Got x=" << x.dimString() << " and y=" << y.size() << ".");
     
     // Direct access to the arrays
-    const std::vector<int> &x_rowind = x.rowind();
-    const std::vector<int> &x_col = x.col();
+    const std::vector<int> &x_colind = x.colind();
+    const std::vector<int> &x_row = x.row();
     const std::vector<T> &x_data = x.data();
     
-    // loop over the rows of the matrix
-    for(int i=0; i<x_rowind.size()-1; ++i){
-      for(int el=x_rowind[i]; el<x_rowind[i+1]; ++el){ // loop over the non-zeros of the matrix
-        int j = x_col[el];
+    // loop over the cols of the matrix
+    for(int i=0; i<x_colind.size()-1; ++i){
+      for(int el=x_colind[i]; el<x_colind[i+1]; ++el){ // loop over the non-zeros of the matrix
+        int j = x_row[el];
         
         // Perform operation
         z[i] += x_data[el] * y[j];
@@ -1371,14 +1371,14 @@ namespace CasADi{
     casadi_assert_message(x_trans.size1()==y.size(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and y=" << y.size() << ".");
     
     // Direct access to the arrays
-    const std::vector<int> &x_colind = x_trans.rowind();
-    const std::vector<int> &x_row = x_trans.col();
+    const std::vector<int> &x_rowind = x_trans.colind();
+    const std::vector<int> &x_col = x_trans.row();
     const std::vector<T> &x_trans_data = x_trans.data();
     
-    // loop over the columns of the matrix
-    for(int i=0; i<x_colind.size()-1; ++i){
-      for(int el=x_colind[i]; el<x_colind[i+1]; ++el){ // loop over the non-zeros of the matrix
-        int j = x_row[el];
+    // loop over the rows of the matrix
+    for(int i=0; i<x_rowind.size()-1; ++i){
+      for(int el=x_rowind[i]; el<x_rowind[i+1]; ++el){ // loop over the non-zeros of the matrix
+        int j = x_col[el];
         z[j] += x_trans_data[el] * y[i];
       }
     }
@@ -1392,25 +1392,25 @@ namespace CasADi{
     casadi_assert_message(x_trans.size1()==y.size1(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and y=" << y.dimString() << ".");
   
     // Direct access to the arrays
-    const std::vector<int> &x_colind = x_trans.rowind();
-    const std::vector<int> &x_row = x_trans.col();
+    const std::vector<int> &x_rowind = x_trans.colind();
+    const std::vector<int> &x_col = x_trans.row();
     const std::vector<T> &x_trans_data = x_trans.data();
-    const std::vector<int> &y_rowind = y.rowind();
-    const std::vector<int> &y_col = y.col();
+    const std::vector<int> &y_colind = y.colind();
+    const std::vector<int> &y_row = y.row();
     const std::vector<T> &y_data = y.data();
-    const std::vector<int> &z_rowind = z.rowind();
-    const std::vector<int> &z_col = z.col();
+    const std::vector<int> &z_colind = z.colind();
+    const std::vector<int> &z_row = z.row();
     std::vector<T> &z_data = z.data();
 
-    // loop over the columns of the first argument
-    for(int i=0; i<x_colind.size()-1; ++i){
-      for(int el=x_colind[i]; el<x_colind[i+1]; ++el){ // loop over the non-zeros of the first argument
-        int j = x_row[el];
-        int el1 = y_rowind[i];
-        int el2 = z_rowind[j];
-        while(el1 < y_rowind[i+1] && el2 < z_rowind[j+1]){ // loop over matching non-zero elements
-          int j1 = y_col[el1];
-          int i2 = z_col[el2];      
+    // loop over the rows of the first argument
+    for(int i=0; i<x_rowind.size()-1; ++i){
+      for(int el=x_rowind[i]; el<x_rowind[i+1]; ++el){ // loop over the non-zeros of the first argument
+        int j = x_col[el];
+        int el1 = y_colind[i];
+        int el2 = z_colind[j];
+        while(el1 < y_colind[i+1] && el2 < z_colind[j+1]){ // loop over matching non-zero elements
+          int j1 = y_row[el1];
+          int i2 = z_row[el2];      
           if(j1==i2){
             z_data[el2++] += x_trans_data[el] * y_data[el1++];
           } else if(j1<i2) {
@@ -1431,36 +1431,36 @@ namespace CasADi{
     casadi_assert_message(x.size2()==y_trans.size2(),"Dimension error. Got x=" << x.dimString() << " and y_trans=" << y_trans.dimString() << ".");
   
     // Direct access to the arrays
-    const std::vector<int> &x_rowind = x.rowind();
-    const std::vector<int> &x_col = x.col();
+    const std::vector<int> &x_colind = x.colind();
+    const std::vector<int> &x_row = x.row();
     const std::vector<T> &x_data = x.data();
-    const std::vector<int> &y_colind = y_trans.rowind();
-    const std::vector<int> &y_row = y_trans.col();
+    const std::vector<int> &y_rowind = y_trans.colind();
+    const std::vector<int> &y_col = y_trans.row();
     const std::vector<T> &y_trans_data = y_trans.data();
-    const std::vector<int> &z_rowind = z.rowind();
-    const std::vector<int> &z_col = z.col();
+    const std::vector<int> &z_colind = z.colind();
+    const std::vector<int> &z_row = z.row();
     std::vector<T> &z_data = z.data();
 
 #ifdef WITH_EIGEN3
     // NOTE: this doesn't belong here. It should be put at some higher level. Also, is this really fast than the implementation below?
     if (x.dense() && y_trans.dense() && z.dense()) {
-      Eigen::Map< const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic , Eigen::RowMajor > > X(&x_data[0],x.size1(),x.size2());
+      Eigen::Map< const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic , Eigen::ColMajor > > X(&x_data[0],x.size1(),x.size2());
       Eigen::Map< const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic > > Y(&y_trans_data[0],y_trans.size2(),y_trans.size1());
-      Eigen::Map< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic , Eigen::RowMajor> > Z(&z.data()[0],z.size1(),z.size2());
+      Eigen::Map< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic , Eigen::ColMajor> > Z(&z.data()[0],z.size1(),z.size2());
       Z = X*Y;
       return;
     }
 #endif
   
-    // loop over the rows of the resulting matrix
-    for(int i=0; i<z_rowind.size()-1; ++i){
-      for(int el=z_rowind[i]; el<z_rowind[i+1]; ++el){ // loop over the non-zeros of the resulting matrix
-        int j = z_col[el];
-        int el1 = x_rowind[i];
-        int el2 = y_colind[j];
-        while(el1 < x_rowind[i+1] && el2 < y_colind[j+1]){ // loop over non-zero elements
-          int j1 = x_col[el1];
-          int i2 = y_row[el2];      
+    // loop over the cols of the resulting matrix
+    for(int i=0; i<z_colind.size()-1; ++i){
+      for(int el=z_colind[i]; el<z_colind[i+1]; ++el){ // loop over the non-zeros of the resulting matrix
+        int j = z_row[el];
+        int el1 = x_colind[i];
+        int el2 = y_rowind[j];
+        while(el1 < x_colind[i+1] && el2 < y_rowind[j+1]){ // loop over non-zero elements
+          int j1 = x_row[el1];
+          int i2 = y_col[el2];      
           if(j1==i2){
             z_data[el] += x_data[el1++] * y_trans_data[el2++];
           } else if(j1<i2) {
@@ -1477,27 +1477,27 @@ namespace CasADi{
   template<bool Fwd>
   void Matrix<T>::mul_sparsity(Matrix<T> &x, Matrix<T> &y_trans, Matrix<T>& z){
     // Direct access to the arrays
-    const std::vector<int> &z_col = z.col();
-    const std::vector<int> &z_rowind = z.rowind();
-    const std::vector<int> &x_col = x.col();
-    const std::vector<int> &y_row = y_trans.col();
-    const std::vector<int> &x_rowind = x.rowind();
-    const std::vector<int> &y_colind = y_trans.rowind();
+    const std::vector<int> &z_row = z.row();
+    const std::vector<int> &z_colind = z.colind();
+    const std::vector<int> &x_row = x.row();
+    const std::vector<int> &y_col = y_trans.row();
+    const std::vector<int> &x_colind = x.colind();
+    const std::vector<int> &y_rowind = y_trans.colind();
 
     // Convert data array to arrays of integers
     bvec_t *x_data = get_bvec_t(x.data());
     bvec_t *y_trans_data = get_bvec_t(y_trans.data());
     bvec_t *z_data = get_bvec_t(z.data());
   
-    // loop over the rows of the resulting matrix)
-    for(int i=0; i<z_rowind.size()-1; ++i){
-      for(int el=z_rowind[i]; el<z_rowind[i+1]; ++el){ // loop over the non-zeros of the resulting matrix
-        int j = z_col[el];
-        int el1 = x_rowind[i];
-        int el2 = y_colind[j];
-        while(el1 < x_rowind[i+1] && el2 < y_colind[j+1]){ // loop over non-zero elements
-          int j1 = x_col[el1];
-          int i2 = y_row[el2];      
+    // loop over the cols of the resulting matrix)
+    for(int i=0; i<z_colind.size()-1; ++i){
+      for(int el=z_colind[i]; el<z_colind[i+1]; ++el){ // loop over the non-zeros of the resulting matrix
+        int j = z_row[el];
+        int el1 = x_colind[i];
+        int el2 = y_rowind[j];
+        while(el1 < x_colind[i+1] && el2 < y_rowind[j+1]){ // loop over non-zero elements
+          int j1 = x_row[el1];
+          int i2 = y_col[el2];      
           if(j1==i2){
             // | and not & since we are propagating dependencies
             if(Fwd){
@@ -1524,19 +1524,19 @@ namespace CasADi{
     casadi_assert_message(x.size()==A.size1() && x.size()==A.size2(),"Dimension mismatch. Got x=" << x.size() << " and A=" << A.dimString());
   
     // Access the internal data of A
-    const std::vector<int> &A_rowind = A.rowind();
-    const std::vector<int> &A_col = A.col();
+    const std::vector<int> &A_colind = A.colind();
+    const std::vector<int> &A_row = A.row();
     const std::vector<T> &A_data = A.data();
   
     // Return value
     T ret=0;
 
-    // Loop over the rows of A
+    // Loop over the cols of A
     for(int i=0; i<x.size(); ++i){
       // Loop over the nonzeros of A
-      for(int el=A_rowind[i]; el<A_rowind[i+1]; ++el){
-        // Get column
-        int j = A_col[el];
+      for(int el=A_colind[i]; el<A_colind[i+1]; ++el){
+        // Get row
+        int j = A_row[el];
       
         // Add contribution
         ret += x[i]*A_data[el]*x[j];
@@ -1709,20 +1709,20 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::sparse(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d) {
-    return sparse(row,col,d,*std::max_element(row.begin(),row.end()),*std::max_element(col.begin(),col.end()));
+  Matrix<T> Matrix<T>::sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d) {
+    return sparse(col,row,d,*std::max_element(col.begin(),col.end()),*std::max_element(row.begin(),row.end()));
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::sparse(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d, const std::pair<int,int>& nm) {
-    return sparse(row,col,d,nm.first,nm.second);
+  Matrix<T> Matrix<T>::sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d, const std::pair<int,int>& nm) {
+    return sparse(col,row,d,nm.first,nm.second);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::sparse(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d, int n, int m) {
-    casadi_assert_message(row.size()==col.size() && row.size()==d.size(),"Argument error in Matrix<T>::sparse(row,col,d): supplied lists must all be of equal length, but got: " << row.size() << ", " << col.size()  << " and " << d.size());
+  Matrix<T> Matrix<T>::sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d, int n, int m) {
+    casadi_assert_message(col.size()==row.size() && col.size()==d.size(),"Argument error in Matrix<T>::sparse(col,row,d): supplied lists must all be of equal length, but got: " << col.size() << ", " << row.size()  << " and " << d.size());
     std::vector<int> mapping;
-    Matrix<T> ret(sp_triplet(n,m,row,col,mapping),0);
+    Matrix<T> ret(sp_triplet(n,m,col,row,mapping),0);
   
     for (int k=0;k<mapping.size();++k) ret.data()[k] = d[mapping[k]];
   
@@ -1765,15 +1765,15 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::repmat(const Matrix<T>& x, int nrow, int ncol){
+  Matrix<T> Matrix<T>::repmat(const Matrix<T>& x, int ncol, int nrow){
     if(x.scalar()){
       if(x.dense()){
-        return Matrix<T>(nrow,ncol,x.toScalar());
+        return Matrix<T>(ncol,nrow,x.toScalar());
       } else {
-        return sparse(nrow,ncol);
+        return sparse(ncol,nrow);
       }
     } else {
-      return horzcat(std::vector< Matrix<T> >(ncol,vertcat(std::vector< Matrix<T> >(nrow,x))));
+      return horzcat(std::vector< Matrix<T> >(nrow,vertcat(std::vector< Matrix<T> >(ncol,x))));
     }
   }
 
@@ -1856,9 +1856,9 @@ namespace CasADi{
     nz.k ++;
   
     if (nz.k < m_.size()) {
-      nz.j = m_.col()[nz.k];
+      nz.j = m_.row()[nz.k];
       nz.el = m_.data()[nz.k];
-      while (nz.k>=m_.rowind(nz.i)) {nz.i++; }
+      while (nz.k>=m_.colind(nz.i)) {nz.i++; }
     }
     return *this;
   }

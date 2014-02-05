@@ -74,21 +74,21 @@ ExternalFunctionInternal::ExternalFunctionInternal(const std::string& bin_name) 
   // Get the sparsity pattern
   for(int i=0; i<n_in+n_out; ++i){
     // Get sparsity from file
-    int nrow, ncol, *rowind, *col;
-    flag = getSparsity(i,&nrow,&ncol,&rowind,&col);
+    int ncol, nrow, *colind, *row;
+    flag = getSparsity(i,&ncol,&nrow,&colind,&row);
     if(flag) throw CasadiException("ExternalFunctionInternal: \"getSparsity\" failed");
 
-    // Row offsets
-    vector<int> rowindv(rowind,rowind+nrow+1);
+    // Col offsets
+    vector<int> colindv(colind,colind+ncol+1);
     
     // Number of nonzeros
-    int nnz = rowindv.back();
+    int nnz = colindv.back();
     
-    // Columns
-    vector<int> colv(col,col+nnz);
+    // Rows
+    vector<int> rowv(row,row+nnz);
     
     // Sparsity
-    CCSSparsity sp(nrow,ncol,colv,rowindv);
+    CCSSparsity sp(ncol,nrow,rowv,colindv);
     
     // Save to inputs/outputs
     if(i<n_in){

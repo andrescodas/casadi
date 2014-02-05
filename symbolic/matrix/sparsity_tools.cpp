@@ -52,37 +52,37 @@ namespace CasADi{
 
     int c=0;
     int t=0;
-    std::vector< int >          col((n*(n+1))/2,0);
+    std::vector< int >          row((n*(n+1))/2,0);
     for (int i=0;i<(n*(n+1))/2;i++) {
-      col[i]=t++;
+      row[i]=t++;
       if (t>c) {
         t=0;
         c++;
       }
     }
 
-    std::vector< int >          rowind(n+1,0);
+    std::vector< int >          colind(n+1,0);
     c=0;
     for (int i=1;i<n+1;i++)
-      rowind[i]=rowind[i-1]+1+(c++);
+      colind[i]=colind[i-1]+1+(c++);
 
-    return CCSSparsity(n,n,col,rowind);
+    return CCSSparsity(n,n,row,colind);
   }
 
   CCSSparsity sp_diag(int n){
     casadi_assert_message(n>=0, "sp_diag expects a positive integer as argument");
   
     // Construct sparsity pattern
-    std::vector<int> col(n);
-    std::vector<int> rowind(n+1);
+    std::vector<int> row(n);
+    std::vector<int> colind(n+1);
     int el = 0;
     for(int i=0; i<n; ++i){
-      rowind[i] = el;
-      col[el++] = i;
+      colind[i] = el;
+      row[el++] = i;
     }
-    rowind.back() = el;
+    colind.back() = el;
 
-    return CCSSparsity(n,n,col,rowind);
+    return CCSSparsity(n,n,row,colind);
   }
 
   CCSSparsity sp_band(int n, int p) {
@@ -91,21 +91,21 @@ namespace CasADi{
   
     int nc = n-(p<0? -p : p);
   
-    std::vector< int >          col(nc);
+    std::vector< int >          row(nc);
   
     int offset = max(p,0);
     for (int i=0;i<nc;i++) {
-      col[i]=i+offset;
+      row[i]=i+offset;
     }
   
-    std::vector< int >          rowind(n+1);
+    std::vector< int >          colind(n+1);
   
     offset = min(p,0);
     for (int i=0;i<n+1;i++) {
-      rowind[i]=max(min(i+offset,nc),0);
+      colind[i]=max(min(i+offset,nc),0);
     }
   
-    return CCSSparsity(n,n,col,rowind);
+    return CCSSparsity(n,n,row,colind);
   
   }
 
@@ -118,53 +118,53 @@ namespace CasADi{
     return ret;
   }
 
-  CCSSparsity sp_rowcol(const std::vector<int>& row_, const std::vector<int>& col_, int nrow, int ncol) {
-    std::vector<int> row = row_;
+  CCSSparsity sp_colrow(const std::vector<int>& col_, const std::vector<int>& row_, int ncol, int nrow) {
     std::vector<int> col = col_;
+    std::vector<int> row = row_;
     
-    std::vector<int> rowind(nrow+1);
-    std::vector<int> col_new(row.size()*col.size());
+    std::vector<int> colind(ncol+1);
+    std::vector<int> row_new(col.size()*row.size());
     
-    std::sort(row.begin(),row.end());
     std::sort(col.begin(),col.end());
+    std::sort(row.begin(),row.end());
   
-    // resulting col: the entries of col are repeated row.size() times
-    for (int i=0;i<row.size();i++)
-      std::copy(col.begin(),col.end(),col_new.begin()+col.size()*i);
+    // resulting row: the entries of row are repeated col.size() times
+    for (int i=0;i<col.size();i++)
+      std::copy(row.begin(),row.end(),row_new.begin()+row.size()*i);
 
-    // resulting rowind: first entry is always zero
+    // resulting colind: first entry is always zero
     int cnt=0;
     int z=0;
-    rowind[0]=0;
+    colind[0]=0;
     int k=0;
     try {
-      for (k=0; k < row.size(); k++) {
-        // resulting rowind: fill up rowind entries with copies
-        while (z<row[k])
-          rowind.at(++z)=cnt;
+      for (k=0; k < col.size(); k++) {
+        // resulting colind: fill up colind entries with copies
+        while (z<col[k])
+          colind.at(++z)=cnt;
         
-        // resulting rowind: add col.size() at each row[k]
-        rowind.at(row[k]+1)=(cnt+=col.size());
+        // resulting colind: add row.size() at each col[k]
+        colind.at(col[k]+1)=(cnt+=row.size());
       }
-      while (z<nrow)
-        rowind.at(++z)=cnt;                 
+      while (z<ncol)
+        colind.at(++z)=cnt;                 
     }
     catch (out_of_range& oor) {
       casadi_error(
-                   "sp_rowcol: out-of-range error." << endl <<
-                   "The " << k << "th entry of row (" << row[k] << ") was bigger or equal to the specified total number of rows (" << nrow << ")"
+                   "sp_colrow: out-of-range error." << endl <<
+                   "The " << k << "th entry of col (" << col[k] << ") was bigger or equal to the specified total number of cols (" << ncol << ")"
                    );
     }
-    return CCSSparsity(nrow, ncol, col_new, rowind);
+    return CCSSparsity(ncol, nrow, row_new, colind);
   }
 
   std::vector<int> getNZDense(const CCSSparsity &sp) {
     std::vector<int> ret(sp.size());
-    std::vector<int> row = sp.getRow();
-    const std::vector<int> &col = sp.col();
+    std::vector<int> col = sp.getCol();
+    const std::vector<int> &row = sp.row();
     int s2 = sp.size2();
     for(int k=0;k<sp.size();k++) {
-      ret[k] = col[k]+row[k]*s2;
+      ret[k] = row[k]+col[k]*s2;
     }
     return ret;
   }
@@ -176,23 +176,23 @@ namespace CasADi{
                           n << " x " << m << " =  " << n*m
                           );
 
-    // our strategy is: (col,rowind) -> (col,row) -> modulus calculus -> (col_new, row_new) -> sp_NZ
-    std::vector<int> row = a.getRow();
-    const std::vector<int> &col = a.col();
+    // our strategy is: (row,colind) -> (row,col) -> modulus calculus -> (row_new, col_new) -> sp_NZ
+    std::vector<int> col = a.getCol();
+    const std::vector<int> &row = a.row();
 
-    std::vector<int> row_new(a.size());
     std::vector<int> col_new(a.size());
+    std::vector<int> row_new(a.size());
   
     //  int i=0;int j=0; int z =0;
     for(int k=0; k<a.size(); ++k){
-      int i = row[k];
-      int j = col[k];
+      int i = col[k];
+      int j = row[k];
       int z = j+i*a.size2();
-      row_new[k] = z/m;
-      col_new[k] = z%m;
+      col_new[k] = z/m;
+      row_new[k] = z%m;
     }
   
-    return  sp_triplet(n,m,row_new,col_new);
+    return  sp_triplet(n,m,col_new,row_new);
   }
 
   CCSSparsity vec(const CCSSparsity& a){
@@ -205,95 +205,95 @@ namespace CasADi{
 
 
   CCSSparsity lowerSparsity(const CCSSparsity& a, bool includeDiagonal) {
-    const std::vector<int> & col= a.col();
-    std::vector<int> row = a.getRow();
+    const std::vector<int> & row= a.row();
+    std::vector<int> col = a.getCol();
   
 
-    std::vector<int> new_col;   // new col
     std::vector<int> new_row;   // new row
+    std::vector<int> new_col;   // new col
   
     int offset = (includeDiagonal ? 1 : 0);
   
     // Find size
     int n=0;
-    for (int k=0;k<row.size();k++) n+= row[k] + offset > col[k];
-    new_col.resize(n);
+    for (int k=0;k<col.size();k++) n+= col[k] + offset > row[k];
     new_row.resize(n);
+    new_col.resize(n);
   
     // populate return vector
     int cnt=0;
-    for (int k=0;k<row.size();k++) {
-      if (row[k] + offset > col[k]) {
-        new_col[cnt]=col[k];
+    for (int k=0;k<col.size();k++) {
+      if (col[k] + offset > row[k]) {
         new_row[cnt]=row[k];
+        new_col[cnt]=col[k];
         cnt++;
       }
     }
-    return sp_triplet(a.size1(), a.size2(), new_row, new_col);
+    return sp_triplet(a.size1(), a.size2(), new_col, new_row);
   
   }
 
   std::vector<int> lowerNZ(const CCSSparsity& a) {
-    const std::vector<int> & col= a.col();
-    std::vector<int> row = a.getRow();
+    const std::vector<int> & row= a.row();
+    std::vector<int> col = a.getCol();
   
     // Return vector
     std::vector<int> ret;
   
     // Find size of return vector
     int n=0;
-    for (int k=0;k<row.size();k++) n+= (row[k] >= col[k]);
+    for (int k=0;k<col.size();k++) n+= (col[k] >= row[k]);
     ret.resize(n);
   
     // populate return vector
     int cnt=0;
-    for (int k=0;k<row.size();k++) {
-      if (row[k] >= col[k]) ret[cnt++]=k;
+    for (int k=0;k<col.size();k++) {
+      if (col[k] >= row[k]) ret[cnt++]=k;
     }
   
     return ret;
   }
 
-  CCSSparsity sp_triplet(int nrow, int ncol, const std::vector<int>& row, const std::vector<int>& col, std::vector<int>& mapping, bool invert_mapping){
+  CCSSparsity sp_triplet(int ncol, int nrow, const std::vector<int>& col, const std::vector<int>& row, std::vector<int>& mapping, bool invert_mapping){
     // Assert dimensions
-    casadi_assert_message(row.size()==col.size(),"inconsistent lengths");
+    casadi_assert_message(col.size()==row.size(),"inconsistent lengths");
 
     // Create the return sparsity pattern and access vectors
-    CCSSparsity ret(nrow,ncol);
-    vector<int> &r_rowind = ret.rowindRef();
-    vector<int> &r_col = ret.colRef();
-    r_col.reserve(col.size());
+    CCSSparsity ret(ncol,nrow);
+    vector<int> &r_colind = ret.colindRef();
+    vector<int> &r_row = ret.rowRef();
+    r_row.reserve(row.size());
 
     // Consistency check and check if elements are already perfectly ordered with no duplicates
-    int last_row=-1, last_col=-1;
+    int last_col=-1, last_row=-1;
     bool perfectly_ordered=true;
-    for(int k=0; k<row.size(); ++k){
+    for(int k=0; k<col.size(); ++k){
       // Consistency check
-      casadi_assert_message(row[k]>=0 && row[k]<nrow,"Row index out of bounds");
       casadi_assert_message(col[k]>=0 && col[k]<ncol,"Col index out of bounds");
+      casadi_assert_message(row[k]>=0 && row[k]<nrow,"Row index out of bounds");
     
       // Check if ordering is already perfect
-      perfectly_ordered = perfectly_ordered && (row[k]<last_row || (row[k]==last_row && col[k]<=last_col));
-      last_row = row[k];
+      perfectly_ordered = perfectly_ordered && (col[k]<last_col || (col[k]==last_col && row[k]<=last_row));
       last_col = col[k];
+      last_row = row[k];
     }
   
     // Quick return if perfectly ordered
     if(perfectly_ordered){
-      // Save columns
-      r_col.resize(col.size());
-      copy(col.begin(),col.end(),r_col.begin());
+      // Save rows
+      r_row.resize(row.size());
+      copy(row.begin(),row.end(),r_row.begin());
     
       // Find offset index
       int el=0;
-      for(int i=0; i<nrow; ++i){
-        while(el<row.size() && row[el]==i) el++; 
-        r_rowind[i+1] = el;
+      for(int i=0; i<ncol; ++i){
+        while(el<col.size() && col[el]==i) el++; 
+        r_colind[i+1] = el;
       }
     
       // Identity mapping
-      mapping.resize(col.size());
-      for(int k=0; k<col.size(); ++k)
+      mapping.resize(row.size());
+      for(int k=0; k<row.size(); ++k)
         mapping[k] = k;
     
       // Quick return
@@ -301,75 +301,75 @@ namespace CasADi{
     }
     
     // Reuse data
-    vector<int>& mapping1 = invert_mapping ? r_col : mapping;
-    vector<int>& mapping2 = invert_mapping ? mapping : r_col;
+    vector<int>& mapping1 = invert_mapping ? r_row : mapping;
+    vector<int>& mapping2 = invert_mapping ? mapping : r_row;
   
     // Make sure that enough memory is allocated to use as a work vector
-    mapping1.reserve(std::max(ncol+1,int(row.size())));
-  
-    // Number of elements in each column
-    vector<int>& colcount = mapping1; // reuse memory
-    colcount.resize(ncol+1);
-    fill(colcount.begin(),colcount.end(),0);
-    for(vector<int>::const_iterator it=col.begin(); it!=col.end(); ++it){
-      colcount[*it+1]++;
-    }
-  
-    // Cumsum to get index offset for each column
-    for(int i=0; i<ncol; ++i){
-      colcount[i+1] += colcount[i];
-    }
-  
-    // New column for each old column
-    mapping2.resize(col.size());
-    for(int k=0; k<col.size(); ++k){
-      mapping2[colcount[col[k]]++] = k;
-    }
+    mapping1.reserve(std::max(nrow+1,int(col.size())));
   
     // Number of elements in each row
-    vector<int>& rowcount = r_rowind; // reuse memory, r_rowind is already the right size and is filled with zeros
-    for(vector<int>::const_iterator it=mapping2.begin(); it!=mapping2.end(); ++it){
-      rowcount[row[*it]+1]++;
+    vector<int>& rowcount = mapping1; // reuse memory
+    rowcount.resize(nrow+1);
+    fill(rowcount.begin(),rowcount.end(),0);
+    for(vector<int>::const_iterator it=row.begin(); it!=row.end(); ++it){
+      rowcount[*it+1]++;
     }
   
     // Cumsum to get index offset for each row
     for(int i=0; i<nrow; ++i){
       rowcount[i+1] += rowcount[i];
     }
-
+  
     // New row for each old row
-    mapping1.resize(row.size());
+    mapping2.resize(row.size());
+    for(int k=0; k<row.size(); ++k){
+      mapping2[rowcount[row[k]]++] = k;
+    }
+  
+    // Number of elements in each col
+    vector<int>& colcount = r_colind; // reuse memory, r_colind is already the right size and is filled with zeros
     for(vector<int>::const_iterator it=mapping2.begin(); it!=mapping2.end(); ++it){
-      mapping1[rowcount[row[*it]]++] = *it;
+      colcount[col[*it]+1]++;
+    }
+  
+    // Cumsum to get index offset for each col
+    for(int i=0; i<ncol; ++i){
+      colcount[i+1] += colcount[i];
+    }
+
+    // New col for each old col
+    mapping1.resize(col.size());
+    for(vector<int>::const_iterator it=mapping2.begin(); it!=mapping2.end(); ++it){
+      mapping1[colcount[col[*it]]++] = *it;
     }
 
     // Current element in the return matrix
     int r_el = 0;
-    r_col.resize(row.size());
+    r_row.resize(col.size());
 
     // Current nonzero
     vector<int>::const_iterator it=mapping1.begin();
 
-    // Loop over rows
-    r_rowind[0] = 0;
-    for(int i=0; i<nrow; ++i){
+    // Loop over cols
+    r_colind[0] = 0;
+    for(int i=0; i<ncol; ++i){
     
-      // Previous column (to detect duplicates)
+      // Previous row (to detect duplicates)
       int j_prev = -1;
     
-      // Loop over nonzero elements of the row
-      while(it!=mapping1.end() && row[*it]==i){
+      // Loop over nonzero elements of the col
+      while(it!=mapping1.end() && col[*it]==i){
 
         // Get the element
         int el = *it;
         it++;
 
-        // Get the column
-        int j = col[el];
+        // Get the row
+        int j = row[el];
       
         // If not a duplicate, save to return matrix
         if(j!=j_prev)
-          r_col[r_el++] = j;
+          r_row[r_el++] = j;
       
         if(invert_mapping){
           // Save to the inverse mapping
@@ -380,16 +380,16 @@ namespace CasADi{
             mapping1[r_el-1] = el;
         }
       
-        // Save column
+        // Save row
         j_prev = j;
       }
     
-      // Update row offset
-      r_rowind[i+1] = r_el;
+      // Update col offset
+      r_colind[i+1] = r_el;
     }
 
-    // Resize the column vector
-    r_col.resize(r_el);
+    // Resize the row vector
+    r_row.resize(r_el);
 
     // Resize mapping matrix
     if(!invert_mapping){
@@ -400,9 +400,9 @@ namespace CasADi{
   }
 
 
-  CCSSparsity sp_triplet(int n, int m, const std::vector<int>& row, const std::vector<int>& col){
+  CCSSparsity sp_triplet(int n, int m, const std::vector<int>& col, const std::vector<int>& row){
     std::vector<int> mapping;
-    return sp_triplet(n,m,row,col,mapping,false);
+    return sp_triplet(n,m,col,row,mapping,false);
   }
 
 
@@ -410,41 +410,41 @@ namespace CasADi{
     return (mul(DMatrix(a,1),DMatrix(b,1))).sparsity();
   }
 
-  std::size_t hash_sparsity(int nrow, int ncol, const std::vector<int>& col, const std::vector<int>& rowind){
+  std::size_t hash_sparsity(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind){
     // Condense the sparsity pattern to a single, deterministric number
     std::size_t ret=0;
-    hash_combine(ret,nrow);
     hash_combine(ret,ncol);
-    hash_combine(ret,rowind);
-    hash_combine(ret,col);
+    hash_combine(ret,nrow);
+    hash_combine(ret,colind);
+    hash_combine(ret,row);
     return ret;
   }
   
   std::vector<int> sp_compress(const CCSSparsity& a){
     // Get the sparsity pattern
-    int nrow = a.size1();
-    int ncol = a.size2();
-    const vector<int>& rowind = a.rowind();
-    const vector<int>& col = a.col();
+    int ncol = a.size1();
+    int nrow = a.size2();
+    const vector<int>& colind = a.colind();
+    const vector<int>& row = a.row();
     
     // Create compressed pattern
     vector<int> ret;
-    ret.reserve(1 + 1 + rowind.size() + col.size());
-    ret.push_back(nrow);
+    ret.reserve(1 + 1 + colind.size() + row.size());
     ret.push_back(ncol);
-    ret.insert(ret.end(),rowind.begin(),rowind.end());
-    ret.insert(ret.end(),col.begin(),col.end());
+    ret.push_back(nrow);
+    ret.insert(ret.end(),colind.begin(),colind.end());
+    ret.insert(ret.end(),row.begin(),row.end());
     return ret;
   }
   
   CCSSparsity sp_compress(const std::vector<int>& v){
     // Check consistency
     casadi_assert(v.size() >= 2);
-    int nrow = v[0];
-    //int ncol = v[1];
-    casadi_assert(v.size() >= 2 + nrow+1);
-    int nnz = v[2 + nrow];
-    casadi_assert(v.size() == 2 + nrow+1 + nnz);
+    int ncol = v[0];
+    //int nrow = v[1];
+    casadi_assert(v.size() >= 2 + ncol+1);
+    int nnz = v[2 + ncol];
+    casadi_assert(v.size() == 2 + ncol+1 + nnz);
 
     // Call array version
     return sp_compress(&v.front());
@@ -452,25 +452,25 @@ namespace CasADi{
   
   CCSSparsity sp_compress(const int* v){
     // Get sparsity pattern
-    int nrow = v[0];
-    int ncol = v[1];
-    const int *rowind = v+2;
-    int nnz = rowind[nrow];
-    const int *col = v + 2 + nrow+1;
+    int ncol = v[0];
+    int nrow = v[1];
+    const int *colind = v+2;
+    int nnz = colind[ncol];
+    const int *row = v + 2 + ncol+1;
     
     // Construct sparsity pattern
-    return CCSSparsity(nrow, ncol, vector<int>(col,col+nnz), vector<int>(rowind,rowind+nrow+1));
+    return CCSSparsity(ncol, nrow, vector<int>(row,row+nnz), vector<int>(colind,colind+ncol+1));
   }
   
   int rank(const CCSSparsity& a) {
-    std::vector< int > rowperm;
     std::vector< int > colperm;
-    std::vector< int > rowblock;
+    std::vector< int > rowperm;
     std::vector< int > colblock;
-    std::vector< int > coarse_rowblock;
+    std::vector< int > rowblock;
     std::vector< int > coarse_colblock;
-    a.dulmageMendelsohn(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock);
-    return coarse_colblock.at(3);
+    std::vector< int > coarse_rowblock;
+    a.dulmageMendelsohn(colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock);
+    return coarse_rowblock.at(3);
   }
 
   bool isSingular(const CCSSparsity& a) {
@@ -516,25 +516,25 @@ namespace CasADi{
     int n = 0;
     int m = 0;
     
-    std::vector<int> rowind(1,0);
-    std::vector<int> col;
+    std::vector<int> colind(1,0);
+    std::vector<int> row;
     
     int nz = 0;
     for (int i=0;i<v.size();++i) {
-      const std::vector<int> &rowind_ = v[i].rowind();
-      const std::vector<int> &col_ = v[i].col();
-      for (int k=1;k<rowind_.size();++k) {
-        rowind.push_back(rowind_[k]+nz);
+      const std::vector<int> &colind_ = v[i].colind();
+      const std::vector<int> &row_ = v[i].row();
+      for (int k=1;k<colind_.size();++k) {
+        colind.push_back(colind_[k]+nz);
       }
-      for (int k=0;k<col_.size();++k) {
-        col.push_back(col_[k]+m);
+      for (int k=0;k<row_.size();++k) {
+        row.push_back(row_[k]+m);
       }
       n+= v[i].size1();
       m+= v[i].size2();
       nz+= v[i].size();
     }
     
-    return CCSSparsity(n,m,col,rowind);
+    return CCSSparsity(n,m,row,colind);
   }
   
   CCSSparsity blkdiag(const CCSSparsity &a, const CCSSparsity &b) {

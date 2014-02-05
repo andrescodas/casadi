@@ -47,12 +47,12 @@ namespace CasADi{
     LinearSolverInternal::init();
 
     AT_.nzmax = input().size();  // maximum number of entries 
-    AT_.m = input().size2(); // number of rows
-    AT_.n = input().size1(); // number of columns
-    AT_.p = const_cast<int*>(&input().rowind().front()); // column pointers (size n+1) or col indices (size nzmax)
-    AT_.i = const_cast<int*>(&input().col().front()); // row indices, size nzmax
-    AT_.x = &input().front(); // row indices, size nzmax
-    AT_.nz = -1; // of entries in triplet matrix, -1 for compressed-col 
+    AT_.m = input().size2(); // number of cols
+    AT_.n = input().size1(); // number of rows
+    AT_.p = const_cast<int*>(&input().colind().front()); // row pointers (size n+1) or row indices (size nzmax)
+    AT_.i = const_cast<int*>(&input().row().front()); // col indices, size nzmax
+    AT_.x = &input().front(); // col indices, size nzmax
+    AT_.nz = -1; // of entries in triplet matrix, -1 for compressed-row 
 
     // Temporary
     temp_.resize(AT_.n);
@@ -140,7 +140,7 @@ namespace CasADi{
         cs_usolve (N_->U, t) ;               // t = U\t 
         cs_ipvec (S_->q, t, x, AT_.n) ;      // x = P2\t 
       }
-      x += nrow();
+      x += ncol();
     }
   }
 

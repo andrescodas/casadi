@@ -197,13 +197,13 @@ octave_value toSparse() {
   Array<int> Ar(nz);
   Array<int> Ac(nz);
   
-  std::vector<int> vr = (*$self).sparsity().getRow();
+  std::vector<int> vr = (*$self).sparsity().getCol();
   Array<double> mydata(nz);
   const std::vector<double> &cdata = (*$self).data();
   
   for (int k=0;k<nz;k++) {
     Ar(k)=vr[k];
-    Ac(k)=(*$self).sparsity().col()[k];
+    Ac(k)=(*$self).sparsity().row()[k];
     mydata(k)=cdata[k];
   }
   
@@ -285,7 +285,7 @@ PyObject* arrayView() {
   def toCsr_matrix(self):
     import numpy as n
     from scipy.sparse import csr_matrix
-    return csr_matrix( (list(self.data()),self.sparsity().col(),self.sparsity().rowind()), shape = (self.size1(),self.size2()), dtype=n.double )
+    return csr_matrix( (list(self.data()),self.sparsity().row(),self.sparsity().colind()), shape = (self.size1(),self.size2()), dtype=n.double )
 %}
 
 %pythoncode %{
@@ -375,13 +375,13 @@ binopsFull(const CasADi::MX & b,,CasADi::MX,CasADi::MX)
   %pythoncode %{
     def __setstate__(self, state):
         if state:
-          self.__init__(state["nrow"],state["ncol"],state["col"],state["rowind"])
+          self.__init__(state["ncol"],state["nrow"],state["row"],state["colind"])
         else:
           self.__init__()
 
     def __getstate__(self):
         if self.isNull(): return {}
-        return {"nrow": self.size1(), "ncol": self.size2(), "col": numpy.array(self.col(),dtype=int), "rowind": numpy.array(self.rowind(),dtype=int)}
+        return {"ncol": self.size1(), "nrow": self.size2(), "row": numpy.array(self.row(),dtype=int), "colind": numpy.array(self.colind(),dtype=int)}
   %}
   
 }

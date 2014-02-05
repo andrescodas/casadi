@@ -65,13 +65,13 @@ void QPStabilizerInternal::evaluate() {
         
       DMatrix & A_qp = qp_solver_.input(QP_SOLVER_A);
       DMatrix & A = input(STABILIZED_QP_SOLVER_A);
-      const std::vector <int> &A_rowind = A.rowind();
-      for (int i=0;i<A_qp.size1();++i) { // Loop over rows
-        int row_start = A_rowind[i];
-        int row_end = A_rowind[i+1];
-        // Copy row contents
-        std::copy(A.begin()+row_start,A.begin()+row_end,A_qp.begin()+row_start+i);
-        A_qp[row_end+i] = -muR;
+      const std::vector <int> &A_colind = A.colind();
+      for (int i=0;i<A_qp.size1();++i) { // Loop over cols
+        int col_start = A_colind[i];
+        int col_end = A_colind[i+1];
+        // Copy col contents
+        std::copy(A.begin()+col_start,A.begin()+col_end,A_qp.begin()+col_start+i);
+        A_qp[col_end+i] = -muR;
       }
       
       // Add constant to linear inequality 

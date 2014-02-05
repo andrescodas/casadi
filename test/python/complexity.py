@@ -150,7 +150,7 @@ class ComplexityTests(casadiTestCase):
     
     
   def test_DMatrixadd(self):
-    self.message("DMatrix add column vectors")
+    self.message("DMatrix add row vectors")
     def setupfun(self,N):
       return {'A': DMatrix(N,1,0), 'B': DMatrix(N,1,0)}
     def fun(self,N,setup):
@@ -158,7 +158,7 @@ class ComplexityTests(casadiTestCase):
     
     self.complexity(setupfun,fun, 1)
     
-    self.message("DMatrix add rows vectors")
+    self.message("DMatrix add cols vectors")
     def setupfun(self,N):
       return {'A': DMatrix(1,N,0), 'B': DMatrix(1,N,0)}
     
@@ -167,7 +167,7 @@ class ComplexityTests(casadiTestCase):
 
   def test_SXFunctionadd(self):
     return
-    self.message("SXFunction add column vectors")
+    self.message("SXFunction add row vectors")
     def setupfun(self,N):
       A = ssym("A",N,1)
       B = ssym("B",N,1)
@@ -181,7 +181,7 @@ class ComplexityTests(casadiTestCase):
 
   def test_SXFunctionprodvec(self):
     return
-    self.message("SXFunction prod column vectors")
+    self.message("SXFunction prod row vectors")
     def setupfun(self,N):
       A = ssym("A",N,1)
       B = ssym("B",N,1)

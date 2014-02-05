@@ -104,28 +104,28 @@ namespace CasADi{
         if (K_==1) {
           sp = sp_dense(np,np);
         } else {
-          std::vector<int> row_ind = range(0,np*(np+1)*K_+np+1,np+1);
-          std::vector<int> col(np*(np+1)*K_);
+          std::vector<int> col_ind = range(0,np*(np+1)*K_+np+1,np+1);
+          std::vector<int> row(np*(np+1)*K_);
 
           int k = 0;
           for (int l=0;l<np;++l) {
-            col[np*(np+1)*k+l*(np+1)] = l;
+            row[np*(np+1)*k+l*(np+1)] = l;
             for (int m=0;m<np;++m) {
-              col[np*(np+1)*k+l*(np+1)+m+1] = (K_-1)*np+m;
+              row[np*(np+1)*k+l*(np+1)+m+1] = (K_-1)*np+m;
             }
           }
           
           for (k=1;k<K_;++k) {
             for (int l=0;l<np;++l) {
               for (int m=0;m<np;++m) {
-                col[np*(np+1)*k+l*(np+1)+m] = (k-1)*np+m;
+                row[np*(np+1)*k+l*(np+1)+m] = (k-1)*np+m;
               }
-              col[np*(np+1)*k+l*(np+1)+np] = k*np +l;
+              row[np*(np+1)*k+l*(np+1)+np] = k*np +l;
             }
             
           }
  
-          sp = CCSSparsity(np*K_,np*K_,col,row_ind);
+          sp = CCSSparsity(np*K_,np*K_,row,col_ind);
         }
         LinearSolver solver = linear_solver_creator(sp,1);
         solver.init();

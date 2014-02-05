@@ -121,13 +121,13 @@ void OOQPInternal::evaluate() {
   input(QP_SOLVER_H).get(H_.data(),SPARSESYM);
   
   // Pass on QP_SOLVER_A
-  vector<int> rowind,col;
-  A_.sparsity().getSparsityCCS(rowind,col);
+  vector<int> colind,row;
+  A_.sparsity().getSparsityCCS(colind,row);
   int k_orig = 0;
   int k_new = 0;
-  for(int r=0; r<rowind.size()-1; ++r) {
-    for(int el=rowind[r]; el<rowind[r+1]; ++el){
-      if (el<rowind[r+1]-1) {
+  for(int r=0; r<colind.size()-1; ++r) {
+    for(int el=colind[r]; el<colind[r+1]; ++el){
+      if (el<colind[r+1]-1) {
         A_.data()[k_new] = input(QP_SOLVER_A).data()[k_orig];
         k_orig++;
       }
@@ -136,11 +136,11 @@ void OOQPInternal::evaluate() {
   }
 
   // Get references to sparsity (NOTE: OOQP does not appear do be const correct)
-  int *H_rowind = const_cast<int*>(getPtr(H_.sparsity().rowind()));
-  int *H_col = const_cast<int*>(getPtr(H_.sparsity().col()));
+  int *H_colind = const_cast<int*>(getPtr(H_.sparsity().colind()));
+  int *H_row = const_cast<int*>(getPtr(H_.sparsity().row()));
 
-  int *A_rowind = const_cast<int*>(getPtr(A_.sparsity().rowind()));
-  int *A_col = const_cast<int*>(getPtr(A_.sparsity().col()));
+  int *A_colind = const_cast<int*>(getPtr(A_.sparsity().colind()));
+  int *A_row = const_cast<int*>(getPtr(A_.sparsity().row()));
 
   if (qp_) {
     delete qp_;
@@ -152,16 +152,16 @@ void OOQPInternal::evaluate() {
   // Set up a Sparse solver; the decision space is [x,s]; there are no inequalities
   qp_ = new QpGenSparseMa27( n_ + nc_, nc_, 0, H_.size() , G_.size(), A_.size() );
   
-  std::vector<int> rowind_empty_(1,0);
+  std::vector<int> colind_empty_(1,0);
   
   // Set all pointers to problem data
   prob_ = (QpGenData * )qp_->makeData( getPtr(G_),
-                                       H_rowind,  H_col,  getPtr(H_),
+                                       H_colind,  H_row,  getPtr(H_),
                                        getPtr(lbX_),  getPtr(ixlow_),
                                        getPtr(ubX_),  getPtr(ixupp_),
-                                       A_rowind, A_col,  getPtr(A_),
+                                       A_colind, A_row,  getPtr(A_),
                                        getPtr(b_),
-                                       getPtr(rowind_empty_), 0,  0,
+                                       getPtr(colind_empty_), 0,  0,
                                        0,  0,
                                        0,  0);
                                        

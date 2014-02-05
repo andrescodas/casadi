@@ -102,8 +102,8 @@ void SQICInternal::init(){
   pi_.resize(nc_+1,0);
   rc_.resize(n_+nc_+1,0);
   
-  locH_ = st_[QP_STRUCT_H].rowind();
-  indH_ = st_[QP_STRUCT_H].col();
+  locH_ = st_[QP_STRUCT_H].colind();
+  indH_ = st_[QP_STRUCT_H].row();
   
   // Fortran indices are one-based
   for (int i=0;i<indH_.size();++i) indH_[i]+=1;
@@ -111,8 +111,8 @@ void SQICInternal::init(){
   
   // Sparsity of augmented linear constraint matrix
   CCSSparsity A_ = trans(vertcat(st_[QP_STRUCT_A],sp_dense(1,n_)));
-  locA_ = A_.rowind();
-  indA_ = A_.col();
+  locA_ = A_.colind();
+  indA_ = A_.row();
   
   // Fortran indices are one-based
   for (int i=0;i<indA_.size();++i) indA_[i]+=1;
@@ -127,7 +127,7 @@ void SQICInternal::init(){
   formatA_ = MXFunction(ins,trans(vertcat(a,trans(g))));
   formatA_.init();
   
-  // Set objective row of augmented linear constraints
+  // Set objective col of augmented linear constraints
   bu_[n_+nc_] = inf_;
   bl_[n_+nc_] = -inf_;
   

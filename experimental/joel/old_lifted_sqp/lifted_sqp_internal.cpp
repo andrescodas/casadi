@@ -502,7 +502,7 @@ void LiftedSQPInternal::evaluate(int nfdir, int nadir){
     }
     norm_viol = sqrt(norm_viol);
     
-    // Print progress (including the header every 10 rows)
+    // Print progress (including the header every 10 cols)
     if(k % 10 == 0){
       cout << setw(4) << "iter" << setw(20) << "objective" << setw(20) << "norm_step" << setw(20) << "norm_viol" << endl;
     }
