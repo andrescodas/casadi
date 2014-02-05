@@ -67,10 +67,10 @@ class ControlTests(casadiTestCase):
           As = msym("A",K*n,n)
           Vs = msym("V",K*n,n)
           
-          Vss = horzcat([(i+i.T)/2 for i in vertsplit(Vs,n) ])
+          Vss = horzcat([(i+i.T)/2 for i in horzsplit(Vs,n) ])
           
           
-          AA = blkdiag([c.kron(i,i) for i in vertsplit(As,n)])
+          AA = blkdiag([c.kron(i,i) for i in horzsplit(As,n)])
 
           A_total = DMatrix.eye(n*n*K) - horzcat([AA[-n*n:,:],AA[:-n*n,:]])
           
@@ -86,7 +86,7 @@ class ControlTests(casadiTestCase):
           refsol.setInput(horzcat(V_),DPLE_V)
           
           solver.evaluate()
-          X = list(vertsplit(solver.output(),n))
+          X = list(horzsplit(solver.output(),n))
           
           a0 = (mul([blkdiag(A_),blkdiag(X),blkdiag(A_).T])+blkdiag(V_))
           
@@ -121,7 +121,7 @@ class ControlTests(casadiTestCase):
           solver.setInput(horzcat(V_),DPLE_V)
           
           solver.evaluate()
-          X = list(vertsplit(solver.output(),n))
+          X = list(horzsplit(solver.output(),n))
           
           a0 = (mul([blkdiag(A_),blkdiag(X),blkdiag(A_).T])+blkdiag(V_))
           

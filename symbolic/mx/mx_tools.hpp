@@ -33,7 +33,7 @@ namespace CasADi{
 
   /** \brief  concatenate vertically
   *
-  *  horzcat(vertsplit(x,...)) = x
+  *  horzcat(horzsplit(x,...)) = x
   */
   MX horzcat(const std::vector<MX>& x);
 
@@ -41,20 +41,20 @@ namespace CasADi{
   * \param output_offset List of all start cols for each group
   *      the last col group will run to the end.
   * 
-  *   horzcat(vertsplit(x,...)) = x
+  *   horzcat(horzsplit(x,...)) = x
   */
-  std::vector<MX> vertsplit(const MX& x, const std::vector<int>& output_offset);
+  std::vector<MX> horzsplit(const MX& x, const std::vector<int>& output_offset);
 
   /** \brief  split vertically, retaining fixed-sized groups of cols
   * \param incr Size of each group of cols
   *
-  *  horzcat(vertsplit(x,...)) = x
+  *  horzcat(horzsplit(x,...)) = x
   */
-  std::vector<MX> vertsplit(const MX& x, int incr=1);
+  std::vector<MX> horzsplit(const MX& x, int incr=1);
   
   /** \brief  concatenate horizontally 
   *
-  *   vertcat(horzsplit(x,...)) = x
+  *   vertcat(vertsplit(x,...)) = x
   */
   MX vertcat(const std::vector<MX>& comp);
   
@@ -62,16 +62,16 @@ namespace CasADi{
   * \param output_offset List of all start rows for each group
   *      the last row group will run to the end.
   *
-  *   vertcat(horzsplit(x,...)) = x
+  *   vertcat(vertsplit(x,...)) = x
   */
-  std::vector<MX> horzsplit(const MX& x, const std::vector<int>& output_offset);
+  std::vector<MX> vertsplit(const MX& x, const std::vector<int>& output_offset);
 
   /** \brief  split horizontally, retaining fixed-sized groups of rows
   * \param incr Size of each group of rows
   *
-  *   vertcat(horzsplit(x,...)) = x
+  *   vertcat(vertsplit(x,...)) = x
   */
-  std::vector<MX> horzsplit(const MX& x, int incr=1);
+  std::vector<MX> vertsplit(const MX& x, int incr=1);
   
   /** \brief Construct a matrix from a list of list of blocks.
   *

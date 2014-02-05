@@ -64,8 +64,8 @@ namespace CasADi{
     MX As = msym("A",K_*n_,n_);
     MX Vs = msym("V",K_*n_,n_);
     
-    std::vector< MX > Vss = vertsplit(Vs,n_);
-    std::vector< MX > Ass = vertsplit(As,n_);
+    std::vector< MX > Vss = horzsplit(Vs,n_);
+    std::vector< MX > Ass = horzsplit(As,n_);
     
     for (int k=0;k<K_;++k) {
       Vss[k]=(Vss[k]+trans(Vss[k]))/2;

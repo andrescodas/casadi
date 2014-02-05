@@ -879,7 +879,7 @@ class msymStruct(CasadiStructured,MasterGettable):
       sps.append(sp)
       k += sp.size()
       
-    for it, k, sp in zip(its,vertsplit(self.master,ks),sps):
+    for it, k, sp in zip(its,horzsplit(self.master,ks),sps):
       self.priority_object_map[it] = k if k.sparsity()==sp else k[IMatrix(sp,range(sp.size()))] #.reshape(sp)
       
 

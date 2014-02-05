@@ -53,7 +53,7 @@ namespace CasADi{
     
     // Intermediate variables (does not enter in F_, only in G_)
     MX v = msym("v",3*nx_);
-    vector<MX> x = vertsplit(v,nx_);
+    vector<MX> x = horzsplit(v,nx_);
     casadi_assert(x.size()==3);
     
     // Definitions of x

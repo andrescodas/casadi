@@ -214,7 +214,7 @@ namespace CasADi{
     } else {
       splitPositions.push_back(order*nx);
     }
-    std::vector<MX> Vs = vertsplit(V,splitPositions);
+    std::vector<MX> Vs = horzsplit(V,splitPositions);
     
     // Extracting unknowns from Z
     for (int i=0;i<order;++i) {
@@ -281,7 +281,7 @@ namespace CasADi{
     ifcn_call_in[0] = MX::zeros(V.sparsity()); 
     std::copy(vfcn_inputs.begin()+1,vfcn_inputs.end(),ifcn_call_in.begin()+1);
     std::vector<MX> ifcn_call_out = ifcn.eval(ifcn_call_in);
-    Vs = vertsplit(ifcn_call_out[0],splitPositions);
+    Vs = horzsplit(ifcn_call_out[0],splitPositions);
     
     MX XF = 0;
     for (int i=0;i<order+1;++i) {

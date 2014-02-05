@@ -20,7 +20,7 @@
  *
  */
 
-#include "vertsplit.hpp"
+#include "horzsplit.hpp"
 #include "../stl_vector_tools.hpp"
 #include "../matrix/matrix_tools.hpp"
 #include "mx_tools.hpp"
@@ -32,7 +32,7 @@ using namespace std;
 
 namespace CasADi{
 
-  Vertsplit::Vertsplit(const MX& x, const std::vector<int>& offset) : offset_(offset){
+  Horzsplit::Horzsplit(const MX& x, const std::vector<int>& offset) : offset_(offset){
     setDependencies(x);
     setSparsity(CCSSparsity(1, 1, true));
     
@@ -72,20 +72,20 @@ namespace CasADi{
     }
   }
 
-  Vertsplit* Vertsplit::clone() const{
-    return new Vertsplit(*this);
+  Horzsplit* Horzsplit::clone() const{
+    return new Horzsplit(*this);
   }
 
-  void Vertsplit::evaluateD(const DMatrixPtrV& input, DMatrixPtrV& output, std::vector<int>& itmp, std::vector<double>& rtmp){
+  void Horzsplit::evaluateD(const DMatrixPtrV& input, DMatrixPtrV& output, std::vector<int>& itmp, std::vector<double>& rtmp){
     evaluateGen<double,DMatrixPtrV,DMatrixPtrVV>(input,output,itmp,rtmp);
   }
 
-  void Vertsplit::evaluateSX(const SXMatrixPtrV& input, SXMatrixPtrV& output, std::vector<int>& itmp, std::vector<SX>& rtmp){
+  void Horzsplit::evaluateSX(const SXMatrixPtrV& input, SXMatrixPtrV& output, std::vector<int>& itmp, std::vector<SX>& rtmp){
     evaluateGen<SX,SXMatrixPtrV,SXMatrixPtrVV>(input,output,itmp,rtmp);
   }
 
   template<typename T, typename MatV, typename MatVV>
-  void Vertsplit::evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp){
+  void Horzsplit::evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp){
     // Number of derivatives
     int nx = offset_.size()-1;
     const vector<int>& x_colind = dep().sparsity().colind();
@@ -101,7 +101,7 @@ namespace CasADi{
     }
   }
 
-  void Vertsplit::propagateSparsity(DMatrixPtrV& input, DMatrixPtrV& output, bool fwd){
+  void Horzsplit::propagateSparsity(DMatrixPtrV& input, DMatrixPtrV& output, bool fwd){
     int nx = offset_.size()-1;
     const vector<int>& x_colind = dep().sparsity().colind();
     for(int i=0; i<nx; ++i){
@@ -121,15 +121,15 @@ namespace CasADi{
     }
   }
 
-  void Vertsplit::printPart(std::ostream &stream, int part) const{
+  void Horzsplit::printPart(std::ostream &stream, int part) const{
     if(part==0){
-      stream << "vertsplit(";
+      stream << "horzsplit(";
     } else {
       stream << ")";
     }
   }
 
-  void Vertsplit::evaluateMX(const MXPtrV& input, MXPtrV& output, const MXPtrVV& fwdSeed, MXPtrVV& fwdSens, const MXPtrVV& adjSeed, MXPtrVV& adjSens, bool output_given){
+  void Horzsplit::evaluateMX(const MXPtrV& input, MXPtrV& output, const MXPtrVV& fwdSeed, MXPtrVV& fwdSens, const MXPtrVV& adjSeed, MXPtrVV& adjSens, bool output_given){
     int nfwd = fwdSens.size();
     int nadj = adjSeed.size();
     int nx = offset_.size()-1;
@@ -140,7 +140,7 @@ namespace CasADi{
       const MXPtrV& arg = d<0 ? input : fwdSeed[d];
       MXPtrV& res = d<0 ? output : fwdSens[d];
       MX& x = *arg[0];
-      vector<MX> y = vertsplit(x,offset_);
+      vector<MX> y = horzsplit(x,offset_);
       for(int i=0; i<nx; ++i){
         if(res[i]!=0){
           *res[i] = y[i];
@@ -168,7 +168,7 @@ namespace CasADi{
     }
   }
 
-  void Vertsplit::generateOperation(std::ostream &stream, const std::vector<std::string>& arg, const std::vector<std::string>& res, CodeGenerator& gen) const{
+  void Horzsplit::generateOperation(std::ostream &stream, const std::vector<std::string>& arg, const std::vector<std::string>& res, CodeGenerator& gen) const{
     int nx = res.size();
     const vector<int>& x_colind = dep().sparsity().colind();
     for(int i=0; i<nx; ++i){

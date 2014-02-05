@@ -1686,13 +1686,13 @@ namespace CasADi{
 
     // Forward derivatives
     if(nfwd>0){
-      // Get col offsets for the vertsplit
+      // Get col offsets for the horzsplit
       vector<int> offset(1,0);
       for(int i=0; i<n_out; ++i){
         offset.push_back(offset.back()+res[i].numel());
       }
       
-      // Calculate one derivative at a time (alternative: all at once using horzcat/vertsplit)
+      // Calculate one derivative at a time (alternative: all at once using horzcat/horzsplit)
       for(int dir=0; dir<nfwd; ++dir){        
         // Assemble the right hand side
         d.clear();
@@ -1711,7 +1711,7 @@ namespace CasADi{
         d_all = mul(J,d_all);
         
         // Split up the left hand sides
-        d = vertsplit(d_all,offset);
+        d = horzsplit(d_all,offset);
         for(int i=0; i<n_out; ++i){
           res.push_back(reshape(d[i],res[i].size1(),res[i].size2()));
         }
@@ -1723,13 +1723,13 @@ namespace CasADi{
       // Transpose of J
       MX JT = trans(J);
 
-      // Get col offsets for the vertsplit
+      // Get col offsets for the horzsplit
       vector<int> offset(1,0);
       for(int i=0; i<n_in; ++i){
         offset.push_back(offset.back()+arg[i].numel());
       }
       
-      // Calculate one derivative at a time (alternative: all at once using horzcat/vertsplit)
+      // Calculate one derivative at a time (alternative: all at once using horzcat/horzsplit)
       for(int dir=0; dir<nadj; ++dir){        
         // Assemble the right hand side
         d.clear();
@@ -1748,7 +1748,7 @@ namespace CasADi{
         d_all = mul(JT,d_all);
         
         // Split up the left hand sides
-        d = vertsplit(d_all,offset);
+        d = horzsplit(d_all,offset);
         for(int i=0; i<n_in; ++i){
           res.push_back(reshape(d[i],arg[i].size1(),arg[i].size2()));
         }
@@ -1912,7 +1912,7 @@ namespace CasADi{
       arg = msym("x",sp_arg);
 
       // Split up and fix shape
-      argv = vertsplit(arg,col_offset);
+      argv = horzsplit(arg,col_offset);
       for(int i=0; i<getNumInputs(); ++i){
         argv[i] = reshape(argv[i],input(i).sparsity());
       }

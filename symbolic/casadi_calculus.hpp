@@ -90,7 +90,7 @@ namespace CasADi{
     OP_HORZCAT,
 
     // Vertical split
-    OP_VERTSPLIT,
+    OP_HORZSPLIT,
 
     // Reshape an expression
     OP_RESHAPE,

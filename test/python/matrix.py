@@ -876,16 +876,16 @@ class Matrixtests(casadiTestCase):
     self.assertEqual(v.size1(),4)
     self.assertEqual(v.size2(),0)
   
-  def test_vertsplit(self):
+  def test_horzsplit(self):
     a = DMatrix(sp_tril(5),range(5*6/2))
-    v = vertsplit(a,[0,2,4])
+    v = horzsplit(a,[0,2,4])
     
     self.assertEqual(len(v),3)
     self.checkarray(v[0],DMatrix([[0,0,0,0,0],[1,2,0,0,0]]))
     self.checkarray(v[1],DMatrix([[3,4,5,0,0],[6,7,8,9,0]]))
     self.checkarray(v[2],DMatrix([[10,11,12,13,14]]))
     
-    v = vertsplit(a)
+    v = horzsplit(a)
     self.assertEqual(len(v),a.size1())
     self.checkarray(v[0],DMatrix([[0,0,0,0,0]]))
     self.checkarray(v[1],DMatrix([[1,2,0,0,0]]))
@@ -893,29 +893,29 @@ class Matrixtests(casadiTestCase):
     self.checkarray(v[3],DMatrix([[6,7,8,9,0]]))
     self.checkarray(v[4],DMatrix([[10,11,12,13,14]]))
     
-    v = vertsplit(a,2)
+    v = horzsplit(a,2)
     self.assertEqual(len(v),3)
     self.checkarray(v[0],DMatrix([[0,0,0,0,0],[1,2,0,0,0]]))
     self.checkarray(v[1],DMatrix([[3,4,5,0,0],[6,7,8,9,0]]))
     self.checkarray(v[2],DMatrix([[10,11,12,13,14]]))
     
-    v = vertsplit(a,[0,0,3])
+    v = horzsplit(a,[0,0,3])
     self.assertEqual(len(v),3)
     self.assertEqual(v[0].size1(),0)
     self.assertEqual(v[0].size2(),5)
     self.checkarray(v[1],DMatrix([[0,0,0,0,0],[1,2,0,0,0],[3,4,5,0,0]]))
     self.checkarray(v[2],DMatrix([[6,7,8,9,0],[10,11,12,13,14]]))
     
-  def test_horzsplit(self):
+  def test_vertsplit(self):
     a = DMatrix(sp_tril(5),range(5*6/2))
-    v = horzsplit(a,[0,2,4])
+    v = vertsplit(a,[0,2,4])
     
     self.assertEqual(len(v),3)
     self.checkarray(v[0],DMatrix([[0,0],[1,2],[3,4],[6,7],[10,11]]))
     self.checkarray(v[1],DMatrix([[0,0],[0,0],[5,0],[8,9],[12,13]]))
     self.checkarray(v[2],DMatrix([[0],[0],[0],[0],[14]]))
     
-    v = horzsplit(a)
+    v = vertsplit(a)
     self.assertEqual(len(v),a.size1())
     self.checkarray(v[0],DMatrix([0,1,3,6,10]))
     self.checkarray(v[1],DMatrix([0,2,4,7,11]))
@@ -923,13 +923,13 @@ class Matrixtests(casadiTestCase):
     self.checkarray(v[3],DMatrix([0,0,0,9,13]))
     self.checkarray(v[4],DMatrix([0,0,0,0,14]))
     
-    v = horzsplit(a,2)
+    v = vertsplit(a,2)
     self.assertEqual(len(v),3)
     self.checkarray(v[0],DMatrix([[0,0],[1,2],[3,4],[6,7],[10,11]]))
     self.checkarray(v[1],DMatrix([[0,0],[0,0],[5,0],[8,9],[12,13]]))
     self.checkarray(v[2],DMatrix([[0],[0],[0],[0],[14]]))
     
-    v = horzsplit(a,[0,0,3])
+    v = vertsplit(a,[0,0,3])
     self.assertEqual(len(v),3)
     self.assertEqual(v[0].size1(),5)
     self.assertEqual(v[0].size2(),0)

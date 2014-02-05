@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef VERTSPLIT_HPP
-#define VERTSPLIT_HPP
+#ifndef HORZSPLIT_HPP
+#define HORZSPLIT_HPP
 
 #include "multiple_output.hpp"
 #include <map>
@@ -32,11 +32,11 @@ namespace CasADi{
       \author Joel Andersson
       \date 2013
   */
-  class Vertsplit : public MultipleOutput{
+  class Horzsplit : public MultipleOutput{
   public:
 
     /// Constructor
-    Vertsplit(const MX& x, const std::vector<int>& offset);
+    Horzsplit(const MX& x, const std::vector<int>& offset);
 
     /** \brief  Number of outputs */
     virtual int getNumOutputs() const{ return output_sparsity_.size(); }
@@ -45,10 +45,10 @@ namespace CasADi{
     virtual const CCSSparsity& sparsity(int oind) const{ return output_sparsity_.at(oind);}
 
     /// Clone function
-    virtual Vertsplit* clone() const;
+    virtual Horzsplit* clone() const;
       
     /// Destructor
-    virtual ~Vertsplit(){}
+    virtual ~Horzsplit(){}
     
     /// Evaluate the function numerically
     virtual void evaluateD(const DMatrixPtrV& input, DMatrixPtrV& output, std::vector<int>& itmp, std::vector<double>& rtmp);
@@ -73,7 +73,7 @@ namespace CasADi{
     void evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp);    
     
     /** \brief Get the operation */
-    virtual int getOp() const{ return OP_VERTSPLIT;}
+    virtual int getOp() const{ return OP_HORZSPLIT;}
     
     // Sparsity pattern of the outputs
     std::vector<int> offset_;
@@ -82,4 +82,4 @@ namespace CasADi{
 
 } // namespace CasADi
 
-#endif // VERTSPLIT_HPP
+#endif // HORZSPLIT_HPP

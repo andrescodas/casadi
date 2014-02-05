@@ -121,7 +121,7 @@ namespace CasADi{
     // Adjoint sensitivities
     for(int d=0; d<nadj; ++d){
       MX& aseed = *adjSeed[d][0];
-      vector<MX> s = vertsplit(aseed,col_offset);
+      vector<MX> s = horzsplit(aseed,col_offset);
       aseed = MX();
       for(int i=0; i<ndep(); ++i){
         *adjSens[d][i] += s[i];

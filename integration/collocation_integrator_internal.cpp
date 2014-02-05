@@ -106,7 +106,7 @@ namespace CasADi{
       v_offset.push_back(v_offset.back()+nx_);
       v_offset.push_back(v_offset.back()+nz_);
     }
-    vector<MX> vv = vertsplit(v,v_offset);
+    vector<MX> vv = horzsplit(v,v_offset);
     vector<MX>::const_iterator vv_it = vv.begin();
 
     // Collocated states
@@ -190,7 +190,7 @@ namespace CasADi{
         rv_offset.push_back(rv_offset.back()+nrx_);
         rv_offset.push_back(rv_offset.back()+nrz_);
       }
-      vector<MX> rvv = vertsplit(rv,rv_offset);
+      vector<MX> rvv = horzsplit(rv,rv_offset);
       vector<MX>::const_iterator rvv_it = rvv.begin();
 
       // Collocated states

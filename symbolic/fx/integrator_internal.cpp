@@ -195,12 +195,12 @@ namespace CasADi{
     MX aug_rp = msym("aug_rp",offset.rp.back(),std::max(qf().size2(),rp().size2()));
 
     // Split up the augmented vectors
-    vector<MX> aug_x_split = vertsplit(aug_x,offset.x);     vector<MX>::const_iterator aug_x_split_it = aug_x_split.begin();
-    vector<MX> aug_z_split = vertsplit(aug_z,offset.z);     vector<MX>::const_iterator aug_z_split_it = aug_z_split.begin();
-    vector<MX> aug_p_split = vertsplit(aug_p,offset.p);     vector<MX>::const_iterator aug_p_split_it = aug_p_split.begin();
-    vector<MX> aug_rx_split = vertsplit(aug_rx,offset.rx);  vector<MX>::const_iterator aug_rx_split_it = aug_rx_split.begin();
-    vector<MX> aug_rz_split = vertsplit(aug_rz,offset.rz);  vector<MX>::const_iterator aug_rz_split_it = aug_rz_split.begin();
-    vector<MX> aug_rp_split = vertsplit(aug_rp,offset.rp);  vector<MX>::const_iterator aug_rp_split_it = aug_rp_split.begin();
+    vector<MX> aug_x_split = horzsplit(aug_x,offset.x);     vector<MX>::const_iterator aug_x_split_it = aug_x_split.begin();
+    vector<MX> aug_z_split = horzsplit(aug_z,offset.z);     vector<MX>::const_iterator aug_z_split_it = aug_z_split.begin();
+    vector<MX> aug_p_split = horzsplit(aug_p,offset.p);     vector<MX>::const_iterator aug_p_split_it = aug_p_split.begin();
+    vector<MX> aug_rx_split = horzsplit(aug_rx,offset.rx);  vector<MX>::const_iterator aug_rx_split_it = aug_rx_split.begin();
+    vector<MX> aug_rz_split = horzsplit(aug_rz,offset.rz);  vector<MX>::const_iterator aug_rz_split_it = aug_rz_split.begin();
+    vector<MX> aug_rp_split = horzsplit(aug_rp,offset.rp);  vector<MX>::const_iterator aug_rp_split_it = aug_rp_split.begin();
 
     // Temporary vector
     vector<MX> tmp;
@@ -796,12 +796,12 @@ namespace CasADi{
     vector<MX> integrator_out = integrator.call(integrator_in);
   
     // Augmented results
-    vector<MX> xf_aug = vertsplit(integrator_out[INTEGRATOR_XF],offset.x);
-    vector<MX> qf_aug = vertsplit(integrator_out[INTEGRATOR_QF],offset.q);
-    vector<MX> zf_aug = vertsplit(integrator_out[INTEGRATOR_ZF],offset.z);
-    vector<MX> rxf_aug = vertsplit(integrator_out[INTEGRATOR_RXF],offset.rx);
-    vector<MX> rqf_aug = vertsplit(integrator_out[INTEGRATOR_RQF],offset.rq);
-    vector<MX> rzf_aug = vertsplit(integrator_out[INTEGRATOR_RZF],offset.rz);
+    vector<MX> xf_aug = horzsplit(integrator_out[INTEGRATOR_XF],offset.x);
+    vector<MX> qf_aug = horzsplit(integrator_out[INTEGRATOR_QF],offset.q);
+    vector<MX> zf_aug = horzsplit(integrator_out[INTEGRATOR_ZF],offset.z);
+    vector<MX> rxf_aug = horzsplit(integrator_out[INTEGRATOR_RXF],offset.rx);
+    vector<MX> rqf_aug = horzsplit(integrator_out[INTEGRATOR_RQF],offset.rq);
+    vector<MX> rzf_aug = horzsplit(integrator_out[INTEGRATOR_RZF],offset.rz);
     vector<MX>::const_iterator xf_aug_it = xf_aug.begin();
     vector<MX>::const_iterator qf_aug_it = qf_aug.begin();
     vector<MX>::const_iterator zf_aug_it = zf_aug.begin();

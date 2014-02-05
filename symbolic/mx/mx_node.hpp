@@ -276,7 +276,7 @@ namespace CasADi{
     static MX getHorzcat(const std::vector<MX>& x);
 
     /// Create a vertical split node
-    std::vector<MX> getVertsplit(const std::vector<int>& output_offset) const;
+    std::vector<MX> getHorzsplit(const std::vector<int>& output_offset) const;
 
     /// Transpose
     virtual MX getTranspose() const;

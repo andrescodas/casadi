@@ -6,7 +6,7 @@ x = msym("x",n,m)
 col_offset = range(0,n,n/3)
 print "col_offset = ", col_offset
 
-r1,r2,r3 = vertsplit(x,col_offset)
+r1,r2,r3 = horzsplit(x,col_offset)
 
 f = MXFunction([x],[r3,r2])
 f.init()

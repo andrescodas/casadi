@@ -155,7 +155,7 @@ namespace CasADi{
     
     if(!rhs.empty()){
       // Solve for all directions at once
-      rhs = vertsplit(solve(A,horzcat(rhs),tr),col_offset);
+      rhs = horzsplit(solve(A,horzcat(rhs),tr),col_offset);
     
       // Save result
       for(int i=0; i<rhs.size(); ++i){
@@ -188,7 +188,7 @@ namespace CasADi{
 
     if(!rhs.empty()){
       // Solve for all directions at once
-      rhs = vertsplit(solve(A,horzcat(rhs),!tr),col_offset);
+      rhs = horzsplit(solve(A,horzcat(rhs),!tr),col_offset);
     
       for(int i=0; i<rhs.size(); ++i){
         int d = rhs_ind[i];

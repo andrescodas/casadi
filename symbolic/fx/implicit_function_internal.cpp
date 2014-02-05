@@ -206,7 +206,7 @@ namespace CasADi{
       }
 
       // Solve for all right-hand-sides at once
-      rhs = vertsplit(J->getSolve(horzcat(rhs),false,linsol_),col_offset);
+      rhs = horzsplit(J->getSolve(horzcat(rhs),false,linsol_),col_offset);
       for(int d=0; d<rhs.size(); ++d){
         v[rhs_loc[d]] = trans(rhs[d]);
       }
@@ -239,7 +239,7 @@ namespace CasADi{
       }
         
       // Solve for all the forward derivatives at once
-      rhs = vertsplit(J->getSolve(horzcat(rhs),true,linsol_),col_offset);
+      rhs = horzsplit(J->getSolve(horzcat(rhs),true,linsol_),col_offset);
       for(int d=0; d<nfwd; ++d){
         if(fsens[d][iout_]!=0){
           *fsens[d][iout_] = -trans(rhs[d]);

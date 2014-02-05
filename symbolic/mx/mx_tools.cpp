@@ -35,7 +35,7 @@ namespace CasADi{
     return MXNode::getHorzcat(comp);
   }
 
-  std::vector<MX> vertsplit(const MX& x, const std::vector<int>& offset){
+  std::vector<MX> horzsplit(const MX& x, const std::vector<int>& offset){
     // Consistency check
     casadi_assert(offset.size()>=1);
     casadi_assert(offset.front()==0);
@@ -48,13 +48,13 @@ namespace CasADi{
     } else if(offset.size()==1 || (offset.size()==2 && offset.back()==x.size1())){
       return vector<MX>(1,x);
     } else {
-      return x->getVertsplit(offset);
+      return x->getHorzsplit(offset);
     }
   }
   
-  std::vector<MX> vertsplit(const MX& x, int incr){
+  std::vector<MX> horzsplit(const MX& x, int incr){
     casadi_assert(incr>=1);
-    return vertsplit(x,range(0,x.size1(),incr));
+    return horzsplit(x,range(0,x.size1(),incr));
   }
 
   MX vertcat(const vector<MX>& comp){
@@ -64,23 +64,23 @@ namespace CasADi{
     return trans(horzcat(v));
   }
   
-  std::vector<MX> horzsplit(const MX& x, const std::vector<int>& offset){
-    std::vector<MX> ret = vertsplit(trans(x),offset);
+  std::vector<MX> vertsplit(const MX& x, const std::vector<int>& offset){
+    std::vector<MX> ret = horzsplit(trans(x),offset);
     MX (*transMX)(const MX& x) = trans; 
     std::transform(ret.begin(),ret.end(),ret.begin(),transMX);
     return ret;
   }
   
-  std::vector<MX> horzsplit(const MX& x, int incr){
+  std::vector<MX> vertsplit(const MX& x, int incr){
     casadi_assert(incr>=1);
-    return horzsplit(x,range(0,x.size2(),incr));
+    return vertsplit(x,range(0,x.size2(),incr));
   }
   
   std::vector< std::vector<MX > > blocksplit(const MX& x, const std::vector<int>& vert_offset, const std::vector<int>& horz_offset) {
-    std::vector<MX > cols = vertsplit(x,vert_offset);
+    std::vector<MX > cols = horzsplit(x,vert_offset);
     std::vector< std::vector<MX > > ret;
     for (int i=0;i<cols.size();++i) {
-      ret.push_back(horzsplit(cols[i],horz_offset));
+      ret.push_back(vertsplit(cols[i],horz_offset));
     }
     return ret;
   }

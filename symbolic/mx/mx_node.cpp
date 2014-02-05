@@ -42,7 +42,7 @@
 #include "inner_prod.hpp"
 #include "norm.hpp"
 #include "horzcat.hpp"
-#include "vertsplit.hpp"
+#include "horzsplit.hpp"
 #include "assertion.hpp"
 
 // Template implementations
@@ -718,15 +718,15 @@ namespace CasADi{
     }
   }
 
-  std::vector<MX> MXNode::getVertsplit(const std::vector<int>& output_offset) const{
+  std::vector<MX> MXNode::getHorzsplit(const std::vector<int>& output_offset) const{
     if (isZero()) {
-      std::vector<MX> ret = MX::createMultipleOutput(new Vertsplit(shared_from_this<MX>(),output_offset));
+      std::vector<MX> ret = MX::createMultipleOutput(new Horzsplit(shared_from_this<MX>(),output_offset));
       for (int i=0;i<ret.size();++i) {
         ret[i]=MX::zeros(ret[i].sparsity());
       }
       return ret;
     }
-    return MX::createMultipleOutput(new Vertsplit(shared_from_this<MX>(),output_offset));
+    return MX::createMultipleOutput(new Horzsplit(shared_from_this<MX>(),output_offset));
   }
 
   void MXNode::clearVector(const std::vector<std::vector<MX*> > v){

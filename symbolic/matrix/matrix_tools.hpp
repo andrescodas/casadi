@@ -172,7 +172,7 @@ namespace CasADi{
   /** \brief Concatenate a list of matrices vertically
    * Alternative terminology: vertical stack, vstack, vertical append, [a;b]
    *
-   *   horzcat(vertsplit(x,...)) = x
+   *   horzcat(horzsplit(x,...)) = x
    */
   template<class T>
   Matrix<T> horzcat(const std::vector<Matrix<T> > &v);
@@ -181,23 +181,23 @@ namespace CasADi{
    * \param offset List of all start cols for each group
    *      the last col group will run to the end.
    *
-   *   horzcat(vertsplit(x,...)) = x
+   *   horzcat(horzsplit(x,...)) = x
    */
   template<class T>
-  std::vector<Matrix<T> > vertsplit(const Matrix<T> &v, const std::vector<int>& offset);
+  std::vector<Matrix<T> > horzsplit(const Matrix<T> &v, const std::vector<int>& offset);
 
   /** \brief  split vertically, retaining fixed-sized groups of cols
    * \param incr Size of each group of cols
    *
-   *   horzcat(vertsplit(x,...)) = x
+   *   horzcat(horzsplit(x,...)) = x
    */
   template<class T>
-  std::vector<Matrix<T> > vertsplit(const Matrix<T> &v, int incr=1);
+  std::vector<Matrix<T> > horzsplit(const Matrix<T> &v, int incr=1);
 
   /** \brief Concatenate a list of matrices horizontally
    * Alternative terminology: horizontal stack, hstack, horizontal append, [a b]
    *
-   *   vertcat(horzsplit(x,...)) = x
+   *   vertcat(vertsplit(x,...)) = x
    */
   template<class T>
   Matrix<T> vertcat(const std::vector<Matrix<T> > &v);
@@ -206,18 +206,18 @@ namespace CasADi{
    * \param output_offset List of all start rows for each group
    *      the last row group will run to the end.
    *
-   *   vertcat(horzsplit(x,...)) = x
+   *   vertcat(vertsplit(x,...)) = x
    */
   template<class T>
-  std::vector<Matrix<T> > horzsplit(const Matrix<T> &v, const std::vector<int>& offset);
+  std::vector<Matrix<T> > vertsplit(const Matrix<T> &v, const std::vector<int>& offset);
 
   /** \brief  split horizontally, retaining fixed-sized groups of rows
    * \param incr Size of each group of rows
    *
-   *   vertcat(horzsplit(x,...)) = x
+   *   vertcat(vertsplit(x,...)) = x
    */
   template<class T>
-  std::vector<Matrix<T> > horzsplit(const Matrix<T> &v, int incr=1);
+  std::vector<Matrix<T> > vertsplit(const Matrix<T> &v, int incr=1);
 
 
   /** \brief  chop up into blocks
@@ -820,11 +820,11 @@ namespace CasADi{
   }
 
   template<class T>
-  std::vector<Matrix<T> > vertsplit(const Matrix<T> &v, const std::vector<int>& offset) {
+  std::vector<Matrix<T> > horzsplit(const Matrix<T> &v, const std::vector<int>& offset) {
     // Consistency check
     casadi_assert(offset.size()>=1);
     casadi_assert(offset.front()==0);
-    casadi_assert_message(offset.back()<=v.size1(),"vertsplit(const Matrix<T> &v, const std::vector<int>& offset): Last elements of offset (" << offset.back() << ") must be at maximum the number of cols in v (" << v.size1() << ")");
+    casadi_assert_message(offset.back()<=v.size1(),"horzsplit(const Matrix<T> &v, const std::vector<int>& offset): Last elements of offset (" << offset.back() << ") must be at maximum the number of cols in v (" << v.size1() << ")");
     casadi_assert(isMonotone(offset));
   
     std::vector<Matrix<T> > ret;
@@ -859,9 +859,9 @@ namespace CasADi{
   }
 
   template<class T>
-  std::vector<Matrix<T> > vertsplit(const Matrix<T> &v, int incr) {
+  std::vector<Matrix<T> > horzsplit(const Matrix<T> &v, int incr) {
     casadi_assert(incr>=1);
-    return vertsplit(v,range(0,v.size1(),incr));
+    return horzsplit(v,range(0,v.size1(),incr));
   }
 
 
@@ -874,25 +874,25 @@ namespace CasADi{
   }
 
   template<class T>
-  std::vector< Matrix<T> > horzsplit(const Matrix<T>& x, const std::vector<int>& offset){
-    std::vector< Matrix<T> > ret = vertsplit(trans(x),offset);
+  std::vector< Matrix<T> > vertsplit(const Matrix<T>& x, const std::vector<int>& offset){
+    std::vector< Matrix<T> > ret = horzsplit(trans(x),offset);
     Matrix<T> (*transT)(const Matrix<T>& x) = trans;
     std::transform(ret.begin(),ret.end(),ret.begin(),transT);
     return ret;
   }
   
   template<class T>
-  std::vector< Matrix<T> > horzsplit(const Matrix<T>& x, int incr){
+  std::vector< Matrix<T> > vertsplit(const Matrix<T>& x, int incr){
     casadi_assert(incr>=1);
-    return horzsplit(x,range(0,x.size2(),incr));
+    return vertsplit(x,range(0,x.size2(),incr));
   }
 
   template<class T>
   std::vector< std::vector< Matrix<T> > > blocksplit(const Matrix<T>& x, const std::vector<int>& vert_offset, const std::vector<int>& horz_offset) {
-    std::vector< Matrix<T> > cols = vertsplit(x,vert_offset);
+    std::vector< Matrix<T> > cols = horzsplit(x,vert_offset);
     std::vector< std::vector< Matrix<T> > > ret;
     for (int i=0;i<cols.size();++i) {
-      ret.push_back(horzsplit(cols[i],horz_offset));
+      ret.push_back(vertsplit(cols[i],horz_offset));
     }
     return ret;
   }
@@ -1614,9 +1614,9 @@ namespace CasADi{
   MTT_INST(T,blockcat)                          \
   MTT_INST(T,blocksplit)                        \
   MTT_INST(T,vertcat)                           \
-  MTT_INST(T,horzsplit)                         \
-  MTT_INST(T,horzcat)                           \
   MTT_INST(T,vertsplit)                         \
+  MTT_INST(T,horzcat)                           \
+  MTT_INST(T,horzsplit)                         \
   MTT_INST(T,inner_prod)                        \
   MTT_INST(T,outer_prod)                        \
   MTT_INST(T,norm_1)                            \
