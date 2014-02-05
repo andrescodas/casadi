@@ -56,12 +56,12 @@ namespace CasADi{
   
   /** \brief General sparsity class
    * 
-   * The storage format is a compressed col storage (CCS) format.\n
+   * The storage format is a compressed column storage (CCS) format.\n
    * 
-   In this format, the structural non-zero elements are stored in col-major order, starting from 
+   In this format, the structural non-zero elements are stored in column-major order, starting from 
    the upper left corner of the matrix and ending in the lower right corner.
   
-   In addition to the dimension (size2(),size1()), (i.e. the number of cols and the number of rows
+   In addition to the dimension (size1(),size2()), (i.e. the number of rows and the number of columns
    respectively), there are also two vectors of integers:
   
    1. "colind" [length size2()+1], which contains the index to the first non-zero element on or after
@@ -71,11 +71,11 @@ namespace CasADi{
    2. "row" [same length as the number of non-zero elements, size()] The rows for each of the
    structural non-zeros.
      
-   Note that with this format, it is cheap to loop over all the non-zero elements of a particular col,
-   constant time per elment, but expensive to jump to access a location (i,j).
+   Note that with this format, it is cheap to loop over all the non-zero elements of a particular column,
+   at constant time per element, but expensive to jump to access a location (i,j).
   
-   If the matrix is dense, i.e. length(row) == size2()*size1(), the format reduces to standard dense
-   col major format, which allows access to an arbitrary element in constant time.
+   If the matrix is dense, i.e. length(row) == size1()*size2(), the format reduces to standard dense
+   column major format, which allows access to an arbitrary element in constant time.
   
    Since the object is reference counted (it inherits from SharedObject), several matrices are allowed
    to share the same sparsity pattern.
