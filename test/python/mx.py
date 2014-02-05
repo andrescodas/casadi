@@ -135,16 +135,16 @@ class MXtests(casadiTestCase):
   def test_MX1(self):
     self.message("MX constructor")
     x = MX("x",2,3)
-    self.assertEqual(x.size1(),2,"MX fails to indicate its size1")
-    self.assertEqual(x.size2(),3,"MX fails to indicate its size2")
+    self.assertEqual(x.size2(),2,"MX fails to indicate its size2")
+    self.assertEqual(x.size1(),3,"MX fails to indicate its size1")
 
   def test_MXhorzcat(self):
     self.message("MX horzcat")
     x = MX("x",1,3)
     y = MX("y",1,3)
     z=horzcat((x,y))
-    self.assertEqual(z.size1(),2,"MX fails to indicate its size1")
-    self.assertEqual(z.size2(),3,"MX fails to indicate its size2")
+    self.assertEqual(z.size2(),2,"MX fails to indicate its size2")
+    self.assertEqual(z.size1(),3,"MX fails to indicate its size1")
 
   def test_MXFunction1(self):
     self.message("MXFunction single input, single output")
@@ -366,15 +366,15 @@ class MXtests(casadiTestCase):
     self.message("trans")
     a = MX(0,1)
     b = trans(a)
-    self.assertEquals(b.size1(),1)
-    self.assertEquals(b.size2(),0)
+    self.assertEquals(b.size2(),1)
+    self.assertEquals(b.size1(),0)
     
   def test_MXtrans(self):
     self.message("trans(MX)")
     x = MX("x",2,3)
     z=trans(x)
-    self.assertEqual(z.size1(),3,"Flatten returns MX of wrong dimension")
-    self.assertEqual(z.size2(),2,"Flatten returns MX of wrong dimension")
+    self.assertEqual(z.size2(),3,"Flatten returns MX of wrong dimension")
+    self.assertEqual(z.size1(),2,"Flatten returns MX of wrong dimension")
     f = MXFunction([x],[z])
     self.assertEqual(f.getNumInputs(),1,"MXFunction fails to indicate correct number of inputs")
     self.assertEqual(f.getNumOutputs(),1,"MXFunction fails to indicate correct number of outputs")
@@ -425,8 +425,8 @@ class MXtests(casadiTestCase):
     self.message("reshape(MX)")
     x = MX("x",2,3)
     z=c.reshape(x,(1,6))
-    self.assertEqual(z.size1(),1,"Flatten returns MX of wrong dimension")
-    self.assertEqual(z.size2(),6,"Flatten returns MX of wrong dimension")
+    self.assertEqual(z.size2(),1,"Flatten returns MX of wrong dimension")
+    self.assertEqual(z.size1(),6,"Flatten returns MX of wrong dimension")
     f = MXFunction([x],[z])
     self.assertEqual(f.getNumInputs(),1,"MXFunction fails to indicate correct number of inputs")
     self.assertEqual(f.getNumOutputs(),1,"MXFunction fails to indicate correct number of outputs")
@@ -1127,8 +1127,8 @@ class MXtests(casadiTestCase):
     f.init()
     self.assertTrue(isinstance(f.jac(0,0),MX))
     self.assertEqual(f.jac(0,0).size(),10)
-    self.assertEqual(f.jac(0,0).size1(),10)
     self.assertEqual(f.jac(0,0).size2(),10)
+    self.assertEqual(f.jac(0,0).size1(),10)
     
     g = MXFunction([],[f.jac(0,0)]);g.init();g.evaluate()
     self.checkarray(g.getOutput(),eye(10),"unit matrix")
@@ -1759,14 +1759,14 @@ class MXtests(casadiTestCase):
     a = MX(DMatrix(0,2))
     v = horzcat([a,a])
     
-    self.assertEqual(v.size1(),0)
-    self.assertEqual(v.size2(),2)
+    self.assertEqual(v.size2(),0)
+    self.assertEqual(v.size1(),2)
     
     a = MX(DMatrix(2,0))
     v = horzcat([a,a])
     
-    self.assertEqual(v.size1(),4)
-    self.assertEqual(v.size2(),0)
+    self.assertEqual(v.size2(),4)
+    self.assertEqual(v.size1(),0)
     
   def test_jacobian_empty(self):
     x = msym("x",3)
@@ -1835,7 +1835,7 @@ class MXtests(casadiTestCase):
     f.evaluate()
     v = [f.output(i) for i in range(len(v))]
     
-    self.assertEqual(len(v),a.size1())
+    self.assertEqual(len(v),a.size2())
     self.checkarray(v[0],DMatrix([[0,0,0,0,0]]))
     self.checkarray(v[1],DMatrix([[1,2,0,0,0]]))
     self.checkarray(v[2],DMatrix([[3,4,5,0,0]]))
@@ -1866,8 +1866,8 @@ class MXtests(casadiTestCase):
     V = [f.output(i) for i in range(len(v))]
     
     self.assertEqual(len(v),3)
-    self.assertEqual(v[0].size1(),0)
-    self.assertEqual(v[0].size2(),5)  # why not 5?
+    self.assertEqual(v[0].size2(),0)
+    self.assertEqual(v[0].size1(),5)  # why not 5?
     self.checkarray(V[1],DMatrix([[0,0,0,0,0],[1,2,0,0,0],[3,4,5,0,0]]))
     self.checkarray(V[2],DMatrix([[6,7,8,9,0],[10,11,12,13,14]]))
  
@@ -1894,7 +1894,7 @@ class MXtests(casadiTestCase):
 
     f.evaluate()
     v = [f.output(i) for i in range(len(v))]
-    self.assertEqual(len(v),a.size1())
+    self.assertEqual(len(v),a.size2())
     self.checkarray(v[0],DMatrix([0,1,3,6,10]))
     self.checkarray(v[1],DMatrix([0,2,4,7,11]))
     self.checkarray(v[2],DMatrix([0,0,5,8,12]))
@@ -1924,8 +1924,8 @@ class MXtests(casadiTestCase):
     V = [f.output(i) for i in range(len(v))]
     
     self.assertEqual(len(v),3)
-    self.assertEqual(v[0].size1(),5)
-    self.assertEqual(v[0].size2(),0)
+    self.assertEqual(v[0].size2(),5)
+    self.assertEqual(v[0].size1(),0)
     self.checkarray(V[1],DMatrix([[0,0,0],[1,2,0],[3,4,5],[6,7,8],[10,11,12]]))
     self.checkarray(V[2],DMatrix([[0,0],[0,0],[0,0],[9,0],[13,14]]))
     
@@ -1954,13 +1954,13 @@ class MXtests(casadiTestCase):
      f.init()
      c = f.call([b])[0]
 
-     self.assertEqual(c.size1(),5)
-     self.assertEqual(c.size2(),0)
+     self.assertEqual(c.size2(),5)
+     self.assertEqual(c.size1(),0)
 
      c = f.eval([b])[0]
 
-     self.assertEqual(c.size1(),5)
-     self.assertEqual(c.size2(),0)
+     self.assertEqual(c.size2(),5)
+     self.assertEqual(c.size1(),0)
      
      a = MX(0,0)
      b = msym("x",2)
@@ -1969,13 +1969,13 @@ class MXtests(casadiTestCase):
      f.init()
      c = f.call([b])[0]
 
-     self.assertEqual(c.size1(),0)
      self.assertEqual(c.size2(),0)
+     self.assertEqual(c.size1(),0)
 
      c = f.eval([b])[0]
 
-     self.assertEqual(c.size1(),0)
      self.assertEqual(c.size2(),0)
+     self.assertEqual(c.size1(),0)
      
   def test_mxnull(self):
      a = MX(5,0)
@@ -2012,7 +2012,7 @@ class MXtests(casadiTestCase):
         for v in [0,1,0.2]:
           x_ = DMatrix(sp,v)
           
-          xx = msym("x",sp.size1(),sp.size2())
+          xx = msym("x",sp.size2(),sp.size1())
           x=xx[sp]
           
           for (casadiop, numpyop,name, flags) in self.pool.zip():
@@ -2036,16 +2036,16 @@ class MXtests(casadiTestCase):
       for sp in [sp_sparse(1,1),sp_dense(1,1),sp_sparse(3,4),sp_dense(3,4), CCSSparsity(3,4,[1,2,1],[0,2,2,3])]:
         for v1 in [0,1,0.2,-0.2]:
           x1_ = DMatrix(sp,v1)
-          xx1 = msym("x",sp.size1(),sp.size2())
+          xx1 = msym("x",sp.size2(),sp.size1())
           x1=xx1[sp]
-          xx1s = ssym("x",sp.size1(),sp.size2())
+          xx1s = ssym("x",sp.size2(),sp.size1())
           x1s=xx1s[sp]
           for sp2 in [sp_sparse(1,1),sp_dense(1,1),sp_sparse(3,4),sp_dense(3,4), CCSSparsity(3,4,[1,2,1],[0,2,2,3])]:
             for v2 in [0,1,0.2,-0.2]:
               x2_ = DMatrix(sp2,v2)
-              xx2 = msym("x",sp2.size1(),sp2.size2())
+              xx2 = msym("x",sp2.size2(),sp2.size1())
               x2=xx2[sp2]
-              xx2s = ssym("x",sp2.size1(),sp2.size2())
+              xx2s = ssym("x",sp2.size2(),sp2.size1())
               x2s=xx2s[sp2]
               for (casadiop, numpyop,name, flags) in self.matrixbinarypool.zip():
                 if "mul" in name and (sp.numel()==1 or sp2.numel()==1): continue
@@ -2222,8 +2222,8 @@ class MXtests(casadiTestCase):
     
     c_ = f.output()
     
-    self.assertEqual(c_.size1(),a.size1()*b.size1())
     self.assertEqual(c_.size2(),a.size2()*b.size2())
+    self.assertEqual(c_.size1(),a.size1()*b.size1())
     self.assertEqual(c_.size(),a.size()*b.size())
     
     self.checkarray(c_,numpy.kron(a,b))

@@ -114,7 +114,7 @@ namespace CasADi{
     // Get offsets for each col
     vector<int> col_offset(ndep()+1,0);
     for(int i=0; i<ndep(); ++i){
-      int ncol = dep(i).sparsity().size1();
+      int ncol = dep(i).sparsity().size2();
       col_offset[i+1] = col_offset[i] + ncol;
     }
 

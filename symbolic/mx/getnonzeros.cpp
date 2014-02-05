@@ -211,7 +211,7 @@ namespace CasADi{
       arg.sparsity().getNZInplace(r_ind);
 
       // Sparsity pattern for the result
-      r_colind.resize(osp.size1()+1); // Col count
+      r_colind.resize(osp.size2()+1); // Col count
       fill(r_colind.begin(),r_colind.end(),0);
       r_row.clear();
 
@@ -249,7 +249,7 @@ namespace CasADi{
       if(r_nz.size()==0){
         res = MX::sparse(osp.shape());
       } else {
-        CCSSparsity f_sp(osp.size1(),osp.size2(),r_row,r_colind);
+        CCSSparsity f_sp(osp.size2(),osp.size1(),r_row,r_colind);
         res = arg->getGetNonzeros(f_sp,r_nz);
       }
     }

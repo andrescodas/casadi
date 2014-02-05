@@ -49,8 +49,8 @@ namespace CasADi{
     
     casadi_assert(!dense_ || A_sp_.dense());
     
-    m_ = A_sp_.size1();
-    n_ = A_sp_.size2();
+    m_ = A_sp_.size2();
+    n_ = A_sp_.size1();
     
     casadi_assert(m_<=n_);
     

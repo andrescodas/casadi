@@ -107,7 +107,7 @@ void Lqr::setupCostFunctions()
 	  simplify(cost_xu_k);
 	  simplify(cost_uu_k);
 
-	  // workaround bug where size() != size1()*size2()
+	  // workaround bug where size() != size2()*size1()
 	  makeDense(cost_0_k);
 	  makeDense(cost_x_k);
 	  makeDense(cost_u_k);
@@ -205,7 +205,7 @@ void Lqr::setupBackwardSweepFunction()
 
 
      /*************** backwardSweepFcn ****************/
-     // workaround bug where size() != size1()*size2()
+     // workaround bug where size() != size2()*size1()
      makeDense( u_feedforward_k );
      makeDense( feedbackGain_k );
      makeDense( V_0_k );
@@ -223,7 +223,7 @@ void Lqr::setupBackwardSweepFunction()
      backwardSweepFcn.init();
 
      /*************** dynamicsFcn ****************/
-     // workaround bug where size() != size1()*size2()
+     // workaround bug where size() != size2()*size1()
      makeDense( f );
      makeDense( f_x );
      makeDense( f_u );
@@ -236,7 +236,7 @@ void Lqr::setupBackwardSweepFunction()
      dynamicsFcn.init();
 
      /*************** qFcn ****************/
-     // workaround bug where size() != size1()*size2()
+     // workaround bug where size() != size2()*size1()
      makeDense( Q_0 );
      makeDense( Q_x );
      makeDense( Q_u );

@@ -34,7 +34,7 @@ Simulator::Simulator(const Integrator& integrator, const FX& output_fcn, const v
 }
 
 Simulator::Simulator(const Integrator& integrator, const FX& output_fcn, const Matrix<double>& grid){
-  casadi_assert_message(grid.size2()==1,"Simulator::Simulator: grid must be of a row matrix shape, but got " << grid.dimString());
+  casadi_assert_message(grid.size1()==1,"Simulator::Simulator: grid must be of a row matrix shape, but got " << grid.dimString());
   casadi_assert_message(grid.dense(),"Simulator::Simulator: grid must be dense, but got " << grid.dimString());
   assignNode(new SimulatorInternal(integrator,output_fcn,grid.data()));
 }
@@ -44,7 +44,7 @@ Simulator::Simulator(const Integrator& integrator, const vector<double>& grid){
 }
 
 Simulator::Simulator(const Integrator& integrator, const Matrix<double>& grid){
-  casadi_assert_message(grid.size2()==1,"Simulator::Simulator: grid must be of a row matrix shape, but got " << grid.dimString());
+  casadi_assert_message(grid.size1()==1,"Simulator::Simulator: grid must be of a row matrix shape, but got " << grid.dimString());
   casadi_assert_message(grid.dense(),"Simulator::Simulator: grid must be dense, but got " << grid.dimString());
   assignNode(new SimulatorInternal(integrator,FX(),grid.data()));
 }

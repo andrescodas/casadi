@@ -22,16 +22,16 @@ Ocp::~Ocp()
 
 void Ocp::addNonlconIneq( SXMatrix gNew, string name)
 {
-     if (gNew.size2() != 1){
-          cerr << "gNew.size2() != 1" << endl;
+     if (gNew.size1() != 1){
+          cerr << "gNew.size1() != 1" << endl;
           throw 1;
      }
 
      g = horzcat(g, gNew);
-     gSizes.push_back(gNew.size1());
+     gSizes.push_back(gNew.size2());
      gLabels.push_back(name);
 
-     for (int k=0; k<gNew.size1(); k++){
+     for (int k=0; k<gNew.size2(); k++){
           gMin.push_back(-1.0e50);
           gMax.push_back(0.0);
           //    -numeric_limits<double>::infinity()
@@ -44,16 +44,16 @@ void Ocp::addNonlconIneq( SXMatrix gNew )
 
 void Ocp::addNonlconEq( SXMatrix gNew, string name)
 {
-     if (gNew.size2() != 1){
-          cerr << "gNew.size2() != 1" << endl;
+     if (gNew.size1() != 1){
+          cerr << "gNew.size1() != 1" << endl;
           throw 1;
      }
 
      g = horzcat(g, gNew);
-     gSizes.push_back(gNew.size1());
+     gSizes.push_back(gNew.size2());
      gLabels.push_back(name);
 
-     for (int k=0; k<gNew.size1(); k++){
+     for (int k=0; k<gNew.size2(); k++){
           gMin.push_back(0);
           gMax.push_back(0);
      }
@@ -94,7 +94,7 @@ MultipleShooting & Ocp::addMultipleShooting(string name, Ode & ode, SX t0, SX tf
      assertUniqueName(name);
 
      int numNew = ode.nxu()*N;
-     if (designVariables.size1() == 0)
+     if (designVariables.size2() == 0)
           designVariables = ssym(name, numNew);
      else
           designVariables = horzcat( designVariables, ssym(name, numNew) );
@@ -105,7 +105,7 @@ MultipleShooting & Ocp::addMultipleShooting(string name, Ode & ode, SX t0, SX tf
           guess.push_back(0);
      }
 
-     ms[name] = new MultipleShooting(name, ode, t0, tf, N, lb, ub, guess, designVariables, designVariables.size1() - ode.nxu()*N, params);
+     ms[name] = new MultipleShooting(name, ode, t0, tf, N, lb, ub, guess, designVariables, designVariables.size2() - ode.nxu()*N, params);
 
      // dynamics constraint
      for (int k=0; k<N-1; k++)
@@ -141,11 +141,11 @@ SX & Ocp::addParam(string _newParam)
 {
      assertUniqueName(_newParam);
 
-     int idx = designVariables.size1();
+     int idx = designVariables.size2();
 
      SXMatrix newDv = ssym(_newParam, 1);
 //      designVariables = horzcat( designVariables, ssym(_newParam, 1) );
-     if (designVariables.size1() == 0)
+     if (designVariables.size2() == 0)
           designVariables = newDv;
      else
           designVariables = horzcat( designVariables, newDv );

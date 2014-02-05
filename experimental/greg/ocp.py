@@ -33,21 +33,21 @@ class Ocp():
         self.Gmax = []
 
     def _addNonlconIneq(self, g):
-        if g.size2() != 1:
+        if g.size1() != 1:
             errStr = "invalid dimensions of g "+str(g.shape)
             raise ValueError(errStr)
 
-        self.Gmin += g.size1()*[-1e-15]
-        self.Gmax += g.size1()*[0]
+        self.Gmin += g.size2()*[-1e-15]
+        self.Gmax += g.size2()*[0]
         self.G.append(g)
 
     def _addNonlconEq(self, g):
-        if g.size2() != 1:
+        if g.size1() != 1:
             errStr = "invalid dimensions of g "+str(g.shape)
             raise ValueError(errStr)
 
-        self.Gmin += g.size1()*[0]
-        self.Gmax += g.size1()*[0]
+        self.Gmin += g.size2()*[0]
+        self.Gmax += g.size2()*[0]
         self.G.append(g)
 
     def addNonlcon(self, lhs, rel, rhs):

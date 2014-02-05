@@ -98,13 +98,13 @@ class DotArtist:
       nzlabels = map(str,range(sp.size()))
     nzlabelcounter = 0
     if s.size()==s.numel():
-      graph.add_node(pydot.Node(id,label="%d x %d" % (s.size1(),s.size2()),shape='rectangle',color=self.sparsityrow,style="filled"))
+      graph.add_node(pydot.Node(id,label="%d x %d" % (s.size2(),s.size1()),shape='rectangle',color=self.sparsityrow,style="filled"))
     else:
       label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">'
-      label+="<TR><TD ROWSPAN='%d'><font color='#666666'>%s</font></TD></TR>" % (s.size2(), s.dimString())
-      for i in range(s.size1()):
+      label+="<TR><TD ROWSPAN='%d'><font color='#666666'>%s</font></TD></TR>" % (s.size1(), s.dimString())
+      for i in range(s.size2()):
         label+="<TR>"
-        for j in range(s.size2()):
+        for j in range(s.size1()):
           k = sp.getNZ_const(i,j)
           if k==-1:
             label+="<TD>.</TD>"
@@ -132,10 +132,10 @@ class MXSymbolicArtist(DotArtist):
     else:
        # The Matrix grid is represented by a html table with 'ports'
       label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % row
-      label+="<TR><TD ROWSPAN='%d'>%s: <font color='#666666'>%s</font></TD></TR>" % (s.size2(),s.getName(), s.dimString())
-      for i in range(s.size1()):
+      label+="<TR><TD ROWSPAN='%d'>%s: <font color='#666666'>%s</font></TD></TR>" % (s.size1(),s.getName(), s.dimString())
+      for i in range(s.size2()):
         label+="<TR>"
-        for j in range(s.size2()):
+        for j in range(s.size1()):
           k = sp.getNZ_const(i,j)
           if k==-1:
             label+="<TD>.</TD>"
@@ -181,10 +181,10 @@ class MXSymbolicArtist(DotArtist):
 #       if candidates[0] == hash(s):
 #         label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="#0000aa">'
 #         if not(d.numel()==1 and d.numel()==d.size()): 
-#           label+="<TR><TD ROWSPAN='%d' BGCOLOR='#dddddd'><font>%s</font></TD></TR>" % (d.size2(), d.dimString())
-#         for i in range(d.size1()):
+#           label+="<TR><TD ROWSPAN='%d' BGCOLOR='#dddddd'><font>%s</font></TD></TR>" % (d.size1(), d.dimString())
+#         for i in range(d.size2()):
 #           label+="<TR>"
-#           for j in range(d.size2()):
+#           for j in range(d.size1()):
 #             kk = spd.getNZ_const(i,j)
 #             if kk==-1:
 #               label+="<TD>.</TD>"
@@ -198,10 +198,10 @@ class MXSymbolicArtist(DotArtist):
 #     # The Matrix grid is represented by a html table with 'ports'
 #     label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">'
 #     if not(s.numel()==1 and s.numel()==s.size()): 
-#       label+="<TR><TD ROWSPAN='%d'><font color='#666666'>%s</font></TD></TR>" % (s.size2(), s.dimString())
-#     for i in range(s.size1()):
+#       label+="<TR><TD ROWSPAN='%d'><font color='#666666'>%s</font></TD></TR>" % (s.size1(), s.dimString())
+#     for i in range(s.size2()):
 #       label+="<TR>"
-#       for j in range(s.size2()):
+#       for j in range(s.size1()):
 #         k = sp.getNZ_const(i,j)
 #         if k==-1:
 #           label+="<TD>.</TD>"
@@ -252,10 +252,10 @@ class MXConstantArtist(DotArtist):
     else:
       # The Matrix grid is represented by a html table with 'ports'
       label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % row
-      label+="<TR><TD ROWSPAN='%d'><font color='#666666'>%s</font></TD></TR>" % (s.size2(), s.dimString())
-      for i in range(s.size1()):
+      label+="<TR><TD ROWSPAN='%d'><font color='#666666'>%s</font></TD></TR>" % (s.size1(), s.dimString())
+      for i in range(s.size2()):
         label+="<TR>"
-        for j in range(s.size2()):
+        for j in range(s.size1()):
           k = sp.getNZ_const(i,j)
           if k==-1:
             label+="<TD>.</TD>"
@@ -319,10 +319,10 @@ class MXGetNonzerosArtist(DotArtist):
     else:
       # The Matrix grid is represented by a html table with 'ports'
       label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % row
-      label+="<TR><TD ROWSPAN='%d' PORT='entry'>getNonzeros</TD></TR>" % (s.size2())
-      for i in range(s.size1()):
+      label+="<TR><TD ROWSPAN='%d' PORT='entry'>getNonzeros</TD></TR>" % (s.size1())
+      for i in range(s.size2()):
         label+="<TR>"
-        for j in range(s.size2()):
+        for j in range(s.size1()):
           k = sp.getNZ_const(i,j)
           if k==-1:
             label+="<TD>.</TD>"
@@ -357,10 +357,10 @@ class MXSetNonzerosArtist(DotArtist):
 
     # The Matrix grid is represented by a html table with 'ports'
     label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % row
-    label+="<TR><TD ROWSPAN='%d' PORT='entry'>setNonzeros</TD></TR>" % (s.size2())
-    for i in range(s.size1()):
+    label+="<TR><TD ROWSPAN='%d' PORT='entry'>setNonzeros</TD></TR>" % (s.size1())
+    for i in range(s.size2()):
       label+="<TR>"
-      for j in range(s.size2()):
+      for j in range(s.size1()):
         k = entry.sparsity().getNZ_const(i,j)
         if k==-1 or Mk>= len(M) or k != M[Mk]:
           label+="<TD>.</TD>"
@@ -398,10 +398,10 @@ class MXAddNonzerosArtist(DotArtist):
 
     # The Matrix grid is represented by a html table with 'ports'
     label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" COLOR="%s">' % row
-    label+="<TR><TD ROWSPAN='%d' PORT='entry'>addNonzeros</TD></TR>" % (s.size2())
-    for i in range(s.size1()):
+    label+="<TR><TD ROWSPAN='%d' PORT='entry'>addNonzeros</TD></TR>" % (s.size1())
+    for i in range(s.size2()):
       label+="<TR>"
-      for j in range(s.size2()):
+      for j in range(s.size1()):
         k = sp.getNZ_const(i,j)
         if k==-1 or Mk>= len(M) or k != M[Mk]:
           label+="<TD>.</TD>"
@@ -518,9 +518,9 @@ class SXMatrixArtist(DotArtist):
       
     # The Matrix grid is represented by a html table with 'ports'
     label = '<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">'
-    for i in range(s.size1()):
+    for i in range(s.size2()):
       label+="<TR>"
-      for j in range(s.size2()):
+      for j in range(s.size1()):
         k = sp.getNZ_const(i,j)
         if k==-1:
           label+="<TD>.</TD>"

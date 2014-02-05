@@ -36,8 +36,8 @@ namespace CasADi{
   LinearSolverInternal::LinearSolverInternal(const CCSSparsity& sparsity, int nrhs){
     // Make sure arguments are consistent
     casadi_assert(!sparsity.isNull());
-    casadi_assert_message(sparsity.size1()==sparsity.size2(),"LinearSolverInternal::init: the matrix must be square but got " << sparsity.dimString());  
-    casadi_assert_message(!isSingular(sparsity),"LinearSolverInternal::init: singularity - the matrix is structurally rank-deficient. sprank(J)=" << rank(sparsity) << " (in stead of "<< sparsity.size1() << ")");
+    casadi_assert_message(sparsity.size2()==sparsity.size1(),"LinearSolverInternal::init: the matrix must be square but got " << sparsity.dimString());  
+    casadi_assert_message(!isSingular(sparsity),"LinearSolverInternal::init: singularity - the matrix is structurally rank-deficient. sprank(J)=" << rank(sparsity) << " (in stead of "<< sparsity.size2() << ")");
 
     // Calculate the Dulmage-Mendelsohn decomposition
     std::vector<int> coarse_colblock, coarse_rowblock;
@@ -46,7 +46,7 @@ namespace CasADi{
     // Allocate inputs
     setNumInputs(LINSOL_NUM_IN);
     input(LINSOL_A) = DMatrix(sparsity);
-    input(LINSOL_B) = DMatrix(nrhs,sparsity.size1(),0);
+    input(LINSOL_B) = DMatrix(nrhs,sparsity.size2(),0);
   
     // Allocate outputs
     setNumOutputs(LINSOL_NUM_OUT);
@@ -102,7 +102,7 @@ namespace CasADi{
     // Get input and output vector
     const vector<double>& b = input(LINSOL_B).data();
     vector<double>& x = output(LINSOL_X).data();
-    int nrhs = input(LINSOL_B).size1();
+    int nrhs = input(LINSOL_B).size2();
 
     // Copy input to output
     copy(b.begin(),b.end(),x.begin());
@@ -149,7 +149,7 @@ namespace CasADi{
       } else {
         rhs.push_back(rhs_d);
         rhs_ind.push_back(d);
-        col_offset.push_back(col_offset.back()+rhs_d.size1());
+        col_offset.push_back(col_offset.back()+rhs_d.size2());
       }
     }
     
@@ -179,7 +179,7 @@ namespace CasADi{
       } else {
         rhs.push_back(X_bar);
         rhs_ind.push_back(d);
-        col_offset.push_back(col_offset.back()+X_bar.size1());
+        col_offset.push_back(col_offset.back()+X_bar.size2());
 
         // Delete seed
         X_bar = MX();
@@ -217,8 +217,8 @@ namespace CasADi{
     const CCSSparsity& A_sp = input[1]->sparsity();
     const std::vector<int>& A_colind = A_sp.colind();
     const std::vector<int>& A_row = A_sp.row();
-    int nrhs = r_sp.size1();
-    int n = r_sp.size2();
+    int nrhs = r_sp.size2();
+    int n = r_sp.size1();
     int nnz = A_sp.size();
 
     // Get pointers to data
@@ -348,7 +348,7 @@ namespace CasADi{
     if(input[0]!=output[0]){
       copy(input[0]->begin(),input[0]->end(),output[0]->begin());
     }
-    solve(getPtr(output[0]->data()),output[0]->size1(),tr);
+    solve(getPtr(output[0]->data()),output[0]->size2(),tr);
   }
 
   MX LinearSolverInternal::solve(const MX& A, const MX& B, bool transpose){

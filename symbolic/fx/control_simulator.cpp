@@ -34,7 +34,7 @@ namespace CasADi{
   }
 
   ControlSimulator::ControlSimulator(const FX& dae, const FX& output_fcn, const Matrix<double>& grid){
-    casadi_assert_message(grid.size2()==1,"ControlSimulator::ControlSimulator: grid must be of a row matrix shape, but got " << grid.dimString());
+    casadi_assert_message(grid.size1()==1,"ControlSimulator::ControlSimulator: grid must be of a row matrix shape, but got " << grid.dimString());
     casadi_assert_message(grid.dense(),"ControlSimulator::ControlSimulator: grid must be dense, but got " << grid.dimString());
     assignNode(new ControlSimulatorInternal(dae,output_fcn,grid.data()));
   }
@@ -44,7 +44,7 @@ namespace CasADi{
   }
 
   ControlSimulator::ControlSimulator(const FX& dae, const Matrix<double>& grid){
-    casadi_assert_message(grid.size2()==1,"ControlSimulator::ControlSimulator: grid must be of a row matrix shape, but got " << grid.dimString());
+    casadi_assert_message(grid.size1()==1,"ControlSimulator::ControlSimulator: grid must be of a row matrix shape, but got " << grid.dimString());
     casadi_assert_message(grid.dense(),"ControlSimulator::ControlSimulator: grid must be dense, but got " << grid.dimString());
     assignNode(new ControlSimulatorInternal(dae,FX(),grid.data()));
   }

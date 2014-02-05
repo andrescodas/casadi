@@ -68,16 +68,16 @@ T linspace(const GenericMatrix<T> &a_, const GenericMatrix<T> &b_, int nsteps){
 #ifndef SWIG
 template<typename T>
 T cross(const GenericMatrix<T> &a, const GenericMatrix<T> &b, int dim) {
-  casadi_assert_message(a.size1()==b.size1() && a.size2()==b.size2(),"cross(a,b): Inconsistent dimensions. Dimension of a (" << a.dimString() << " ) must equal that of b (" << b.dimString() << ").");
+  casadi_assert_message(a.size2()==b.size2() && a.size1()==b.size1(),"cross(a,b): Inconsistent dimensions. Dimension of a (" << a.dimString() << " ) must equal that of b (" << b.dimString() << ").");
   
-  casadi_assert_message(a.size1()==3 || a.size2()==3,"cross(a,b): One of the dimensions of a should have length 3, but got " << a.dimString() << ".");
+  casadi_assert_message(a.size2()==3 || a.size1()==3,"cross(a,b): One of the dimensions of a should have length 3, but got " << a.dimString() << ".");
   casadi_assert_message(dim==-1 || dim==1 || dim==2,"cross(a,b,dim): Dim must be 1, 2 or -1 (automatic).");
   
   
   std::vector<T> ret(3);
   
   
-  bool t = a.size1()==3;
+  bool t = a.size2()==3;
   
   if (dim==1) t = true;
   if (dim==2) t = false;
@@ -101,10 +101,10 @@ T cross(const GenericMatrix<T> &a, const GenericMatrix<T> &b, int dim) {
 template<typename T> 
 T tril2symm(const GenericMatrix<T> &a_) {
   const T& a = static_cast<const T&>(a_);
-  casadi_assert_message(a.size1()==a.size2(),"Shape error in tril2symm. Expecting square shape but got " << a.dimString());
+  casadi_assert_message(a.size2()==a.size1(),"Shape error in tril2symm. Expecting square shape but got " << a.dimString());
   casadi_assert_message(a.sizeU()-a.sizeD()==0,"Sparsity error in tril2symm. Found above-diagonal entries in argument: " << a.dimString());
   T ret = a + trans(a);
-  ret(sp_diag(a.size1()))/=2;
+  ret(sp_diag(a.size2()))/=2;
   return ret;
 }
 #endif // SWIG

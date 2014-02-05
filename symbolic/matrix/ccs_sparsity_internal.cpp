@@ -1690,10 +1690,10 @@ namespace CasADi{
 
   CCSSparsity CCSSparsityInternal::multiply(const CCSSparsity& B) const{
     int nz = 0;
-    casadi_assert_message(ncol_ == B.size2(), "Dimension mismatch.");
+    casadi_assert_message(ncol_ == B.size1(), "Dimension mismatch.");
     int m = nrow_;
     int anz = colind_[ncol_];
-    int n = B.size1();
+    int n = B.size2();
     const int* Bp = &B.colind().front();
     const int* Bi = &B.row().front();
     int bnz = Bp[n];
@@ -1854,7 +1854,7 @@ namespace CasADi{
   CCSSparsity CCSSparsityInternal::patternProduct(const CCSSparsity& y_trans) const{
     // Dimensions
     int x_ncol = ncol_;
-    int y_nrow = y_trans.size1();
+    int y_nrow = y_trans.size2();
 
     // Quick return if both are dense
     if(dense() && y_trans.dense()){
@@ -2368,7 +2368,7 @@ namespace CasADi{
   CCSSparsity CCSSparsityInternal::patternCombineGen(const CCSSparsity& y, vector<unsigned char>& mapping) const{
 
     // Assert dimensions
-    casadi_assert_message(ncol_==y.size1() && nrow_==y.size2(), "Dimension mismatch");
+    casadi_assert_message(ncol_==y.size2() && nrow_==y.size1(), "Dimension mismatch");
     
     // Sparsity pattern of the argument
     const vector<int>& y_colind = y.colind();
@@ -2434,7 +2434,7 @@ namespace CasADi{
     if(this == y.get()) return true;  
   
     // Otherwise, compare the patterns
-    return isEqual(y.size1(),y.size2(),y.row(),y.colind());
+    return isEqual(y.size2(),y.size1(),y.row(),y.colind());
   }
   
   CCSSparsity CCSSparsityInternal::patternInverse() const {
@@ -2505,7 +2505,7 @@ namespace CasADi{
 
   void CCSSparsityInternal::append(const CCSSparsity& sp){
     // Assert dimensions
-    casadi_assert_message(nrow_==sp.size2(),"CCSSparsityInternal::append: Dimension mismatch. You attempt to append a shape " << sp.dimString() << " to a shape " << dimString() << ". The number of rows must match.");
+    casadi_assert_message(nrow_==sp.size1(),"CCSSparsityInternal::append: Dimension mismatch. You attempt to append a shape " << sp.dimString() << " to a shape " << dimString() << ". The number of rows must match.");
   
     // Get current number of non-zeros
     int sz = size();
@@ -2520,7 +2520,7 @@ namespace CasADi{
       colind_[i] += sz;
   
     // Update dimensions
-    ncol_ += sp.size1();
+    ncol_ += sp.size2();
   }
 
   void CCSSparsityInternal::enlargeColumns(int ncol, const std::vector<int>& ii){

@@ -849,8 +849,8 @@ void SymbolicOCP::scaleEquations(){
   
   // Get the maximum of every col
   Matrix<double> &J0 = J.output();
-  vector<double> scale(J0.size1(),0.0); // scaling factors
-  for(int i=0; i<J0.size1(); ++i){
+  vector<double> scale(J0.size2(),0.0); // scaling factors
+  for(int i=0; i<J0.size2(); ++i){
     // Loop over non-zero entries of the col
     for(int el=J0.colind(i); el<J0.colind(i+1); ++el){
       // Row

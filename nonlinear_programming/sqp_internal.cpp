@@ -601,7 +601,7 @@ namespace CasADi{
 
   double SQPInternal::quad_form(const std::vector<double>& x, const DMatrix& A){
     // Assert dimensions
-    casadi_assert(x.size()==A.size1() && x.size()==A.size2());
+    casadi_assert(x.size()==A.size2() && x.size()==A.size1());
   
     // Access the internal data of A
     const std::vector<int> &A_colind = A.colind();

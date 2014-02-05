@@ -45,7 +45,7 @@ namespace CasADi{
   The syntax tries to stay as close as possible to the ublas syntax  when it comes to vector/matrix operations.\n
 
   Index starts with 0.\n
-  Index flatten happens as follows: (i,j) -> k = j+i*size2()\n
+  Index flatten happens as follows: (i,j) -> k = j+i*size1()\n
   Vectors are considered to be row vectors.\n
   
   The storage format is a (modified) compressed col storage (CCS) format. This way, a vector element can always be accessed in constant time.\n
@@ -75,10 +75,10 @@ class GenericMatrix{
     int numel() const;
 
     /** \brief Get the first dimension (i.e. n for a n-by-m matrix) */
-    int size1() const;
+    int size2() const;
     
     /** \brief Get the first dimension (i.e. m for a n-by-m matrix) */
-    int size2() const;
+    int size1() const;
 
     /** \brief Get the number if non-zeros for a given sparsity pattern */
     int size(Sparsity sp) const;
@@ -205,13 +205,13 @@ int GenericMatrix<MatType>::numel() const{
 }
 
 template<typename MatType>
-int GenericMatrix<MatType>::size1() const{
-  return sparsity().size1();
+int GenericMatrix<MatType>::size2() const{
+  return sparsity().size2();
 }
 
 template<typename MatType>
-int GenericMatrix<MatType>::size2() const{
-  return sparsity().size2();
+int GenericMatrix<MatType>::size1() const{
+  return sparsity().size1();
 }
 
 template<typename MatType>
@@ -231,7 +231,7 @@ bool GenericMatrix<MatType>::empty() const{
 
 template<typename MatType>
 bool GenericMatrix<MatType>::null() const{
-  return size1()==0 && size2()==0;
+  return size2()==0 && size1()==0;
 }
 
 template<typename MatType>
@@ -254,7 +254,7 @@ MatType GenericMatrix<MatType>::mul_smart(const MatType& y, const CCSSparsity &s
   const MatType& x = *static_cast<const MatType*>(this);
   
   if (!(x.scalar() || y.scalar())) {
-    casadi_assert_message(size2()==y.size1(),"Matrix product with incompatible dimensions. Lhs is " << dimString() << " and rhs is " << y.dimString() << ".");
+    casadi_assert_message(size1()==y.size2(),"Matrix product with incompatible dimensions. Lhs is " << dimString() << " and rhs is " << y.dimString() << ".");
   }
   
   // Check if we can simplify the product
@@ -264,15 +264,15 @@ MatType GenericMatrix<MatType>::mul_smart(const MatType& y, const CCSSparsity &s
     return x;
   } else if(isZero(x) || isZero(y)){
     // See if one of the arguments can be used as result
-    if(x.size()==0 && y.size1()==y.size2()) {
+    if(x.size()==0 && y.size2()==y.size1()) {
       return x;
-    } else if(y.size()==0 && x.size1()==x.size2()) {
+    } else if(y.size()==0 && x.size2()==x.size1()) {
       return y;
     } else {
       if (x.size()==0 || y.size()==0 || y.empty() || x.empty()) {
-        return MatType::sparse(x.size1(),y.size2());
+        return MatType::sparse(x.size2(),y.size1());
       } else {
-        return MatType::zeros(x.size1(),y.size2());
+        return MatType::zeros(x.size2(),y.size1());
       }
     }
   } else if(x.scalar() || y.scalar()){
@@ -291,7 +291,7 @@ int GenericMatrix<MatType>::size(Sparsity sp) const{
   } else if(sp==DENSE){
     return numel();
   } else if(sp==DENSESYM){
-    return (numel()+size1())/2;
+    return (numel()+size2())/2;
   } else {
       throw CasadiException("Matrix<T>::size(Sparsity): unknown sparsity");
   }

@@ -1151,10 +1151,10 @@ class CasadiStructEntry(StructEntry):
       if self.type not in allowedclass:
         raise Exception("You supplied a type argument '%s' but it is not recognised. Use one of %s" % (str(self.type,str(allowedclass))))
       if self.type=="symm":
-        if self.sparsity.size1() != self.sparsity.size2():
+        if self.sparsity.size2() != self.sparsity.size1():
           raise Exception("You supplied a type 'symm', but matrix is not square. Got " % self.sparsity.dimString() + ".")
         self.originalsparsity = self.sparsity
-        self.sparsity = self.sparsity*sp_tril(self.sparsity.size1())
+        self.sparsity = self.sparsity*sp_tril(self.sparsity.size2())
         
          
       

@@ -32,7 +32,7 @@ namespace CasADi{
 
   template<bool Tr>
   Solve<Tr>::Solve(const MX& r, const MX& A, const LinearSolver& linear_solver) : linear_solver_(linear_solver){
-    casadi_assert_message(r.size2() == A.size1(),"Solve::Solve: dimension mismatch.");
+    casadi_assert_message(r.size1() == A.size2(),"Solve::Solve: dimension mismatch.");
     setDependencies(r,A);
     setSparsity(r.sparsity());
   }

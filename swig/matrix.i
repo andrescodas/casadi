@@ -75,7 +75,7 @@ def dot(self,*args):
 %pythoncode %{
     @property
     def shape(self):
-        return (self.size1(),self.size2())
+        return (self.size2(),self.size1())
         
     def reshape(self,arg):
         return _casadi_global.reshape(self,arg)
@@ -152,8 +152,8 @@ def dot(self,*args):
   
   std::vector<int> __dims__() const {
     std::vector<int> ret(2);
-    ret[0] = $self->size1();
-    ret[1] = $self->size2();
+    ret[0] = $self->size2();
+    ret[1] = $self->size1();
     return ret;
   }
   
@@ -192,7 +192,7 @@ namespace CasADi{
 /// Create a 2D contiguous NP_DOUBLE numpy.ndarray
 
 octave_value toSparse() {
-  int nz = (*$self).size(), nr = (*$self).size1(), nc = (*$self).size2();
+  int nz = (*$self).size(), nr = (*$self).size2(), nc = (*$self).size1();
   
   Array<int> Ar(nz);
   Array<int> Ac(nz);
@@ -245,8 +245,8 @@ PyObject* arrayView() {
   if ($self->size()!=$self->numel()) 
     throw  CasADi::CasadiException("Matrix<double>::arrayview() can only construct arrayviews for dense DMatrices.");
   npy_intp dims[2];
-  dims[0] = $self->size1();
-  dims[1] = $self->size2();
+  dims[0] = $self->size2();
+  dims[1] = $self->size1();
   std::vector<double> &v = $self->data();
   return PyArray_SimpleNewFromData(2, dims, NPY_DOUBLE, &v[0]);
 }
@@ -260,7 +260,7 @@ PyObject* arrayView() {
         raise Expection("toArray(shared=True) only possible for dense arrays.")
       return self.arrayView()
     else:
-      r = n.zeros((self.size1(),self.size2()))
+      r = n.zeros((self.size2(),self.size1()))
       self.get(r)
     return r
 %}
@@ -285,7 +285,7 @@ PyObject* arrayView() {
   def toCsr_matrix(self):
     import numpy as n
     from scipy.sparse import csr_matrix
-    return csr_matrix( (list(self.data()),self.sparsity().row(),self.sparsity().colind()), shape = (self.size1(),self.size2()), dtype=n.double )
+    return csr_matrix( (list(self.data()),self.sparsity().row(),self.sparsity().colind()), shape = (self.size2(),self.size1()), dtype=n.double )
 %}
 
 %pythoncode %{
@@ -333,7 +333,7 @@ binopsFull(const CasADi::MX & b,,CasADi::MX,CasADi::MX)
   %pythoncode %{
     def toArray(self):
       import numpy as n
-      r = n.zeros((self.size1(),self.size2()))
+      r = n.zeros((self.size2(),self.size1()))
       for i in range(r.shape[0]):
         for j in range(r.shape[1]):
           r[i,j] = self.elem(i,j)
@@ -381,7 +381,7 @@ binopsFull(const CasADi::MX & b,,CasADi::MX,CasADi::MX)
 
     def __getstate__(self):
         if self.isNull(): return {}
-        return {"ncol": self.size1(), "nrow": self.size2(), "row": numpy.array(self.row(),dtype=int), "colind": numpy.array(self.colind(),dtype=int)}
+        return {"ncol": self.size2(), "nrow": self.size1(), "row": numpy.array(self.row(),dtype=int), "colind": numpy.array(self.colind(),dtype=int)}
   %}
   
 }
@@ -576,11 +576,11 @@ Accepts: 2D numpy.ndarray, numpy.matrix (contiguous, native byte order, datatype
 	    }
 	    
 			if (array_numdims(p)==2) {
-				if (!(array_size(p,0)==arg1->size1() && array_size(p,1)==arg1->size2()) ) {
+				if (!(array_size(p,0)==arg1->size2() && array_size(p,1)==arg1->size1()) ) {
 				  std::stringstream s;
 				  s << "SWIG::typemap(in) (double *val,int len,Sparsity sp) " << std::endl;
 				  s << "Array is not of correct shape.";
-				  s << "Expecting shape (" << arg1->size1() << "," << arg1->size2() << ")" << ", but got shape (" << array_size(p,0) << "," << array_size(p,1) <<") instead.";
+				  s << "Expecting shape (" << arg1->size2() << "," << arg1->size1() << ")" << ", but got shape (" << array_size(p,0) << "," << array_size(p,1) <<") instead.";
           const std::string tmp(s.str());
           const char* cstr = tmp.c_str();
 			    SWIG_exception_fail(SWIG_TypeError,  cstr);
@@ -638,11 +638,11 @@ Accepts: 2D numpy.ndarray, numpy.matrix (any setting of contiguous, native byte 
 	if (is_array(p)) {
 			array = obj_to_array_contiguous_allow_conversion(p,NPY_DOUBLE,&array_is_new_object);
 			if (array_numdims(array)==2) {
-				if (!(array_size(array,0)==arg1->size1() && array_size(array,1)==arg1->size2()) ) {
+				if (!(array_size(array,0)==arg1->size2() && array_size(array,1)==arg1->size1()) ) {
 				  std::stringstream s;
 				  s << "SWIG::typemap(in) (const double *val,int len,Sparsity sp) " << std::endl;
 				  s << "Array is not of correct shape.";
-				  s << "Expecting shape (" << arg1->size1() << "," << arg1->size2() << ")" << ", but got shape (" << array_size(array,0) << "," << array_size(array,1) <<") instead.";
+				  s << "Expecting shape (" << arg1->size2() << "," << arg1->size1() << ")" << ", but got shape (" << array_size(array,0) << "," << array_size(array,1) <<") instead.";
           const std::string tmp(s.str());
           const char* cstr = tmp.c_str();
 			    SWIG_exception_fail(SWIG_TypeError,  cstr);

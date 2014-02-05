@@ -62,7 +62,7 @@ namespace CasADi{
     casadi_assert_message(!pos_def_,"pos_def option set to True: Solver only handles the indefinite case.");
     casadi_assert_message(const_dim_,"const_dim option set to False: Solver only handles the True case.");
     
-    n_ = A_[0].size1();
+    n_ = A_[0].size2();
     
     // Allocate data structures
     VZ_.resize(n_*n_*K_);

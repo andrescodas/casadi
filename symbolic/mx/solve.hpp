@@ -77,7 +77,7 @@ namespace CasADi{
     virtual void deepCopyMembers(std::map<SharedObjectNode*,SharedObject>& already_copied);
 
     /// Get number of temporary variables needed
-    virtual void nTmp(size_t& ni, size_t& nr){ ni=0; nr=sparsity().size2();}
+    virtual void nTmp(size_t& ni, size_t& nr){ ni=0; nr=sparsity().size1();}
 
     /// Linear Solver (may be shared between multiple nodes)
     LinearSolver linear_solver_;

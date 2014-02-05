@@ -186,12 +186,12 @@ namespace CasADi{
     return sparsity_.size();
   }
 
-  int MXNode::size1() const{
-    return sparsity_.size1();
-  }
-
   int MXNode::size2() const{
     return sparsity_.size2();
+  }
+
+  int MXNode::size1() const{
+    return sparsity_.size1();
   }
 
   const CCSSparsity& MXNode::sparsity() const{
@@ -360,9 +360,9 @@ namespace CasADi{
     } else {
       z = MX::zeros(sp_z);
     }
-    casadi_assert_message(size1()==z.size1(),"Dimension error. Got lhs=" << size1() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(trans_y.size1()==z.size2(),"Dimension error. Got trans_y=" << trans_y.dimString() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(size2()==trans_y.size2(),"Dimension error. Got lhs=" << size2() << " and trans_y" << trans_y.dimString() << ".");
+    casadi_assert_message(size2()==z.size2(),"Dimension error. Got lhs=" << size2() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(trans_y.size2()==z.size1(),"Dimension error. Got trans_y=" << trans_y.dimString() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(size1()==trans_y.size1(),"Dimension error. Got lhs=" << size1() << " and trans_y" << trans_y.dimString() << ".");
     if(sparsity().dense() && y.dense()){
       return MX::create(new DenseMultiplication<false,true>(z,shared_from_this<MX>(),trans_y));
     } else {
@@ -468,7 +468,7 @@ namespace CasADi{
 
   MX MXNode::getBinarySwitch(int op, const MX& y) const{
     // Make sure that dimensions match
-    casadi_assert_message((sparsity().scalar(false) || y.scalar() || (sparsity().size1()==y.size1() && size2()==y.size2())),
+    casadi_assert_message((sparsity().scalar(false) || y.scalar() || (sparsity().size2()==y.size2() && size1()==y.size1())),
                           "Dimension mismatch." << "lhs is " << sparsity().dimString() << ", while rhs is " << y.dimString());
       
     // Create binary node
@@ -552,7 +552,7 @@ namespace CasADi{
             break;
           case OP_ADD:
           case OP_SUB:
-            if(y->isZero()) return scX ? MX(y.size1(),y.size2(),shared_from_this<MX>()) : shared_from_this<MX>();
+            if(y->isZero()) return scX ? MX(y.size2(),y.size1(),shared_from_this<MX>()) : shared_from_this<MX>();
             break;
           case OP_MUL:
             if(y->isValue(1)) return shared_from_this<MX>();
@@ -649,7 +649,7 @@ namespace CasADi{
 
 
   MX MXNode::getInnerProd(const MX& y) const{
-    casadi_assert_message(size1()==y.size1() && size2()==y.size2(),"MXNode::inner_prod: Dimension mismatch. inner_prod requires its two arguments to have equal shapes, but got (" << size1() << "," << size2() << ") and (" << y.size1() << "," << y.size2() << ").");
+    casadi_assert_message(size2()==y.size2() && size1()==y.size1(),"MXNode::inner_prod: Dimension mismatch. inner_prod requires its two arguments to have equal shapes, but got (" << size2() << "," << size1() << ") and (" << y.size2() << "," << y.size1() << ").");
     if(sparsity()==y.sparsity()){
       if(sparsity().size()==0){
         return 0;

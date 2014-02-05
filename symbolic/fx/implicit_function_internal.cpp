@@ -61,8 +61,8 @@ namespace CasADi{
     // Get the number of equations and check consistency
     casadi_assert_message(iin_>=0 && iin_<f_.getNumInputs()>0,"Implicit input not in range");
     casadi_assert_message(iout_>=0 && iout_<f_.getNumOutputs()>0,"Implicit output not in range");
-    casadi_assert_message(f_.output(iout_).dense() && f_.output(iout_).size2()==1, "Residual must be a dense vector");
-    casadi_assert_message(f_.input(iin_).dense() && f_.input(iin_).size2()==1, "Unknown must be a dense vector");
+    casadi_assert_message(f_.output(iout_).dense() && f_.output(iout_).size1()==1, "Residual must be a dense vector");
+    casadi_assert_message(f_.input(iin_).dense() && f_.input(iin_).size1()==1, "Unknown must be a dense vector");
     n_ = f_.output(iout_).size();
     casadi_assert_message(n_ == f_.input(iin_).size(), "Dimension mismatch. Input size is " << f_.input(iin_).size() << ", while output size is " << f_.output(iout_).size());
 
@@ -90,7 +90,7 @@ namespace CasADi{
     jac_.init(false);
   
     // Check for structural singularity in the Jacobian
-    casadi_assert_message(!isSingular(jac_.output().sparsity()),"ImplicitFunctionInternal::init: singularity - the jacobian is structurally rank-deficient. sprank(J)=" << sprank(jac_.output()) << " (instead of "<< jac_.output().size1() << ")");
+    casadi_assert_message(!isSingular(jac_.output().sparsity()),"ImplicitFunctionInternal::init: singularity - the jacobian is structurally rank-deficient. sprank(J)=" << sprank(jac_.output()) << " (instead of "<< jac_.output().size2() << ")");
   
     // Get the linear solver creator function
     if(linsol_.isNull()){

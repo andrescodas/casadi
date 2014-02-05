@@ -585,8 +585,8 @@ namespace CasADi{
     if(verbose()) std::cout << "XFunctionInternal::jac graph coloring completed" << std::endl;
 
     // Get the number of forward and adjoint sweeps
-    int nfdir = D1.isNull() ? 0 : D1.size1();
-    int nadir = D2.isNull() ? 0 : D2.size1();
+    int nfdir = D1.isNull() ? 0 : D1.size2();
+    int nadir = D2.isNull() ? 0 : D2.size2();
   
     // Number of derivative directions supported by the function
     int max_nfdir = optimized_num_dir;
@@ -682,7 +682,7 @@ namespace CasADi{
         // initialize to zero
         fseed[d].resize(getNumInputs());
         for(int ind=0; ind<fseed[d].size(); ++ind){
-          int ncol = input(ind).size1(), nrow = input(ind).size2(); // Input dimensions
+          int ncol = input(ind).size2(), nrow = input(ind).size1(); // Input dimensions
           if(ind==iind){
             fseed[d][ind] = MatType::ones(sp_triplet(ncol,nrow,seed_col,seed_row));
           } else {
@@ -712,7 +712,7 @@ namespace CasADi{
         //initialize to zero
         aseed[d].resize(getNumOutputs());
         for(int ind=0; ind<aseed[d].size(); ++ind){
-          int ncol = output(ind).size1(), nrow = output(ind).size2(); // Output dimensions
+          int ncol = output(ind).size2(), nrow = output(ind).size1(); // Output dimensions
           if(ind==oind){
             aseed[d][ind] = MatType::ones(sp_triplet(ncol,nrow,seed_col,seed_row));
           } else {
@@ -995,14 +995,14 @@ namespace CasADi{
   //   // Loop over outputs
   //   for (int oind = 0; oind < outputv_.size(); ++oind) {
   //     // Output dimensions
-  //     int od1 = outputv_[oind].size1();
-  //     int od2 = outputv_[oind].size2();
+  //     int od1 = outputv_[oind].size2();
+  //     int od2 = outputv_[oind].size1();
     
   //     // Loop over inputs
   //     for (int iind = 0; iind < inputv_.size(); ++iind) {
   //       // Input dimensions
-  //       int id1 = inputv_[iind].size1();
-  //       int id2 = inputv_[iind].size2();
+  //       int id1 = inputv_[iind].size2();
+  //       int id2 = inputv_[iind].size1();
 
   //       // Create a Jacobian block
   //       MatType J = jac(iind,oind);

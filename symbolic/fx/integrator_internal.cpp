@@ -187,12 +187,12 @@ namespace CasADi{
 
     // Create augmented problem
     MX aug_t = msym("aug_t",f_.input(DAE_T).sparsity());
-    MX aug_x = msym("aug_x",offset.x.back(),x0().size2());
-    MX aug_z = msym("aug_z",offset.z.back(),std::max(z0().size2(),rz0().size2()));
-    MX aug_p = msym("aug_p",offset.p.back(),std::max(p().size2(),rp().size2()));
-    MX aug_rx = msym("aug_rx",offset.rx.back(),x0().size2());
-    MX aug_rz = msym("aug_rz",offset.rz.back(),std::max(z0().size2(),rz0().size2()));
-    MX aug_rp = msym("aug_rp",offset.rp.back(),std::max(qf().size2(),rp().size2()));
+    MX aug_x = msym("aug_x",offset.x.back(),x0().size1());
+    MX aug_z = msym("aug_z",offset.z.back(),std::max(z0().size1(),rz0().size1()));
+    MX aug_p = msym("aug_p",offset.p.back(),std::max(p().size1(),rp().size1()));
+    MX aug_rx = msym("aug_rx",offset.rx.back(),x0().size1());
+    MX aug_rz = msym("aug_rz",offset.rz.back(),std::max(z0().size1(),rz0().size1()));
+    MX aug_rp = msym("aug_rp",offset.rp.back(),std::max(qf().size1(),rp().size1()));
 
     // Split up the augmented vectors
     vector<MX> aug_x_split = horzsplit(aug_x,offset.x);     vector<MX>::const_iterator aug_x_split_it = aug_x_split.begin();
@@ -621,26 +621,26 @@ namespace CasADi{
 
     // Count nondifferentiated and forward sensitivities 
     for(int dir=-1; dir<nfwd; ++dir){
-      if( nx_>0) ret.x.push_back(x0().size1());
-      if( nz_>0) ret.z.push_back(z0().size1());
-      if( nq_>0) ret.q.push_back(qf().size1());
-      if( np_>0) ret.p.push_back(p().size1());
-      if(nrx_>0) ret.rx.push_back(rx0().size1());
-      if(nrz_>0) ret.rz.push_back(rz0().size1());
-      if(nrq_>0) ret.rq.push_back(rqf().size1());
-      if(nrp_>0) ret.rp.push_back(rp().size1());
+      if( nx_>0) ret.x.push_back(x0().size2());
+      if( nz_>0) ret.z.push_back(z0().size2());
+      if( nq_>0) ret.q.push_back(qf().size2());
+      if( np_>0) ret.p.push_back(p().size2());
+      if(nrx_>0) ret.rx.push_back(rx0().size2());
+      if(nrz_>0) ret.rz.push_back(rz0().size2());
+      if(nrq_>0) ret.rq.push_back(rqf().size2());
+      if(nrp_>0) ret.rp.push_back(rp().size2());
     }
 
     // Count adjoint sensitivities
     for(int dir=0; dir<nadj; ++dir){
-      if( nx_>0) ret.rx.push_back(x0().size1());
-      if( nz_>0) ret.rz.push_back(z0().size1());
-      if( np_>0) ret.rq.push_back(p().size1());
-      if( nq_>0) ret.rp.push_back(qf().size1());
-      if(nrx_>0) ret.x.push_back(rx0().size1());
-      if(nrz_>0) ret.z.push_back(rz0().size1());
-      if(nrp_>0) ret.q.push_back(rp().size1());
-      if(nrq_>0) ret.p.push_back(rqf().size1());
+      if( nx_>0) ret.rx.push_back(x0().size2());
+      if( nz_>0) ret.rz.push_back(z0().size2());
+      if( np_>0) ret.rq.push_back(p().size2());
+      if( nq_>0) ret.rp.push_back(qf().size2());
+      if(nrx_>0) ret.x.push_back(rx0().size2());
+      if(nrz_>0) ret.z.push_back(rz0().size2());
+      if(nrp_>0) ret.q.push_back(rp().size2());
+      if(nrq_>0) ret.p.push_back(rqf().size2());
     }
     
     // Get cummulative offsets

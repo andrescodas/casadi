@@ -162,7 +162,7 @@ namespace CasADi{
     std::vector<int> ret(sp.size());
     std::vector<int> col = sp.getCol();
     const std::vector<int> &row = sp.row();
-    int s2 = sp.size2();
+    int s2 = sp.size1();
     for(int k=0;k<sp.size();k++) {
       ret[k] = row[k]+col[k]*s2;
     }
@@ -172,7 +172,7 @@ namespace CasADi{
   CCSSparsity reshape(const CCSSparsity& a, int n, int m){
     casadi_assert_message(a.numel() == n*m,
                           "reshape: number of elements must remain the same." << endl <<
-                          "Input argument has shape " << a.size1() << " x " << a.size2() << " =  " << a.numel() << ", while you request a reshape to " <<
+                          "Input argument has shape " << a.size2() << " x " << a.size1() << " =  " << a.numel() << ", while you request a reshape to " <<
                           n << " x " << m << " =  " << n*m
                           );
 
@@ -187,7 +187,7 @@ namespace CasADi{
     for(int k=0; k<a.size(); ++k){
       int i = col[k];
       int j = row[k];
-      int z = j+i*a.size2();
+      int z = j+i*a.size1();
       col_new[k] = z/m;
       row_new[k] = z%m;
     }
@@ -229,7 +229,7 @@ namespace CasADi{
         cnt++;
       }
     }
-    return sp_triplet(a.size1(), a.size2(), new_col, new_row);
+    return sp_triplet(a.size2(), a.size1(), new_col, new_row);
   
   }
 
@@ -422,8 +422,8 @@ namespace CasADi{
   
   std::vector<int> sp_compress(const CCSSparsity& a){
     // Get the sparsity pattern
-    int ncol = a.size1();
-    int nrow = a.size2();
+    int ncol = a.size2();
+    int nrow = a.size1();
     const vector<int>& colind = a.colind();
     const vector<int>& row = a.row();
     
@@ -474,8 +474,8 @@ namespace CasADi{
   }
 
   bool isSingular(const CCSSparsity& a) {
-    casadi_assert_message(a.size1()==a.size2(),"isSingular: only defined for square matrices, but got " << a.dimString());
-    return rank(a)!=a.size1();
+    casadi_assert_message(a.size2()==a.size1(),"isSingular: only defined for square matrices, but got " << a.dimString());
+    return rank(a)!=a.size2();
   }
 
   CCSSparsity sp_unit(int n, int el){
@@ -529,8 +529,8 @@ namespace CasADi{
       for (int k=0;k<row_.size();++k) {
         row.push_back(row_[k]+m);
       }
-      n+= v[i].size1();
-      m+= v[i].size2();
+      n+= v[i].size2();
+      m+= v[i].size1();
       nz+= v[i].size();
     }
     

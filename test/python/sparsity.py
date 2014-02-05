@@ -395,7 +395,7 @@ class Sparsitytests(casadiTestCase):
       A = blkdiag(Ai)
       
       #A.sparsity().spy()
-      perm =  numpy.random.permutation(range(A.size1()))
+      perm =  numpy.random.permutation(range(A.size2()))
       
       AP = A[perm,perm]
       #AP.sparsity().spy()
@@ -409,13 +409,13 @@ class Sparsitytests(casadiTestCase):
       blocks = []
       acc = -1
       mc = 0
-      for i in range(0,Ar.size1()):
+      for i in range(0,Ar.size2()):
         mc = max(ST.row()[ST.colind()[i+1]-1],mc)
         if mc==i:
           blocks.append(i-acc)
           acc = i
       
-      truth = [i.size1() for i in Ai]
+      truth = [i.size2() for i in Ai]
       tryme = blocks
       
       truth.sort()
@@ -432,7 +432,7 @@ class Sparsitytests(casadiTestCase):
       A = blkdiag(Ai)
       
       #A.sparsity().spy()
-      perm =  numpy.random.permutation(range(A.size1()))
+      perm =  numpy.random.permutation(range(A.size2()))
       
       AP = A[perm,perm]
       #AP.sparsity().spy()
@@ -449,13 +449,13 @@ class Sparsitytests(casadiTestCase):
       blocks = []
       acc = -1
       mc = 0
-      for i in range(0,Ar.size1()):
+      for i in range(0,Ar.size2()):
         mc = max(ST.row()[ST.colind()[i+1]-1],mc)
         if mc==i:
           blocks.append(i-acc)
           acc = i
       
-      truth = [i.size1() for i in Ai]
+      truth = [i.size2() for i in Ai]
       tryme = blocks
 
       self.assertTrue(n>=len(truth))

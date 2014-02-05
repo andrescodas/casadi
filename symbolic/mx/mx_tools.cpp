@@ -39,13 +39,13 @@ namespace CasADi{
     // Consistency check
     casadi_assert(offset.size()>=1);
     casadi_assert(offset.front()==0);
-    casadi_assert(offset.back()<=x.size1());
+    casadi_assert(offset.back()<=x.size2());
     casadi_assert(isMonotone(offset));
     
     // Trivial return if possible
-    if(offset.size()==1 && offset.back()==x.size1()){
+    if(offset.size()==1 && offset.back()==x.size2()){
       return vector<MX>(0);
-    } else if(offset.size()==1 || (offset.size()==2 && offset.back()==x.size1())){
+    } else if(offset.size()==1 || (offset.size()==2 && offset.back()==x.size2())){
       return vector<MX>(1,x);
     } else {
       return x->getHorzsplit(offset);
@@ -54,7 +54,7 @@ namespace CasADi{
   
   std::vector<MX> horzsplit(const MX& x, int incr){
     casadi_assert(incr>=1);
-    return horzsplit(x,range(0,x.size1(),incr));
+    return horzsplit(x,range(0,x.size2(),incr));
   }
 
   MX vertcat(const vector<MX>& comp){
@@ -73,7 +73,7 @@ namespace CasADi{
   
   std::vector<MX> vertsplit(const MX& x, int incr){
     casadi_assert(incr>=1);
-    return vertsplit(x,range(0,x.size2(),incr));
+    return vertsplit(x,range(0,x.size1(),incr));
   }
   
   std::vector< std::vector<MX > > blocksplit(const MX& x, const std::vector<int>& vert_offset, const std::vector<int>& horz_offset) {
@@ -88,7 +88,7 @@ namespace CasADi{
   std::vector< std::vector<MX > > blocksplit(const MX& x, int vert_incr, int horz_incr) {
     casadi_assert(horz_incr>=1);
     casadi_assert(vert_incr>=1);
-    return blocksplit(x,range(0,x.size1(),vert_incr),range(0,x.size2(),horz_incr));
+    return blocksplit(x,range(0,x.size2(),vert_incr),range(0,x.size1(),horz_incr));
   }
 
   MX horzcat(const MX& a, const MX& b){
@@ -213,7 +213,7 @@ namespace CasADi{
   }
 
   MX reshape(const MX &x, int n, int m){
-    if(n==x.size1() && m==x.size2())
+    if(n==x.size2() && m==x.size1())
       return x;
     else
       return reshape(x,x.sparsity().reshape(n,m));
@@ -232,7 +232,7 @@ namespace CasADi{
   }
 
   MX vec(const MX &x) {
-    if(x.size2()==1){
+    if(x.size1()==1){
       return x;
     } else {
       return reshape(trans(x),x.numel(),1);
@@ -240,7 +240,7 @@ namespace CasADi{
   }
 
   MX flatten(const MX& x) {
-    if(x.size2()==1){
+    if(x.size1()==1){
       return x;
     } else {
       return reshape(x,x.numel(),1);
@@ -316,9 +316,9 @@ namespace CasADi{
   }
 
   MX trace(const MX& A){
-    casadi_assert_message(A.size1() == A.size2(), "trace: must be square");
+    casadi_assert_message(A.size2() == A.size1(), "trace: must be square");
     MX res(0);
-    for (int i=0; i < A.size1(); i ++) {
+    for (int i=0; i < A.size2(); i ++) {
       res+=A(i,i);
     }
     return res;
@@ -381,7 +381,7 @@ namespace CasADi{
     if(x.dense()) return;
   
     // Densify
-    x = x.setSparse(sp_dense(x.size1(),x.size2()));
+    x = x.setSparse(sp_dense(x.size2(),x.size1()));
   }
 
   MX createParent(std::vector<MX> &deps) {
@@ -449,8 +449,8 @@ namespace CasADi{
     int col=0;
     int row=0;
     for (int i=0;i<A.size();++i) {
-      col+=A[i].size1();
-      row+=A[i].size2();
+      col+=A[i].size2();
+      row+=A[i].size1();
     }
     
     MX ret = MX(col,row);
@@ -459,9 +459,9 @@ namespace CasADi{
     row = 0;
     
     for (int i=0;i<A.size();++i) {
-      ret(range(col,col+A[i].size1()),range(row,row+A[i].size2())) = A[i];
-      col+=A[i].size1();
-      row+=A[i].size2();
+      ret(range(col,col+A[i].size2()),range(row,row+A[i].size1())) = A[i];
+      col+=A[i].size2();
+      row+=A[i].size1();
     }
     
     return ret;
@@ -481,11 +481,11 @@ namespace CasADi{
   }
 
   MX sumCols(const MX &x) {
-    return mul(MX::ones(1,x.size1()),x);
+    return mul(MX::ones(1,x.size2()),x);
   }
 
   MX sumRows(const MX &x) {
-    return mul(x,MX::ones(x.size2(),1));
+    return mul(x,MX::ones(x.size1(),1));
   }
 
   MX sumAll(const MX &x) {
@@ -504,7 +504,7 @@ namespace CasADi{
   }
 
   bool isVector(const MX& ex){
-    return ex.size2()==1;
+    return ex.size1()==1;
   }
 
   bool isDense(const MX& ex){
@@ -528,7 +528,7 @@ namespace CasADi{
   }
 
   bool isEqual(const MX& ex1,const MX &ex2){
-    if ((ex1.size()!=0 || ex2.size()!=0) && (ex1.size1()!=ex2.size1() || ex1.size2()!=ex2.size2())) return false;
+    if ((ex1.size()!=0 || ex2.size()!=0) && (ex1.size2()!=ex2.size2() || ex1.size1()!=ex2.size1())) return false;
     MX difference = ex1 - ex2;  
     return isZero(difference);
   }
@@ -1011,10 +1011,10 @@ namespace CasADi{
   
   MX kron(const MX& a, const MX& b) {
     const CCSSparsity &a_sp = a.sparsity();
-    MX filler(b.size1(),b.size2());
-    std::vector< std::vector< MX > > blocks(a.size1(),std::vector< MX >(a.size2(),filler));
-    for (int i=0;i<a.size1();++i) {
-      for (int j=0;j<a.size2();++j) {
+    MX filler(b.size2(),b.size1());
+    std::vector< std::vector< MX > > blocks(a.size2(),std::vector< MX >(a.size1(),filler));
+    for (int i=0;i<a.size2();++i) {
+      for (int j=0;j<a.size1();++j) {
         int k = a_sp.getNZ(i,j);
         if (k!=-1) {
           blocks[i][j] = a[k]*b;
@@ -1032,7 +1032,7 @@ namespace CasADi{
   }
   
   MX pinv(const MX& A, linearSolverCreator lsolver, const Dictionary& dict) {
-    if (A.size2()>=A.size1()) {
+    if (A.size1()>=A.size2()) {
       return trans(solve(mul(A,trans(A)),A,lsolver,dict));
     } else {
       return solve(mul(trans(A),A),trans(A),lsolver,dict);

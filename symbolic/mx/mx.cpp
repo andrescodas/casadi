@@ -79,7 +79,7 @@ namespace CasADi{
       *this = val->getGetNonzeros(sp,vector<int>(sp.size(),0));
      } else {
       // Empty matrix
-      *this = sparse(sp.size1(),sp.size2());
+      *this = sparse(sp.size2(),sp.size1());
     }
   }
 
@@ -147,7 +147,7 @@ namespace CasADi{
   }
 
   const MX MX::sub(const std::vector<int>& ii, const Matrix<int>& k) const{
-    std::vector< int > rows = range(size2());
+    std::vector< int > rows = range(size1());
     std::vector< MX > temp;
 
     for (int i=0;i<ii.size();++i) {
@@ -163,7 +163,7 @@ namespace CasADi{
   }
 
   const MX MX::sub(const Matrix<int>& k, const std::vector<int>& jj) const{
-    std::vector< int > cols = range(size1());
+    std::vector< int > cols = range(size2());
     std::vector< MX > temp;
 
     for (int j=0;j<jj.size();++j) {
@@ -190,7 +190,7 @@ namespace CasADi{
   }
 
   const MX MX::sub(const CCSSparsity& sp, int dummy) const {
-    casadi_assert_message(size1()==sp.size1() && size2()==sp.size2(),"sub(CCSSparsity sp): shape mismatch. This matrix has shape " << size1() << " x " << size2() << ", but supplied sparsity index has shape " << sp.size1() << " x " << sp.size2() << "." );
+    casadi_assert_message(size2()==sp.size2() && size1()==sp.size1(),"sub(CCSSparsity sp): shape mismatch. This matrix has shape " << size2() << " x " << size1() << ", but supplied sparsity index has shape " << sp.size2() << " x " << sp.size1() << "." );
     vector<unsigned char> mappingc; // Mapping that will be filled by patternunion
     
     // Quick return if sparsity matches MX's sparsity
@@ -245,7 +245,7 @@ namespace CasADi{
   }
 
   void MX::setSub(const MX& m, const Slice& i, const Slice& j){
-    setSub(m,i.getAll(size1()),j.getAll(size2()));
+    setSub(m,i.getAll(size2()),j.getAll(size1()));
   }
 
 
@@ -258,12 +258,12 @@ namespace CasADi{
       }
     }
   
-    casadi_assert_message(ii.size()==m.size1(),"Dimension mismatch." << "lhs is " << ii.size() << " x " << jj.size() << ", while rhs is " << m.dimString());
-    casadi_assert_message(jj.size()==m.size2(),"Dimension mismatch." << "lhs is " << ii.size() << " x " << jj.size() << ", while rhs is " << m.dimString());
+    casadi_assert_message(ii.size()==m.size2(),"Dimension mismatch." << "lhs is " << ii.size() << " x " << jj.size() << ", while rhs is " << m.dimString());
+    casadi_assert_message(jj.size()==m.size1(),"Dimension mismatch." << "lhs is " << ii.size() << " x " << jj.size() << ", while rhs is " << m.dimString());
 
     if(dense() && m.dense()){
       // Dense mode
-      int ld = size2(), ld_el = m.size2(); // leading dimensions
+      int ld = size1(), ld_el = m.size1(); // leading dimensions
       vector<int> kk1, kk2;
       for(int i=0; i<ii.size(); ++i) {
         for(int j=0; j<jj.size(); ++j) {
@@ -280,7 +280,7 @@ namespace CasADi{
 
       // Extend m to the same dimension as this
       MX el_ext = m;
-      el_ext.enlarge(size1(),size2(),ii,jj);
+      el_ext.enlarge(size2(),size1(),ii,jj);
 
       // Unite the sparsity patterns
       *this = unite(*this,el_ext);
@@ -294,7 +294,7 @@ namespace CasADi{
       return;
     }
 
-    if (!inBounds(jj,size2())) {
+    if (!inBounds(jj,size1())) {
       casadi_error("setSub[.,i,jj] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
@@ -303,10 +303,10 @@ namespace CasADi{
   
     casadi_assert_message(result_sparsity == m.sparsity(),"setSub(.,Imatrix" << i.dimString() << ",Ivector(length=" << jj.size() << "),Matrix<T>)::Dimension mismatch. The sparsity of repmat(Imatrix,1," << jj.size() << ") = " << result_sparsity.dimString()  << " must match the sparsity of MX = "  << m.dimString() << ".");
 
-    std::vector<int> slice_i = range(i.size1());
+    std::vector<int> slice_i = range(i.size2());
   
     for(int k=0; k<jj.size(); ++k) {
-      MX el_k = m(slice_i,range(k*i.size2(),(k+1)*i.size2()));
+      MX el_k = m(slice_i,range(k*i.size1(),(k+1)*i.size1()));
       for (int j=0;j<i.size();++j) {
         (*this)(i.at(j),jj[k])=el_k[j];
       }
@@ -323,7 +323,7 @@ namespace CasADi{
       return;
     }
 
-    if (!inBounds(ii,size1())) {
+    if (!inBounds(ii,size2())) {
       casadi_error("setSub[.,ii,j] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
@@ -332,10 +332,10 @@ namespace CasADi{
   
     casadi_assert_message(result_sparsity == m.sparsity(),"setSub(Ivector(length=" << ii.size() << "),Imatrix" << j.dimString() << ",MX)::Dimension mismatch. The sparsity of repmat(Imatrix," << ii.size() << ",1) = " << result_sparsity.dimString() << " must match the sparsity of Matrix<T> = " << m.dimString() << ".");
   
-    std::vector<int> slice_j = range(j.size2());
+    std::vector<int> slice_j = range(j.size1());
   
     for(int k=0; k<ii.size(); ++k) {
-      MX el_k = m(range(k*j.size1(),(k+1)*j.size1()),slice_j);
+      MX el_k = m(range(k*j.size2(),(k+1)*j.size2()),slice_j);
       for (int i=0;i<j.size();++i) {
         (*this)(ii[k],j.at(i))=el_k[i];
       }
@@ -361,7 +361,7 @@ namespace CasADi{
   }
 
   void MX::setSub(const MX& m, const CCSSparsity& sp, int dummy) {
-    casadi_assert_message(size1()==sp.size1() && size2()==sp.size2(),"setSub(.,CCSSparsity sp): shape mismatch. This matrix has shape " << size1() << " x " << size2() << ", but supplied sparsity index has shape " << sp.size1() << " x " << sp.size2() << "." );
+    casadi_assert_message(size2()==sp.size2() && size1()==sp.size1(),"setSub(.,CCSSparsity sp): shape mismatch. This matrix has shape " << size2() << " x " << size1() << ", but supplied sparsity index has shape " << sp.size2() << " x " << sp.size1() << "." );
     
     // If m is scalar
     if(m.scalar()){
@@ -938,7 +938,7 @@ namespace CasADi{
     if(dense()){
       return *this;
     } else {
-      MX ret(size1(),size2(),val);
+      MX ret(size2(),size1(),val);
       ret(sparsity()) = *this;
       return ret;
     }

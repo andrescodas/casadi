@@ -487,7 +487,7 @@ namespace CasADi{
     // Construct sparsity pattern
     CCSSparsity ret = sp_triplet(nz_out, nz_in,use_fwd ? jcol : jrow, use_fwd ? jrow : jcol);
     
-    casadi_log("Formed Jacobian sparsity pattern (dimension " << ret.shape() << ", " << ret.size() << " nonzeros, " << 100*double(ret.size())/double(ret.size1())/double(ret.size2()) << " \% nonzeros).");
+    casadi_log("Formed Jacobian sparsity pattern (dimension " << ret.shape() << ", " << ret.size() << " nonzeros, " << 100*double(ret.size())/double(ret.size2())/double(ret.size1()) << " \% nonzeros).");
     casadi_log("FXInternal::getJacSparsity end ");
     
     // Return sparsity pattern
@@ -545,7 +545,7 @@ namespace CasADi{
       
       CCSSparsity D = r.starColoring();
 
-      casadi_log("Star coloring on " << r.dimString() << ": " << D.size1() << " <-> " << D.size2());
+      casadi_log("Star coloring on " << r.dimString() << ": " << D.size2() << " <-> " << D.size1());
       
       // Reset the virtual machine
       spInit(true);
@@ -583,7 +583,7 @@ namespace CasADi{
       std::vector<int> lookup_value;
       
       // Loop over all coarse seed directions from the coloring
-      for(int csd=0; csd<D.size1(); ++csd) {
+      for(int csd=0; csd<D.size2(); ++csd) {
         // The maximum number of fine blocks contained in one coarse block
         int n_fine_blocks_max = fine_lookup[coarse[1]]-fine_lookup[coarse[0]];
          
@@ -631,7 +631,7 @@ namespace CasADi{
           bvec_i+= min(n_fine_blocks_max,fci_cap);
            
           // Check if bvec buffer is full
-          if (bvec_i==bvec_size || csd==D.size1()-1) {
+          if (bvec_i==bvec_size || csd==D.size2()-1) {
             // Calculate sparsity for bvec_size directions at once
               
             // Statistics
@@ -715,7 +715,7 @@ namespace CasADi{
     }
     
     casadi_log("Number of sweeps: " << nsweeps );
-    casadi_log("Formed Jacobian sparsity pattern (dimension " << r.shape() << ", " << r.size() << " nonzeros, " << 100*double(r.size())/double(r.size1())/double(r.size2()) << " \% nonzeros).");
+    casadi_log("Formed Jacobian sparsity pattern (dimension " << r.shape() << ", " << r.size() << " nonzeros, " << 100*double(r.size())/double(r.size2())/double(r.size1()) << " \% nonzeros).");
     
     return r;
   }
@@ -796,7 +796,7 @@ namespace CasADi{
       // Adjoint mode
       CCSSparsity D2 = r.unidirectionalColoring(rT);
       
-      casadi_log("Coloring on " << r.dimString() << " (fwd seeps: " << D1.size1() << " , adj sweeps: " << D2.size2() << ")");
+      casadi_log("Coloring on " << r.dimString() << " (fwd seeps: " << D1.size2() << " , adj sweeps: " << D2.size1() << ")");
       
       // Adjoint mode penalty factor (adjoint mode is usually more expensive to calculate)
       int adj_penalty = 2;
@@ -805,12 +805,12 @@ namespace CasADi{
       int adj_cost = use_fwd ? granularity_col: granularity_row;
       
       // Use whatever required less colors if we tried both (with preference to forward mode)
-      if((D1.size1()*fwd_cost <= adj_penalty*D2.size1()*adj_cost)){
+      if((D1.size2()*fwd_cost <= adj_penalty*D2.size2()*adj_cost)){
         use_fwd = true;
-        casadi_log("Forward mode chosen (fwd cost: " << D1.size1()*fwd_cost << ", adj cost: " << adj_penalty*D2.size1()*adj_cost << ")");
+        casadi_log("Forward mode chosen (fwd cost: " << D1.size2()*fwd_cost << ", adj cost: " << adj_penalty*D2.size2()*adj_cost << ")");
       } else {
         use_fwd = false;
-        casadi_log("Adjoint mode chosen (adj cost: " << D1.size1()*fwd_cost << ", adj cost: " << adj_penalty*D2.size1()*adj_cost << ")");
+        casadi_log("Adjoint mode chosen (adj cost: " << D1.size2()*fwd_cost << ", adj cost: " << adj_penalty*D2.size2()*adj_cost << ")");
       }
       
       use_fwd = spCanEvaluate(true) && use_fwd;
@@ -883,7 +883,7 @@ namespace CasADi{
       std::vector<int> lookup_value;
       
       // Loop over all coarse seed directions from the coloring
-      for(int csd=0; csd<D.size1(); ++csd) {
+      for(int csd=0; csd<D.size2(); ++csd) {
       
         // The maximum number of fine blocks contained in one coarse block
         int n_fine_blocks_max = fine_row_lookup[coarse_row[1]]-fine_row_lookup[coarse_row[0]];
@@ -930,7 +930,7 @@ namespace CasADi{
           bvec_i+= min(n_fine_blocks_max,fci_cap);
            
           // Check if bvec buffer is full
-          if (bvec_i==bvec_size || csd==D.size1()-1) {
+          if (bvec_i==bvec_size || csd==D.size2()-1) {
             // Calculate sparsity for bvec_size directions at once
               
             // Statistics
@@ -1012,7 +1012,7 @@ namespace CasADi{
       hasrun = true;
     }
     casadi_log("Number of sweeps: " << nsweeps );
-    casadi_log("Formed Jacobian sparsity pattern (dimension " << r.shape() << ", " << r.size() << " nonzeros, " << 100*double(r.size())/double(r.size1())/double(r.size2()) << " \% nonzeros).");
+    casadi_log("Formed Jacobian sparsity pattern (dimension " << r.shape() << ", " << r.size() << " nonzeros, " << 100*double(r.size())/double(r.size2())/double(r.size1()) << " \% nonzeros).");
     
     return r;
   }
@@ -1065,8 +1065,8 @@ namespace CasADi{
         CCSSparsity sp = jacSparsity(iind,oind,true,symmetric);
 
         // Enlarge if sparse output 
-        if(output(oind).numel()!=sp.size1()){
-          casadi_assert(sp.size1()==output(oind).size());
+        if(output(oind).numel()!=sp.size2()){
+          casadi_assert(sp.size2()==output(oind).size());
         
           // New col for each old col 
           vector<int> col_map = output(oind).sparsity().getElements();
@@ -1076,8 +1076,8 @@ namespace CasADi{
         }
   
         // Enlarge if sparse input 
-        if(input(iind).numel()!=sp.size2()){
-          casadi_assert(sp.size2()==input(iind).size());
+        if(input(iind).numel()!=sp.size1()){
+          casadi_assert(sp.size1()==input(iind).size());
         
           // New row for each old row
           vector<int> row_map = input(iind).sparsity().getElements();
@@ -1127,7 +1127,7 @@ namespace CasADi{
       // Star coloring if symmetric
       log("FXInternal::getPartition starColoring");
       D1 = A.starColoring();
-      casadi_log("Star coloring completed: " << D1.size1() << " directional derivatives needed (" << A.size2() << " without coloring).");
+      casadi_log("Star coloring completed: " << D1.size2() << " directional derivatives needed (" << A.size1() << " without coloring).");
     
     } else {
     
@@ -1138,7 +1138,7 @@ namespace CasADi{
       int best_coloring = numeric_limits<int>::max();
 
       // Test forward mode first?
-      bool test_fwd_first = A.size2() <= adj_penalty*A.size1();
+      bool test_fwd_first = A.size1() <= adj_penalty*A.size2();
       int mode_fwd = test_fwd_first ? 0 : 1;
 
       // Test both coloring modes
@@ -1157,9 +1157,9 @@ namespace CasADi{
           if(D1.isNull()){
             if(verbose()) cout << "Forward mode coloring interrupted (more than " << best_coloring << " needed)." << endl; 
           } else {
-            if(verbose()) cout << "Forward mode coloring completed: " << D1.size1() << " directional derivatives needed (" << A.size2() << " without coloring)." << endl;
+            if(verbose()) cout << "Forward mode coloring completed: " << D1.size2() << " directional derivatives needed (" << A.size1() << " without coloring)." << endl;
             D2 = CCSSparsity();
-            best_coloring = D1.size1();
+            best_coloring = D1.size2();
           }
         } else {
           log("FXInternal::getPartition unidirectional coloring (adjoint mode)");
@@ -1168,9 +1168,9 @@ namespace CasADi{
           if(D2.isNull()){
             if(verbose()) cout << "Adjoint mode coloring interrupted (more than " << max_colorings_to_test << " needed)." << endl; 
           } else {
-            if(verbose()) cout << "Adjoint mode coloring completed: " << D2.size1() << " directional derivatives needed (" << A.size1() << " without coloring)." << endl;
+            if(verbose()) cout << "Adjoint mode coloring completed: " << D2.size2() << " directional derivatives needed (" << A.size2() << " without coloring)." << endl;
             D1 = CCSSparsity();
-            best_coloring = D2.size1();
+            best_coloring = D2.size2();
           }
         }
       }
@@ -1395,8 +1395,8 @@ namespace CasADi{
         CCSSparsity& sp = jacSparsity(iind, oind, true, false);
         if (sp.isNull() || sp.size() == 0)
           continue; // Skip if zero
-        const int d1 = sp.size1();
-        //const int d2 = sp.size2();
+        const int d1 = sp.size2();
+        //const int d2 = sp.size1();
         const vector<int>& colind = sp.colind();
         const vector<int>& row = sp.row();
 
@@ -1713,7 +1713,7 @@ namespace CasADi{
         // Split up the left hand sides
         d = horzsplit(d_all,offset);
         for(int i=0; i<n_out; ++i){
-          res.push_back(reshape(d[i],res[i].size1(),res[i].size2()));
+          res.push_back(reshape(d[i],res[i].size2(),res[i].size1()));
         }
       }
     }
@@ -1750,7 +1750,7 @@ namespace CasADi{
         // Split up the left hand sides
         d = horzsplit(d_all,offset);
         for(int i=0; i<n_in; ++i){
-          res.push_back(reshape(d[i],arg[i].size1(),arg[i].size2()));
+          res.push_back(reshape(d[i],arg[i].size2(),arg[i].size1()));
         }
       }
     }
@@ -1814,10 +1814,10 @@ namespace CasADi{
       // Assumes initialised
       for(int i=0; i<arg.size(); ++i){
         if(arg[i].isNull() || arg[i].empty() || input(i).isNull() || input(i).empty()) continue;
-        casadi_assert_message(arg[i].size1()==input(i).size1() && arg[i].size2()==input(i).size2(),
+        casadi_assert_message(arg[i].size2()==input(i).size2() && arg[i].size1()==input(i).size1(),
                               "Evaluation::shapes of passed-in dependencies should match shapes of inputs of function." << 
-                              std::endl << input_.scheme.describeInput(i) <<  " has shape (" << input(i).size1() << 
-                              "," << input(i).size2() << ") while a shape (" << arg[i].size1() << "," << arg[i].size2() << 
+                              std::endl << input_.scheme.describeInput(i) <<  " has shape (" << input(i).size2() << 
+                              "," << input(i).size1() << ") while a shape (" << arg[i].size2() << "," << arg[i].size1() << 
                               ") was supplied.");
       }
       createCall(arg,res,fseed,fsens,aseed,asens);

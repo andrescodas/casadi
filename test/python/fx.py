@@ -255,7 +255,7 @@ class FXtests(casadiTestCase):
     
     
     def test(sp):
-      x = ssym("x",sp.size2())
+      x = ssym("x",sp.size1())
       sp2 = jacobian(mul(DMatrix(sp,1),x),x).sparsity()
       self.checkarray(sp.row(),sp2.row());
       self.checkarray(sp.colind(),sp2.colind());   
@@ -345,7 +345,7 @@ class FXtests(casadiTestCase):
   @memory_heavy()
   def test_hessians(self):
     def test(sp):
-      x = ssym("x",sp.size2())
+      x = ssym("x",sp.size1())
       self.assertTrue(sp==sp.transpose())
       f = SXFunction([x],[mul([x.T,DMatrix(sp,1),x])])
       f.init()

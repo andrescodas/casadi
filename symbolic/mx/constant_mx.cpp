@@ -54,7 +54,7 @@ namespace CasADi{
   
     // Forward sensitivities
     if(!fwdSens.empty()){
-      MX zero_sens = MX::sparse(size1(),size2());
+      MX zero_sens = MX::sparse(size2(),size1());
       for(int d=0; d<fwdSens.size(); ++d){
         if(fwdSens[d][0]!=0){
           *fwdSens[d][0] = zero_sens;

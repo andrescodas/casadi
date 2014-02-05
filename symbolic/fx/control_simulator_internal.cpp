@@ -340,7 +340,7 @@ namespace CasADi{
         P_eval[3] = trans(U(k,range(nu_)));
       }
       if (control_dae_.input(CONTROL_DAE_U_INTERP).size()>0) {
-        if (k+1==U.size1()) {
+        if (k+1==U.size2()) {
           P_eval[4] = P_eval[3];
         } else {
           P_eval[4] = trans(U(k+1,range(nu_)));
@@ -353,7 +353,7 @@ namespace CasADi{
       simulator_out = simulator_.call(simulator_in);
     
       // Remember the end state and dstate for next iteration in this loop
-      Xk = trans(simulator_out[0](simulator_out[0].size1()-1,ALL));
+      Xk = trans(simulator_out[0](simulator_out[0].size2()-1,ALL));
     
       // Copy all the outputs (but not those 2 extra we introduced)
       for (int i=0;i<simulator_out.size()-2;++i) {

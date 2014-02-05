@@ -72,8 +72,8 @@ namespace CasADi{
   void DenseTranspose::evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp){
 
     // Get sparsity patterns
-    int x_ncol = input[0]->size1();
-    int x_nrow = input[0]->size2();
+    int x_ncol = input[0]->size2();
+    int x_nrow = input[0]->size1();
     
     const vector<T>& x = input[0]->data();
     vector<T>& xT = output[0]->data();
@@ -117,8 +117,8 @@ namespace CasADi{
   void DenseTranspose::propagateSparsity(DMatrixPtrV& input, DMatrixPtrV& output, std::vector<int>& itmp, std::vector<double>& rtmp, bool fwd){
     // Access the input
     bvec_t *x = get_bvec_t(input[0]->data());
-    int x_ncol = input[0]->size1();
-    int x_nrow = input[0]->size2();
+    int x_ncol = input[0]->size2();
+    int x_nrow = input[0]->size1();
 
     // Access the output
     bvec_t *xT = get_bvec_t(output[0]->data());
@@ -172,9 +172,9 @@ namespace CasADi{
   }
 
   void DenseTranspose::generateOperation(std::ostream &stream, const std::vector<std::string>& arg, const std::vector<std::string>& res, CodeGenerator& gen) const{
-    stream << "  for(i=0; i<" << dep().size1() << "; ++i) ";
-    stream << "for(j=0; j<" << dep().size2() << "; ++j) ";
-    stream << res.front() << "[i+j*" << dep().size1() << "] = " << arg.front() << "[j+i*" << dep().size2() << "];" << endl;
+    stream << "  for(i=0; i<" << dep().size2() << "; ++i) ";
+    stream << "for(j=0; j<" << dep().size1() << "; ++j) ";
+    stream << res.front() << "[i+j*" << dep().size2() << "] = " << arg.front() << "[j+i*" << dep().size1() << "];" << endl;
   }
 
 } // namespace CasADi

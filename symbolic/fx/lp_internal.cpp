@@ -36,8 +36,8 @@ LPSolverInternal::LPSolverInternal(const std::vector<CCSSparsity> &st) : st_(st)
   
   const CCSSparsity& A = st_[LP_STRUCT_A];
  
-  n_ = A.size2();
-  nc_ = A.size1();
+  n_ = A.size1();
+  nc_ = A.size2();
   
 
   // Input arguments

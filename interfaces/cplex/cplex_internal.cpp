@@ -51,9 +51,9 @@ CplexInternal::CplexInternal(const std::vector<CCSSparsity>& st) : QPSolverInter
   
   // Initializing members
   // Number of vars
-  NUMROWS_ = H.size1();
+  NUMROWS_ = H.size2();
   // Number of constraints
-  NUMCOLS_ = A.size1();
+  NUMCOLS_ = A.size2();
   // Setting warm-start flag
   is_warm_ = false;
 
@@ -359,8 +359,8 @@ void CplexInternal::freeCplex(){
 
 void CplexInternal::toCplexSparsity(const CCSSparsity& sp_trans, vector<int> &matbeg, vector<int>& matcnt, vector<int>& matind){
   // Get sparsity
-  int nrow = sp_trans.size1();
-  //int ncol = sp_trans.size2();
+  int nrow = sp_trans.size2();
+  //int ncol = sp_trans.size1();
   const std::vector<int>& rowind = sp_trans.colind();
   const std::vector<int>& col = sp_trans.row();
 

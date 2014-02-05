@@ -82,8 +82,8 @@ namespace CasADi{
     bool prepared_;
 
     // Get sparsity pattern
-    int ncol() const{ return input(LINSOL_A).size1();}
-    int nrow() const{ return input(LINSOL_A).size2();}
+    int ncol() const{ return input(LINSOL_A).size2();}
+    int nrow() const{ return input(LINSOL_A).size1();}
     int nnz() const{ return input(LINSOL_A).size();}
     const std::vector<int>& row() const{ return input(LINSOL_A).row();}
     const std::vector<int>& colind() const{ return input(LINSOL_A).colind();}    

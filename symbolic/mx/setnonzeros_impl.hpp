@@ -109,7 +109,7 @@ namespace CasADi{
       
       // Get element (note: may contain duplicates)
       if(onz_k>=0){
-        with_duplicates[k] = ocol[onz_k] + orow[onz_k]*osp.size1();
+        with_duplicates[k] = ocol[onz_k] + orow[onz_k]*osp.size2();
       } else {
         with_duplicates[k] = -1;
       }
@@ -211,7 +211,7 @@ namespace CasADi{
       aseed.sparsity().getNZInplace(r_ind);
 
       // Sparsity pattern for the result
-      r_colind.resize(isp.size1()+1); // Col count
+      r_colind.resize(isp.size2()+1); // Col count
       fill(r_colind.begin(),r_colind.end(),0);
       r_row.clear();
 
@@ -248,7 +248,7 @@ namespace CasADi{
       // If anything to set/add
       if(!r_nz.empty()){
         // Create a sparsity pattern from vectors
-        CCSSparsity f_sp(isp.size1(),isp.size2(),r_row,r_colind);
+        CCSSparsity f_sp(isp.size2(),isp.size1(),r_row,r_colind);
         asens += aseed->getGetNonzeros(f_sp,r_nz);
         if(!Add){
           aseed = MX::zeros(f_sp)->getSetNonzeros(aseed,r_nz);

@@ -61,10 +61,10 @@ namespace CasADi{
    In this format, the structural non-zero elements are stored in col-major order, starting from 
    the upper left corner of the matrix and ending in the lower right corner.
   
-   In addition to the dimension (size1(),size2()), (i.e. the number of cols and the number of rows
+   In addition to the dimension (size2(),size1()), (i.e. the number of cols and the number of rows
    respectively), there are also two vectors of integers:
   
-   1. "colind" [length size1()+1], which contains the index to the first non-zero element on or after
+   1. "colind" [length size2()+1], which contains the index to the first non-zero element on or after
    the corresponding col. All the non-zero elements of a particular i are thus the elements with 
    index el that fulfils: colind[i] <= el < colind[i+1].
      
@@ -74,7 +74,7 @@ namespace CasADi{
    Note that with this format, it is cheap to loop over all the non-zero elements of a particular col,
    constant time per elment, but expensive to jump to access a location (i,j).
   
-   If the matrix is dense, i.e. length(row) == size1()*size2(), the format reduces to standard dense
+   If the matrix is dense, i.e. length(row) == size2()*size1(), the format reduces to standard dense
    col major format, which allows access to an arbitrary element in constant time.
   
    Since the object is reference counted (it inherits from SharedObject), several matrices are allowed
@@ -160,12 +160,12 @@ namespace CasADi{
     /// @{
     
     /// Get the number of cols
-    int size1() const;
+    int size2() const;
     
     /// Get the number of rows
-    int size2() const;
+    int size1() const;
 
-    /** \brief The total number of elements, including structural zeros, i.e. size1()*size2()
+    /** \brief The total number of elements, including structural zeros, i.e. size2()*size1()
         \see size()  */
     int numel() const;
     
@@ -508,14 +508,14 @@ namespace CasADi{
   void CCSSparsity::set(T* data, const T* val_data, const CCSSparsity& val_sp) const{
     // Get dimensions of this
     const int sz = size();
-    const int sz1 = size1();
-    const int sz2 = size2();
+    const int sz1 = size2();
+    const int sz2 = size1();
     const int nel = sz1*sz2;
 
     // Get dimensions of assigning matrix
     const int val_sz = val_sp.size();
-    const int val_sz1 = val_sp.size1();
-    const int val_sz2 = val_sp.size2();
+    const int val_sz1 = val_sp.size2();
+    const int val_sz2 = val_sp.size1();
     const int val_nel = val_sz1*val_sz2;
 
     // Check if sparsity matches
@@ -582,14 +582,14 @@ namespace CasADi{
   void CCSSparsity::add(T* data, const T* val_data, const CCSSparsity& val_sp) const{
     // Get dimensions of this
     const int sz = size();
-    const int sz1 = size1();
-    const int sz2 = size2();
+    const int sz1 = size2();
+    const int sz2 = size1();
     const int nel = sz1*sz2;
 
     // Get dimensions of assigning matrix
     const int val_sz = val_sp.size();
-    const int val_sz1 = val_sp.size1();
-    const int val_sz2 = val_sp.size2();
+    const int val_sz1 = val_sp.size2();
+    const int val_sz2 = val_sp.size1();
     const int val_nel = val_sz1*val_sz2;
 
     // Check if sparsity matches
@@ -660,14 +660,14 @@ namespace CasADi{
   void CCSSparsity::bor(T* data, const T* val_data, const CCSSparsity& val_sp) const{
     // Get dimensions of this
     const int sz = size();
-    const int sz1 = size1();
-    const int sz2 = size2();
+    const int sz1 = size2();
+    const int sz2 = size1();
     const int nel = sz1*sz2;
 
     // Get dimensions of assigning matrix
     const int val_sz = val_sp.size();
-    const int val_sz1 = val_sp.size1();
-    const int val_sz2 = val_sp.size2();
+    const int val_sz1 = val_sp.size2();
+    const int val_sz2 = val_sp.size1();
     const int val_nel = val_sz1*val_sz2;
 
     // Check if sparsity matches

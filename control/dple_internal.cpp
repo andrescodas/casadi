@@ -65,13 +65,13 @@ namespace CasADi{
     for (int k=0;k<K_;++k) {
       casadi_assert_message(V_[k]==trans(V_[k]),"V_i must be symmetric but got " << V_[k].dimString() << " for i = " << k << ".");
 
-      casadi_assert_message(A_[k].size1()==V_[k].size1(),"First dimension of A (" << A_[k].size1() << ") must match dimension of symmetric V_i (" << V_[k].size1() << ")" << " for i = " << k << ".");
+      casadi_assert_message(A_[k].size2()==V_[k].size2(),"First dimension of A (" << A_[k].size2() << ") must match dimension of symmetric V_i (" << V_[k].size2() << ")" << " for i = " << k << ".");
     }
     
     if (const_dim_) {
-      int n = A_[0].size1();
+      int n = A_[0].size2();
        for (int k=1;k<K_;++k) {
-         casadi_assert_message(A_[k].size1()==n,"You have set const_dim option, but found an A_i with dimension ( " << A_[k].dimString() << " ) deviating from n = " << n << " at i = " << k << ".");
+         casadi_assert_message(A_[k].size2()==n,"You have set const_dim option, but found an A_i with dimension ( " << A_[k].dimString() << " ) deviating from n = " << n << " at i = " << k << ".");
       }
     }
 
@@ -98,7 +98,7 @@ namespace CasADi{
     // Allocate outputs
     std::vector<CCSSparsity> P; 
     for (int k=0;k<K_;++k) {
-      P.push_back(sp_dense(V_[k].size1(),V_[k].size1()));
+      P.push_back(sp_dense(V_[k].size2(),V_[k].size2()));
     }
     setNumOutputs(DPLE_NUM_OUT*(1+nfwd_) + DPLE_NUM_IN*nadj_);
     for (int i=0;i<nfwd_+1;++i) {

@@ -48,8 +48,8 @@ namespace CasADi{
     LinearSolverInternal::init();
 
     AT_.nzmax = input().size();  // maximum number of entries 
-    AT_.m = input().size2(); // number of cols
-    AT_.n = input().size1(); // number of rows
+    AT_.m = input().size1(); // number of cols
+    AT_.n = input().size2(); // number of rows
     AT_.p = const_cast<int*>(&input().colind().front()); // row pointers (size n+1) or row indices (size nzmax)
     AT_.i = const_cast<int*>(&input().row().front()); // col indices, size nzmax
     AT_.x = &input().front(); // col indices, size nzmax
@@ -145,7 +145,7 @@ namespace CasADi{
       makeSparse(temp);
       if (isSingular(temp.sparsity())) {
         stringstream ss;
-        ss << "CSparseCholeskyInternal::prepare: factorization failed due to matrix being singular. Matrix contains numerical zeros which are structurally non-zero. Promoting these zeros to be structural zeros, the matrix was found to be structurally rank deficient. sprank: " << rank(temp.sparsity()) << " <-> " << temp.size1() << endl;
+        ss << "CSparseCholeskyInternal::prepare: factorization failed due to matrix being singular. Matrix contains numerical zeros which are structurally non-zero. Promoting these zeros to be structural zeros, the matrix was found to be structurally rank deficient. sprank: " << rank(temp.sparsity()) << " <-> " << temp.size2() << endl;
         if(verbose()){
           ss << "Sparsity of the linear system: " << endl;
           input(LINSOL_A).sparsity().print(ss); // print detailed
@@ -198,7 +198,7 @@ namespace CasADi{
   }
 
   CSparseCholeskyInternal* CSparseCholeskyInternal::clone() const{
-    return new CSparseCholeskyInternal(input(LINSOL_A).sparsity(),input(LINSOL_B).size1());
+    return new CSparseCholeskyInternal(input(LINSOL_A).sparsity(),input(LINSOL_B).size2());
   }
 
 } // namespace CasADi

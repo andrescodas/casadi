@@ -32,8 +32,8 @@ A.printMatrix()
 
 #! Ruin the nice structure
 numpy.random.seed(0)
-p1 = numpy.random.permutation(A.size1())
-p2 = numpy.random.permutation(A.size2())
+p1 = numpy.random.permutation(A.size2())
+p2 = numpy.random.permutation(A.size1())
 
 S = A[p1,:]
 #S = A[p1,p2]

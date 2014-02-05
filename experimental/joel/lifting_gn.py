@@ -164,18 +164,18 @@ for (i,x0) in enumerate([0.08]):
     xdot = ssym("xdot",x.size())
     
     # Lagrange multipliers
-    mux = ssym("mux",u.size1())
-    mug = ssym("mug",f2.size1())
+    mux = ssym("mux",u.size2())
+    mug = ssym("mug",f2.size2())
 
     # Gradient of the Lagrangian
     xu = horzcat((u,x))
     lgrad = gradient(f1 - inner_prod(mug,f2) + inner_prod(xdot,xdef),xu)
 
     # Gradient of the Lagrangian
-    f1 = lgrad[:u.size1(),0] # + mux # What about the mux term?
+    f1 = lgrad[:u.size2(),0] # + mux # What about the mux term?
 
     # Definition of xdot
-    xdotdef = lgrad[u.size1():,0]
+    xdotdef = lgrad[u.size2():,0]
     
     # Reverse direction of x
     xdot[:,0] = SXMatrix(list(reversed(list(xdot))))
@@ -190,7 +190,7 @@ for (i,x0) in enumerate([0.08]):
   G.init()
 
   # Difference vector d
-  d = ssym("d",xdef.size1())
+  d = ssym("d",xdef.size2())
 
   # Substitute out the x from the zdef
   z = xdef-d
@@ -379,7 +379,7 @@ for (i,x0) in enumerate([0.08]):
 
     # Plot the progress
     plotx = horzcat([x0,x_k[:nk]])
-    plott = NP.linspace(0,1,plotx.size1())
+    plott = NP.linspace(0,1,plotx.size2())
     plt.plot(plott,plotx,'*-')
     leg.append(str(k))
 

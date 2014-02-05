@@ -673,7 +673,7 @@ namespace CasADi{
       fsens[d].resize(outputv_.size());
       if(skip_fwd){
         for(int i=0; i<fsens[d].size(); ++i){
-          fsens[d][i] = MX::sparse(output(i).size1(),output(i).size2());
+          fsens[d][i] = MX::sparse(output(i).size2(),output(i).size1());
         }
       }
     }
@@ -687,7 +687,7 @@ namespace CasADi{
       asens[d].resize(inputv_.size());
       if(skip_adj){
         for(int i=0; i<asens[d].size(); ++i){
-          asens[d][i] = MX::sparse(input(i).size1(),input(i).size2());
+          asens[d][i] = MX::sparse(input(i).size2(),input(i).size1());
         }
       }
     }
@@ -796,7 +796,7 @@ namespace CasADi{
             // Give zero seed if null
             if(el>=0 && dwork[el][d].isNull()){
               if(d==0){
-                dwork[el][d] = MX::sparse(input_p[iind]->size1(),input_p[iind]->size2());
+                dwork[el][d] = MX::sparse(input_p[iind]->size2(),input_p[iind]->size1());
               } else {
                 dwork[el][d] = dwork[el][0];
               }
@@ -808,7 +808,7 @@ namespace CasADi{
             int el = it->res[oind];
             fsens_p[d][oind] = el<0 ? 0 : &dwork[el][d];
             if (el>=0 && dwork[el][d].isNull() && !output_p[oind]->isNull()) {
-              dwork[el][d] = MX::sparse(output_p[oind]->size1(),output_p[oind]->size2());
+              dwork[el][d] = MX::sparse(output_p[oind]->size2(),output_p[oind]->size1());
             }
           }
         }

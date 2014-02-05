@@ -64,7 +64,7 @@ class StabilizedQPSolverInternal : public FXInternal{
     /// Number of decision variables
     int n_;
     
-    /// The number of constraints (counting both equality and inequality) == A.size1()
+    /// The number of constraints (counting both equality and inequality) == A.size2()
     int nc_; 
 };
 

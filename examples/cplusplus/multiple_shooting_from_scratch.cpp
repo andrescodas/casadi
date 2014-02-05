@@ -58,10 +58,10 @@ int main(){
   SXMatrix x = horzcat(r,s);
 
   // Number of differential states
-  int nx = x.size1();
+  int nx = x.size2();
   
   // Number of controls
-  int nu = u.size1();
+  int nu = u.size2();
 
   // Bounds and initial guess for the control
   double u_min[] =  { -0.75 };

@@ -38,14 +38,14 @@ QPSolverInternal::QPSolverInternal(const std::vector<CCSSparsity> &st) : st_(st)
   const CCSSparsity& A = st_[QP_STRUCT_A];
   const CCSSparsity& H = st_[QP_STRUCT_H];
   
-  n_ = H.size2();
-  nc_ = A.isNull() ? 0 : A.size1();
+  n_ = H.size1();
+  nc_ = A.isNull() ? 0 : A.size2();
   
   if (!A.isNull()) {
-    casadi_assert_message(A.size2()==n_,
+    casadi_assert_message(A.size1()==n_,
       "Got incompatible dimensions.   min          x'Hx + G'x s.t.   LBA <= Ax <= UBA :" << std::endl <<
       "H: " << H.dimString() << " - A: " << A.dimString() << std::endl <<
-      "We need: H.size2()==A.size2()" << std::endl
+      "We need: H.size1()==A.size1()" << std::endl
     );
   } 
   

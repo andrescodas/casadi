@@ -147,10 +147,10 @@ if (dwork==0) {
   
   void slicot_periodic_schur(const std::vector< Matrix<double> > & a, std::vector< Matrix<double> > & t, std::vector< Matrix<double> > & z) {
     int K = a.size();
-    int n = a[0].size1();
+    int n = a[0].size2();
     for (int k=0;k<K;++k) {
-      casadi_assert_message(a[k].size1()==a[k].size2(), "a must be square");
-      casadi_assert_message(a[k].size1()==n, "a must be n-by-n");
+      casadi_assert_message(a[k].size2()==a[k].size1(), "a must be square");
+      casadi_assert_message(a[k].size2()==n, "a must be n-by-n");
       casadi_assert_message(a[k].dense(), "a must be dense");
     }
     

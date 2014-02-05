@@ -775,7 +775,7 @@ namespace CasADi{
 
   double StabilizedSQPInternal::quad_form(const std::vector<double>& x, const DMatrix& A){
     // Assert dimensions
-    casadi_assert(x.size()==A.size1() && x.size()==A.size2());
+    casadi_assert(x.size()==A.size2() && x.size()==A.size1());
   
     // Access the internal data of A
     const std::vector<int> &A_colind = A.colind();
@@ -1057,7 +1057,7 @@ namespace CasADi{
     // Access the arrays
     const std::vector<double>& v = A.data();
     const std::vector<int>& row = A.row();
-    std::vector<double> sums(A.size2(),0);
+    std::vector<double> sums(A.size1(),0);
     for (int i=0;i<A.size();i++)
       sums[row[i]] += abs(v[i]);
     
@@ -1087,7 +1087,7 @@ namespace CasADi{
   
 void StabilizedSQPInternal::mat_vectran(const std::vector<double>& x, const DMatrix& A, std::vector<double>& y){
     // Assert dimensions
-    casadi_assert(x.size()==A.size1() && y.size()==A.size2());
+    casadi_assert(x.size()==A.size2() && y.size()==A.size1());
   
     // Access the internal data of A
     const std::vector<int> &A_colind = A.colind();
@@ -1098,7 +1098,7 @@ void StabilizedSQPInternal::mat_vectran(const std::vector<double>& x, const DMat
     for (int i=0;i<y.size();++i)
       y[i] = 0;
     // Loop over the cols of A
-    for(int i=0; i<A.size1(); ++i){
+    for(int i=0; i<A.size2(); ++i){
       // Loop over the nonzeros of A
       for(int el=A_colind[i]; el<A_colind[i+1]; el++){
         // Get row
@@ -1113,7 +1113,7 @@ void StabilizedSQPInternal::mat_vectran(const std::vector<double>& x, const DMat
 
   void StabilizedSQPInternal::mat_vec(const std::vector<double>& x, const DMatrix& A, std::vector<double>& y){
     // Assert dimensions
-    casadi_assert(x.size()==A.size2() && y.size()==A.size1());
+    casadi_assert(x.size()==A.size1() && y.size()==A.size2());
   
     // Access the internal data of A
     const std::vector<int> &A_colind = A.colind();
@@ -1124,7 +1124,7 @@ void StabilizedSQPInternal::mat_vectran(const std::vector<double>& x, const DMat
     for (int i=0;i<y.size();++i)
       y[i] = 0;
     // Loop over the cols of A
-    for(int i=0; i<A.size1(); ++i){
+    for(int i=0; i<A.size2(); ++i){
       // Loop over the nonzeros of A
       for(int el=A_colind[i]; el<A_colind[i+1]; el++){
         // Get row

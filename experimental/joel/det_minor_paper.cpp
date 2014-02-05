@@ -43,7 +43,7 @@ M getMinor(const M& x, int i, int j);
 // Determinant
 template<class M>
 M det(const M& a){
-  int n = a.size1(); // Dimension
+  int n = a.size2(); // Dimension
   if(n==n_min) return det_n_min.call(a)[0]; // Quick return
   if(n==1) return a; // Quick return
   
@@ -59,7 +59,7 @@ M det(const M& a){
 // Minor
 template<class M>
 M getMinor(const M& x, int i, int j){
-  int n = x.size1(); // Dimension
+  int n = x.size2(); // Dimension
 
   // Remove col i and row j from x
   M m(n-1,n-1); // (n-1)-by-(n-1) matrix

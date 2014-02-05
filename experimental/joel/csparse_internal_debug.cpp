@@ -45,8 +45,8 @@ void CSparseInternal::init(){
   LinearSolverInternal::init();
 
   AT_.nzmax = input().size();  // maximum number of entries 
-  AT_.m = input().size2(); // number of cols
-  AT_.n = input().size1(); // number of rows
+  AT_.m = input().size1(); // number of cols
+  AT_.n = input().size2(); // number of rows
   AT_.p = const_cast<int*>(&input().colind().front()); // row pointers (size n+1) or row indices (size nzmax)
   AT_.i = const_cast<int*>(&input().row().front()); // col indices, size nzmax
   AT_.x = &input().front(); // col indices, size nzmax

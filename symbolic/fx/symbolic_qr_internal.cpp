@@ -82,9 +82,9 @@ namespace CasADi{
       inv_rowperm[rowperm[k]] = k;
     
     // Permute the linear system
-    SXMatrix Aperm(0,A.size2());
-    for(int i=0; i<A.size1(); ++i){
-      Aperm.resize(i+1,A.size2());
+    SXMatrix Aperm(0,A.size1());
+    for(int i=0; i<A.size2(); ++i){
+      Aperm.resize(i+1,A.size1());
       for(int el=A.colind(colperm[i]); el<A.colind(colperm[i]+1); ++el){
         Aperm(i,inv_rowperm[A.row(el)]) = A[el];
       }
@@ -117,9 +117,9 @@ namespace CasADi{
     // We have inv(A) = inv(Px) * inv(R) * Q' * Pb
 
     // Permute the right hand side
-    SXMatrix bperm(0,b.size2());
-    for(int i=0; i<b.size1(); ++i){
-      bperm.resize(i+1,b.size2());
+    SXMatrix bperm(0,b.size1());
+    for(int i=0; i<b.size2(); ++i){
+      bperm.resize(i+1,b.size1());
       for(int el=b.colind(colperm[i]); el<b.colind(colperm[i]+1); ++el){
         bperm(i,b.row(el)) = b[el];
       }
@@ -129,9 +129,9 @@ namespace CasADi{
     SXMatrix xperm = CasADi::solve(R,mul(trans(Q),bperm));
 
     // Permute back the solution
-    SXMatrix x(0,xperm.size2());
-    for(int i=0; i<xperm.size1(); ++i){
-      x.resize(i+1,xperm.size2());
+    SXMatrix x(0,xperm.size1());
+    for(int i=0; i<xperm.size2(); ++i){
+      x.resize(i+1,xperm.size1());
       for(int el=xperm.colind(inv_rowperm[i]); el<xperm.colind(inv_rowperm[i]+1); ++el){
         x(i,xperm.row(el)) = xperm[el];
       }
@@ -161,9 +161,9 @@ namespace CasADi{
     // We have inv(A)' = inv(Pb) * Q *inv(R') * Px
 
     // Permute the right hand side
-    bperm = SXMatrix(0,b.size2());
-    for(int i=0; i<b.size1(); ++i){
-      bperm.resize(i+1,b.size2());
+    bperm = SXMatrix(0,b.size1());
+    for(int i=0; i<b.size2(); ++i){
+      bperm.resize(i+1,b.size1());
       for(int el=b.colind(rowperm[i]); el<b.colind(rowperm[i]+1); ++el){
         bperm(i,b.row(el)) = b[el];
       }
@@ -173,9 +173,9 @@ namespace CasADi{
     xperm = mul(Q,CasADi::solve(trans(R),bperm));
 
     // Permute back the solution
-    x = SXMatrix(0,xperm.size2());
-    for(int i=0; i<xperm.size1(); ++i){
-      x.resize(i+1,xperm.size2());
+    x = SXMatrix(0,xperm.size1());
+    for(int i=0; i<xperm.size2(); ++i){
+      x.resize(i+1,xperm.size1());
       for(int el=xperm.colind(inv_colperm[i]); el<xperm.colind(inv_colperm[i]+1); ++el){
         x(i,xperm.row(el)) = xperm[el];
       }

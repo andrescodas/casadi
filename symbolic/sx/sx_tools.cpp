@@ -340,7 +340,7 @@ void makeSmooth(SXMatrix &ex, SXMatrix &bvar, SXMatrix &bexpr){
         if(sw.empty()){ // the switch has not yet been added
           // Get an approriate name of the switch
           std::stringstream name;
-          name << "sw_" << bvar.size1();
+          name << "sw_" << bvar.size2();
           sw = SX(name.str());
   
           // Add to list of switches
@@ -371,9 +371,9 @@ void makeSmooth(SXMatrix &ex, SXMatrix &bvar, SXMatrix &bexpr){
 #endif
 
 SXMatrix spy(const SXMatrix& A){
-  SXMatrix s(A.size1(),A.size2());
-  for(int i=0; i<A.size1(); ++i)
-    for(int j=0; j<A.size2(); ++j)
+  SXMatrix s(A.size2(),A.size1());
+  for(int i=0; i<A.size2(); ++i)
+    for(int j=0; j<A.size1(); ++j)
       if(!A(i,j).toScalar()->isZero())
         s(i,j) = 1;
   return s;
@@ -446,12 +446,12 @@ SXMatrix hessian(const SXMatrix& ex, const SXMatrix &arg) {
 }
 
 double getValue(const SXMatrix& ex, int i, int j) {
-  casadi_assert(i<ex.size1() && j<ex.size2());
+  casadi_assert(i<ex.size2() && j<ex.size1());
   return ex(i,j).toScalar().getValue();
 }
 
 int getIntValue(const SXMatrix& ex, int i, int j) {
-  casadi_assert(i<ex.size1() && j<ex.size2());
+  casadi_assert(i<ex.size2() && j<ex.size1());
   return ex(i,j).toScalar().getIntValue();
 }
 
@@ -605,8 +605,8 @@ void simplify(SX& ex){
 }
 
 void fill(SXMatrix& mat, const SX& val){
-  if(val->isZero())    mat.makeEmpty(mat.size1(),mat.size2());
-  else                 mat.makeDense(mat.size1(),mat.size2(),val);
+  if(val->isZero())    mat.makeEmpty(mat.size2(),mat.size1());
+  else                 mat.makeDense(mat.size2(),mat.size1(),val);
 }
 
 // SXMatrix binary(int op, const SXMatrix &x, const SXMatrix &y){
@@ -733,7 +733,7 @@ SXMatrix taylor(const SXMatrix& ex,const SXMatrix& x, const SXMatrix& a, int ord
     result+=1/nf * substitute(ff,x,a) * dxa;
     dxa*=dx;
   }
-  return trans(reshape(result,ex.size2(),ex.size1()));
+  return trans(reshape(result,ex.size1(),ex.size2()));
 }
 
 SXMatrix mtaylor(const SXMatrix& ex,const SXMatrix& x, const SXMatrix& around,int order) {
@@ -765,7 +765,7 @@ SXMatrix mtaylor(const SXMatrix& ex,const SXMatrix& x, const SXMatrix& a,int ord
     "mtaylor: number of non-zero elements in x (" <<  x.size() << ") must match size of order_contributions (" << order_contributions.size() << ")"
   );
 
-  return trans(reshape(mtaylor_recursive(vec(ex),x,a,order,order_contributions),ex.size2(),ex.size1()));
+  return trans(reshape(mtaylor_recursive(vec(ex),x,a,order,order_contributions),ex.size1(),ex.size2()));
 }
 
 int countNodes(const SXMatrix& A){
@@ -874,7 +874,7 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
     CCSSparsity sp_nonlin = fcnb_nonlin.jacSparsity();
     
     // Get the subsets of variables that appear nonlinearily
-    vector<bool> nonlin(sp_nonlin.size2(),false);
+    vector<bool> nonlin(sp_nonlin.size1(),false);
     for(int el=0; el<sp_nonlin.size(); ++el){
       nonlin[sp_nonlin.row(el)] = true;
     }
@@ -978,16 +978,16 @@ SXMatrix jacobianTimesVector(const SXMatrix &ex, const SXMatrix &arg, const SXMa
   f.init();
   
   // Dimension of v
-  int v1 = v.size1(), v2 = v.size2();
+  int v1 = v.size2(), v2 = v.size1();
   
   // Make sure well-posed
   casadi_assert(v2 >= 1);
-  casadi_assert(ex.size2()==1);
-  casadi_assert(arg.size2()==1);
+  casadi_assert(ex.size1()==1);
+  casadi_assert(arg.size1()==1);
   if(transpose_jacobian){
-    casadi_assert(v1==ex.size1());
+    casadi_assert(v1==ex.size2());
   } else {
-    casadi_assert(v1==arg.size1());
+    casadi_assert(v1==arg.size2());
   }
   
   // Number of sensitivities
@@ -1259,13 +1259,13 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
   }
   
   SXMatrix poly_roots(const SXMatrix& p) {
-    casadi_assert_message(p.size2()==1,"poly_root(): supplied paramter must be row vector but got " << p.dimString() << ".");
+    casadi_assert_message(p.size1()==1,"poly_root(): supplied paramter must be row vector but got " << p.dimString() << ".");
     casadi_assert(p.dense());
-    if (p.size1()==2) { // a*x + b
+    if (p.size2()==2) { // a*x + b
       SXMatrix a = p(0);
       SXMatrix b = p(1);
       return -b/a;
-    } else if (p.size1()==3) { // a*x^2 + b*x + c
+    } else if (p.size2()==3) { // a*x^2 + b*x + c
       SXMatrix a = p(0);
       SXMatrix b = p(1);
       SXMatrix c = p(2);
@@ -1276,7 +1276,7 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
       ret.append((bm-ds)/a2);
       ret.append((bm+ds)/a2);
       return ret;
-    } else if (p.size1()==4) {
+    } else if (p.size2()==4) {
       // www.cs.iastate.edu/~cs577/handouts/polyroots.pdf
       SXMatrix ai = 1/p(0);
        
@@ -1301,7 +1301,7 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
       
       ret-= p_/3;
       return ret;
-    } else if (p.size1()==5) {
+    } else if (p.size2()==5) {
       SXMatrix ai = 1/p(0);
       SXMatrix b = p(1)*ai;
       SXMatrix c = p(2)*ai;
@@ -1341,13 +1341,13 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
       ret.append(0);
       return ret;
     } else {
-      casadi_error("poly_root(): can only solve cases for first or second order polynomial. Got order " << p.size1()-1 << ".");
+      casadi_error("poly_root(): can only solve cases for first or second order polynomial. Got order " << p.size2()-1 << ".");
     }
     
   }
   
   SXMatrix eig_symbolic(const SXMatrix& m) {
-    casadi_assert_message(m.size1()==m.size2(),"eig(): supplied matrix must be square");
+    casadi_assert_message(m.size2()==m.size1(),"eig(): supplied matrix must be square");
     
     SXMatrix ret;
     

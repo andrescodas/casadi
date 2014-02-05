@@ -37,8 +37,8 @@ namespace CasADi{
     setSparsity(CCSSparsity(1, 1, true));
     
     // Add trailing elemement if needed
-    if(offset_.back()!=x.size1()){
-      offset_.push_back(x.size1());
+    if(offset_.back()!=x.size2()){
+      offset_.push_back(x.size2());
     }
 
     // Get the sparsity of the input
@@ -47,7 +47,7 @@ namespace CasADi{
     
     // Sparsity pattern as vectors
     vector<int> colind, row;
-    int ncol, nrow = x.size2();
+    int ncol, nrow = x.size1();
 
     // Get the sparsity patterns of the outputs
     int nx = offset_.size()-1;
@@ -160,7 +160,7 @@ namespace CasADi{
           } else {
             int first_col = offset_[i];
             int last_col = offset_[i+1];
-            v.push_back(MX::sparse(last_col-first_col,dep().size2()));
+            v.push_back(MX::sparse(last_col-first_col,dep().size1()));
           }
         }
         *adjSens[d][0] += horzcat(v);

@@ -37,7 +37,7 @@ namespace CasADi{
   }
   
   Matrix<double> solve(const Matrix<double>& A, const Matrix<double>& b, linearSolverCreator lsolver, const Dictionary& dict) {
-    LinearSolver mysolver = lsolver(A.sparsity(),b.size2());
+    LinearSolver mysolver = lsolver(A.sparsity(),b.size1());
     mysolver.setOption(dict);
     mysolver.init();
     mysolver.setInput(A,LINSOL_A);
@@ -49,7 +49,7 @@ namespace CasADi{
 
 
   Matrix<double> pinv(const Matrix<double>& A, linearSolverCreator lsolver, const Dictionary& dict) {
-    if (A.size2()>=A.size1()) {
+    if (A.size1()>=A.size2()) {
       return trans(solve(mul(A,trans(A)),A,lsolver,dict));
     } else {
       return solve(mul(trans(A),A),trans(A),lsolver,dict);

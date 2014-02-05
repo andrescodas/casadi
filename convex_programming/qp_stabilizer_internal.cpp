@@ -66,7 +66,7 @@ void QPStabilizerInternal::evaluate() {
       DMatrix & A_qp = qp_solver_.input(QP_SOLVER_A);
       DMatrix & A = input(STABILIZED_QP_SOLVER_A);
       const std::vector <int> &A_colind = A.colind();
-      for (int i=0;i<A_qp.size1();++i) { // Loop over cols
+      for (int i=0;i<A_qp.size2();++i) { // Loop over cols
         int col_start = A_colind[i];
         int col_end = A_colind[i+1];
         // Copy col contents

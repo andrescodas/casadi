@@ -434,8 +434,8 @@ class ADtests(casadiTestCase):
     J.setInput([2,7])
     J.evaluate()
 
-    self.assertEqual(f.output().size1(),3,"Jacobian shape bug")
-    self.assertEqual(f.output().size2(),1,"Jacobian shape bug")
+    self.assertEqual(f.output().size2(),3,"Jacobian shape bug")
+    self.assertEqual(f.output().size1(),1,"Jacobian shape bug")
 
     
   def test_bugglibc(self):
@@ -773,7 +773,7 @@ class ADtests(casadiTestCase):
       if out.empty(): continue
       s_i  = out.sparsity().getCol()[0]
       s_j  = out.sparsity().row()[0]
-      s_k = s_i*out.size2()+s_j
+      s_k = s_i*out.size1()+s_j
       fun = MXFunction(inputs,[out[s_i,s_j],jac[s_k,:].T])
       fun.init()
         

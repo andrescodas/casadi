@@ -125,10 +125,10 @@ namespace CasADi{
     const MX indexed_one_based(int i, int j) const{ return (*this)(i-1,j-1);}
     const MX indexed_zero_based(int i, int j) const{ return (*this)(i,j);}
     const MX indexed(const IndexList &i, const IndexList &j) const{ 
-      return (*this)(i.getAll(size1()),j.getAll(size2()));
+      return (*this)(i.getAll(size2()),j.getAll(size1()));
     }
     const MX indexed(const Slice &i, const Slice &j) const{ 
-      return (*this)(i.getAll(size1()),j.getAll(size2()));
+      return (*this)(i.getAll(size2()),j.getAll(size1()));
     }
     const MX indexed(const Matrix<int> &k) const{ 
       return (*this)(k);
@@ -138,11 +138,11 @@ namespace CasADi{
     }
     const MX indexed(const Slice &i, const Matrix<int>& k) const{ return (*this)(i,k); }
     const MX indexed(const IndexList &i, const Matrix<int>& k) const{ 
-      return (*this)(i.getAll(size1()),k);
+      return (*this)(i.getAll(size2()),k);
     }
     const MX indexed(const Matrix<int>& k, const Slice &j) const{ return (*this)(k,j); }
     const MX indexed(const Matrix<int>& k, const IndexList &j) const{ 
-      return (*this)(k,j.getAll(size2()));
+      return (*this)(k,j.getAll(size1()));
     }
     const MX indexed(const Matrix<int>& i, const Matrix<int>& j) const{ 
       return (*this)(i,j);
@@ -162,11 +162,11 @@ namespace CasADi{
     void indexed_one_based_assignment(int i, int j, const MX &m){ (*this)(i-1,j-1) = m;}
     void indexed_zero_based_assignment(int i, int j, const MX &m){ (*this)(i,j) = m;}
     void indexed_assignment(const IndexList &i, const IndexList &j, const MX &m){
-      setSub(m,i.getAll(size1()),j.getAll(size2()));
+      setSub(m,i.getAll(size2()),j.getAll(size1()));
     }
     
     void indexed_assignment(const Slice &i, const Slice &j, const MX &m){
-      (*this)(i.getAll(size1()),j.getAll(size2())) = m;
+      (*this)(i.getAll(size2()),j.getAll(size1())) = m;
     }
     
     void indexed_zero_based_assignment(const Matrix<int>& k, const MX &m){
@@ -176,16 +176,16 @@ namespace CasADi{
       (*this)(sp) = m;
     }
     void indexed_assignment(const Slice &i, const Matrix<int>& j, const MX& m){
-      (*this)(i.getAll(size1()),j) = m;
+      (*this)(i.getAll(size2()),j) = m;
     }
     void indexed_assignment( const Matrix<int>& i, const Slice &j, const MX& m){
-      (*this)(i,j.getAll(size2())) = m;
+      (*this)(i,j.getAll(size1())) = m;
     }
     void indexed_assignment(const IndexList &i, const Matrix<int>& j, const MX& m){
-      (*this)(i.getAll(size1()),j) = m;
+      (*this)(i.getAll(size2()),j) = m;
     }
     void indexed_assignment( const Matrix<int>& i, const IndexList &j, const MX& m){
-      (*this)(i,j.getAll(size2())) = m;
+      (*this)(i,j.getAll(size1())) = m;
     } 
     void indexed_assignment( const Matrix<int>& i, const Matrix<int>& j, const MX& m){
       (*this)(i,j) = m;
@@ -360,11 +360,11 @@ namespace CasADi{
     const MX sub(const CCSSparsity& sp, int dummy=0) const;
     const MX sub(const std::vector<int>& i, const Matrix<int>& j) const;
     const MX sub(const Matrix<int>& k, const std::vector<int>& j) const;
-    const MX sub(const Slice& i, int j) const {return sub(i.getAll(size1()),j);}
-    const MX sub(int i, const Slice& j) const {return sub(i,j.getAll(size2()));}
-    const MX sub(const Slice& i, const Slice& j) const {return sub(i.getAll(size1()),j.getAll(size2()));}
-    const MX sub(const Slice& i, const Matrix<int>& j) const {return sub(i.getAll(size1()),j);}
-    const MX sub(const Matrix<int>& i, const Slice& j) const {return sub(i,j.getAll(size2()));}
+    const MX sub(const Slice& i, int j) const {return sub(i.getAll(size2()),j);}
+    const MX sub(int i, const Slice& j) const {return sub(i,j.getAll(size1()));}
+    const MX sub(const Slice& i, const Slice& j) const {return sub(i.getAll(size2()),j.getAll(size1()));}
+    const MX sub(const Slice& i, const Matrix<int>& j) const {return sub(i.getAll(size2()),j);}
+    const MX sub(const Matrix<int>& i, const Slice& j) const {return sub(i,j.getAll(size1()));}
     const MX sub(const Matrix<int>& i, const Matrix<int>& j) const;
 
     void setSub(const MX& m, int i, int j);
@@ -375,8 +375,8 @@ namespace CasADi{
     void setSub(const MX& m, const std::vector<int>& i, const Matrix<int>& k);
     void setSub(const MX& m, const Matrix<int>& k, const std::vector<int>& j);
     void setSub(const MX& m, const Slice& i, const Slice& j);
-    //void setSub(const MX& m, const Slice& i, const Matrix<int>& k) {return setSub(m,i.getAll(size1()),k);}
-    //void setSub(const MX& m, const Matrix<int>& k, const Slice& j) {return setSub(m,k,j.getAll(size2()));}
+    //void setSub(const MX& m, const Slice& i, const Matrix<int>& k) {return setSub(m,i.getAll(size2()),k);}
+    //void setSub(const MX& m, const Matrix<int>& k, const Slice& j) {return setSub(m,k,j.getAll(size1()));}
     void setSub(const MX& m, const Matrix<int>& i, const Matrix<int>& j);
     void setSub(const MX& m, const CCSSparsity& sp, int dummy);
     

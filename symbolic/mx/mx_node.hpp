@@ -235,10 +235,10 @@ namespace CasADi{
     int size() const;
     
     /// Get size
-    int size1() const;
+    int size2() const;
     
     /// Get size
-    int size2() const;
+    int size1() const;
 
     /// Convert scalar to matrix
     inline static MX toMatrix(const MX& x, const CCSSparsity& sp){

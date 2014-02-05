@@ -143,8 +143,8 @@ int main(){
   
   cs AT_;
   AT_.nzmax = S3.size();  // maximum number of entries 
-  AT_.m = S3.size2(); // number of cols
-  AT_.n = S3.size1(); // number of rows
+  AT_.m = S3.size1(); // number of cols
+  AT_.n = S3.size2(); // number of rows
   AT_.p = &S3.colindRef().front(); // row pointers (size n+1) or row indices (size nzmax)
   AT_.i = &S3.rowRef().front(); // col indices, size nzmax
   AT_.x = 0; // col indices, size nzmax
@@ -201,8 +201,8 @@ int main(){
   csd *perm = cs_dmperm (&AT_, dmseed);
     
   // Save to BLT structure // NOTE: swapping col<>row due to col/row major
-  vector<int> colperm3(perm->q, perm->q + S3.size1());
-  vector<int> rowperm3(perm->p, perm->p + S3.size2());
+  vector<int> colperm3(perm->q, perm->q + S3.size2());
+  vector<int> rowperm3(perm->p, perm->p + S3.size1());
   int nb3 = perm->nb;
   vector<int> colblock3(perm->s, perm->s + nb3 + 1);
   vector<int> rowblock3(perm->r, perm->r + nb3 + 1);

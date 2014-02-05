@@ -237,11 +237,11 @@ void LiftedSQPInternal::init(){
 
   // Matrix A and B in lifted Newton
   SXMatrix B = zfcn.jac(Z_U,Z_F12);
-  SXMatrix B1 = B(Slice(0,nf1),Slice(0,B.size2()));
-  SXMatrix B2 = B(Slice(nf1,B.size1()),Slice(0,B.size2()));
+  SXMatrix B1 = B(Slice(0,nf1),Slice(0,B.size1()));
+  SXMatrix B2 = B(Slice(nf1,B.size2()),Slice(0,B.size1()));
   if(verbose_){
-    cout << "Formed B1 (dimension " << B1.size1() << "-by-" << B1.size2() << ", "<< B1.size() << " nonzeros) " <<
-    "and B2 (dimension " << B2.size1() << "-by-" << B2.size2() << ", "<< B2.size() << " nonzeros)." << endl;
+    cout << "Formed B1 (dimension " << B1.size2() << "-by-" << B1.size1() << ", "<< B1.size() << " nonzeros) " <<
+    "and B2 (dimension " << B2.size2() << "-by-" << B2.size1() << ", "<< B2.size() << " nonzeros)." << endl;
   }
   
   // Step in u
@@ -272,12 +272,12 @@ void LiftedSQPInternal::init(){
     zfcn.eval(zfcn_in,zfcn_out,Z_fwdSeed,Z_fwdSens,Z_adjSeed,Z_adjSens);
     
     b1 += Z_fwdSens[0][Z_F12](Slice(0,nf1));
-    b2 += Z_fwdSens[0][Z_F12](Slice(nf1,B.size1()));
+    b2 += Z_fwdSens[0][Z_F12](Slice(nf1,B.size2()));
     e = Z_fwdSens[1][Z_D_DEF];
   }
   if(verbose_){
-    cout << "Formed b1 (dimension " << b1.size1() << "-by-" << b1.size2() << ", "<< b1.size() << " nonzeros) " <<
-    "and b2 (dimension " << b2.size1() << "-by-" << b2.size2() << ", "<< b2.size() << " nonzeros)." << endl;
+    cout << "Formed b1 (dimension " << b1.size2() << "-by-" << b1.size1() << ", "<< b1.size() << " nonzeros) " <<
+    "and b2 (dimension " << b2.size2() << "-by-" << b2.size1() << ", "<< b2.size() << " nonzeros)." << endl;
   }
   
   // Generate Gauss-Newton Hessian
@@ -285,7 +285,7 @@ void LiftedSQPInternal::init(){
     b1 = mul(trans(B1),b1);
     B1 = mul(trans(B1),B1);
     if(verbose_){
-      cout << "Gauss Newton Hessian (dimension " << B1.size1() << "-by-" << B1.size2() << ", "<< B1.size() << " nonzeros)." << endl;
+      cout << "Gauss Newton Hessian (dimension " << B1.size2() << "-by-" << B1.size1() << ", "<< B1.size() << " nonzeros)." << endl;
     }
   }
   

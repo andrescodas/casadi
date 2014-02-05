@@ -93,10 +93,10 @@ namespace CasADi{
 
   template<class T>
   const Matrix<T> Matrix<T>::sub(const std::vector<int>& ii, const Matrix<int>& k) const{
-    std::vector< int > rows = range(size2());
+    std::vector< int > rows = range(size1());
     std::vector< Matrix<T> > temp;
   
-    if (!inBounds(ii,size1())) {
+    if (!inBounds(ii,size2())) {
       casadi_error("Slicing [ii,k] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
 
@@ -113,10 +113,10 @@ namespace CasADi{
 
   template<class T>
   const Matrix<T> Matrix<T>::sub(const Matrix<int>& k, const std::vector<int>& jj) const{
-    std::vector< int > cols = range(size1());
+    std::vector< int > cols = range(size2());
     std::vector< Matrix<T> > temp;
 
-    if (!inBounds(jj,size2())) {
+    if (!inBounds(jj,size1())) {
       casadi_error("Slicing [ii,k] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
@@ -145,7 +145,7 @@ namespace CasADi{
 
   template<class T>
   const Matrix<T> Matrix<T>::sub(const CCSSparsity& sp, int dummy) const {
-    casadi_assert_message(size1()==sp.size1() && size2()==sp.size2(),"sub(CCSSparsity sp): shape mismatch. This matrix has shape " << size1() << " x " << size2() << ", but supplied sparsity index has shape " << sp.size1() << " x " << sp.size2() << "." );
+    casadi_assert_message(size2()==sp.size2() && size1()==sp.size1(),"sub(CCSSparsity sp): shape mismatch. This matrix has shape " << size2() << " x " << size1() << ", but supplied sparsity index has shape " << sp.size2() << " x " << sp.size1() << "." );
     Matrix<T> ret(sp);
 
     std::vector<unsigned char> mapping; // Mapping that will be filled by patternunion
@@ -175,12 +175,12 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::setSub(const Matrix<T>& m, const std::vector<int>& ii, const std::vector<int>& jj){
-    casadi_assert_message(m.numel()==1 || (ii.size() == m.size1() && jj.size() == m.size2()),"Dimension mismatch." << std::endl << "lhs is " << ii.size() << " x " << jj.size() << ", while rhs is " << m.dimString());
+    casadi_assert_message(m.numel()==1 || (ii.size() == m.size2() && jj.size() == m.size1()),"Dimension mismatch." << std::endl << "lhs is " << ii.size() << " x " << jj.size() << ", while rhs is " << m.dimString());
 
-    if (!inBounds(ii,size1())) {
+    if (!inBounds(ii,size2())) {
       casadi_error("setSub [.,ii,jj] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
-    if (!inBounds(jj,size2())) {
+    if (!inBounds(jj,size1())) {
       casadi_error("setSub[.,ii,jj] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
@@ -194,7 +194,7 @@ namespace CasADi{
       // Dense mode
       for(int i=0; i<ii.size(); ++i) {
         for(int j=0; j<jj.size(); ++j) {
-          data()[ii[i]*size2() + jj[j]]=m.data()[i*m.size2()+j];
+          data()[ii[i]*size1() + jj[j]]=m.data()[i*m.size1()+j];
         }
       }
     } else {
@@ -205,7 +205,7 @@ namespace CasADi{
 
       // Extend el to the same dimension as this
       Matrix<T> el_ext = m;
-      el_ext.enlarge(size1(),size2(),ii,jj);
+      el_ext.enlarge(size2(),size1(),ii,jj);
 
       // Unite the sparsity patterns
       *this = unite(*this,el_ext);
@@ -220,7 +220,7 @@ namespace CasADi{
       return;
     }
 
-    if (!inBounds(jj,size2())) {
+    if (!inBounds(jj,size1())) {
       casadi_error("setSub[.,i,jj] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
@@ -230,10 +230,10 @@ namespace CasADi{
     casadi_assert_message(result_sparsity == m.sparsity(),"setSub(Imatrix" << i.dimString() << ",Ivector(length=" << jj.size() << "),Matrix<T>)::Dimension mismatch. The sparsity of repmat(Imatrix,1," << jj.size() << ") = " << result_sparsity.dimString()  << " must match the sparsity of Matrix<T> = "  << m.dimString() << ".");
   
   
-    std::vector<int> slice_i = range(i.size1());
+    std::vector<int> slice_i = range(i.size2());
   
     for(int k=0; k<jj.size(); ++k) {
-      Matrix<T> el_k = m(slice_i,range(k*i.size2(),(k+1)*i.size2()));
+      Matrix<T> el_k = m(slice_i,range(k*i.size1(),(k+1)*i.size1()));
       for (int j=0;j<i.size();++j) {
         elem(i.at(j),jj[k])=el_k.at(j);
       }
@@ -250,7 +250,7 @@ namespace CasADi{
       return;
     }
 
-    if (!inBounds(ii,size1())) {
+    if (!inBounds(ii,size2())) {
       casadi_error("setSub[.,ii,j] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
@@ -259,10 +259,10 @@ namespace CasADi{
   
     casadi_assert_message(result_sparsity == m.sparsity(),"setSub(Ivector(length=" << ii.size() << "),Imatrix" << j.dimString() << ",Matrix<T>)::Dimension mismatch. The sparsity of repmat(Imatrix," << ii.size() << ",1) = " << result_sparsity.dimString() << " must match the sparsity of Matrix<T> = " << m.dimString() << ".");
   
-    std::vector<int> slice_j = range(j.size2());
+    std::vector<int> slice_j = range(j.size1());
   
     for(int k=0; k<ii.size(); ++k) {
-      Matrix<T> el_k = m(range(k*j.size1(),(k+1)*j.size1()),slice_j);
+      Matrix<T> el_k = m(range(k*j.size2(),(k+1)*j.size2()),slice_j);
       for (int i=0;i<j.size();++i) {
         elem(ii[k],j.at(i))=el_k.at(i);
       }
@@ -290,7 +290,7 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::setSub(const Matrix<T>& m, const CCSSparsity& sp, int dummy) {
-    casadi_assert_message(size1()==sp.size1() && size2()==sp.size2(),"sub(CCSSparsity sp): shape mismatch. This matrix has shape " << size1() << " x " << size2() << ", but supplied sparsity index has shape " << sp.size1() << " x " << sp.size2() << "." );
+    casadi_assert_message(size2()==sp.size2() && size1()==sp.size1(),"sub(CCSSparsity sp): shape mismatch. This matrix has shape " << size2() << " x " << size1() << ", but supplied sparsity index has shape " << sp.size2() << " x " << sp.size1() << "." );
     // TODO: optimize this for speed
     Matrix<T> elm;
     if (m.scalar()) {
@@ -366,7 +366,7 @@ namespace CasADi{
       for(int k=0; k<kk.size(); ++k){
         setNZ(kk.at(k),m);
       }
-    } else if (kk.dense() && !m.dense() && kk.size1()==m.size1() && kk.size2()==m.size2()) {
+    } else if (kk.dense() && !m.dense() && kk.size2()==m.size2() && kk.size1()==m.size1()) {
       const std::vector<int>& row = m.sparsity().row();
       const std::vector<int>& colind = m.sparsity().colind();
       for(int i=0; i<colind.size()-1; ++i){
@@ -389,7 +389,7 @@ namespace CasADi{
     if(n*m == size())
       return;
   
-    if(size1()!=n || size2()!=m){
+    if(size2()!=n || size1()!=m){
       // Also resize
       sparsity_ = CCSSparsity(n,m,true);
       std::fill(data().begin(),data().end(),val);
@@ -420,7 +420,7 @@ namespace CasADi{
 
   template<class T>
   bool Matrix<T>::vector() const{
-    return size2()==1;
+    return size1()==1;
   }
 
   template<class T>
@@ -506,7 +506,7 @@ namespace CasADi{
     stream << "[";
   
     // Loop over cols
-    for(int i=0; i<size1(); ++i){
+    for(int i=0; i<size2(); ++i){
       // Add delimitor
       if(i!=0) stream << ",";
     
@@ -539,13 +539,13 @@ namespace CasADi{
       stream.unsetf(std::ios::scientific);
     }
   
-    for(int i=0; i<size1(); ++i){
+    for(int i=0; i<size2(); ++i){
       if(i==0)
         stream << "[[";
       else
         stream << " [";
       int j=0;
-      int maxj=size2()-1;
+      int maxj=size1()-1;
     
       for(int el=colind(i); el<colind(i+1); ++el){
         // Print leading zeros
@@ -558,11 +558,11 @@ namespace CasADi{
       }
     
       // Print trailing zeros
-      for(;j<size2(); ++j)
+      for(;j<size1(); ++j)
         stream << "00" << (j==maxj? " " : ",  ");
     
       // New col
-      if(i==size1()-1)
+      if(i==size2()-1)
         stream << "]]" << std::endl;
       else
         stream << "]" << std::endl;
@@ -576,16 +576,16 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::printDense(std::ostream &stream) const{
-    stream << className() << "(cols = " << size1() << ", rows = " << size2() << "):" << std::endl;
+    stream << className() << "(cols = " << size2() << ", rows = " << size1() << "):" << std::endl;
     printMatrix(stream);
   }
 
 
   template<class T>
   void Matrix<T>::printSparse(std::ostream &stream) const {
-    stream << className() << "(cols = " << size1() << ", rows = " << size2() << ", nnz = " << size() << ")";
+    stream << className() << "(cols = " << size2() << ", rows = " << size1() << ", nnz = " << size() << ")";
     if (size()>0) stream << ":" << std::endl;
-    for(int i=0; i<size1(); ++i)
+    for(int i=0; i<size2(); ++i)
       for(int el=colind(i); el<colind(i+1); ++el){
         int j=row(el);
         stream << "[" << i << "," << j << "] -> " << data()[el] << std::endl;
@@ -597,7 +597,7 @@ namespace CasADi{
     if(dense()){
       if (size()==1){
         printScalar(stream);
-      } else if (size2()==1){
+      } else if (size1()==1){
         printVector(stream);
       } else {
         printDense(stream);
@@ -614,7 +614,7 @@ namespace CasADi{
       stream << "[]";
     } else if (numel()==1 && size()==1){
       printScalar(stream);
-    } else if (size2()==1){
+    } else if (size1()==1){
       printVector(stream);
     } else {
       stream << std::endl;
@@ -645,7 +645,7 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::reserve(int nnz){
-    reserve(nnz,size1());
+    reserve(nnz,size2());
   }
 
   template<class T>
@@ -742,7 +742,7 @@ namespace CasADi{
       T fcn_0;
       casadi_math<T>::fun(op,0,0,fcn_0);
       if(!casadi_limits<T>::isZero(fcn_0)){ // Remove this if?
-        ret.makeDense(ret.size1(),ret.size2(),fcn_0);
+        ret.makeDense(ret.size2(),ret.size1(),fcn_0);
       }
     }
     
@@ -814,12 +814,12 @@ namespace CasADi{
   template<class T>
   void Matrix<T>::getBand(int kl, int ku, int ldres, T *res) const{
     // delete the content of the matrix
-    for(int j=0; j<size2(); ++j) // loop over rows
+    for(int j=0; j<size1(); ++j) // loop over rows
       for(int s=0; s<kl+ku+1; ++s) // loop over the subdiagonals
         res[s + ldres*j] = 0;
   
     // loop over cols
-    for(int i=0; i<size1(); ++i){ 
+    for(int i=0; i<size2(); ++i){ 
     
       // loop over the non-zero elements
       for(int el=colind(i); el<colind(i+1); ++el){ 
@@ -929,19 +929,19 @@ namespace CasADi{
     if(sp==SPARSE || (sp==DENSE && dense())){
       casadi_assert_message(len==size(),
                             "Matrix<T>::getArray: Dimension mismatch." << std::endl <<
-                            "I am a matrix of shape " << size1() << " x " << size2() << " = " << numel() << " ready to fill something up with " << size() << " non-zero elements," << std::endl <<
+                            "I am a matrix of shape " << size2() << " x " << size1() << " = " << numel() << " ready to fill something up with " << size() << " non-zero elements," << std::endl <<
                             "but you supplied something with " << len << " non-zero elements."); 
       copy(v.begin(),v.end(),val);
     } else if(sp==DENSE){
       casadi_assert_message(len==numel(),
                             "Matrix<T>::getArray: Dimension mismatch." << std::endl <<
-                            "I am a dense matrix of shape " << size1() << " x " << size2() << " ready to fill something up with " << numel() << " elements," << std::endl <<
+                            "I am a dense matrix of shape " << size2() << " x " << size1() << " ready to fill something up with " << numel() << " elements," << std::endl <<
                             "but you supplied something with " << len << " elements."); 
       int k=0; // index of the result
-      for(int i=0; i<size1(); ++i) // loop over cols
+      for(int i=0; i<size2(); ++i) // loop over cols
         for(int el=colind(i); el<colind(i+1); ++el){ // loop over the non-zero elements
           int j=row(el);  // row
-          for(; k<i*size2()+j; ++k)
+          for(; k<i*size1()+j; ++k)
             val[k] = 0; // add zeros before the non-zero element
 
           // add the non-zero element
@@ -954,7 +954,7 @@ namespace CasADi{
     } else if(sp==SPARSESYM){
       // copy to the result vector
       int nz = 0;
-      for(int col=0; col<size1(); ++col){
+      for(int col=0; col<size2(); ++col){
         // Loop over the elements in the col
         for(int el=colind(col); el<colind(col+1); ++el){ // loop over the non-zero elements
           if(row(el) > col) break; // break inner loop (only lower triangular part is used)
@@ -971,16 +971,16 @@ namespace CasADi{
   */
   template<class T>
   void Matrix<T>::getStridedArray(T* val, int len, int stride1, int stride2, Sparsity sp) const{
-    if (stride1==0 || stride2==0 || (stride2==1 && stride1==size2())) 
+    if (stride1==0 || stride2==0 || (stride2==1 && stride1==size1())) 
       return getArray(val, len, sp);
     
     const std::vector<T> &v = data();
     if(sp==SPARSE){
       throw CasadiException("Matrix<T>::getArray: strided SPARSE not implemented");
     } else if(sp==DENSE && numel()==v.size()) {
-      for (int i=0;i<size1();i++) {
-        for (int j=0;j<size2();j++) {
-          val[i*stride1+j*stride2] = v[i*size2()+j];
+      for (int i=0;i<size2();i++) {
+        for (int j=0;j<size1();j++) {
+          val[i*stride1+j*stride2] = v[i*size1()+j];
         }
       }
     } else if(sp==DENSE){
@@ -999,28 +999,28 @@ namespace CasADi{
     if(sp==SPARSE || (sp==DENSE && numel()==size())){
       casadi_assert_message(len==size(),
                             "Matrix<T>::setArray: Dimension mismatch." << std::endl <<
-                            "I am a matrix of shape " << size1() << " x " << size2() << " = " << numel() << " ready to be filled up with " << size() << " non-zero elements," << std::endl <<
+                            "I am a matrix of shape " << size2() << " x " << size1() << " = " << numel() << " ready to be filled up with " << size() << " non-zero elements," << std::endl <<
                             "but you supplied something with " << len << " non-zero elements."); 
       copy(val,val+len,v.begin());
     } else if(sp==DENSE){
       casadi_assert_message(len==numel(),
                             "Matrix<T>::setArray: Dimension mismatch." << std::endl <<
-                            "I am a dense matrix of shape " << size1() << " x " << size2() << " ready to be filled up with " << numel() << " elements," << std::endl <<
+                            "I am a dense matrix of shape " << size2() << " x " << size1() << " ready to be filled up with " << numel() << " elements," << std::endl <<
                             "but you supplied something with " << len << " elements."); 
-      for(int i=0; i<size1(); ++i) // loop over cols
+      for(int i=0; i<size2(); ++i) // loop over cols
         for(int el=colind(i); el<colind(i+1); ++el){ // loop over the non-zero elements
           // row
           int j=row(el);
         
           // Set the element
-          v[el] = val[i*size2()+j];
+          v[el] = val[i*size1()+j];
         }
     } else if(sp==SPARSESYM) {
       std::vector<int> mapping;
       sparsity().transpose(mapping,false);
       // copy to the result vector
       int nz = 0;
-      for(int col=0; col<size1(); ++col){
+      for(int col=0; col<size2(); ++col){
         // Loop over the elements in the col
         for(int el=colind(col); el<colind(col+1); ++el){ // loop over the non-zero elements
           if(row(el) > col) break; // break inner loop (only lower triangular part is used)
@@ -1234,16 +1234,16 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::remove(const std::vector<int>& ii, const std::vector<int>& jj) {
-    if (!inBounds(ii,size1())) {
+    if (!inBounds(ii,size2())) {
       casadi_error("Remove(ii,jj) out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
-    if (!inBounds(jj,size2())) {
+    if (!inBounds(jj,size1())) {
       casadi_error("Remove(ii,jj) out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
     // Remove by performing a complementary slice
-    std::vector<int> iic = complement(ii,size1());
-    std::vector<int> jjc = complement(jj,size2());
+    std::vector<int> iic = complement(ii,size2());
+    std::vector<int> jjc = complement(jj,size1());
   
     Matrix<T> ret = operator()(iic,jjc);
   
@@ -1306,9 +1306,9 @@ namespace CasADi{
   template<class T>
   void Matrix<T>::mul_no_alloc_nn(const Matrix<T> &x, const Matrix<T> &y, Matrix<T>& z){
     // Assert dimensions
-    casadi_assert_message(x.size1()==z.size1(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(y.size2()==z.size2(),"Dimension error. Got y=" << y.dimString() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(x.size2()==y.size1(),"Dimension error. Got x=" << x.dimString() << " and y=" << y.dimString() << ".");
+    casadi_assert_message(x.size2()==z.size2(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(y.size1()==z.size1(),"Dimension error. Got y=" << y.dimString() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(x.size1()==y.size2(),"Dimension error. Got x=" << x.dimString() << " and y=" << y.dimString() << ".");
   
     // Direct access to the arrays
     const std::vector<int> &x_colind = x.colind();
@@ -1345,8 +1345,8 @@ namespace CasADi{
   template<class T>
   void Matrix<T>::mul_no_alloc_nn(const Matrix<T> &x, const std::vector<T> &y, std::vector<T>& z){
     // Assert dimensions
-    casadi_assert_message(x.size1()==z.size(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.size() << ".");
-    casadi_assert_message(x.size2()==y.size(),"Dimension error. Got x=" << x.dimString() << " and y=" << y.size() << ".");
+    casadi_assert_message(x.size2()==z.size(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.size() << ".");
+    casadi_assert_message(x.size1()==y.size(),"Dimension error. Got x=" << x.dimString() << " and y=" << y.size() << ".");
     
     // Direct access to the arrays
     const std::vector<int> &x_colind = x.colind();
@@ -1367,8 +1367,8 @@ namespace CasADi{
   template<class T>
   void Matrix<T>::mul_no_alloc_tn(const Matrix<T>& x_trans, const std::vector<T> &y, std::vector<T> &z){
     // Assert dimensions
-    casadi_assert_message(x_trans.size2()==z.size(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and z=" << z.size() << ".");
-    casadi_assert_message(x_trans.size1()==y.size(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and y=" << y.size() << ".");
+    casadi_assert_message(x_trans.size1()==z.size(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and z=" << z.size() << ".");
+    casadi_assert_message(x_trans.size2()==y.size(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and y=" << y.size() << ".");
     
     // Direct access to the arrays
     const std::vector<int> &x_rowind = x_trans.colind();
@@ -1387,9 +1387,9 @@ namespace CasADi{
   template<class T>
   void Matrix<T>::mul_no_alloc_tn(const Matrix<T>& x_trans, const Matrix<T> &y, Matrix<T> &z){
     // Assert dimensions
-    casadi_assert_message(x_trans.size2()==z.size1(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(y.size2()==z.size2(),"Dimension error. Got y=" << y.dimString() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(x_trans.size1()==y.size1(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and y=" << y.dimString() << ".");
+    casadi_assert_message(x_trans.size1()==z.size2(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(y.size1()==z.size1(),"Dimension error. Got y=" << y.dimString() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(x_trans.size2()==y.size2(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and y=" << y.dimString() << ".");
   
     // Direct access to the arrays
     const std::vector<int> &x_rowind = x_trans.colind();
@@ -1426,9 +1426,9 @@ namespace CasADi{
   template<class T>
   void Matrix<T>::mul_no_alloc_nt(const Matrix<T> &x, const Matrix<T> &y_trans, Matrix<T>& z){
     // Assert dimensions
-    casadi_assert_message(x.size1()==z.size1(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(y_trans.size1()==z.size2(),"Dimension error. Got y_trans=" << y_trans.dimString() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(x.size2()==y_trans.size2(),"Dimension error. Got x=" << x.dimString() << " and y_trans=" << y_trans.dimString() << ".");
+    casadi_assert_message(x.size2()==z.size2(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(y_trans.size2()==z.size1(),"Dimension error. Got y_trans=" << y_trans.dimString() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(x.size1()==y_trans.size1(),"Dimension error. Got x=" << x.dimString() << " and y_trans=" << y_trans.dimString() << ".");
   
     // Direct access to the arrays
     const std::vector<int> &x_colind = x.colind();
@@ -1444,9 +1444,9 @@ namespace CasADi{
 #ifdef WITH_EIGEN3
     // NOTE: this doesn't belong here. It should be put at some higher level. Also, is this really fast than the implementation below?
     if (x.dense() && y_trans.dense() && z.dense()) {
-      Eigen::Map< const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic , Eigen::ColMajor > > X(&x_data[0],x.size1(),x.size2());
-      Eigen::Map< const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic > > Y(&y_trans_data[0],y_trans.size2(),y_trans.size1());
-      Eigen::Map< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic , Eigen::ColMajor> > Z(&z.data()[0],z.size1(),z.size2());
+      Eigen::Map< const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic , Eigen::ColMajor > > X(&x_data[0],x.size2(),x.size1());
+      Eigen::Map< const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic > > Y(&y_trans_data[0],y_trans.size1(),y_trans.size2());
+      Eigen::Map< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic , Eigen::ColMajor> > Z(&z.data()[0],z.size2(),z.size1());
       Z = X*Y;
       return;
     }
@@ -1521,7 +1521,7 @@ namespace CasADi{
   template<class T>
   T Matrix<T>::quad_form(const Matrix<T>& A, const std::vector<T>& x){
     // Assert dimensions
-    casadi_assert_message(x.size()==A.size1() && x.size()==A.size2(),"Dimension mismatch. Got x=" << x.size() << " and A=" << A.dimString());
+    casadi_assert_message(x.size()==A.size2() && x.size()==A.size1(),"Dimension mismatch. Got x=" << x.size() << " and A=" << A.dimString());
   
     // Access the internal data of A
     const std::vector<int> &A_colind = A.colind();
@@ -1549,7 +1549,7 @@ namespace CasADi{
   template<class T>
   Matrix<T> Matrix<T>::trans() const{
     // quick return if empty or scalar
-    if((size1()==0 && size2()==0) || scalar()) return *this;
+    if((size2()==0 && size1()==0) || scalar()) return *this;
 
     // Create the new sparsity pattern and the mapping
     std::vector<int> mapping;
@@ -1614,7 +1614,7 @@ namespace CasADi{
       T fcn_0;
       casadi_math<T>::fun(op,x_val,casadi_limits<T>::zero,fcn_0);
       if(!casadi_limits<T>::isZero(fcn_0)){ // Remove this if?
-        ret.makeDense(ret.size1(),ret.size2(),fcn_0);
+        ret.makeDense(ret.size2(),ret.size1(),fcn_0);
       }
     }
     
@@ -1643,7 +1643,7 @@ namespace CasADi{
       T fcn_0;
       casadi_math<T>::fun(op,casadi_limits<T>::zero,y_val,fcn_0);
       if(!casadi_limits<T>::isZero(fcn_0)){ // Remove this if?
-        ret.makeDense(ret.size1(),ret.size2(),fcn_0);
+        ret.makeDense(ret.size2(),ret.size1(),fcn_0);
       }
     }
     
@@ -1653,7 +1653,7 @@ namespace CasADi{
   template<class T>
   Matrix<T> Matrix<T>::matrix_matrix(int op, const Matrix<T> &x, const Matrix<T> &y){
 
-    if (!(x.size1() == y.size1() && x.size2() == y.size2())) {
+    if (!(x.size2() == y.size2() && x.size1() == y.size1())) {
       std::stringstream ss;
       casadi_math<T>::print(op,ss,"lhs","rhs");
       casadi_error("matrix_matrix: dimension mismatch in element-wise matrix operation " << ss.str() <<"." << std::endl << "Left argument has shape " << x.dimString() << ", right has shape " << y.dimString() << ". They should be equal."
@@ -1692,7 +1692,7 @@ namespace CasADi{
       // Get the value for the structural zeros
       T fcn_0;
       casadi_math<T>::fun(op,casadi_limits<T>::zero,casadi_limits<T>::zero,fcn_0);
-      r.makeDense(r.size1(),r.size2(),fcn_0);
+      r.makeDense(r.size2(),r.size1(),fcn_0);
     }
   
     return r;
@@ -1819,13 +1819,13 @@ namespace CasADi{
   void Matrix<T>::append(const Matrix<T>& y){
 
     // Quick return if expr is empty
-    if(size1()==0 && size2()==0){
+    if(size2()==0 && size1()==0){
       *this=y;
       return;
     }
 
     // Quick return if empty
-    if(y.size1()==0 && y.size2()==0) return;
+    if(y.size2()==0 && y.size1()==0) return;
   
     // Append the sparsity pattern
     sparsityRef().append(y.sparsity());

@@ -39,29 +39,29 @@ QCQPSolverInternal::QCQPSolverInternal(const std::vector<CCSSparsity> &st) : st_
   const CCSSparsity& P = st_[QCQP_STRUCT_P];
   const CCSSparsity& H = st_[QCQP_STRUCT_H];
   
-  n_ = H.size2();
-  nc_ = A.isNull() ? 0 : A.size1();
+  n_ = H.size1();
+  nc_ = A.isNull() ? 0 : A.size2();
   
   if (!A.isNull()) {
-    casadi_assert_message(A.size2()==n_,
+    casadi_assert_message(A.size1()==n_,
       "Got incompatible dimensions.   min          x'Hx + G'x s.t.   LBA <= Ax <= UBA :" << std::endl <<
       "H: " << H.dimString() << " - A: " << A.dimString() << std::endl <<
-      "We need: H.size2()==A.size2()" << std::endl
+      "We need: H.size1()==A.size1()" << std::endl
     );
   } 
   
-  casadi_assert_message(H.size1()==H.size2(),
+  casadi_assert_message(H.size2()==H.size1(),
     "Got incompatible dimensions.   min          x'Hx + G'x" << std::endl <<
     "H: " << H.dimString() <<
     "We need H square & symmetric" << std::endl
   );
   
-  casadi_assert_message(P.size2()==n_,"Got incompatible dimensions. Number of rowums in P (" << P.size2() << ") must match n (" << n_ << ").");
+  casadi_assert_message(P.size1()==n_,"Got incompatible dimensions. Number of rowums in P (" << P.size1() << ") must match n (" << n_ << ").");
 
-  casadi_assert_message(P.size1() % n_ == 0,"Got incompatible dimensions. Number of cols in P (" << P.size1() << ") must be a multiple of n (" << n_ << ").");
+  casadi_assert_message(P.size2() % n_ == 0,"Got incompatible dimensions. Number of cols in P (" << P.size2() << ") must be a multiple of n (" << n_ << ").");
   
   
-  nq_ = P.size1() / n_;
+  nq_ = P.size2() / n_;
 
   // Sparsity
   CCSSparsity x_sparsity = sp_dense(n_,1);

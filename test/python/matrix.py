@@ -68,8 +68,8 @@ class Matrixtests(casadiTestCase):
     self.message("trans")
     a = DMatrix(0,1)
     b = trans(a)
-    self.assertEquals(b.size1(),1)
-    self.assertEquals(b.size2(),0)
+    self.assertEquals(b.size2(),1)
+    self.assertEquals(b.size1(),0)
     
   def test_numpy(self):
     self.message("numpy check")
@@ -853,28 +853,28 @@ class Matrixtests(casadiTestCase):
     a = DMatrix(0,0)
     a.append(DMatrix(0,2))
     
-    self.assertEqual(a.size1(),0)
-    self.assertEqual(a.size2(),2)
+    self.assertEqual(a.size2(),0)
+    self.assertEqual(a.size1(),2)
 
     a = DMatrix(0,0)
     a.append(DMatrix(2,0))
     a.append(DMatrix(3,0))
     
-    self.assertEqual(a.size1(),5)
-    self.assertEqual(a.size2(),0)
+    self.assertEqual(a.size2(),5)
+    self.assertEqual(a.size1(),0)
     
   def test_horzcat_empty(self):
     a = DMatrix(0,2)
     v = horzcat([a,a])
     
-    self.assertEqual(v.size1(),0)
-    self.assertEqual(v.size2(),2)
+    self.assertEqual(v.size2(),0)
+    self.assertEqual(v.size1(),2)
 
     a = DMatrix(2,0)
     v = horzcat([a,a])
     
-    self.assertEqual(v.size1(),4)
-    self.assertEqual(v.size2(),0)
+    self.assertEqual(v.size2(),4)
+    self.assertEqual(v.size1(),0)
   
   def test_horzsplit(self):
     a = DMatrix(sp_tril(5),range(5*6/2))
@@ -886,7 +886,7 @@ class Matrixtests(casadiTestCase):
     self.checkarray(v[2],DMatrix([[10,11,12,13,14]]))
     
     v = horzsplit(a)
-    self.assertEqual(len(v),a.size1())
+    self.assertEqual(len(v),a.size2())
     self.checkarray(v[0],DMatrix([[0,0,0,0,0]]))
     self.checkarray(v[1],DMatrix([[1,2,0,0,0]]))
     self.checkarray(v[2],DMatrix([[3,4,5,0,0]]))
@@ -901,8 +901,8 @@ class Matrixtests(casadiTestCase):
     
     v = horzsplit(a,[0,0,3])
     self.assertEqual(len(v),3)
-    self.assertEqual(v[0].size1(),0)
-    self.assertEqual(v[0].size2(),5)
+    self.assertEqual(v[0].size2(),0)
+    self.assertEqual(v[0].size1(),5)
     self.checkarray(v[1],DMatrix([[0,0,0,0,0],[1,2,0,0,0],[3,4,5,0,0]]))
     self.checkarray(v[2],DMatrix([[6,7,8,9,0],[10,11,12,13,14]]))
     
@@ -916,7 +916,7 @@ class Matrixtests(casadiTestCase):
     self.checkarray(v[2],DMatrix([[0],[0],[0],[0],[14]]))
     
     v = vertsplit(a)
-    self.assertEqual(len(v),a.size1())
+    self.assertEqual(len(v),a.size2())
     self.checkarray(v[0],DMatrix([0,1,3,6,10]))
     self.checkarray(v[1],DMatrix([0,2,4,7,11]))
     self.checkarray(v[2],DMatrix([0,0,5,8,12]))
@@ -931,8 +931,8 @@ class Matrixtests(casadiTestCase):
     
     v = vertsplit(a,[0,0,3])
     self.assertEqual(len(v),3)
-    self.assertEqual(v[0].size1(),5)
-    self.assertEqual(v[0].size2(),0)
+    self.assertEqual(v[0].size2(),5)
+    self.assertEqual(v[0].size1(),0)
     self.checkarray(v[1],DMatrix([[0,0,0],[1,2,0],[3,4,5],[6,7,8],[10,11,12]]))
     self.checkarray(v[2],DMatrix([[0,0],[0,0],[0,0],[9,0],[13,14]]))
     
@@ -974,7 +974,7 @@ class Matrixtests(casadiTestCase):
       random.seed(1)
       a = DMatrix(sA,[random.random() for i in range(sA.size())])
       A = ssym("a",a.sparsity())
-      for sB in [ sp_dense(a.size1(),1), horzcat([sp_dense(1,1),sp_sparse(a.size1()-1,1)]),sp_tril(a.size1()),sp_tril(a.size1()).T]:
+      for sB in [ sp_dense(a.size2(),1), horzcat([sp_dense(1,1),sp_sparse(a.size2()-1,1)]),sp_tril(a.size2()),sp_tril(a.size2()).T]:
 
         b = DMatrix(sB,[random.random() for i in range(sB.size())])
         B = ssym("B",b.sparsity())
@@ -1015,8 +1015,8 @@ class Matrixtests(casadiTestCase):
     
     c_ = c.kron(a,b)
     
-    self.assertEqual(c_.size1(),a.size1()*b.size1())
     self.assertEqual(c_.size2(),a.size2()*b.size2())
+    self.assertEqual(c_.size1(),a.size1()*b.size1())
     self.assertEqual(c_.size(),a.size()*b.size())
     
     self.checkarray(c_,numpy.kron(a,b))

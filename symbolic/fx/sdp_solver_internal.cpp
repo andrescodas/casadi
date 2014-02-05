@@ -46,14 +46,14 @@ SDPSolverInternal::SDPSolverInternal(const std::vector<CCSSparsity> &st) : st_(s
   
   casadi_assert_message(G==G.transpose(),"SDPSolverInternal: Supplied G sparsity must symmetric but got " << G.dimString());
   
-  m_ = G.size1();
+  m_ = G.size2();
   
-  nc_ = A.size1();
-  n_ = A.size2();
+  nc_ = A.size2();
+  n_ = A.size1();
   
-  casadi_assert_message(F.size2()==m_,"SDPSolverInternal: Supplied F sparsity: number of rows (" << F.size2() <<  ")  must match m (" << m_ << ")");
+  casadi_assert_message(F.size1()==m_,"SDPSolverInternal: Supplied F sparsity: number of rows (" << F.size1() <<  ")  must match m (" << m_ << ")");
   
-  casadi_assert_message(F.size1()%n_==0,"SDPSolverInternal: Supplied F sparsity: number of cols (" << F.size2() <<  ")  must be an integer multiple of n (" << n_ << "), but got remainder " << F.size1()%n_);
+  casadi_assert_message(F.size2()%n_==0,"SDPSolverInternal: Supplied F sparsity: number of cols (" << F.size1() <<  ")  must be an integer multiple of n (" << n_ << "), but got remainder " << F.size2()%n_);
   
   // Input arguments
   setNumInputs(SDP_SOLVER_NUM_IN);

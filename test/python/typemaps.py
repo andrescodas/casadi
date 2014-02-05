@@ -118,7 +118,7 @@ class typemaptests(casadiTestCase):
 
       dm = dm * 2
       dm.get(c)
-      dm.shape = (dm.size1(),dm.size2())
+      dm.shape = (dm.size2(),dm.size1())
 
       self.checkarray(c,dm,"get(csr_matrix)")
       
@@ -591,15 +591,15 @@ class typemaptests(casadiTestCase):
     
     W = SXMatrix(DMatrix([[1,2,3],[4,5,6]]))
 
-    self.assertEqual(W.size1(),2)
-    self.assertEqual(W.size2(),3)
+    self.assertEqual(W.size2(),2)
+    self.assertEqual(W.size1(),3)
 
   def test_DMatrixMXcast(self):
     self.message("Casting DMatrix to MX")
     W = MX(DMatrix([[1,2,3],[4,5,6]]))
     
-    self.assertEqual(W.size1(),2)
-    self.assertEqual(W.size2(),3)
+    self.assertEqual(W.size2(),2)
+    self.assertEqual(W.size1(),3)
     
   def test_DMatrixSXMatrix(self):
     self.message("Casting DMatrix to SXMatrix")
@@ -610,8 +610,8 @@ class typemaptests(casadiTestCase):
     f = SXFunction([x],[w])
     
     W = f.outputExpr(0)
-    self.assertEqual(W.size1(),2)
-    self.assertEqual(W.size2(),3)
+    self.assertEqual(W.size2(),2)
+    self.assertEqual(W.size1(),3)
 
   def test_DMatrixMX(self):
     self.message("Casting DMatrix to MX")
@@ -622,8 +622,8 @@ class typemaptests(casadiTestCase):
     
     W = f.outputExpr(0)
 
-    self.assertEqual(W.size1(),2)
-    self.assertEqual(W.size2(),3)
+    self.assertEqual(W.size2(),2)
+    self.assertEqual(W.size1(),3)
 
   def test_sharedarray(self):
     w = DMatrix([[1,2],[3,4]])

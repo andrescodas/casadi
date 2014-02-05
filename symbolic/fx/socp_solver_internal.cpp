@@ -56,12 +56,12 @@ void SOCPSolverInternal::init() {
   const CCSSparsity& G = st_[SOCP_STRUCT_G];
   
   N_ = std::accumulate(ni_.begin(), ni_.end(), 0);
-  casadi_assert_message(N_==G.size1(),"SOCPSolverInternal: Supplied G sparsity: number of cols (" << G.size1() <<  ")  must match sum of vector provided with option 'ni' (" << N_ << ").");
+  casadi_assert_message(N_==G.size2(),"SOCPSolverInternal: Supplied G sparsity: number of cols (" << G.size2() <<  ")  must match sum of vector provided with option 'ni' (" << N_ << ").");
   
-  nc_ = A.size1();
-  n_ = A.size2();
+  nc_ = A.size2();
+  n_ = A.size1();
   
-  casadi_assert_message(n_==G.size2(),"SOCPSolverInternal: Supplied G sparsity: number of rows (" << G.size2() <<  ")  must match number of decision variables (rows of A): " << n_ << ".");
+  casadi_assert_message(n_==G.size1(),"SOCPSolverInternal: Supplied G sparsity: number of rows (" << G.size1() <<  ")  must match number of decision variables (rows of A): " << n_ << ".");
   
   
   // Input arguments

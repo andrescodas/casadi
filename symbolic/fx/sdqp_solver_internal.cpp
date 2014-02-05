@@ -48,16 +48,16 @@ SDQPSolverInternal::SDQPSolverInternal(const std::vector<CCSSparsity> &st) : st_
   casadi_assert_message(G==G.transpose(),"SDQPSolverInternal: Supplied G sparsity must symmetric but got " << G.dimString());
   casadi_assert_message(H==H.transpose(),"SDQPSolverInternal: Supplied H sparsity must symmetric but got " << H.dimString());
   
-  m_ = G.size1();
+  m_ = G.size2();
   
-  nc_ = A.size1();
-  n_ = H.size1();
+  nc_ = A.size2();
+  n_ = H.size2();
   
-  casadi_assert_message(F.size2()==m_,"SDQPSolverInternal: Supplied F sparsity: number of rows (" << F.size2() <<  ")  must match m (" << m_ << ")");
+  casadi_assert_message(F.size1()==m_,"SDQPSolverInternal: Supplied F sparsity: number of rows (" << F.size1() <<  ")  must match m (" << m_ << ")");
   
-  casadi_assert_message(A.size2()==n_,"SDQPSolverInternal: Supplied A sparsity: number of rows (" << A.size2() <<  ")  must match n (" << n_ << ")");
+  casadi_assert_message(A.size1()==n_,"SDQPSolverInternal: Supplied A sparsity: number of rows (" << A.size1() <<  ")  must match n (" << n_ << ")");
   
-  casadi_assert_message(F.size1()%n_==0,"SDQPSolverInternal: Supplied F sparsity: number of cols (" << F.size2() <<  ")  must be an integer multiple of n (" << n_ << "), but got remainder " << F.size1()%n_);
+  casadi_assert_message(F.size2()%n_==0,"SDQPSolverInternal: Supplied F sparsity: number of cols (" << F.size1() <<  ")  must be an integer multiple of n (" << n_ << "), but got remainder " << F.size2()%n_);
   
   // Input arguments
   setNumInputs(SDQP_SOLVER_NUM_IN);

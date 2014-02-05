@@ -74,11 +74,11 @@ namespace CasADi{
   template<class T>
   bool isVector(const Matrix<T>& ex);
 
-  /** \brief  Check if a matrix is lower triangular (complexity ~ A.size1()) */
+  /** \brief  Check if a matrix is lower triangular (complexity ~ A.size2()) */
   template<class T>
   bool isTril(const Matrix<T> &A);
 
-  /** \brief  Check if a matrix is upper triangular (complexity ~ A.size1()) */
+  /** \brief  Check if a matrix is upper triangular (complexity ~ A.size2()) */
   template<class T>
   bool isTriu(const Matrix<T> &A);
 
@@ -328,8 +328,8 @@ namespace CasADi{
   
   /** \brief Computes the Moore-Penrose pseudo-inverse
   * 
-  * If the matrix A is fat (size2>size1), mul(A,pinv(A)) is unity.
-  * If the matrix A is slender (size1<size2), mul(pinv(A),A) is unity.
+  * If the matrix A is fat (size1>size2), mul(A,pinv(A)) is unity.
+  * If the matrix A is slender (size2<size1), mul(pinv(A),A) is unity.
   *
   */
   template<class T>
@@ -342,8 +342,8 @@ namespace CasADi{
   
   /** \brief Computes the Moore-Penrose pseudo-inverse
   * 
-  * If the matrix A is fat (size2>size1), mul(A,pinv(A)) is unity.
-  * If the matrix A is slender (size1<size2), mul(pinv(A),A) is unity.
+  * If the matrix A is fat (size1>size2), mul(A,pinv(A)) is unity.
+  * If the matrix A is slender (size2<size1), mul(pinv(A),A) is unity.
   *
   */
   Matrix<double> pinv(const Matrix<double>& A,linearSolverCreator lsolver, const Dictionary& dict = Dictionary());
@@ -537,12 +537,12 @@ namespace CasADi{
 
   template<class T>
   bool isScalar(const Matrix<T>& ex){
-    return ex.size1()==1 && ex.size2()==1;
+    return ex.size2()==1 && ex.size1()==1;
   }
 
   template<class T>
   bool isVector(const Matrix<T>& ex){
-    return ex.size2()==1;
+    return ex.size1()==1;
   }
 
   template<class T>
@@ -581,7 +581,7 @@ namespace CasADi{
   bool isTril(const Matrix<T> &A){
     // TODO: Move implementation to CCSSparsity as it does not depend on the matrix entries 
     // loop over cols
-    for(int i=0; i<A.size1(); ++i){
+    for(int i=0; i<A.size2(); ++i){
       if(A.colind(i) != A.colind(i+1)){ // if there are any elements of the col
         // check row of the right-most element of the col
         int row = A.row(A.colind(i+1)-1);
@@ -598,7 +598,7 @@ namespace CasADi{
   bool isTriu(const Matrix<T> &A){
     // TODO: Move implementation to CCSSparsity as it does not depend on the matrix entries 
     // loop over cols
-    for(int i=0; i<A.size1(); ++i){
+    for(int i=0; i<A.size2(); ++i){
       if(A.colind(i) != A.colind(i+1)){ // if there are any elements of the col
         // check row of the left-most element of the col
         int row = A.row(A.colind(i));
@@ -613,8 +613,8 @@ namespace CasADi{
 
   template<class T>
   T det(const Matrix<T>& a){
-    int n = a.size1();
-    casadi_assert_message(n == a.size2(),"matrix must be square");
+    int n = a.size2();
+    casadi_assert_message(n == a.size1(),"matrix must be square");
 
     // Trivial return if scalar
     if(isScalar(a)) return a.toScalar();
@@ -677,8 +677,8 @@ namespace CasADi{
 
   template<class T>
   T getMinor(const Matrix<T> &x, int i, int j){
-    int n = x.size1();
-    casadi_assert_message(n == x.size2(), "getMinor: matrix must be square");
+    int n = x.size2();
+    casadi_assert_message(n == x.size1(), "getMinor: matrix must be square");
 
     // Trivial return if scalar
     if(n==1) return 1;
@@ -717,8 +717,8 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> adj(const Matrix<T>& a){
-    int n = a.size1();
-    casadi_assert_message(n == a.size2(),"adj: matrix must be square");
+    int n = a.size2();
+    casadi_assert_message(n == a.size1(),"adj: matrix must be square");
 
     // Temporary placeholder
     T temp;
@@ -767,9 +767,9 @@ namespace CasADi{
 
   template<class T>
   T trace(const Matrix<T>& a){
-    casadi_assert_message(a.size1() == a.size2(), "trace: must be square");
+    casadi_assert_message(a.size2() == a.size1(), "trace: must be square");
     T res=0;
-    for (int i=0; i< a.size1(); i ++) {
+    for (int i=0; i< a.size2(); i ++) {
       res+=a.elem(i,i);
     }
     return res;
@@ -824,7 +824,7 @@ namespace CasADi{
     // Consistency check
     casadi_assert(offset.size()>=1);
     casadi_assert(offset.front()==0);
-    casadi_assert_message(offset.back()<=v.size1(),"horzsplit(const Matrix<T> &v, const std::vector<int>& offset): Last elements of offset (" << offset.back() << ") must be at maximum the number of cols in v (" << v.size1() << ")");
+    casadi_assert_message(offset.back()<=v.size2(),"horzsplit(const Matrix<T> &v, const std::vector<int>& offset): Last elements of offset (" << offset.back() << ") must be at maximum the number of cols in v (" << v.size2() << ")");
     casadi_assert(isMonotone(offset));
   
     std::vector<Matrix<T> > ret;
@@ -835,7 +835,7 @@ namespace CasADi{
   
     for(int i=0; i<offset.size(); ++i) {
       int start = offset[i];
-      int stop = i+1 < offset.size() ? offset[i+1] : v.size1(); 
+      int stop = i+1 < offset.size() ? offset[i+1] : v.size2(); 
   
       // colind for the submatrix: a portion of the original colind, 
       // but with a common offset substracted such that colind_s[0]==0
@@ -846,7 +846,7 @@ namespace CasADi{
       std::vector<int> row_s(colind[stop]-colind[start]);
       std::copy(row.begin()+colind[start],row.begin()+colind[stop],row_s.begin());
     
-      CCSSparsity s(stop-start,v.size2(),row_s,colind_s);
+      CCSSparsity s(stop-start,v.size1(),row_s,colind_s);
       Matrix<T> r(s);
     
       // data for the submatrix: a portion of the original data
@@ -861,7 +861,7 @@ namespace CasADi{
   template<class T>
   std::vector<Matrix<T> > horzsplit(const Matrix<T> &v, int incr) {
     casadi_assert(incr>=1);
-    return horzsplit(v,range(0,v.size1(),incr));
+    return horzsplit(v,range(0,v.size2(),incr));
   }
 
 
@@ -884,7 +884,7 @@ namespace CasADi{
   template<class T>
   std::vector< Matrix<T> > vertsplit(const Matrix<T>& x, int incr){
     casadi_assert(incr>=1);
-    return vertsplit(x,range(0,x.size2(),incr));
+    return vertsplit(x,range(0,x.size1(),incr));
   }
 
   template<class T>
@@ -901,7 +901,7 @@ namespace CasADi{
   std::vector< std::vector< Matrix<T> > > blocksplit(const Matrix<T>& x, int vert_incr, int horz_incr) {
     casadi_assert(horz_incr>=1);
     casadi_assert(vert_incr>=1);
-    return blocksplit(x,range(0,x.size1(),vert_incr),range(0,x.size2(),horz_incr));
+    return blocksplit(x,range(0,x.size2(),vert_incr),range(0,x.size1(),horz_incr));
   }
 
   template<class T>
@@ -966,12 +966,12 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> sumCols(const Matrix<T> &x) {
-    return mul(Matrix<T>::ones(1,x.size1()),x);
+    return mul(Matrix<T>::ones(1,x.size2()),x);
   }
 
   template<class T>
   Matrix<T> sumRows(const Matrix<T> &x) {
-    return mul(x,Matrix<T>::ones(x.size2(),1));
+    return mul(x,Matrix<T>::ones(x.size1(),1));
   }
 
   template<class T>
@@ -1028,8 +1028,8 @@ namespace CasADi{
   template<class T>
   void qr(const Matrix<T>& A, Matrix<T>& Q, Matrix<T> &R){
     // The following algorithm is taken from J. Demmel: Applied Numerical Linear Algebra (algorithm 3.1.)
-    int m = A.size1();
-    int n = A.size2();
+    int m = A.size2();
+    int n = A.size1();
     casadi_assert_message(m>=n, "qr: fewer cols than rows");
 
     // Transpose of A
@@ -1076,8 +1076,8 @@ namespace CasADi{
   
   template<class T>
   Matrix<T> nullspace(const Matrix<T>& A) {
-    int n = A.size1();
-    int m = A.size2();
+    int n = A.size2();
+    int m = A.size1();
     
     Matrix<T> X = A;
     
@@ -1118,8 +1118,8 @@ namespace CasADi{
   template<class T>
   Matrix<T> solve(const Matrix<T>& A, const Matrix<T>& b){
     // check dimensions
-    casadi_assert_message(A.size1() == b.size1(),"solve Ax=b: dimension mismatch: b has " << b.size1() << " cols while A has " << A.size1() << ".");
-    casadi_assert_message(A.size1() == A.size2(),"solve: A not square but " << A.dimString());
+    casadi_assert_message(A.size2() == b.size2(),"solve Ax=b: dimension mismatch: b has " << b.size2() << " cols while A has " << A.size2() << ".");
+    casadi_assert_message(A.size2() == A.size1(),"solve: A not square but " << A.dimString());
   
     if(isTril(A)){
       // forward substitution if lower triangular
@@ -1127,8 +1127,8 @@ namespace CasADi{
       const std::vector<int> & Arow = A.row();
       const std::vector<int> & Acolind = A.colind();
       const std::vector<T> & Adata = A.data();
-      for(int i=0; i<A.size1(); ++i){ // loop over cols
-        for(int k=0; k<b.size2(); ++k){ // for every right hand side
+      for(int i=0; i<A.size2(); ++i){ // loop over cols
+        for(int k=0; k<b.size1(); ++k){ // for every right hand side
           for(int kk=Acolind[i]; kk<Acolind[i+1] && Arow[kk]<i; ++kk){ 
             int j = Arow[kk];
             if (x.hasNZ(j,k))
@@ -1145,8 +1145,8 @@ namespace CasADi{
       const std::vector<int> & Arow = A.row();
       const std::vector<int> & Acolind = A.colind();
       const std::vector<T> & Adata = A.data();
-      for(int i=A.size1()-1; i>=0; --i){ // loop over cols from the back
-        for(int k=0; k<b.size2(); ++k){ // for every right hand side
+      for(int i=A.size2()-1; i>=0; --i){ // loop over cols from the back
+        for(int k=0; k<b.size1(); ++k){ // for every right hand side
           for(int kk=Acolind[i+1]-1; kk>=Acolind[i] && Arow[kk]>i; --kk){
             int j = Arow[kk]; 
             if (x.hasNZ(j,k))
@@ -1176,18 +1176,18 @@ namespace CasADi{
         inv_rowperm[rowperm[k]] = k;
     
       // Permute the right hand side
-      Matrix<T> bperm(0,b.size2());
-      for(int i=0; i<b.size1(); ++i){
-        bperm.resize(i+1,b.size2());
+      Matrix<T> bperm(0,b.size1());
+      for(int i=0; i<b.size2(); ++i){
+        bperm.resize(i+1,b.size1());
         for(int el=b.colind(colperm[i]); el<b.colind(colperm[i]+1); ++el){
           bperm(i,b.row(el)) = b[el];
         }
       }
 
       // Permute the linear system
-      Matrix<T> Aperm(0,A.size2());
-      for(int i=0; i<A.size1(); ++i){
-        Aperm.resize(i+1,A.size2());
+      Matrix<T> Aperm(0,A.size1());
+      for(int i=0; i<A.size2(); ++i){
+        Aperm.resize(i+1,A.size1());
         for(int el=A.colind(colperm[i]); el<A.colind(colperm[i]+1); ++el){
           Aperm(i,inv_rowperm[A.row(el)]) = A[el];
         }
@@ -1202,7 +1202,7 @@ namespace CasADi{
         // Forward substitution if lower triangular after sorting the equations
         xperm = solve(Aperm,bperm);
       
-      } else if(A.size1()<=3){
+      } else if(A.size2()<=3){
       
         // Form inverse by minor expansion and multiply if very small (up to 3-by-3)
         xperm = mul(inv(Aperm),bperm);
@@ -1218,9 +1218,9 @@ namespace CasADi{
       }
     
       // Permute back the solution
-      Matrix<T> x(0,xperm.size2());
-      for(int i=0; i<xperm.size1(); ++i){
-        x.resize(i+1,xperm.size2());
+      Matrix<T> x(0,xperm.size1());
+      for(int i=0; i<xperm.size2(); ++i){
+        x.resize(i+1,xperm.size1());
         for(int el=xperm.colind(inv_rowperm[i]); el<xperm.colind(inv_rowperm[i]+1); ++el){
           x(i,xperm.row(el)) = xperm[el];
         }
@@ -1231,7 +1231,7 @@ namespace CasADi{
   
   template<class T>
   Matrix<T> pinv(const Matrix<T>& A) {
-    if (A.size2()>=A.size1()) {
+    if (A.size1()>=A.size2()) {
       return trans(solve(mul(A,trans(A)),A));
     } else {
       return solve(mul(trans(A),A),trans(A));
@@ -1241,10 +1241,10 @@ namespace CasADi{
   template<class T>
   Matrix<T> kron(const Matrix<T>& a, const Matrix<T>& b) {
     const CCSSparsity &a_sp = a.sparsity();
-    Matrix<T> filler(b.size1(),b.size2());
-    std::vector< std::vector< Matrix<T> > > blocks(a.size1(),std::vector< Matrix<T> >(a.size2(),filler));
-    for (int i=0;i<a.size1();++i) {
-      for (int j=0;j<a.size2();++j) {
+    Matrix<T> filler(b.size2(),b.size1());
+    std::vector< std::vector< Matrix<T> > > blocks(a.size2(),std::vector< Matrix<T> >(a.size1(),filler));
+    for (int i=0;i<a.size2();++i) {
+      for (int j=0;j<a.size1();++j) {
         int k = a_sp.getNZ(i,j);
         if (k!=-1) {
           blocks[i][j] = a[k]*b;
@@ -1317,7 +1317,7 @@ namespace CasADi{
   template<class T>
   int nnz_sym(const Matrix<T>& ex) {
     int nz = 0; // number of non-zeros  
-    for(int col=0; col<ex.size1(); ++col)
+    for(int col=0; col<ex.size2(); ++col)
       {
         // Loop over the elements in the col
         for(int el=ex.colind(col); el<ex.colind(col+1); ++el){ // loop over the non-zero elements
@@ -1330,7 +1330,7 @@ namespace CasADi{
 
   template<class T>
   bool isEqual(const Matrix<T>& ex1,const Matrix<T> &ex2){
-    if ((nnz(ex1)!=0 || nnz(ex2)!=0) && (ex1.size1()!=ex2.size1() || ex1.size2()!=ex2.size2())) return false;
+    if ((nnz(ex1)!=0 || nnz(ex2)!=0) && (ex1.size2()!=ex2.size2() || ex1.size1()!=ex2.size1())) return false;
     Matrix<T> difference = ex1 - ex2;  
     return isZero(difference);
   }
@@ -1414,7 +1414,7 @@ namespace CasADi{
 
   template<class T>
   void makeDense(Matrix<T>& A){
-    A.makeDense(A.size1(),A.size2(),0);
+    A.makeDense(A.size2(),A.size1(),0);
   }
 
   template<class T>
@@ -1436,12 +1436,12 @@ namespace CasADi{
       return;
   
     // Start with a matrix with no cols
-    Matrix<T> Asp(0,A.size2());
+    Matrix<T> Asp(0,A.size1());
 
     // Loop over the cols
-    for(int i=0; i<A.size1(); ++i){
+    for(int i=0; i<A.size2(); ++i){
       // Resize the matrix to accomodate the col
-      Asp.resize(i+1,A.size2());
+      Asp.resize(i+1,A.size1());
     
       // Loop over the existing, possible nonzeros
       for(int el=A.colind(i); el<A.colind(i+1); ++el){
@@ -1497,7 +1497,7 @@ namespace CasADi{
   template<typename T>
   void addMultiple(const Matrix<T>& A, const std::vector<T>& v, std::vector<T>& res, bool trans_A){
     // Get dimension and sparsity
-    int d1=A.size1(), d2=A.size2();
+    int d1=A.size2(), d2=A.size1();
     const std::vector<int> &colind=A.colind();
     const std::vector<int> &row=A.row();
     const std::vector<T>& data = A.data();
@@ -1545,7 +1545,7 @@ namespace CasADi{
   Matrix<T> project(const Matrix<T>& A, const CCSSparsity& sparsity){
     // Check dimensions
     if(!(A.empty() && sparsity.numel()==0)){
-      casadi_assert_message(A.size1()==sparsity.size1() && A.size2()==sparsity.size2(),
+      casadi_assert_message(A.size2()==sparsity.size2() && A.size1()==sparsity.size1(),
                             "Shape mismatch. Expecting " << A.dimString() << ", but got " << 
                             sparsity.dimString() << " instead.");
     }

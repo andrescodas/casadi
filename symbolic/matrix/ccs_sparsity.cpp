@@ -87,7 +87,7 @@ namespace CasADi{
   }
 
   void CCSSparsity::reCache(){
-    assignCached(size1(),size2(),row(),colind());
+    assignCached(size2(),size1(),row(),colind());
   }
  
   CCSSparsityInternal* CCSSparsity::operator->(){
@@ -103,11 +103,11 @@ namespace CasADi{
     return dynamic_cast<const CCSSparsityInternal*>(get())!=0;
   }
 
-  int CCSSparsity::size1() const{
+  int CCSSparsity::size2() const{
     return (*this)->ncol_;
   }
     
-  int CCSSparsity::size2() const{
+  int CCSSparsity::size1() const{
     return (*this)->nrow_;
   }
     
@@ -167,21 +167,21 @@ namespace CasADi{
   }
 
   int CCSSparsity::getNZ(int i, int j){
-    casadi_assert_message(i<size1() && j<size2(),"Indices out of bounds");
+    casadi_assert_message(i<size2() && j<size1(),"Indices out of bounds");
 
-    if (i<0) i += size1();
-    if (j<0) j += size2();
+    if (i<0) i += size2();
+    if (j<0) j += size1();
   
     // Quick return if matrix is dense
     if(numel()==size())
-      return j+i*size2();
+      return j+i*size1();
   
     // Quick return if we are adding an element to the end
     if(colind(i)==size() || (colind(i+1)==size() && row().back()<j)){
       vector<int>& rowv = rowRef();
       vector<int>& colindv = colindRef();
       rowv.push_back(j);
-      for(int ii=i; ii<size1(); ++ii){
+      for(int ii=i; ii<size2(); ++ii){
         colindv[ii+1]++;
       }
       return rowv.size()-1;
@@ -201,7 +201,7 @@ namespace CasADi{
   
     // insert the element
     rowRef().insert(rowRef().begin()+ind,j);
-    for(int col=i+1; col<size1()+1; ++col)
+    for(int col=i+1; col<size2()+1; ++col)
       colindRef()[col]++;
   
     // Return the location of the new element
@@ -228,7 +228,7 @@ namespace CasADi{
   //     // Quick return if matrix is dense
   //   if(numel()==size()){
   //     for(int k=0; k<i.size(); ++k)
-  //       ret.push_back(j[k]+i[k]*size2());
+  //       ret.push_back(j[k]+i[k]*size1());
   //     return ret;
   //   }
   // 
@@ -246,7 +246,7 @@ namespace CasADi{
   //     // Quick return if matrix is dense
   //   if(numel()==size()){
   //     for(int k=0; k<i.size(); ++k)
-  //       ret.push_back(j[k]+i[k]*size2());
+  //       ret.push_back(j[k]+i[k]*size1());
   //     return ret;
   //   }
   // 
@@ -528,8 +528,8 @@ namespace CasADi{
   }
 
   void CCSSparsity::spy(std::ostream &stream) const {
-    for (int i=0;i<size1();++i) {
-      for (int j=0;j<size2();++j) {
+    for (int i=0;i<size2();++i) {
+      for (int j=0;j<size1();++j) {
         stream << (getNZ(i,j)==-1? "." : "*");
       }
       stream << std::endl;

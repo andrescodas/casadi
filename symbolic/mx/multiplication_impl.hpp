@@ -35,7 +35,7 @@ namespace CasADi{
 
   template<bool TrX, bool TrY>
   Multiplication<TrX,TrY>::Multiplication(const MX& z, const MX& x, const MX& y){
-    casadi_assert_message(x.size2() == y.size2(),"Multiplication::Multiplication: dimension mismatch. Attempting to multiply " << x.dimString() << " with " << y.dimString());
+    casadi_assert_message(x.size1() == y.size1(),"Multiplication::Multiplication: dimension mismatch. Attempting to multiply " << x.dimString() << " with " << y.dimString());
     setDependencies(z,x,y);
     setSparsity(z.sparsity());
     casadi_assert_message(!TrX || TrY, "Illegal combination");
@@ -147,9 +147,9 @@ namespace CasADi{
       stream << "  for(i=0; i<" << this->size() << "; ++i) " << res.front() << "[i]=" << arg.at(0) << "[i];" << endl;
     }
 
-    int ncol_x = this->dep(1).size1();
-    int nrow_x = this->dep(1).size2();
-    int ncol_y = this->dep(2).size1();
+    int ncol_x = this->dep(1).size2();
+    int nrow_x = this->dep(1).size1();
+    int ncol_y = this->dep(2).size2();
     stream << "  for(i=0, rr=" << res.front() <<"; i<" << ncol_x << "; ++i)";
     stream << " for(j=0; j<" << ncol_y << "; ++j, ++rr)";
     stream << " for(k=0, ss=" << arg.at(1) << "+i*" << nrow_x << ", tt=" << arg.at(2) << "+j*" << nrow_x << "; k<" << nrow_x << "; ++k)";

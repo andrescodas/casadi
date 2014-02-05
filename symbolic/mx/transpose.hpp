@@ -70,7 +70,7 @@ namespace CasADi{
     virtual int getOp() const{ return OP_TRANSPOSE;}    
 
     /// Get number of temporary variables needed
-    virtual void nTmp(size_t& ni, size_t& nr){ ni=size1()+1; nr=0;}
+    virtual void nTmp(size_t& ni, size_t& nr){ ni=size2()+1; nr=0;}
 
     /// Transpose
     virtual MX getTranspose() const{ return dep();}

@@ -1144,7 +1144,7 @@ class SXtests(casadiTestCase):
     
     H = H[:20000,:20000]
     
-    x = ssym("x",H.size1())
+    x = ssym("x",H.size2())
     
     f = SXFunction([x],[mul([x.T,H,x])])
     H *= 2
@@ -1168,13 +1168,13 @@ class SXtests(casadiTestCase):
      f.init()
      c = f.call([bm])[0]
 
-     self.assertEqual(c.size1(),5)
-     self.assertEqual(c.size2(),0)
+     self.assertEqual(c.size2(),5)
+     self.assertEqual(c.size1(),0)
      
      c = f.eval([b])[0]
 
-     self.assertEqual(c.size1(),5)
-     self.assertEqual(c.size2(),0)
+     self.assertEqual(c.size2(),5)
+     self.assertEqual(c.size1(),0)
      
      a = SXMatrix(0,0)
      
@@ -1183,13 +1183,13 @@ class SXtests(casadiTestCase):
      
      c = f.call([bm])[0]
 
-     self.assertEqual(c.size1(),0)
      self.assertEqual(c.size2(),0)
+     self.assertEqual(c.size1(),0)
      
      c = f.eval([b])[0]
 
-     self.assertEqual(c.size1(),0)
      self.assertEqual(c.size2(),0)
+     self.assertEqual(c.size1(),0)
      
   def test_mxnull(self):
      a = SXMatrix(5,0)
