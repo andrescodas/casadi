@@ -63,10 +63,10 @@ class GenericMatrix{
     int size() const;
 
     /** \brief Get the number of non-zeros in the lower triangular half */
-    int sizeL() const;
+    int sizeU() const;
 
     /** \brief Get get the number of non-zeros in the upper triangular half */
-    int sizeU() const;
+    int sizeL() const;
 
     /** \brief Get get the number of non-zeros on the diagonal */
     int sizeD() const;
@@ -185,13 +185,13 @@ int GenericMatrix<MatType>::size() const{
 }
 
 template<typename MatType>
-int GenericMatrix<MatType>::sizeU() const{
-  return sparsity().sizeU();
+int GenericMatrix<MatType>::sizeL() const{
+  return sparsity().sizeL();
 }
 
 template<typename MatType>
-int GenericMatrix<MatType>::sizeL() const{
-  return sparsity().sizeL();
+int GenericMatrix<MatType>::sizeU() const{
+  return sparsity().sizeU();
 }
 
 template<typename MatType>
@@ -287,7 +287,7 @@ int GenericMatrix<MatType>::size(Sparsity sp) const{
   if(sp==SPARSE){
     return size();
   } else if(sp==SPARSESYM){
-    return sizeL();
+    return sizeU();
   } else if(sp==DENSE){
     return numel();
   } else if(sp==DENSESYM){

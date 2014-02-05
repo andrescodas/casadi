@@ -750,7 +750,7 @@ namespace CasADi{
 
       // Get Hessian sparsity pattern
       if(exact_hessian_)
-        nnz_h_lag = hessLag().output().sparsity().sizeL();
+        nnz_h_lag = hessLag().output().sparsity().sizeU();
       else
         nnz_h_lag = 0;
     } catch (exception& ex){

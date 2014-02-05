@@ -158,7 +158,7 @@ namespace CasADi{
     vector<int> Jcol = jacG_.output().sparsity().getCol();
 
     // Hessian sparsity
-    int nnzH = hessLag_.isNull() ? 0 : hessLag_.output().sizeL();
+    int nnzH = hessLag_.isNull() ? 0 : hessLag_.output().sizeU();
     vector<int> Hrow(nnzH), Hcol(nnzH);
     if(nnzH>0){
       const vector<int> &colind = hessLag_.output().colind();

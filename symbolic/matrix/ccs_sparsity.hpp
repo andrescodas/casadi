@@ -180,10 +180,10 @@ namespace CasADi{
     int size() const;
 
     /** \brief Number of non-zeros in the upper triangular half, i.e. the number of elements (i,j) with j>=i */
-    int sizeU() const;
+    int sizeL() const;
 
     /** \brief Number of non-zeros in the lower triangular half, i.e. the number of elements (i,j) with j<=i */
-    int sizeL() const;
+    int sizeU() const;
 
     /** \brief Number of non-zeros on the diagonal, i.e. the number of elements (i,j) with j==i */
     int sizeD() const;

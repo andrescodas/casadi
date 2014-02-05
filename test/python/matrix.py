@@ -826,15 +826,15 @@ class Matrixtests(casadiTestCase):
     
   def test_sizes(self):
     self.assertEqual(sp_diag(10).sizeD(),10)
-    self.assertEqual(sp_diag(10).sizeU(),10)
     self.assertEqual(sp_diag(10).sizeL(),10)
-    self.assertEqual(sp_dense(10,10).sizeL(),10*11/2)
+    self.assertEqual(sp_diag(10).sizeU(),10)
     self.assertEqual(sp_dense(10,10).sizeU(),10*11/2)
+    self.assertEqual(sp_dense(10,10).sizeL(),10*11/2)
     self.assertEqual(sp_dense(10,10).sizeD(),10)
     
     self.assertEqual(sparse(DMatrix([[1,1,0],[1,0,1],[0,0,0]])).sizeD(),1)
-    self.assertEqual(sparse(DMatrix([[1,1,0],[1,0,1],[0,0,0]])).sizeL(),2)
-    self.assertEqual(sparse(DMatrix([[1,1,0],[1,0,1],[0,0,0]])).sizeU(),3)
+    self.assertEqual(sparse(DMatrix([[1,1,0],[1,0,1],[0,0,0]])).sizeU(),2)
+    self.assertEqual(sparse(DMatrix([[1,1,0],[1,0,1],[0,0,0]])).sizeL(),3)
     
   def test_tril2symm(self):
     a = DMatrix(sp_tril(3),range(sp_tril(3).size()))
@@ -844,7 +844,7 @@ class Matrixtests(casadiTestCase):
     with self.assertRaises(Exception):
       tril2symm(DMatrix.ones(5,3))
     
-    print DMatrix.ones(5,5).sizeU()-DMatrix.ones(5,5).sizeD()
+    print DMatrix.ones(5,5).sizeL()-DMatrix.ones(5,5).sizeD()
     
     with self.assertRaises(Exception):
       tril2symm(DMatrix.ones(5,5))

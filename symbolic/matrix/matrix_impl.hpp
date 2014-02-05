@@ -913,13 +913,13 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::set(const T* val, Sparsity sp){
-    int len = sp==SPARSE ? size() : sp==DENSE ? numel() : sp==SPARSESYM ? sizeL() : -1;
+    int len = sp==SPARSE ? size() : sp==DENSE ? numel() : sp==SPARSESYM ? sizeU() : -1;
     setArray(val,len,sp);
   }
 
   template<class T>
   void Matrix<T>::get(T* val, Sparsity sp) const{
-    int len = sp==SPARSE ? size() : sp==DENSE ? numel() : sp==SPARSESYM ? sizeL() : -1;
+    int len = sp==SPARSE ? size() : sp==DENSE ? numel() : sp==SPARSESYM ? sizeU() : -1;
     getArray(val,len,sp);
   }
 

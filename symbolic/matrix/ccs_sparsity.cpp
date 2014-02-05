@@ -286,12 +286,12 @@ namespace CasADi{
     return (*this)->erase(ii,jj);
   }
 
-  int CCSSparsity::sizeU() const{
-    return (*this)->sizeU();
-  }
-
   int CCSSparsity::sizeL() const{
     return (*this)->sizeL();
+  }
+
+  int CCSSparsity::sizeU() const{
+    return (*this)->sizeU();
   }
 
   int CCSSparsity::sizeD() const{

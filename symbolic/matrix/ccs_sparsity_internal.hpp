@@ -150,10 +150,10 @@ namespace CasADi{
     bool null() const;
 
     /// Number of non-zeros in the upper triangular half
-    int sizeU() const;
+    int sizeL() const;
 
     /// Number of non-zeros in the lower triangular half
-    int sizeL() const;
+    int sizeU() const;
 
     /// Number of non-zeros on the diagonal
     int sizeD() const;

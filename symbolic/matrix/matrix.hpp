@@ -156,8 +156,8 @@ namespace CasADi{
 
     /// Expose base class functions
     using B::size;
-    using B::sizeL;
     using B::sizeU;
+    using B::sizeL;
     using B::numel;
     using B::size2;
     using B::size1;

@@ -2027,7 +2027,7 @@ namespace CasADi{
     return ncol_ == nrow_;
   }
 
-  int CCSSparsityInternal::sizeU() const{
+  int CCSSparsityInternal::sizeL() const{
     int nnz = 0;
     for(int r=0; r<ncol_; ++r){
       for(int el = colind_[r]; el < colind_[r+1]; ++el){
@@ -2047,7 +2047,7 @@ namespace CasADi{
     return nnz;
   }
 
-  int CCSSparsityInternal::sizeL() const{
+  int CCSSparsityInternal::sizeU() const{
     int nnz = 0;
     for(int r=0; r<ncol_; ++r){
       for(int el = colind_[r]; el < colind_[r+1] && row_[el]<=r; ++el){
@@ -2954,7 +2954,7 @@ namespace CasADi{
     vector<int> firstNeighborQ_el(ncol_,-1);
     
     vector<int> treated(ncol_,-1);
-    vector<int> hub(sizeL(),-1);
+    vector<int> hub(sizeU(),-1);
 
     vector<int> Tmapping;
     transpose(Tmapping);

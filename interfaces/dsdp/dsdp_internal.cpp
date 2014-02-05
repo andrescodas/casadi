@@ -102,7 +102,7 @@ void DSDPInternal::init(){
     values_[i].resize(nb_);
     for (int j=0;j<nb_;++j) {
       CCSSparsity CAij = mapping_.output(i*nb_+j).sparsity();
-      pattern_[i][j].resize(CAij.sizeL());
+      pattern_[i][j].resize(CAij.sizeU());
       values_[i][j].resize(pattern_[i][j].size());
       int nz=0;
       vector<int> colind,row;
