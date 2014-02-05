@@ -307,7 +307,7 @@ for k in range(nk):
   ubg.append(zeros(nx))
 
 # Nonlinear constraint function
-gfcn_nlp = MXFunction([V],[vertcat(g)])
+gfcn_nlp = MXFunction([V],[horzcat(g)])
 
 # Objective function of the NLP
 [f] = mfcn.call([T[nk-1][deg],X[nk][0],U[nk-1]])

@@ -168,7 +168,7 @@ for (i,x0) in enumerate([0.08]):
     mug = ssym("mug",f2.size1())
 
     # Gradient of the Lagrangian
-    xu = vertcat((u,x))
+    xu = horzcat((u,x))
     lgrad = gradient(f1 - inner_prod(mug,f2) + inner_prod(xdot,xdef),xu)
 
     # Gradient of the Lagrangian
@@ -378,7 +378,7 @@ for (i,x0) in enumerate([0.08]):
       break
 
     # Plot the progress
-    plotx = vertcat([x0,x_k[:nk]])
+    plotx = horzcat([x0,x_k[:nk]])
     plott = NP.linspace(0,1,plotx.size1())
     plt.plot(plott,plotx,'*-')
     leg.append(str(k))

@@ -61,29 +61,29 @@ class ControlTests(casadiTestCase):
           solver.setOption(options)
           solver.setOption("ad_mode","forward")
           solver.init()
-          solver.setInput(vertcat(A_),DPLE_A)
-          solver.setInput(vertcat(V_),DPLE_V)
+          solver.setInput(horzcat(A_),DPLE_A)
+          solver.setInput(horzcat(V_),DPLE_V)
           
           As = msym("A",K*n,n)
           Vs = msym("V",K*n,n)
           
-          Vss = vertcat([(i+i.T)/2 for i in vertsplit(Vs,n) ])
+          Vss = horzcat([(i+i.T)/2 for i in vertsplit(Vs,n) ])
           
           
           AA = blkdiag([c.kron(i,i) for i in vertsplit(As,n)])
 
-          A_total = DMatrix.eye(n*n*K) - vertcat([AA[-n*n:,:],AA[:-n*n,:]])
+          A_total = DMatrix.eye(n*n*K) - horzcat([AA[-n*n:,:],AA[:-n*n,:]])
           
           
-          Pf = solve(A_total,flatten(vertcat([Vss[-n:,:],Vss[:-n,:]])),CSparse)
+          Pf = solve(A_total,flatten(horzcat([Vss[-n:,:],Vss[:-n,:]])),CSparse)
           P = Pf.reshape((K*n,n))
           #P = (P+P.T)/2
           
           refsol = MXFunction([As,Vs],[P])
           refsol.init()
           
-          refsol.setInput(vertcat(A_),DPLE_A)
-          refsol.setInput(vertcat(V_),DPLE_V)
+          refsol.setInput(horzcat(A_),DPLE_A)
+          refsol.setInput(horzcat(V_),DPLE_V)
           
           solver.evaluate()
           X = list(vertsplit(solver.output(),n))
@@ -117,8 +117,8 @@ class ControlTests(casadiTestCase):
           solver = Solver([sp_dense(n,n) for i in range(K)],[sp_dense(n,n) for i in range(K)])
           solver.setOption(options)
           solver.init()
-          solver.setInput(vertcat(A_),DPLE_A)
-          solver.setInput(vertcat(V_),DPLE_V)
+          solver.setInput(horzcat(A_),DPLE_A)
+          solver.setInput(horzcat(V_),DPLE_V)
           
           solver.evaluate()
           X = list(vertsplit(solver.output(),n))

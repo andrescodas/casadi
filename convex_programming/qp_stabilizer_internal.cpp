@@ -113,7 +113,7 @@ void QPStabilizerInternal::init(){
   StabilizedQPSolverInternal::init();
 
   CCSSparsity H_sparsity_qp = blkdiag(st_[QP_STRUCT_H],sp_diag(nc_));
-  CCSSparsity A_sparsity_qp = horzcat(st_[QP_STRUCT_A],sp_diag(nc_));
+  CCSSparsity A_sparsity_qp = vertcat(st_[QP_STRUCT_A],sp_diag(nc_));
     
   QPSolverCreator qp_solver_creator = getOption("qp_solver");
   qp_solver_ = qp_solver_creator(qpStruct("h",H_sparsity_qp,"a",A_sparsity_qp));

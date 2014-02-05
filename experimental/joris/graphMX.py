@@ -85,7 +85,7 @@ z = vec(x)
 
 zz = z+y
 
-zz = vertcat([zz,y])
+zz = horzcat([zz,y])
 
 d = [MX("d") for i in range(9)]
 f = MXFunction(d + [MX("d",2,1)],[__builtin__.sum(i for i in d)])

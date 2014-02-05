@@ -20,7 +20,7 @@
  *
  */
 
-#include "vertcat.hpp"
+#include "horzcat.hpp"
 #include "../stl_vector_tools.hpp"
 #include "../matrix/matrix_tools.hpp"
 #include "mx_tools.hpp"
@@ -32,7 +32,7 @@ using namespace std;
 
 namespace CasADi{
 
-  Vertcat::Vertcat(const vector<MX>& x){
+  Horzcat::Horzcat(const vector<MX>& x){
     setDependencies(x);
     
     // Construct the sparsity
@@ -45,20 +45,20 @@ namespace CasADi{
     setSparsity(sp);
   }
 
-  Vertcat* Vertcat::clone() const{
-    return new Vertcat(*this);
+  Horzcat* Horzcat::clone() const{
+    return new Horzcat(*this);
   }
 
-  void Vertcat::evaluateD(const DMatrixPtrV& input, DMatrixPtrV& output, std::vector<int>& itmp, std::vector<double>& rtmp){
+  void Horzcat::evaluateD(const DMatrixPtrV& input, DMatrixPtrV& output, std::vector<int>& itmp, std::vector<double>& rtmp){
     evaluateGen<double,DMatrixPtrV,DMatrixPtrVV>(input,output,itmp,rtmp);
   }
 
-  void Vertcat::evaluateSX(const SXMatrixPtrV& input, SXMatrixPtrV& output, std::vector<int>& itmp, std::vector<SX>& rtmp){
+  void Horzcat::evaluateSX(const SXMatrixPtrV& input, SXMatrixPtrV& output, std::vector<int>& itmp, std::vector<SX>& rtmp){
     evaluateGen<SX,SXMatrixPtrV,SXMatrixPtrVV>(input,output,itmp,rtmp);
   }
 
   template<typename T, typename MatV, typename MatVV>
-  void Vertcat::evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp){
+  void Horzcat::evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp){
     typename vector<T>::iterator res_it = output[0]->data().begin();
     for(int i=0; i<input.size(); ++i){
       const vector<T>& arg_i = input[i]->data();
@@ -67,7 +67,7 @@ namespace CasADi{
     }
   }
 
-  void Vertcat::propagateSparsity(DMatrixPtrV& input, DMatrixPtrV& output, bool fwd){
+  void Horzcat::propagateSparsity(DMatrixPtrV& input, DMatrixPtrV& output, bool fwd){
     bvec_t *res_ptr = get_bvec_t(output[0]->data());
     for(int i=0; i<input.size(); ++i){
       vector<double>& arg_i = input[i]->data();
@@ -84,9 +84,9 @@ namespace CasADi{
     }
   }
 
-  void Vertcat::printPart(std::ostream &stream, int part) const{
+  void Horzcat::printPart(std::ostream &stream, int part) const{
     if(part==0){
-      stream << "vertcat(";
+      stream << "horzcat(";
     } else if(part==ndep()){
       stream << ")";
     } else {
@@ -94,18 +94,18 @@ namespace CasADi{
     }
   }
 
-  void Vertcat::evaluateMX(const MXPtrV& input, MXPtrV& output, const MXPtrVV& fwdSeed, MXPtrVV& fwdSens, const MXPtrVV& adjSeed, MXPtrVV& adjSens, bool output_given){
+  void Horzcat::evaluateMX(const MXPtrV& input, MXPtrV& output, const MXPtrVV& fwdSeed, MXPtrVV& fwdSens, const MXPtrVV& adjSeed, MXPtrVV& adjSens, bool output_given){
     int nfwd = fwdSens.size();
     int nadj = adjSeed.size();
 
     // Non-differentiated output
     if(!output_given){
-      *output[0] = vertcat(getVector(input));
+      *output[0] = horzcat(getVector(input));
     }
     
     // Forward sensitivities
     for(int d = 0; d<nfwd; ++d){
-      *fwdSens[d][0] = vertcat(getVector(fwdSeed[d]));
+      *fwdSens[d][0] = horzcat(getVector(fwdSeed[d]));
     }
     
     // Quick return?
@@ -129,7 +129,7 @@ namespace CasADi{
     }
   }
 
-  void Vertcat::generateOperation(std::ostream &stream, const std::vector<std::string>& arg, const std::vector<std::string>& res, CodeGenerator& gen) const{
+  void Horzcat::generateOperation(std::ostream &stream, const std::vector<std::string>& arg, const std::vector<std::string>& res, CodeGenerator& gen) const{
     int nz_offset = 0;
     for(int i=0; i<arg.size(); ++i){
       int nz = dep(i).size();
@@ -139,7 +139,7 @@ namespace CasADi{
     casadi_assert(nz_offset == size());
   }
 
-  MX Vertcat::getGetNonzeros(const CCSSparsity& sp, const std::vector<int>& nz) const{
+  MX Horzcat::getGetNonzeros(const CCSSparsity& sp, const std::vector<int>& nz) const{
     // Get the first nonnegative nz
     int nz_test = -1;
     for(vector<int>::const_iterator i=nz.begin(); i!=nz.end(); ++i){

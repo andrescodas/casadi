@@ -35,7 +35,7 @@ x  = ssym("x",3)  # state
 xd = ssym("xd",3) # state derivative
 
 # ODE right hand side
-rhs = vertcat( [(1 - x[1]*x[1])*x[0] - x[1] + u, \
+rhs = horzcat( [(1 - x[1]*x[1])*x[0] - x[1] + u, \
                 x[0], \
                 x[0]*x[0] + x[1]*x[1] + u*u] )
 

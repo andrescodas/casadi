@@ -260,7 +260,7 @@ namespace CasADi{
     vfcn_inputs.push_back(t0_l);
     vfcn_inputs.push_back(h);
     
-    FX vfcn = MXFunction(vfcn_inputs,vertcat(V_eq));
+    FX vfcn = MXFunction(vfcn_inputs,horzcat(V_eq));
     vfcn.init();
     
     try {

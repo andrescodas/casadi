@@ -109,7 +109,7 @@ void DirectSingleShootingInternal::init(){
   // For all shooting nodes
   for(int k=0; k<nk_; ++k){
     // Integrate
-    vector<MX> int_out = integrator_.call(integratorIn("x0",X,"p",vertcat(P,U[k])));
+    vector<MX> int_out = integrator_.call(integratorIn("x0",X,"p",horzcat(P,U[k])));
 
     // Store expression for state trajectory
     X = int_out[INTEGRATOR_XF];
@@ -129,7 +129,7 @@ void DirectSingleShootingInternal::init(){
   nlp_j += jk;
 
   // NLP
-  nlp_ = MXFunction(nlpIn("x",V),nlpOut("f",nlp_j,"g",vertcat(nlp_g)));
+  nlp_ = MXFunction(nlpIn("x",V),nlpOut("f",nlp_j,"g",horzcat(nlp_g)));
   nlp_.setOption("name","nlp");
   nlp_.init();
     

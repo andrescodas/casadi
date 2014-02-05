@@ -21,7 +21,7 @@
  */
 
 // Turn off the warnings that certain methods are effectively ignored, this seams to be a false warning, 
-// for example vertcat(SXMatrixVector), vertcat(DMatrixVector) and vertcat(MXVector) appears to work fine
+// for example horzcat(SXMatrixVector), horzcat(DMatrixVector) and horzcat(MXVector) appears to work fine
 #pragma SWIG nowarn=509,303,302
 
 // Incude cmath early on, see #622

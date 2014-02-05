@@ -43,14 +43,14 @@ class OCPtests(casadiTestCase):
     X=ssym("X",N+1)
     U=ssym("U",N)
     
-    V = vertcat([X,U])
+    V = horzcat([X,U])
     
     cost = 0
     for i in range(N):
       cost = cost + s*X[i]**2+r*U[i]**2
     cost = cost + q*X[N]**2
     
-    nlp = SXFunction(nlpIn(x=V),nlpOut(f=cost,g=vertcat([X[0]-x0,X[1:,0]-(a*X[:N,0]+b*U)])))
+    nlp = SXFunction(nlpIn(x=V),nlpOut(f=cost,g=horzcat([X[0]-x0,X[1:,0]-(a*X[:N,0]+b*U)])))
     
     solver = IpoptSolver(nlp)
     solver.setOption("tol",1e-5)
@@ -84,7 +84,7 @@ class OCPtests(casadiTestCase):
     p=ssym("p",1,1)
     # y
     # y'
-    f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=vertcat([q[1],p[0]+q[1]**2 ])))
+    f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=horzcat([q[1],p[0]+q[1]**2 ])))
     f.init()
     
     integrator = CVodesIntegrator(f)
@@ -101,7 +101,7 @@ class OCPtests(casadiTestCase):
     par = MX("par",1,1)
     parMX= par
     
-    q0   = vertcat([var[0],par])
+    q0   = horzcat([var[0],par])
     par  = var[1]
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
     
@@ -143,7 +143,7 @@ class OCPtests(casadiTestCase):
     p=ssym("p",1,1)
     # y
     # y'
-    f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=vertcat([q[1],p[0]+q[1]**2 ])))
+    f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=horzcat([q[1],p[0]+q[1]**2 ])))
     f.init()
     
     integrator = CVodesIntegrator(f)
@@ -159,7 +159,7 @@ class OCPtests(casadiTestCase):
     var = MX("var",2,1)
     par = MX("par",1,1)
     
-    q0   = vertcat([var[0],par])
+    q0   = horzcat([var[0],par])
     parl  = var[1]
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=parl)),"xf")
     
@@ -244,7 +244,7 @@ class OCPtests(casadiTestCase):
     print ocp.initial
     print c,T,cost
     #print c.atTime(0)
-    f=SXFunction([vertcat([c,T,cost])],[ocp.initial])
+    f=SXFunction([horzcat([c,T,cost])],[ocp.initial])
     f.init()
     return 
     f.evaluate()
@@ -350,7 +350,7 @@ class OCPtests(casadiTestCase):
     t=SX("t")
     y=ssym("y",3,1)
     p=SX("p")
-    f=SXFunction(daeIn(t=t, x=y, p=p),daeOut(ode=vertcat([y[1,0],-y[0,0],p*y[0,0]])))
+    f=SXFunction(daeIn(t=t, x=y, p=p),daeOut(ode=horzcat([y[1,0],-y[0,0],p*y[0,0]])))
     f.init()
     
     # Options to be passed to the integrator
@@ -425,7 +425,7 @@ class OCPtests(casadiTestCase):
     x=ssym("x")
     a=ssym("a")
     u=ssym("u")
-    f=SXFunction(daeIn(t=t, x=x, p=vertcat([a,u])),daeOut(a*x+u))
+    f=SXFunction(daeIn(t=t, x=x, p=horzcat([a,u])),daeOut(a*x+u))
     f.init()
     
     integrator_options = {}

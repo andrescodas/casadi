@@ -530,7 +530,7 @@ class Sparsitytests(casadiTestCase):
     X = ssym("X",100)
     P = ssym("P",1000)
 
-    optvar = vertcat([X,P])
+    optvar = horzcat([X,P])
 
     p = ssym("p")
 
@@ -549,7 +549,7 @@ class Sparsitytests(casadiTestCase):
 
     p = ssym("p")
 
-    g = SXFunction([X,p],[vertcat([X*p,P])])
+    g = SXFunction([X,p],[horzcat([X*p,P])])
     g.setOption("verbose",True)
     g.init()
 

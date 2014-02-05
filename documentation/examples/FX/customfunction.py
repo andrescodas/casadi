@@ -122,7 +122,7 @@ def funjac(f):
   y = f.input(1)
 
   # First output, the full Jacobian
-  J = horzcat((cos(x+3*y),3*cos(x+3*y)))
+  J = vertcat((cos(x+3*y),3*cos(x+3*y)))
   f.setOutput(J,0)
 
   # Remaining outputs, the original function outputs

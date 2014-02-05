@@ -64,7 +64,7 @@ SnoptInterface::SnoptInterface( Ocp& _ocp ) : designVariables(_ocp.designVariabl
 {
 	si = this;
 
-	ftotal = vertcat( SXMatrix(_ocp.objFun), _ocp.g );
+	ftotal = horzcat( SXMatrix(_ocp.objFun), _ocp.g );
 
 	init();
 

@@ -131,7 +131,7 @@ void LiftedSQPInternal::init(){
     SXMatrix lam_v = ssym("lam_v",nv);
     
     // Lagrange multipliers for the simple bounds on x
-    lam_x = vertcat(lam_u,lam_v);
+    lam_x = horzcat(lam_u,lam_v);
 
     // Lagrange multipliers corresponding to the definition of the dependent variables
     SXMatrix lam_v_eq = ssym("lam_v_eq",nv);
@@ -144,7 +144,7 @@ void LiftedSQPInternal::init(){
     }
     
     // Lagrange multipliers for constraints
-    lam_g = vertcat(lam_v_eq,lam_f2);
+    lam_g = horzcat(lam_v_eq,lam_f2);
     
     // Lagrangian function
     SXMatrix lag = f + inner_prod(lam_x,x);
@@ -153,7 +153,7 @@ void LiftedSQPInternal::init(){
     
     // Gradient of the Lagrangian
     SXMatrix lgrad = CasADi::gradient(lag,x);
-    if(!v.empty()) lgrad -= vertcat(SXMatrix::zeros(nu),lam_v_eq); // Put here to ensure that lgrad is of the form "h_extended -v_extended"
+    if(!v.empty()) lgrad -= horzcat(SXMatrix::zeros(nu),lam_v_eq); // Put here to ensure that lgrad is of the form "h_extended -v_extended"
     makeDense(lgrad);
     if(verbose_){
       cout << "Generated the gradient of the Lagrangian." << endl;
@@ -227,7 +227,7 @@ void LiftedSQPInternal::init(){
   enum ZOut{Z_D_DEF,Z_F12,Z_NUM_OUT};
   SXMatrixVector zfcn_out(Z_NUM_OUT);
   zfcn_out[Z_D_DEF] = d_def;
-  zfcn_out[Z_F12] = vertcat(f1_z,f2_z);
+  zfcn_out[Z_F12] = horzcat(f1_z,f2_z);
   
   SXFunction zfcn(zfcn_in,zfcn_out);
   zfcn.init();

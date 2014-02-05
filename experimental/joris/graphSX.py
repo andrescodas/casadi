@@ -32,7 +32,7 @@ print "done"
 
 dotsave(z,filename='SX1.pdf')
 
-z = jacobian(sqrt(x**2+y**2),vertcat([x,y]))
+z = jacobian(sqrt(x**2+y**2),horzcat([x,y]))
 
 dotsave(z,filename='SX2.pdf')
 

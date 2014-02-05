@@ -337,8 +337,8 @@ class FXtests(casadiTestCase):
         for r in range(R):
           h = [z]*5
           h[r] = I
-          v.append(horzcat(h))
-        d = vertcat(v)
+          v.append(vertcat(h))
+        d = horzcat(v)
         
         test(d.sparsity())
         
@@ -426,8 +426,8 @@ class FXtests(casadiTestCase):
       for r in range(R):
         h = [z]*5
         h[r] = I
-        v.append(horzcat(h))
-      d = vertcat(v)
+        v.append(vertcat(h))
+      d = horzcat(v)
       
       test(d.sparsity())
       
@@ -650,7 +650,7 @@ class FXtests(casadiTestCase):
     
     x = msym("x",2)
         
-    g = MXFunction([x],[vertcat([x[0]**2,x[1]**2])])
+    g = MXFunction([x],[horzcat([x[0]**2,x[1]**2])])
     g.init()
     
 
@@ -700,7 +700,7 @@ class FXtests(casadiTestCase):
     
     x = msym("x",2)
         
-    g = MXFunction([x],[vertcat([x[0]**2+x[1],x[0]*x[1]])])
+    g = MXFunction([x],[horzcat([x[0]**2+x[1],x[0]*x[1]])])
     g.init()
     
 
@@ -787,7 +787,7 @@ class FXtests(casadiTestCase):
     # Form Jacobians: sin(x0+3*y)*x1
     x = ssym("x")
     y = ssym("y")
-    J = SXFunction([x,y],[horzcat((cos(x+3*y),3*cos(x+3*y))),sin(x+3*y)])
+    J = SXFunction([x,y],[vertcat((cos(x+3*y),3*cos(x+3*y))),sin(x+3*y)])
     J.setOption("name","my_J")
     J.init()
     

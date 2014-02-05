@@ -226,25 +226,25 @@ void OOQPInternal::init(){
   std::vector<DMatrix> A_trans;
   A_trans.push_back(input(QP_SOLVER_A));
   A_trans.push_back(-DMatrix::eye(nc_));
-  A_ = horzcat(A_trans);
+  A_ = vertcat(A_trans);
   
   // Reformulation of G
   std::vector<DMatrix> G_trans;
   G_trans.push_back(input(QP_SOLVER_G));
   G_trans.push_back(DMatrix::zeros(nc_));
-  G_ = vertcat(G_trans);
+  G_ = horzcat(G_trans);
   
   // Reformulation of H
   std::vector<DMatrix> H_trans;
   H_trans.push_back(DMatrix(lowerSparsity(input(QP_SOLVER_H).sparsity())));
   H_trans.push_back(DMatrix(n_,nc_));
   
-  H_ = horzcat(H_trans);
+  H_ = vertcat(H_trans);
   H_trans.clear();
   H_trans.push_back(H_);
   H_trans.push_back(DMatrix(nc_,n_+nc_));
   
-  H_ = vertcat(H_trans);
+  H_ = horzcat(H_trans);
   
   // Allocate vectors to hold indicators of infinite variable bounds
   ixlow_.resize(n_+nc_,0);

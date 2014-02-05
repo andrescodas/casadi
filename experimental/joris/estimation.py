@@ -88,7 +88,7 @@ rhs[states.I_V] = mul(R,imu.a) - dstates.V
 rhs[states.I_q] = 0.5*mul(G,imu.w) - dstates.q
 
 # This is our DAE
-dae = SXFunction({'NUM':DAE_NUM_IN, DAE_T: t, DAE_Y: states.veccat(), DAE_YDOT: dstates.veccat(), DAE_P: imu.veccat()},[vertcat(rhs)])
+dae = SXFunction({'NUM':DAE_NUM_IN, DAE_T: t, DAE_Y: states.veccat(), DAE_YDOT: dstates.veccat(), DAE_P: imu.veccat()},[horzcat(rhs)])
 
 # Let's generate some dummy measurements
 # First, we need dummy excitations.
@@ -134,7 +134,7 @@ d = len(tau_root)
 tau = SX("tau")
 
 # A vertical stack of d-by-1 Langrange functions that together form a basis on the collocation interval tau = [0..1]
-Le = vertcat([numpy.prod([(tau - tau_root[r])/(tau_root[j]-tau_root[r]) for r in range(d) if not(r==j)]) for j in range(d)])
+Le = horzcat([numpy.prod([(tau - tau_root[r])/(tau_root[j]-tau_root[r]) for r in range(d) if not(r==j)]) for j in range(d)])
 L = SXFunction([tau],[Le])
 L.init()
 dL = L.jacobian(0,0)
@@ -185,13 +185,13 @@ for k,tk in enumerate(ts[:-1]):
     
 g.append(sumCols(optvar.X[0][states.i_q,0]**2) - 1)  # Add the quaternion norm constraint at the start
 
-g = SXFunction([optvar.veccat(),par.veccat()],[vertcat(g)])
+g = SXFunction([optvar.veccat(),par.veccat()],[horzcat(g)])
 g.init()
 
 J = g.jac(0,0)
 
 # Objective function
-f = sumAll( (horzcat([i[states.i_X,0] for i in optvar.X] + [optvar.X[-1][states.i_X,-1]]).T -par.Xref)**2 )
+f = sumAll( (vertcat([i[states.i_X,0] for i in optvar.X] + [optvar.X[-1][states.i_X,-1]]).T -par.Xref)**2 )
 f = SXFunction([optvar.veccat(),par.veccat()],[f])
 f.init()
 
@@ -224,8 +224,8 @@ class NLPSolutionInspector:
       
     self.i += 1
     sol = f.getInput("x")
-    X_opt = horzcat([sol[i][states.i_X,:] for i in optvar.i_X])
-    q_opt = horzcat([sol[i][states.i_q,:] for i in optvar.i_X])
+    X_opt = vertcat([sol[i][states.i_X,:] for i in optvar.i_X])
+    q_opt = vertcat([sol[i][states.i_q,:] for i in optvar.i_X])
     R_opt = numSample1D(Rf,q_opt)
     
     if hasattr(self,'xlines'):
@@ -280,6 +280,6 @@ nlp.solve()
 
 sol = nlp.getOutput()
 
-X_opt = horzcat([sol[i][states.i_X,:] for i in optvar.i_X])
+X_opt = vertcat([sol[i][states.i_X,:] for i in optvar.i_X])
 
 show()

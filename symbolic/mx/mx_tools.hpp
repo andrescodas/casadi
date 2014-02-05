@@ -33,43 +33,43 @@ namespace CasADi{
 
   /** \brief  concatenate vertically
   *
-  *  vertcat(vertsplit(x,...)) = x
+  *  horzcat(vertsplit(x,...)) = x
   */
-  MX vertcat(const std::vector<MX>& x);
+  MX horzcat(const std::vector<MX>& x);
 
   /** \brief  split vertically, retaining groups of cols
   * \param output_offset List of all start cols for each group
   *      the last col group will run to the end.
   * 
-  *   vertcat(vertsplit(x,...)) = x
+  *   horzcat(vertsplit(x,...)) = x
   */
   std::vector<MX> vertsplit(const MX& x, const std::vector<int>& output_offset);
 
   /** \brief  split vertically, retaining fixed-sized groups of cols
   * \param incr Size of each group of cols
   *
-  *  vertcat(vertsplit(x,...)) = x
+  *  horzcat(vertsplit(x,...)) = x
   */
   std::vector<MX> vertsplit(const MX& x, int incr=1);
   
   /** \brief  concatenate horizontally 
   *
-  *   horzcat(horzsplit(x,...)) = x
+  *   vertcat(horzsplit(x,...)) = x
   */
-  MX horzcat(const std::vector<MX>& comp);
+  MX vertcat(const std::vector<MX>& comp);
   
   /** \brief  split horizontally, retaining groups of rows
   * \param output_offset List of all start rows for each group
   *      the last row group will run to the end.
   *
-  *   horzcat(horzsplit(x,...)) = x
+  *   vertcat(horzsplit(x,...)) = x
   */
   std::vector<MX> horzsplit(const MX& x, const std::vector<int>& output_offset);
 
   /** \brief  split horizontally, retaining fixed-sized groups of rows
   * \param incr Size of each group of rows
   *
-  *   horzcat(horzsplit(x,...)) = x
+  *   vertcat(horzsplit(x,...)) = x
   */
   std::vector<MX> horzsplit(const MX& x, int incr=1);
   
@@ -114,10 +114,10 @@ namespace CasADi{
 
 #ifndef SWIG
   /** \brief  concatenate vertically, two matrices */
-  MX vertcat(const MX& a, const MX& b);
+  MX horzcat(const MX& a, const MX& b);
 
   /** \brief  concatenate horizontally, two matrices */
-  MX horzcat(const MX& a, const MX& b);
+  MX vertcat(const MX& a, const MX& b);
 #endif // SWIG
 
   /** \brief  Frobenius norm  */

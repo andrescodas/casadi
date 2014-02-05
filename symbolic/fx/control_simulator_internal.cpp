@@ -348,7 +348,7 @@ namespace CasADi{
       }
       P_eval[5] = Xk;
     
-      simulator_in[INTEGRATOR_P] = vertcat(P_eval);
+      simulator_in[INTEGRATOR_P] = horzcat(P_eval);
  
       simulator_out = simulator_.call(simulator_in);
     
@@ -371,7 +371,7 @@ namespace CasADi{
     // Concatenate the results of all simulator calls
     vector<MX> all_output_out(simulator_outputs.size());
     for (int k=0;k<all_output_out.size();++k) {
-      all_output_out[k] = vertcat(simulator_outputs[k]);
+      all_output_out[k] = horzcat(simulator_outputs[k]);
     }
   
     // Finally, construct all_output_

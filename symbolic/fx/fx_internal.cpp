@@ -1692,7 +1692,7 @@ namespace CasADi{
         offset.push_back(offset.back()+res[i].numel());
       }
       
-      // Calculate one derivative at a time (alternative: all at once using vertcat/vertsplit)
+      // Calculate one derivative at a time (alternative: all at once using horzcat/vertsplit)
       for(int dir=0; dir<nfwd; ++dir){        
         // Assemble the right hand side
         d.clear();
@@ -1705,7 +1705,7 @@ namespace CasADi{
           // Add to the right-hand-side under construction
           d.push_back(flatten(arg.back()));
         }
-        MX d_all = vertcat(d);
+        MX d_all = horzcat(d);
         
         // Calculate the derivatives using a matrix multiplication with the Jacobian
         d_all = mul(J,d_all);
@@ -1729,7 +1729,7 @@ namespace CasADi{
         offset.push_back(offset.back()+arg[i].numel());
       }
       
-      // Calculate one derivative at a time (alternative: all at once using vertcat/vertsplit)
+      // Calculate one derivative at a time (alternative: all at once using horzcat/vertsplit)
       for(int dir=0; dir<nadj; ++dir){        
         // Assemble the right hand side
         d.clear();
@@ -1742,7 +1742,7 @@ namespace CasADi{
           // Add to the right-hand-side under construction
           d.push_back(flatten(arg.back()));
         }
-        MX d_all = vertcat(d);
+        MX d_all = horzcat(d);
         
         // Calculate the derivatives using a matrix multiplication with the Jacobian
         d_all = mul(JT,d_all);
@@ -1931,7 +1931,7 @@ namespace CasADi{
       for(vector<MX>::iterator i=tmp.begin(); i!=tmp.end(); ++i){
         *i = reshape(*i,i->numel(),1);
       }
-      res = vertcat(tmp);
+      res = horzcat(tmp);
     }
     
     // Create a SISO function
@@ -1959,7 +1959,7 @@ namespace CasADi{
       for(vector<MX>::iterator i=tmp.begin(); i!=tmp.end(); ++i){
         *i = reshape(*i,i->numel(),1);
       }
-      MX J_simo_arg = vertcat(tmp);
+      MX J_simo_arg = horzcat(tmp);
 
       // Evaluate symbolically
       jac_resv = J_simo.call(J_simo_arg);

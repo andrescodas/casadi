@@ -172,16 +172,16 @@ namespace CasADi{
   /** \brief Concatenate a list of matrices vertically
    * Alternative terminology: vertical stack, vstack, vertical append, [a;b]
    *
-   *   vertcat(vertsplit(x,...)) = x
+   *   horzcat(vertsplit(x,...)) = x
    */
   template<class T>
-  Matrix<T> vertcat(const std::vector<Matrix<T> > &v);
+  Matrix<T> horzcat(const std::vector<Matrix<T> > &v);
 
   /** \brief  split vertically, retaining groups of cols
    * \param offset List of all start cols for each group
    *      the last col group will run to the end.
    *
-   *   vertcat(vertsplit(x,...)) = x
+   *   horzcat(vertsplit(x,...)) = x
    */
   template<class T>
   std::vector<Matrix<T> > vertsplit(const Matrix<T> &v, const std::vector<int>& offset);
@@ -189,7 +189,7 @@ namespace CasADi{
   /** \brief  split vertically, retaining fixed-sized groups of cols
    * \param incr Size of each group of cols
    *
-   *   vertcat(vertsplit(x,...)) = x
+   *   horzcat(vertsplit(x,...)) = x
    */
   template<class T>
   std::vector<Matrix<T> > vertsplit(const Matrix<T> &v, int incr=1);
@@ -197,16 +197,16 @@ namespace CasADi{
   /** \brief Concatenate a list of matrices horizontally
    * Alternative terminology: horizontal stack, hstack, horizontal append, [a b]
    *
-   *   horzcat(horzsplit(x,...)) = x
+   *   vertcat(horzsplit(x,...)) = x
    */
   template<class T>
-  Matrix<T> horzcat(const std::vector<Matrix<T> > &v);
+  Matrix<T> vertcat(const std::vector<Matrix<T> > &v);
 
   /** \brief  split horizontally, retaining groups of rows
    * \param output_offset List of all start rows for each group
    *      the last row group will run to the end.
    *
-   *   horzcat(horzsplit(x,...)) = x
+   *   vertcat(horzsplit(x,...)) = x
    */
   template<class T>
   std::vector<Matrix<T> > horzsplit(const Matrix<T> &v, const std::vector<int>& offset);
@@ -214,7 +214,7 @@ namespace CasADi{
   /** \brief  split horizontally, retaining fixed-sized groups of rows
    * \param incr Size of each group of rows
    *
-   *   horzcat(horzsplit(x,...)) = x
+   *   vertcat(horzsplit(x,...)) = x
    */
   template<class T>
   std::vector<Matrix<T> > horzsplit(const Matrix<T> &v, int incr=1);
@@ -240,10 +240,10 @@ namespace CasADi{
 
 #ifndef SWIG
   template<class T>
-  Matrix<T> vertcat(const Matrix<T> &x, const Matrix<T> &y);
+  Matrix<T> horzcat(const Matrix<T> &x, const Matrix<T> &y);
 
   template<class T>
-  Matrix<T> horzcat(const Matrix<T> &x, const Matrix<T> &y);
+  Matrix<T> vertcat(const Matrix<T> &x, const Matrix<T> &y);
 #endif // SWIG
 
   template<class T>
@@ -802,17 +802,17 @@ namespace CasADi{
   Matrix<T> blockcat(const std::vector< std::vector<Matrix<T> > > &v) {
     std::vector< Matrix<T> > ret;
     for(int i=0; i<v.size(); ++i)
-      ret.push_back(horzcat(v[i]));
-    return vertcat(ret);
+      ret.push_back(vertcat(v[i]));
+    return horzcat(ret);
   }
 
   template<class T>
   Matrix<T> blockcat(const Matrix<T> &A,const Matrix<T> &B,const Matrix<T> &C,const Matrix<T> &D) {
-    return vertcat(horzcat(A,B),horzcat(C,D));
+    return horzcat(vertcat(A,B),vertcat(C,D));
   }
 
   template<class T>
-  Matrix<T> vertcat(const std::vector<Matrix<T> > &v){
+  Matrix<T> horzcat(const std::vector<Matrix<T> > &v){
     Matrix<T> ret;
     for(int i=0; i<v.size(); ++i)
       ret.append(v[i]);
@@ -866,7 +866,7 @@ namespace CasADi{
 
 
   template<class T>
-  Matrix<T> horzcat(const std::vector<Matrix<T> > &v){
+  Matrix<T> vertcat(const std::vector<Matrix<T> > &v){
     Matrix<T> ret;
     for(int i=0; i<v.size(); ++i)
       ret.append(trans(v[i]));
@@ -905,39 +905,39 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> vertcat(const Matrix<T> &x, const Matrix<T> &y){
+  Matrix<T> horzcat(const Matrix<T> &x, const Matrix<T> &y){
     Matrix<T> xy = x;
     xy.append(y);
     return xy;
   }
 
   template<class T>
-  Matrix<T> horzcat(const Matrix<T> &x, const Matrix<T> &y){
-    return trans(vertcat(trans(x),trans(y)));
+  Matrix<T> vertcat(const Matrix<T> &x, const Matrix<T> &y){
+    return trans(horzcat(trans(x),trans(y)));
   }
 
   template<class T>
   Matrix<T> veccat(const std::vector< Matrix<T> >& comp) {
     Matrix<T> (&f)(const Matrix<T>&) = vec;
-    return vertcat(applymap(f,comp));
+    return horzcat(applymap(f,comp));
   }
   
   template<class T>
   Matrix<T> flattencat(const std::vector< Matrix<T> >& comp) {
     Matrix<T> (&f)(const Matrix<T>&) = flatten;
-    return vertcat(applymap(f,comp));
+    return horzcat(applymap(f,comp));
   }
 
   template<class T>
   Matrix<T> vecNZcat(const std::vector< Matrix<T> >& comp) {
     Matrix<T> (&f)(const Matrix<T>&) = vecNZ;
-    return vertcat(applymap(f,comp));
+    return horzcat(applymap(f,comp));
   }
   
   template<class T>
   Matrix<T> flattenNZcat(const std::vector< Matrix<T> >& comp) {
     Matrix<T> (&f)(const Matrix<T>&) = flattenNZ;
-    return vertcat(applymap(f,comp));
+    return horzcat(applymap(f,comp));
   }
 
   template<class T>
@@ -1338,10 +1338,10 @@ namespace CasADi{
   template<class T>
   Matrix<T> repmat(const Matrix<T> &A, int n, int m){
     // First concatenate horizontally
-    Matrix<T> col = horzcat(std::vector<Matrix<T> >(m, A));
+    Matrix<T> col = vertcat(std::vector<Matrix<T> >(m, A));
   
     // Then vertically
-    return vertcat(std::vector<Matrix<T> >(n, col));
+    return horzcat(std::vector<Matrix<T> >(n, col));
   }
 
   template<class T>
@@ -1613,9 +1613,9 @@ namespace CasADi{
   MTT_INST(T,flattenNZ)                         \
   MTT_INST(T,blockcat)                          \
   MTT_INST(T,blocksplit)                        \
-  MTT_INST(T,horzcat)                           \
-  MTT_INST(T,horzsplit)                         \
   MTT_INST(T,vertcat)                           \
+  MTT_INST(T,horzsplit)                         \
+  MTT_INST(T,horzcat)                           \
   MTT_INST(T,vertsplit)                         \
   MTT_INST(T,inner_prod)                        \
   MTT_INST(T,outer_prod)                        \

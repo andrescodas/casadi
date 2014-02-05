@@ -80,7 +80,7 @@ g = [s[100]-s100, v[100]-v100]
 # Create NLP functions
 ffcn = SXFunction([u],[f])
 ffcn.init()
-gfcn = SXFunction([u],[vertcat(g)])
+gfcn = SXFunction([u],[horzcat(g)])
 gfcn.init()
 
 # Solve with IPOPT

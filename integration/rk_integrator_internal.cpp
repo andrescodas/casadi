@@ -108,7 +108,7 @@ namespace CasADi{
       f_arg[DAE_Z] = v;
       f_res[DAE_ODE] = xf;
       f_res[DAE_QUAD] = qf;
-      f_res[DAE_ALG] = vertcat(x_def);
+      f_res[DAE_ALG] = horzcat(x_def);
       F_ = MXFunction(f_arg,f_res);
       F_.init();
     }
@@ -175,7 +175,7 @@ namespace CasADi{
       g_arg[RDAE_RZ] = rv;
       g_res[RDAE_ODE] = rxf;
       g_res[RDAE_QUAD] = rqf;
-      g_res[RDAE_ALG] = vertcat(rx_def);
+      g_res[RDAE_ALG] = horzcat(rx_def);
       G_ = MXFunction(g_arg,g_res);
       G_.init();
     }

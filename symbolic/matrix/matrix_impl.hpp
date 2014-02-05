@@ -108,7 +108,7 @@ namespace CasADi{
       temp.push_back(m);
     }
   
-    return vertcat(temp);
+    return horzcat(temp);
   }
 
   template<class T>
@@ -128,7 +128,7 @@ namespace CasADi{
       temp.push_back(m);
     }
   
-    return horzcat(temp);
+    return vertcat(temp);
   }
 
   template<class T>
@@ -1773,7 +1773,7 @@ namespace CasADi{
         return sparse(ncol,nrow);
       }
     } else {
-      return horzcat(std::vector< Matrix<T> >(nrow,vertcat(std::vector< Matrix<T> >(ncol,x))));
+      return vertcat(std::vector< Matrix<T> >(nrow,horzcat(std::vector< Matrix<T> >(ncol,x))));
     }
   }
 

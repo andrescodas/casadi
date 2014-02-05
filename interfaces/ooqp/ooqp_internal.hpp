@@ -76,10 +76,10 @@ public:
     /* @} */
     
     
-    /// Reformulated A : horzcat([A,-DMatrix.eye(nc_)]) 
+    /// Reformulated A : vertcat([A,-DMatrix.eye(nc_)]) 
     DMatrix A_;
     
-    /// Reformulated G : horzcat([G,-DMatrix.zeros(nc_)])
+    /// Reformulated G : vertcat([G,-DMatrix.zeros(nc_)])
     DMatrix G_;
     
     /// Reformulated H : [tril(H) 0;0 0]

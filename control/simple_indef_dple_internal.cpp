@@ -78,13 +78,13 @@ namespace CasADi{
     
     MX AA = blkdiag(AA_list);
     
-    MX A_total = DMatrix::eye(n_*n_*K_)-vertcat(AA(range(K_*n_*n_-n_*n_,K_*n_*n_),range(K_*n_*n_)),AA(range(K_*n_*n_-n_*n_),range(K_*n_*n_)));
+    MX A_total = DMatrix::eye(n_*n_*K_)-horzcat(AA(range(K_*n_*n_-n_*n_,K_*n_*n_),range(K_*n_*n_)),AA(range(K_*n_*n_-n_*n_),range(K_*n_*n_)));
 
     std::vector<MX> Vss_shift;
     Vss_shift.push_back(Vss.back());
     Vss_shift.insert(Vss_shift.end(),Vss.begin(),Vss.begin()+K_-1);
     
-    MX Pf = solve(A_total,flatten(vertcat(Vss_shift)),getOption("linear_solver"));
+    MX Pf = solve(A_total,flatten(horzcat(Vss_shift)),getOption("linear_solver"));
           
     MX P = reshape(Pf,K_*n_,n_);
     

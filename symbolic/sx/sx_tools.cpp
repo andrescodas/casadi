@@ -1018,7 +1018,7 @@ SXMatrix jacobianTimesVector(const SXMatrix &ex, const SXMatrix &arg, const SXMa
       dirder[dir] = fsens[dir][0];
     }
   }
-  return horzcat(dirder);
+  return vertcat(dirder);
 }
 
 void extractShared(std::vector<SX>& ex, std::vector<SX>& v, std::vector<SX>& vdef, const std::string& v_prefix, const std::string& v_suffix){

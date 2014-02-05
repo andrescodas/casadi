@@ -61,7 +61,7 @@ T linspace(const GenericMatrix<T> &a_, const GenericMatrix<T> &b_, int nsteps){
     ret[i] = ret[i-1] + step;
   
   ret[nsteps-1] = b;
-  return vertcat(ret);
+  return horzcat(ret);
 }
 #endif // SWIG
 
@@ -94,7 +94,7 @@ T cross(const GenericMatrix<T> &a, const GenericMatrix<T> &b, int dim) {
   ret[1] = a3*b1-a1*b3;
   ret[2] = a1*b2-a2*b1;
     
-  return t ? vertcat(ret) : horzcat(ret);
+  return t ? horzcat(ret) : vertcat(ret);
   
 }
 

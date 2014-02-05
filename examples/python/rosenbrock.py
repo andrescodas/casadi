@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
 x = ssym("x")
 y = ssym("y")
 z = ssym("z")
-v = vertcat([x,y,z])
+v = horzcat([x,y,z])
 
 # Form NLP functions
 nlp = SXFunction(nlpIn(x=v),nlpOut(f=x**2 + 100*z**2, g=z + (1-x)**2 - y))

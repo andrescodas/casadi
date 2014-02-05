@@ -58,7 +58,7 @@ k_     = 0.2
 params_ = [0.1,0.1,alpha_,k_,sigma_]
 
 #! We create a NLPImplicitSolver instance
-f=SXFunction([vertcat([a,gamma]),vertcat(params)],[vertcat([res0,res1])])
+f=SXFunction([horzcat([a,gamma]),horzcat(params)],[horzcat([res0,res1])])
 s=NLPImplicitSolver(f)
 s.setOption("nlp_solver",IpoptSolver)
 s.setOption("nlp_solver_options",{"tol":1e-14})

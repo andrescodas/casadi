@@ -27,7 +27,7 @@ void Ocp::addNonlconIneq( SXMatrix gNew, string name)
           throw 1;
      }
 
-     g = vertcat(g, gNew);
+     g = horzcat(g, gNew);
      gSizes.push_back(gNew.size1());
      gLabels.push_back(name);
 
@@ -49,7 +49,7 @@ void Ocp::addNonlconEq( SXMatrix gNew, string name)
           throw 1;
      }
 
-     g = vertcat(g, gNew);
+     g = horzcat(g, gNew);
      gSizes.push_back(gNew.size1());
      gLabels.push_back(name);
 
@@ -97,7 +97,7 @@ MultipleShooting & Ocp::addMultipleShooting(string name, Ode & ode, SX t0, SX tf
      if (designVariables.size1() == 0)
           designVariables = ssym(name, numNew);
      else
-          designVariables = vertcat( designVariables, ssym(name, numNew) );
+          designVariables = horzcat( designVariables, ssym(name, numNew) );
 
      for (int k=0; k<numNew; k++){
           lb.push_back(-1e50);
@@ -144,11 +144,11 @@ SX & Ocp::addParam(string _newParam)
      int idx = designVariables.size1();
 
      SXMatrix newDv = ssym(_newParam, 1);
-//      designVariables = vertcat( designVariables, ssym(_newParam, 1) );
+//      designVariables = horzcat( designVariables, ssym(_newParam, 1) );
      if (designVariables.size1() == 0)
           designVariables = newDv;
      else
-          designVariables = vertcat( designVariables, newDv );
+          designVariables = horzcat( designVariables, newDv );
 
      guess.push_back(0);
      lb.push_back(-1e50);

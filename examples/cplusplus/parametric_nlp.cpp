@@ -60,7 +60,7 @@ int main(){
   SXMatrix f = x[0]*x[0] + x[1]*x[1] + x[2]*x[2];
   
   // Constraints
-  SXMatrix g = vertcat(
+  SXMatrix g = horzcat(
        6*x[0] + 3*x[1] + 2*x[2] - p[0],
     p[1]*x[0] +   x[1] -   x[2] -    1
   );

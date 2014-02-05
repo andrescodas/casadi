@@ -48,13 +48,13 @@ m = SX("m")
 u = SX("u") 
 
 #! Create the dae
-rhs = vertcat([v, (u -  c*v - k*x)/m ])
+rhs = horzcat([v, (u -  c*v - k*x)/m ])
 fin = controldaeIn(
     t = t,
-    x = vertcat([x,v]),
-    p = vertcat([k,c,m]),
+    x = horzcat([x,v]),
+    p = horzcat([k,c,m]),
     u = u,
-    x_major = vertcat([x0,v0])
+    x_major = horzcat([x0,v0])
   )
 f=SXFunction(fin,daeOut(ode=rhs))
 f.init()
@@ -96,10 +96,10 @@ show()
 
 fin = controldaeIn(
     t = t,
-    x = vertcat([x,v]),
-    p = vertcat([k,c,m]),
+    x = horzcat([x,v]),
+    p = horzcat([k,c,m]),
     u = u,
-    x_major = vertcat([x0,v0])
+    x_major = horzcat([x0,v0])
   )
 h=SXFunction(fin,[x0,u])
 h.init()
@@ -128,10 +128,10 @@ show()
 
 fin = controldaeIn(
     t = t,
-    x = vertcat([x,v]),
-    p = vertcat([k,c,m]),
+    x = horzcat([x,v]),
+    p = horzcat([k,c,m]),
     u = u,
-    x_major = vertcat([x0,v0])
+    x_major = horzcat([x0,v0])
   )
   
 f=SXFunction(fin,[rhs])
@@ -141,10 +141,10 @@ ui = ssym("ui")
 
 fin = controldaeIn(
     t = t,
-    x = vertcat([x,v]),
-    p = vertcat([k,c,m]),
+    x = horzcat([x,v]),
+    p = horzcat([k,c,m]),
     u = ui,
-    x_major = vertcat([x0,v0])
+    x_major = horzcat([x0,v0])
   )
   
 h=SXFunction(fin,[x,ui])

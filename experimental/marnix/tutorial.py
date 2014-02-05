@@ -45,7 +45,7 @@ u_reg = 0.01
 # State equation
 f = [ 1.0*x[0] + 0.1*x[1],\
      -0.5*x[0] + 0.9*x[1] + 0.1*u]
-f = vertcat(f)
+f = horzcat(f)
 
 ffcn = SXFunction([x,u,w],[f])
 ffcn.init()
@@ -90,7 +90,7 @@ for k in range(N):
   v_init += [ 0.0*ones(1)]
   v_init += [ 0.0*ones(1)]
 
-v = vertcat(v)
+v = horzcat(v)
 v_min = NP.concatenate(v_min)
 v_max = NP.concatenate(v_max)
 v_init = NP.concatenate(v_init)
@@ -104,7 +104,7 @@ W = ones(N)
 
 # Residual
 y_bar = W-trans(X[1,:])
-y_bar = vertcat((y_bar,trans(U)))
+y_bar = horzcat((y_bar,trans(U)))
 
 # Objective
 J = dot(trans(y_bar),dot(Q,y_bar))
@@ -139,7 +139,7 @@ for k in range(0,N-1):
 g += [Z[:,N-1]-z_final]
 
 # Concatenate
-g = vertcat(g)
+g = horzcat(g)
   
 # Constraint function
 gfcn = SXFunction([v],[g])

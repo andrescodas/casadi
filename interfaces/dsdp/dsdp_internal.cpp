@@ -132,10 +132,10 @@ void DSDPInternal::init(){
     // DSDP has no infinities -- replace by a big number
     // There is a way to deal with this properly, but requires modifying the dsdp source
     // We already did this for the variable bounds
-    MX lba = trans(horzcat(fmax(fmin(LBA,getOption("infinity")),-(double)getOption("infinity")),A));
-    MX uba = trans(horzcat(fmax(fmin(UBA,getOption("infinity")),-(double)getOption("infinity")),A));
+    MX lba = trans(vertcat(fmax(fmin(LBA,getOption("infinity")),-(double)getOption("infinity")),A));
+    MX uba = trans(vertcat(fmax(fmin(UBA,getOption("infinity")),-(double)getOption("infinity")),A));
     
-    mappingA_ = MXFunction(syms,horzcat(-lba,uba));
+    mappingA_ = MXFunction(syms,vertcat(-lba,uba));
     mappingA_.init();
   
   }

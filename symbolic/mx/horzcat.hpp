@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef VERTCAT_HPP
-#define VERTCAT_HPP
+#ifndef HORZCAT_HPP
+#define HORZCAT_HPP
 
 #include "mx_node.hpp"
 #include <map>
@@ -32,17 +32,17 @@ namespace CasADi{
       \author Joel Andersson
       \date 2013
   */
-  class Vertcat : public MXNode{
+  class Horzcat : public MXNode{
   public:
 
     /// Constructor
-    Vertcat(const std::vector<MX>& x);
+    Horzcat(const std::vector<MX>& x);
 
     /// Clone function
-    virtual Vertcat* clone() const;
+    virtual Horzcat* clone() const;
       
     /// Destructor
-    virtual ~Vertcat(){}
+    virtual ~Horzcat(){}
     
     /// Evaluate the function numerically
     virtual void evaluateD(const DMatrixPtrV& input, DMatrixPtrV& output, std::vector<int>& itmp, std::vector<double>& rtmp);
@@ -67,7 +67,7 @@ namespace CasADi{
     void evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp);    
     
     /** \brief Get the operation */
-    virtual int getOp() const{ return OP_VERTCAT;}
+    virtual int getOp() const{ return OP_HORZCAT;}
 
     /// Get the nonzeros of matrix
     virtual MX getGetNonzeros(const CCSSparsity& sp, const std::vector<int>& nz) const;
@@ -78,4 +78,4 @@ namespace CasADi{
 
 } // namespace CasADi
 
-#endif // VERTCAT_HPP
+#endif // HORZCAT_HPP

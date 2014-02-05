@@ -65,7 +65,7 @@ h0[I] = spheight * cos(3.0*pi*spdist[I]/(2.0*sprad))
 # Free parameters
 drag = ssym("b")
 depth = ssym("H")
-p = vertcat([drag,depth])
+p = horzcat([drag,depth])
 
 # The state at a measurement
 uk = ssym("uk",numboxes+1, numboxes)

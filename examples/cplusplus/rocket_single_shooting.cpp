@@ -143,7 +143,7 @@ int main(){
   MX F = inner_prod(U,U);
 
   // Terminal constraints
-  MX G = vertcat(X[0],X[1]);
+  MX G = horzcat(X[0],X[1]);
   
   // Create the NLP
   MXFunction nlp(nlpIn("x",U),nlpOut("f",F,"g",G));

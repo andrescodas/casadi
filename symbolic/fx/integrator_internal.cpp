@@ -404,9 +404,9 @@ namespace CasADi{
       f_in[DAE_X] = aug_x;
       f_in[DAE_Z] = aug_z;
       f_in[DAE_P] = aug_p;
-      if(!f_ode.empty()) f_out[DAE_ODE] = densify(vertcat(f_ode));
-      if(!f_alg.empty()) f_out[DAE_ALG] = densify(vertcat(f_alg));
-      if(!f_quad.empty()) f_out[DAE_QUAD] = densify(vertcat(f_quad));
+      if(!f_ode.empty()) f_out[DAE_ODE] = densify(horzcat(f_ode));
+      if(!f_alg.empty()) f_out[DAE_ALG] = densify(horzcat(f_alg));
+      if(!f_quad.empty()) f_out[DAE_QUAD] = densify(horzcat(f_quad));
       MXFunction f_mx(f_in,f_out);
       
       // Expand to SXFuncion?
@@ -428,9 +428,9 @@ namespace CasADi{
       g_in[RDAE_RX] = aug_rx;
       g_in[RDAE_RZ] = aug_rz;
       g_in[RDAE_RP] = aug_rp;
-      if(!g_ode.empty()) g_out[RDAE_ODE] = densify(vertcat(g_ode));
-      if(!g_alg.empty()) g_out[RDAE_ALG] = densify(vertcat(g_alg));
-      if(!g_quad.empty()) g_out[RDAE_QUAD] = densify(vertcat(g_quad));
+      if(!g_ode.empty()) g_out[RDAE_ODE] = densify(horzcat(g_ode));
+      if(!g_alg.empty()) g_out[RDAE_ALG] = densify(horzcat(g_alg));
+      if(!g_quad.empty()) g_out[RDAE_QUAD] = densify(horzcat(g_quad));
       MXFunction g_mx(g_in,g_out);
 
       // Expand to SXFuncion?
@@ -904,8 +904,8 @@ namespace CasADi{
     CCSSparsity jac_ode_z = f_.jacSparsity(DAE_Z,DAE_ODE);
     CCSSparsity jac_alg_x = f_.jacSparsity(DAE_X,DAE_ALG);
     CCSSparsity jac_alg_z = f_.jacSparsity(DAE_Z,DAE_ALG);
-    ret = horzcat(ret,jac_ode_z);
-    ret.append(horzcat(jac_alg_x,jac_alg_z));
+    ret = vertcat(ret,jac_ode_z);
+    ret.append(vertcat(jac_alg_x,jac_alg_z));
     return ret;
   }
 
@@ -923,8 +923,8 @@ namespace CasADi{
     CCSSparsity jac_ode_z = g_.jacSparsity(RDAE_RZ,RDAE_ODE);
     CCSSparsity jac_alg_x = g_.jacSparsity(RDAE_RX,RDAE_ALG);
     CCSSparsity jac_alg_z = g_.jacSparsity(RDAE_RZ,RDAE_ALG);
-    ret = horzcat(ret,jac_ode_z);
-    ret.append(horzcat(jac_alg_x,jac_alg_z));
+    ret = vertcat(ret,jac_ode_z);
+    ret.append(vertcat(jac_alg_x,jac_alg_z));
     return ret;
   }
 

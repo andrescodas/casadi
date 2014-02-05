@@ -2083,7 +2083,7 @@ namespace CasADi{
     typename FunctionType::MatType cj = FunctionType::MatType::sym("cj");
     typename FunctionType::MatType jac = f.jac(DAE_X,DAE_ODE) - cj*FunctionType::MatType::eye(nx_);
     if(nz_>0){
-      jac = horzcat(vertcat(jac,f.jac(DAE_X,DAE_ALG)),vertcat(f.jac(DAE_Z,DAE_ODE),f.jac(DAE_Z,DAE_ALG)));
+      jac = vertcat(horzcat(jac,f.jac(DAE_X,DAE_ALG)),horzcat(f.jac(DAE_Z,DAE_ODE),f.jac(DAE_Z,DAE_ALG)));
     }
   
     // Jacobian function
@@ -2103,7 +2103,7 @@ namespace CasADi{
     typename FunctionType::MatType cj = FunctionType::MatType::sym("cj");
     typename FunctionType::MatType jac = g.jac(RDAE_RX,RDAE_ODE) + cj*FunctionType::MatType::eye(nrx_);
     if(nrz_>0){
-      jac = horzcat(vertcat(jac,g.jac(RDAE_RX,RDAE_ALG)),vertcat(g.jac(RDAE_RZ,RDAE_ODE),g.jac(RDAE_RZ,RDAE_ALG)));
+      jac = vertcat(horzcat(jac,g.jac(RDAE_RX,RDAE_ALG)),horzcat(g.jac(RDAE_RZ,RDAE_ODE),g.jac(RDAE_RZ,RDAE_ALG)));
     }
     
     // Jacobian function

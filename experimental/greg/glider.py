@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
 
     # Create the NLP
-    gfcn = C.SXFunction([gliderOcp.designVariables],[C.vertcat(gliderOcp.G)]) # constraint function
+    gfcn = C.SXFunction([gliderOcp.designVariables],[C.horzcat(gliderOcp.G)]) # constraint function
     
     # Allocate an NLP solver
     solver = C.IpoptSolver(ffcn,gfcn)

@@ -69,7 +69,7 @@ class Toolstests(casadiTestCase):
         self.assertTrue(all(map(isEqual,p.x,p["x"])))
         self.assertTrue(all(map(isEqual,p.z,p["z"])))
         self.assertTrue(all(map(lambda a,b: all(map(isEqual,a,b)),p.y,p["y"])))
-        self.checkarray(p[...],vertcat([p.x[0],p.y[0][0],p.y[0][1],p.y[1][0],p.y[1][1],p.y[2][0],p.y[2][1],p.z[0],p.z[1]]),"")
+        self.checkarray(p[...],horzcat([p.x[0],p.y[0][0],p.y[0][1],p.y[1][0],p.y[1][1],p.y[2][0],p.y[2][1],p.z[0],p.z[1]]),"")
 
       self.checkarray(p.i_x[0],0,"")
       self.checkarray(p.i_z[0],7,"")
@@ -105,10 +105,10 @@ class Toolstests(casadiTestCase):
         self.assertTrue(all(map(isEqual,p.x,p["x"])))
         self.assertTrue(all(map(isEqual,p.z,p["z"])))
         self.assertTrue(all(map(lambda a,b: all(map(isEqual,a,b)),p.y,p["y"])))
-        self.checkarray(p[...],vertcat([p.x[0],p.y[0][0],p.y[0][1],p.z[0],p.y[1][0],p.y[1][1],p.z[1],p.y[2][0],p.y[2][1]]),"")
+        self.checkarray(p[...],horzcat([p.x[0],p.y[0][0],p.y[0][1],p.z[0],p.y[1][0],p.y[1][1],p.z[1],p.y[2][0],p.y[2][1]]),"")
 
-        self.checkarray(p.z[...],vertcat([p.z[0],p.z[1]]),"")
-        self.checkarray(p.y[...],vertcat([p.y[0][0],p.y[0][1],p.y[1][0],p.y[1][1],p.y[2][0],p.y[2][1]]),"")
+        self.checkarray(p.z[...],horzcat([p.z[0],p.z[1]]),"")
+        self.checkarray(p.y[...],horzcat([p.y[0][0],p.y[0][1],p.y[1][0],p.y[1][1],p.y[2][0],p.y[2][1]]),"")
       
       self.checkarray(p.i_x[0],0,"")
       self.checkarray(p.i_z[0],3,"")
@@ -132,11 +132,11 @@ class Toolstests(casadiTestCase):
        
       self.assertEqual(g.size,4)
       if CasadiOptions.getSimplificationOnTheFly():
-        self.checkarray(g[...],vertcat([g.c,p.a,p.b,g.e]),"")
+        self.checkarray(g[...],horzcat([g.c,p.a,p.b,g.e]),"")
 
       self.assertEqual(p.size,2)
       if CasadiOptions.getSimplificationOnTheFly():
-        self.checkarray(p[...],vertcat([p.a,p.b]),"")
+        self.checkarray(p[...],horzcat([p.a,p.b]),"")
       
       self.checkarray(p.i_a,0)
       self.checkarray(p.i_b,1)
@@ -147,7 +147,7 @@ class Toolstests(casadiTestCase):
       self.checkarray(g.i_e,3)
       
       if CasadiOptions.getSimplificationOnTheFly():
-        self.checkarray(g.d[...],vertcat([p.a,p.b]),"")
+        self.checkarray(g.d[...],horzcat([p.a,p.b]),"")
       
 
   def test_variables(self):
@@ -476,8 +476,8 @@ class Toolstests(casadiTestCase):
     
     s = struct_ssym(['x','y','z'])
     self.assertEqual(s.size,3)
-    self.assertEqual(s[vertcat,['x','y']].shape[0],2)
-    self.assertTrue(isinstance(s[list,vertcat,['x','y']],list))
+    self.assertEqual(s[horzcat,['x','y']].shape[0],2)
+    self.assertTrue(isinstance(s[list,horzcat,['x','y']],list))
     
     s = struct_ssym([entry('x',repeat=5),entry('y',repeat=6),entry('z')])
     self.assertEqual(s.size,12)
@@ -511,7 +511,7 @@ class Toolstests(casadiTestCase):
       struct_ssym([entry('a',sym=x+x),'y','z'])
     with self.assertRaises(Exception):
       struct_ssym([entry('a',sym=[x+x]),'y','z'])
-    s = struct_ssym([entry('a',sym=vertcat([x,x2])),'y','z'])
+    s = struct_ssym([entry('a',sym=horzcat([x,x2])),'y','z'])
     self.assertEqual(s.size,6)
     with self.assertRaises(Exception):
       s = struct_ssym([entry('a',repeat=6,sym=x),'y','z'])
@@ -545,8 +545,8 @@ class Toolstests(casadiTestCase):
     
     self.checkarray(num["P",indexf[["x","y"]],indexf[["z","x"]]],DMatrix([[3,1],[6,4]]))
     
-    self.checkarray(num["P",index[list,vertcat,["x","y"]],index[list,vertcat,["z","x"]]],DMatrix([[3,1],[6,4]]))
-    self.checkarray(num["P",index[vertcat,["x","y"]],index[vertcat,["z","x"]]],DMatrix([3,4]))
+    self.checkarray(num["P",index[list,horzcat,["x","y"]],index[list,horzcat,["z","x"]]],DMatrix([[3,1],[6,4]]))
+    self.checkarray(num["P",index[horzcat,["x","y"]],index[horzcat,["z","x"]]],DMatrix([3,4]))
     
     S = struct_ssym([entry("P",shapestruct=s0)])
     
@@ -575,8 +575,8 @@ class Toolstests(casadiTestCase):
     
     self.checkarray(num["P",:,indexf[["z","x"]]],DMatrix([[3,1],[6,4],[9,7]]))
     
-    self.checkarray(num["P",:,index[list,vertcat,["z","x"]]],DMatrix([[3,1],[6,4],[9,7]]))
-    self.checkarray(num["P",:,index[vertcat,["z","x"]]],DMatrix([3,1,6,4,9,7]))
+    self.checkarray(num["P",:,index[list,horzcat,["z","x"]]],DMatrix([[3,1],[6,4],[9,7]]))
+    self.checkarray(num["P",:,index[horzcat,["z","x"]]],DMatrix([3,1,6,4,9,7]))
     
     S = struct_ssym([entry("P",shapestruct=s0)])
  
@@ -642,7 +642,7 @@ class Toolstests(casadiTestCase):
     with self.assertRaises(Exception):
       struct_msym([entry('x',sym=[x+x]),'y','z'])
     with self.assertRaises(Exception):
-      struct_msym([entry('x',sym=vertcat([x,x2])),'y','z'])
+      struct_msym([entry('x',sym=horzcat([x,x2])),'y','z'])
     with self.assertRaises(Exception):
       s = struct_,msym([(2,'x',[x,x2]),'y','z'])
     
@@ -734,17 +734,17 @@ class Toolstests(casadiTestCase):
     self.checkarray(init.cat[shooting.i['X',0,-1,'p',1]],DMatrix.ones(6)*7)
     self.assertEqual(sum([i!=i for i in init.cat.data()]),1503-6*9)
     
-    self.checkarray(init['X',0,-1,'p',horzcat,:],DMatrix.ones(6,9)*7)
+    self.checkarray(init['X',0,-1,'p',vertcat,:],DMatrix.ones(6,9)*7)
 
     with self.assertRaises(Exception):
       init['X',0,-1,'p',:] = [1,2,3,4,5,6]
       
     init['X',0,-1,'p',:] = repeated([1,2,3,4,5,6])
-    self.checkarray(init['X',0,-1,'p',vertcat,:,2],DMatrix.ones(9)*3)
+    self.checkarray(init['X',0,-1,'p',horzcat,:,2],DMatrix.ones(9)*3)
     
     init = shooting(DMatrix(range(shooting.size)))
 
-    self.checkarray(init['X',vertcat,:,horzcat,:],init['X',blockcat,:,:])
+    self.checkarray(init['X',horzcat,:,vertcat,:],init['X',blockcat,:,:])
 
     init = shooting(nan)
 
@@ -775,18 +775,18 @@ class Toolstests(casadiTestCase):
     
 
     
-    init['X',0,-1,'p',horzcat,:] = DMatrix.ones(6,9)*2
+    init['X',0,-1,'p',vertcat,:] = DMatrix.ones(6,9)*2
     
     self.assertEqual(sum(init.cat==2),6*9)
 
-    init['X',0,-1,'p',vertcat,:,2] = DMatrix.ones(9)*3
+    init['X',0,-1,'p',horzcat,:,2] = DMatrix.ones(9)*3
     
     self.assertEqual(sum(init.cat==2),6*9-9)
     self.assertEqual(sum(init.cat==3),9)
 
-    self.checkarray(init['X',0,-1,'p',horzcat,:,[2,3]],vertcat([DMatrix.ones(1,9)*3,DMatrix.ones(1,9)*2]))
+    self.checkarray(init['X',0,-1,'p',vertcat,:,[2,3]],horzcat([DMatrix.ones(1,9)*3,DMatrix.ones(1,9)*2]))
     
-    init['X',:,-1,'p',horzcat,:] = repeated(DMatrix.ones(6,9)*2)
+    init['X',:,-1,'p',vertcat,:] = repeated(DMatrix.ones(6,9)*2)
     
     self.assertEqual(sum(init.cat==2),4*6*9)
     
@@ -842,7 +842,7 @@ class Toolstests(casadiTestCase):
     a[:,"x"] = range(12)
     
     self.checkarray(a[4,"x"],DMatrix([4]))
-    self.checkarray(d,horzcat([range(12),DMatrix.zeros(12),DMatrix.zeros(12)]))
+    self.checkarray(d,vertcat([range(12),DMatrix.zeros(12),DMatrix.zeros(12)]))
 
   def test_structure_squared_dmatrix(self):
     self.message("squared dmatrix")

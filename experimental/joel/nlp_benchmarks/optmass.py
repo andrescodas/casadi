@@ -62,7 +62,7 @@ def NPvec(x):
   return NP.reshape(x,NP.prod(x.shape),1)
 
 # All variables
-vv = vertcat([vec(x),vec(v),vec(f)])
+vv = horzcat([vec(x),vec(v),vec(f)])
 vv_lb = NP.concatenate([NPvec(x_lb),NPvec(v_lb),NPvec(f_lb)])
 vv_ub = NP.concatenate([NPvec(x_ub),NPvec(v_ub),NPvec(f_ub)])
 vv_guess = NP.concatenate([NPvec(x_guess),NPvec(v_guess),NPvec(f_guess)])
@@ -96,7 +96,7 @@ for i in range(n+1):
   g_lb.append(-inf)
   g_ub.append(1)
   
-g = vertcat(g)
+g = horzcat(g)
 g_lb = NP.array(g_lb)
 g_ub = NP.array(g_ub)
 gfcn = SXFunction([vv],[g])

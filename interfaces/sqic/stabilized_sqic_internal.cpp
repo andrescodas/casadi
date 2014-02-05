@@ -116,7 +116,7 @@ void StabilizedSQICInternal::init(){
   for (int i=0;i<locH_.size();++i) locH_[i]+=1;
   
   // Sparsity of augmented linear constraint matrix
-  CCSSparsity A_ = trans(vertcat(st_[QP_STRUCT_A],sp_dense(1,n_)));
+  CCSSparsity A_ = trans(horzcat(st_[QP_STRUCT_A],sp_dense(1,n_)));
   locA_ = A_.colind();
   indA_ = A_.row();
   
@@ -130,7 +130,7 @@ void StabilizedSQICInternal::init(){
   std::vector<MX> ins;
   ins.push_back(a);
   ins.push_back(g);
-  formatA_ = MXFunction(ins,trans(vertcat(a,trans(g))));
+  formatA_ = MXFunction(ins,trans(horzcat(a,trans(g))));
   formatA_.init();
   
   // Set objective col of augmented linear constraints

@@ -41,7 +41,7 @@
 #include "inverse.hpp"
 #include "inner_prod.hpp"
 #include "norm.hpp"
-#include "vertcat.hpp"
+#include "horzcat.hpp"
 #include "vertsplit.hpp"
 #include "assertion.hpp"
 
@@ -683,7 +683,7 @@ namespace CasADi{
     return MX::create(new Norm1(shared_from_this<MX>()));
   }
 
-  MX MXNode::getVertcat(const std::vector<MX>& x){
+  MX MXNode::getHorzcat(const std::vector<MX>& x){
     // Remove nulls and empty matrices
     vector<MX> c;
     c.reserve(x.size());
@@ -702,19 +702,19 @@ namespace CasADi{
         if (!c[i]->isZero()) { zero = false; break; }
       }
       if (zero) {
-        return MX::zeros(Vertcat(c).sparsity());
+        return MX::zeros(Horzcat(c).sparsity());
       }
-      // Split up existing vertcats
+      // Split up existing horzcats
       vector<MX> c_split;
       c_split.reserve(c.size());
       for(vector<MX>::const_iterator i=c.begin(); i!=c.end(); ++i){
-        if(i->getOp()==OP_VERTCAT){        
+        if(i->getOp()==OP_HORZCAT){        
           c_split.insert(c_split.end(),(*i)->dep_.begin(),(*i)->dep_.end());
         } else {
           c_split.push_back(*i);
         }
       }
-      return MX::create(new Vertcat(c_split));
+      return MX::create(new Horzcat(c_split));
     }
   }
 

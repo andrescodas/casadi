@@ -228,8 +228,8 @@ print init["X",:,:,"x"]
 #! Callables/functions can be thrown in in the powerIndex at any location.
 #! They operate on subresults obtain from resolving the remainder of the powerIndex
 
-print init["X",:,horzcat,:,"x"]
-print init["X",vertcat,:,horzcat,:,"x"]
+print init["X",:,vertcat,:,"x"]
+print init["X",horzcat,:,vertcat,:,"x"]
 print init["X",blockcat,:,:,"x"]
 
 #! Set all quaternions to 1,0,0,0
@@ -359,7 +359,7 @@ P0.set(P)
 
 #! Next we represent the 'squared_repeated' helper construct
 #! Imagine we somehow obtain a matrix that represents a vertical concatenation of covariance
-P0 = vertcat([DMatrix.zeros(states.size,states.size),DMatrix.ones(states.size,states.size)])
+P0 = horzcat([DMatrix.zeros(states.size,states.size),DMatrix.ones(states.size,states.size)])
 
 #! We can conveniently access it as follows:
 P = states.squared_repeated(P0)

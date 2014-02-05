@@ -228,7 +228,7 @@ def idSystem(makePlots=False):
     xdot = C.MX('xdot', 2,1)
     for j in range(nu):
         xj = x_hats[j]
-        Xnext = integrator( [T0, TF, xj, C.vertcat([Utrue[j], k_hat, b_hat]), xdot, C.MX()])
+        Xnext = integrator( [T0, TF, xj, C.horzcat([Utrue[j], k_hat, b_hat]), xdot, C.MX()])
     
         err = Xnext - x_hats[j+1]
         ll = -C.MX(0.5)*C.prod( err.T, C.prod( C.MX(Q.I), err) )

@@ -310,7 +310,7 @@ namespace CasADi{
     }
   
     // Constraint expression
-    MX gv = vertcat(g);
+    MX gv = horzcat(g);
     
     // Make sure that the dimension is consistent with the number of unknowns
     casadi_assert_message(gv.size()==V.size(),"Implicit function unknowns and equations do not match");

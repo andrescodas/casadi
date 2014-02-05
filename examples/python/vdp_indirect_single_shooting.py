@@ -26,13 +26,13 @@ import matplotlib.pyplot as plt
 
 # Declare variables (use simple, efficient DAG)
 x0=ssym("x0"); x1=ssym("x1")
-x = vertcat((x0,x1))
+x = horzcat((x0,x1))
 
 # Control
 u = ssym("u")
 
 # ODE right hand side
-xdot = vertcat([(1 - x1*x1)*x0 - x1 + u, x0])
+xdot = horzcat([(1 - x1*x1)*x0 - x1 + u, x0])
 
 # Lagrangian function
 L = x0*x0 + x1*x1 + u*u
@@ -62,11 +62,11 @@ u_opt = max(u_opt,-0.75)
 print "optimal control: ", u_opt
 
 # Augment f with lam_dot and substitute in the value for the optimal control
-f = vertcat((xdot,ldot))
+f = horzcat((xdot,ldot))
 f = substitute(f,u,u_opt)
 
 # Create the right hand side function
-rhs_in = daeIn(x=vertcat((x,lam)))
+rhs_in = daeIn(x=horzcat((x,lam)))
 rhs = SXFunction(rhs_in,daeOut(ode=f))
 
 # Create an integrator (CVodes)
@@ -84,7 +84,7 @@ x_init = NP.array([0.,1.])
 l_init = msym("l_init",2)
 
 # The initial condition for the shooting
-X = vertcat((x_init,l_init))
+X = horzcat((x_init,l_init))
 
 # Call the integrator
 X, = integratorOut(I.call(integratorIn(x0=X)),"xf")

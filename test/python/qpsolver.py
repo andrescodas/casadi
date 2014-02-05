@@ -660,7 +660,7 @@ class QPSolverTests(casadiTestCase):
     
     for w0,w1 in [(0,2),(1,1),(0.1,0.6)]:
       
-      A =  vertcat([a.T,a_.T,(w0*a+w1*a_).T])
+      A =  horzcat([a.T,a_.T,(w0*a+w1*a_).T])
         
       LBA = DMatrix([0,0,0])
       UBA = DMatrix([0.5,0.3,w0*0.5+w1*0.3])

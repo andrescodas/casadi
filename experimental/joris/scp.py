@@ -65,7 +65,7 @@ for i in range(25):
   oracle.setInput(Lambda_k,"Lambd")
   oracle.evaluate()
   
-  step, lambda_k, Lambda_k = sdqp_sol(h=oracle.output("hess"),c=oracle.output("gradF"),a=oracle.output("jacG"),uba=-oracle.output("g"),f=vertcat([ oracle.output("jac_nsd")[:,i].reshape(oracle.output("nsd").shape) for i in range(x_k.size())]),g=-oracle.output("nsd"))
+  step, lambda_k, Lambda_k = sdqp_sol(h=oracle.output("hess"),c=oracle.output("gradF"),a=oracle.output("jacG"),uba=-oracle.output("g"),f=horzcat([ oracle.output("jac_nsd")[:,i].reshape(oracle.output("nsd").shape) for i in range(x_k.size())]),g=-oracle.output("nsd"))
    
   x_k+= step
   

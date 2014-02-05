@@ -133,7 +133,7 @@ class LinearSolverTests(casadiTestCase):
         
         #print exact, fd
         
-        #print numpy.linalg.svd(horzcat([exact, fd]).T)[1]
+        #print numpy.linalg.svd(vertcat([exact, fd]).T)[1]
         
         #print "fd:", mul(fd.T,fd), numpy.linalg.eig(mul(fd.T,fd))[0]
         #print "exact:", mul(exact.T,exact), numpy.linalg.eig(mul(exact.T,exact))[0]
@@ -304,7 +304,7 @@ class LinearSolverTests(casadiTestCase):
       b_0 = b[0]
       b_1 = b[1]
       
-      solution = MXFunction(linsolIn(A=A,B=b),[horzcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
+      solution = MXFunction(linsolIn(A=A,B=b),[vertcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
       solution.init()
       
       solution.setInput(A_,"A")
@@ -340,7 +340,7 @@ class LinearSolverTests(casadiTestCase):
       b_0 = b[0]
       b_1 = b[1]
       
-      solution = MXFunction(linsolIn(A=A,B=b),[horzcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
+      solution = MXFunction(linsolIn(A=A,B=b),[vertcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
       solution.init()
       
       solution.setInput(A_,"A")
@@ -380,7 +380,7 @@ class LinearSolverTests(casadiTestCase):
         b_0 = b[0]
         b_1 = b[1]
         
-        solution = MXFunction([A,b],[horzcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
+        solution = MXFunction([A,b],[vertcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
         solution.init()
         
         solution.setInput(A_,0)
@@ -423,7 +423,7 @@ class LinearSolverTests(casadiTestCase):
         b_0 = b[0]
         b_1 = b[1]
         
-        solution = MXFunction([A,b],[horzcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
+        solution = MXFunction([A,b],[vertcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
         solution.init()
         
         solution.setInput(A_,0)
@@ -464,7 +464,7 @@ class LinearSolverTests(casadiTestCase):
         b_0 = b[0,0]
         b_1 = b[0,1]
         
-        solution = MXFunction([A,b],[horzcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
+        solution = MXFunction([A,b],[vertcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
         solution.init()
         
         solution.setInput(A_,0)

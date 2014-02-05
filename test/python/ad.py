@@ -52,7 +52,7 @@ class ADtests(casadiTestCase):
     
     self.sxinputs = {
        "row" : {
-            "dense": [vertcat([x,y,z,w])],
+            "dense": [horzcat([x,y,z,w])],
             "sparse": [inp] }
         , "col": {
             "dense":  [SXMatrix([x,y,z,w]).T],
@@ -95,18 +95,18 @@ class ADtests(casadiTestCase):
       return [X]
 
     def testje(xyz):
-      print vertcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]]).shape
+      print horzcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]]).shape
       
     self.mxoutputs = {
        "row": {
-        "dense":  lambda xyz: [vertcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]])],
+        "dense":  lambda xyz: [horzcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]])],
         "sparse": temp1
         }, "col": {
-        "dense": lambda xyz: [horzcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]])],
+        "dense": lambda xyz: [vertcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]])],
         "sparse": temp2
        },
        "matrix": {
-          "dense": lambda xyz: [c.reshape(vertcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]]),(2,2))],
+          "dense": lambda xyz: [c.reshape(horzcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]]),(2,2))],
           "sparse": lambda xyz: [c.reshape(temp1(xyz)[0],(3,2))]
        }
     }
@@ -114,7 +114,7 @@ class ADtests(casadiTestCase):
 
     self.sxoutputs = {
        "row": {
-        "dense": [vertcat([x,x+2*y**2,x+2*y**3+3*z**4,w])],
+        "dense": [horzcat([x,x+2*y**2,x+2*y**3+3*z**4,w])],
         "sparse": [out]
         }, "col": {
           "dense":  [SXMatrix([x,x+2*y**2,x+2*y**3+3*z**4,w]).T],
@@ -399,7 +399,7 @@ class ADtests(casadiTestCase):
     y=ssym("y")
     z=ssym("z")
     n=array([1.2,2.3,7])
-    f=SXFunction([vertcat([x,y,z])],[vertcat([x+2*y**3+3*z**4])])
+    f=SXFunction([horzcat([x,y,z])],[horzcat([x+2*y**3+3*z**4])])
     f.init()
     J=f.jacobian(0,0)
     J.init()
@@ -426,7 +426,7 @@ class ADtests(casadiTestCase):
     inp[0,0]=x
     inp[3,0]=y
 
-    f=SXFunction([inp],[vertcat([x+y,x,y])])
+    f=SXFunction([inp],[horzcat([x+y,x,y])])
     #f.setOption("ad_mode","forward")
     f.init()
     J=f.jacobian(0,0)
@@ -447,7 +447,7 @@ class ADtests(casadiTestCase):
     inp[0,0]=x
     inp[3,0]=y
 
-    f=SXFunction([inp],[vertcat([x+y,x,y])])
+    f=SXFunction([inp],[horzcat([x+y,x,y])])
     #f.setOption("ad_mode","forward")
     f.init()
     J=f.jacobian(0,0)
@@ -455,7 +455,7 @@ class ADtests(casadiTestCase):
     J.setInput([2,7])
     J.evaluate()
 
-    f=SXFunction([inp],[vertcat([x+y,x,y])])
+    f=SXFunction([inp],[horzcat([x+y,x,y])])
     f.init()
     print f.input().shape
     J=f.jacobian(0,0)
@@ -541,14 +541,14 @@ class ADtests(casadiTestCase):
           (in1,v1,x*x,2*c.diag(x)),
           (in1,v1,x*y[0],DMatrix.eye(2)*y[0]),
           (in1,v1,x[0],DMatrix.eye(2)[0,:]),
-          (in1,v1,(x**2)[0],horzcat([2*x[0],MX(1,1)])),
+          (in1,v1,(x**2)[0],vertcat([2*x[0],MX(1,1)])),
           (in1,v1,x[0]+x[1],DMatrix.ones(1,2)),
-          (in1,v1,vertcat([x[1],x[0]]),sparse(DMatrix([[0,1],[1,0]]))),
+          (in1,v1,horzcat([x[1],x[0]]),sparse(DMatrix([[0,1],[1,0]]))),
           #(in1,v1,vertsplit(x,[0,1,2])[1],sparse(DMatrix([[0,1]]))),
-          (in1,v1,vertcat([x[1]**2,x[0]**2]),blockcat([[MX(1,1),2*x[1]],[2*x[0],MX(1,1)]])),
+          (in1,v1,horzcat([x[1]**2,x[0]**2]),blockcat([[MX(1,1),2*x[1]],[2*x[0],MX(1,1)]])),
           #(in1,v1,vertsplit(x**2,[0,1,2])[1],blockcat([[MX(1,1),2*x[1]]])),
-          (in1,v1,horzcat([x[1],x[0]]).T,sparse(DMatrix([[0,1],[1,0]]))),
-          (in1,v1,horzcat([x[1]**2,x[0]**2]).T,blockcat([[MX(1,1),2*x[1]],[2*x[0],MX(1,1)]])),
+          (in1,v1,vertcat([x[1],x[0]]).T,sparse(DMatrix([[0,1],[1,0]]))),
+          (in1,v1,vertcat([x[1]**2,x[0]**2]).T,blockcat([[MX(1,1),2*x[1]],[2*x[0],MX(1,1)]])),
           (in1,v1,x[[0,1]],sparse(DMatrix([[1,0],[0,1]]))),
           (in1,v1,(x**2)[[0,1]],2*c.diag(x)),
           (in1,v1,x[[0,0,1,1]],sparse(DMatrix([[1,0],[1,0],[0,1],[0,1]]))),
@@ -559,7 +559,7 @@ class ADtests(casadiTestCase):
           (in1,v1,w,sparse(DMatrix([[1,0],[0,2]]))),
           (in1,v1,w2,blockcat([[1,MX(1,1)],[x[1],x[0]]])),
           (in1,v1,ww,2*c.diag(x)),
-          (in1,v1,wwf,vertcat([x[[1,0]].T,x[[1,0]].T])),
+          (in1,v1,wwf,horzcat([x[[1,0]].T,x[[1,0]].T])),
           (in1,v1,yy[:,0],DMatrix.eye(2)),
           (in1,v1,yy2[:,0],2*c.diag(x)),
           (in1,v1,yyy[:,0],sparse(DMatrix([[0,1],[1,0]]))),
@@ -569,7 +569,7 @@ class ADtests(casadiTestCase):
           (in1,v1,mul(x.T,y.T,sp_triplet(2,1,[1],[0]).T),y[sp_triplet(2,2,[1,1],[0,1])]),
           (in1,v1,mul(y[sp_triplet(2,2,[0,1,1],[0,0,1])],x),y[sp_triplet(2,2,[0,1,1],[0,0,1])]),
           (in1,v1,mul(x.T,y[sp_triplet(2,2,[0,1,1],[0,0,1])].T),y[sp_triplet(2,2,[0,1,1],[0,0,1])]),
-          (in1,v1,mul(y,x**2),y*2*vertcat([x.T,x.T])),
+          (in1,v1,mul(y,x**2),y*2*horzcat([x.T,x.T])),
           (in1,v1,sin(x),c.diag(cos(x))),
           (in1,v1,sin(x**2),c.diag(cos(x**2)*2*x)),
           (in1,v1,x*y[:,0],c.diag(y[:,0])),
@@ -578,9 +578,9 @@ class ADtests(casadiTestCase):
           (in1,v1,x*y[[0,1],0],c.diag(y[[0,1],0])),
           (in1,v1,inner_prod(x,x),(2*x).T),
           (in1,v1,inner_prod(x**2,x),(3*x**2).T),
-          #(in1,v1,c.det(horzcat([x,DMatrix([1,2])])),DMatrix([-1,2])), not implemented
+          #(in1,v1,c.det(vertcat([x,DMatrix([1,2])])),DMatrix([-1,2])), not implemented
           (in1,v1,f1.call(in1)[1],y),
-          (in1,v1,f1.call([x**2,y])[1],y*2*vertcat([x.T,x.T])),
+          (in1,v1,f1.call([x**2,y])[1],y*2*horzcat([x.T,x.T])),
           (in1,v1,f2.call(in1)[0],DMatrix.zeros(0,2)),
           (in1,v1,f2.call([x**2,y])[0],DMatrix.zeros(0,2)),
           (in1,v1,f3.call(in1)[0],DMatrix.zeros(0,2)),
@@ -589,7 +589,7 @@ class ADtests(casadiTestCase):
           (in1,v1,f4.call([x**2,y])[0],DMatrix.zeros(0,2)),
           #(in1,v1,f1.call([x**2,[]])[1],DMatrix.zeros(2,2)),
           #(in1,v1,f1.call([[],y])[1],DMatrix.zeros(2,2)),
-          (in1,v1,vertcat([x,DMatrix(0,1)]),DMatrix.eye(2)),
+          (in1,v1,horzcat([x,DMatrix(0,1)]),DMatrix.eye(2)),
           (in1,v1,(x**2).setSparse(sparse(DMatrix([0,1])).sparsity()),blockcat([[MX(1,1),MX(1,1)],[MX(1,1),2*x[1]]])),
      ]:
       print out

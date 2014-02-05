@@ -109,7 +109,7 @@ void DirectMultipleShootingInternal::init(){
   vector<vector<MX> > int_in(nk_);
   for(int k=0; k<nk_; ++k){
     int_in[k].resize(INTEGRATOR_NUM_IN);
-    int_in[k][INTEGRATOR_P] = vertcat(P,U[k]);
+    int_in[k][INTEGRATOR_P] = horzcat(P,U[k]);
     int_in[k][INTEGRATOR_X0] = X[k];
   }
 
@@ -118,7 +118,7 @@ void DirectMultipleShootingInternal::init(){
   for(int k=0; k<nk_; ++k){
     fcn_in[k].resize(DAE_NUM_IN);
     fcn_in[k][DAE_T] = (k*tf_)/nk_;
-    fcn_in[k][DAE_P] = vertcat(P,U.at(k));
+    fcn_in[k][DAE_P] = horzcat(P,U.at(k));
     fcn_in[k][DAE_X] = X[k];
   }
 
@@ -151,7 +151,7 @@ void DirectMultipleShootingInternal::init(){
   }
 
   // Terminal constraints
-  MX g = vertcat(gg);
+  MX g = horzcat(gg);
 
   // Objective function
   MX f;

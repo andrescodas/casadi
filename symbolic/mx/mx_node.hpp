@@ -273,7 +273,7 @@ namespace CasADi{
     virtual Matrix<int> mapping() const;
 
     /// Create a vertical concatenation node
-    static MX getVertcat(const std::vector<MX>& x);
+    static MX getHorzcat(const std::vector<MX>& x);
 
     /// Create a vertical split node
     std::vector<MX> getVertsplit(const std::vector<int>& output_offset) const;

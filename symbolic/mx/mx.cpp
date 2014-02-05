@@ -157,7 +157,7 @@ namespace CasADi{
       }
       temp.push_back(m);
     }
-    MX ret = vertcat(temp);
+    MX ret = horzcat(temp);
     simplify(ret);
     return ret;
   }
@@ -173,7 +173,7 @@ namespace CasADi{
       }
       temp.push_back(m);
     }
-    MX ret = horzcat(temp);
+    MX ret = vertcat(temp);
     simplify(ret);
     return ret;
   }
@@ -299,7 +299,7 @@ namespace CasADi{
     }
   
     //CCSSparsity result_sparsity = repmat(i,1,jj.size()).sparsity();
-    CCSSparsity result_sparsity = horzcat(std::vector< Matrix<int> >(jj.size(),i)).sparsity();
+    CCSSparsity result_sparsity = vertcat(std::vector< Matrix<int> >(jj.size(),i)).sparsity();
   
     casadi_assert_message(result_sparsity == m.sparsity(),"setSub(.,Imatrix" << i.dimString() << ",Ivector(length=" << jj.size() << "),Matrix<T>)::Dimension mismatch. The sparsity of repmat(Imatrix,1," << jj.size() << ") = " << result_sparsity.dimString()  << " must match the sparsity of MX = "  << m.dimString() << ".");
 
@@ -328,7 +328,7 @@ namespace CasADi{
     }
   
     //CCSSparsity result_sparsity = repmat(j,ii.size(),1).sparsity();
-    CCSSparsity result_sparsity = vertcat(std::vector< Matrix<int> >(ii.size(),j)).sparsity();
+    CCSSparsity result_sparsity = horzcat(std::vector< Matrix<int> >(ii.size(),j)).sparsity();
   
     casadi_assert_message(result_sparsity == m.sparsity(),"setSub(Ivector(length=" << ii.size() << "),Imatrix" << j.dimString() << ",MX)::Dimension mismatch. The sparsity of repmat(Imatrix," << ii.size() << ",1) = " << result_sparsity.dimString() << " must match the sparsity of Matrix<T> = " << m.dimString() << ".");
   
@@ -825,7 +825,7 @@ namespace CasADi{
   MX MX::__mpower__(const MX& b) const   { return pow(*this,b); throw CasadiException("mpower: Not implemented");}
 
   void MX::append(const MX& y){
-    *this = vertcat(*this,y);
+    *this = horzcat(*this,y);
   }
 
   long MX::max_num_calls_in_print_ = 10000;

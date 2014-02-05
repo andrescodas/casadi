@@ -100,19 +100,19 @@ print [[f.grad(i,j) for i in range(2)] for j in range(2)]
 x=SX("x")
 a=SX("a")
 b=SX("b")
-f = SXFunction([x,vertcat([a,b])],[a*x + b]) 
+f = SXFunction([x,horzcat([a,b])],[a*x + b]) 
 f.init()
 
-print f.eval([x,vertcat([a,b])])
-print f.eval([SX(1.0),vertcat([a,b])])
-print f.eval([x,vertcat([SX("c"),SX("d")])])
-print f.eval([SX(),vertcat([SX("c"),SX("d")])])
+print f.eval([x,horzcat([a,b])])
+print f.eval([SX(1.0),horzcat([a,b])])
+print f.eval([x,horzcat([SX("c"),SX("d")])])
+print f.eval([SX(),horzcat([SX("c"),SX("d")])])
 
 #$ We can make an accompanying $g(x) = f(x;a;b)$ by making a and b implicity:
 
 k = SXMatrix(a)
-print f.eval([x,vertcat([k[0],b])])
-print f.eval([x,vertcat([SX("c"),SX("d")])])
+print f.eval([x,horzcat([k[0],b])])
+print f.eval([x,horzcat([SX("c"),SX("d")])])
 
 #! Functions with vector valued input
 #! ----------------------------------
@@ -121,7 +121,7 @@ print f.eval([x,vertcat([SX("c"),SX("d")])])
 
 x = SX("x")
 y = SX("y")
-f = SXFunction([vertcat([x , y ])], [vertcat([x*y, x+y])])
+f = SXFunction([horzcat([x , y ])], [horzcat([x*y, x+y])])
 print "%d -> %d" % (f.getNumInputs(),f.getNumOutputs())
 f.init()
 f.setInput([2,3])

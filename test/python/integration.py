@@ -221,7 +221,7 @@ class Integrationtests(casadiTestCase):
             f.init()
             
             for k in solution.keys():
-              solution[k] = substitute(solution[k],vertcat([tstart,tend]),vertcat([tstart_,tend_]))
+              solution[k] = substitute(solution[k],horzcat([tstart,tend]),horzcat([tstart_,tend_]))
 
             fs = SXFunction(integratorIn(**solutionin),integratorOut(**solution))
             fs.init()
@@ -315,7 +315,7 @@ class Integrationtests(casadiTestCase):
 
       s1=(2*y0-log(yc0**2/p+1))/2-log(cos(arctan(yc0/sqrt(p))+sqrt(p)*(tend-tstart)))
       s2=sqrt(p)*tan(arctan(yc0/sqrt(p))+sqrt(p)*(tend-tstart))
-      yield (["ode"],{'x':q,'p':p},{'ode': vertcat([q[1],p[0]+q[1]**2 ])},{},{},{'x0':q, 'p': p} ,{'xf': vertcat([s1,s2])},{'x0': A, 'p': p0},(0,0.4) )
+      yield (["ode"],{'x':q,'p':p},{'ode': horzcat([q[1],p[0]+q[1]**2 ])},{},{},{'x0':q, 'p': p} ,{'xf': horzcat([s1,s2])},{'x0': A, 'p': p0},(0,0.4) )
 
     for p_features, din, dout, rdin, rdout, solutionin, solution, point, (tstart_, tend_) in checks():
 
@@ -331,7 +331,7 @@ class Integrationtests(casadiTestCase):
           f.init()
             
           for k in solution.keys():
-            solution[k] = substitute(solution[k],vertcat([tstart,tend]),vertcat([tstart_,tend_]))
+            solution[k] = substitute(solution[k],horzcat([tstart,tend]),horzcat([tstart_,tend_]))
           
           fs = SXFunction(integratorIn(**solutionin),integratorOut(**solution))
           fs.init()
@@ -478,7 +478,7 @@ class Integrationtests(casadiTestCase):
         
         s1=(2*y0-log(yc0**2/p+1))/2-log(cos(arctan(yc0/sqrt(p))+sqrt(p)*(tend-tstart)))
         s2=sqrt(p)*tan(arctan(yc0/sqrt(p))+sqrt(p)*(tend-tstart))
-        yield (["ode"],{'x':q,'p':p},{'ode': vertcat([q[1],p[0]+q[1]**2 ])},{},{},{'x0':q, 'p': p} ,{'xf': vertcat([s1,s2])},{'x0': A, 'p': p0},(0,0.4) )
+        yield (["ode"],{'x':q,'p':p},{'ode': horzcat([q[1],p[0]+q[1]**2 ])},{},{},{'x0':q, 'p': p} ,{'xf': horzcat([s1,s2])},{'x0': A, 'p': p0},(0,0.4) )
       
       for tt in checks():
         print tt
@@ -495,7 +495,7 @@ class Integrationtests(casadiTestCase):
             f.init()
             
             for k in solution.keys():
-              solution[k] = substitute(solution[k],vertcat([tstart,tend]),vertcat([tstart_,tend_]))
+              solution[k] = substitute(solution[k],horzcat([tstart,tend]),horzcat([tstart_,tend_]))
             
             fs = SXFunction(integratorIn(**solutionin),integratorOut(**solution))
             fs.init()
@@ -655,7 +655,7 @@ class Integrationtests(casadiTestCase):
     x=SX("x")
     y=SX("y")
     z=x*exp(t)
-    f=SXFunction(daeIn(t=t, x=vertcat([x,y])),[vertcat([z,z])])
+    f=SXFunction(daeIn(t=t, x=horzcat([x,y])),[horzcat([z,z])])
     f.init()
     # Pass inputs
     f.setInput(1.0,"t")
@@ -670,7 +670,7 @@ class Integrationtests(casadiTestCase):
     t=SX("t")
     x=SX("x")
     y=SX("y")
-    f=SXFunction(daeIn(t=t, x=vertcat([x,y])),daeOut(ode=vertcat([x,(1+1e-9)*x])))
+    f=SXFunction(daeIn(t=t, x=horzcat([x,y])),daeOut(ode=horzcat([x,(1+1e-9)*x])))
     integrator = CVodesIntegrator(f)
     integrator.setOption("fsens_err_con", True)
     integrator.setOption("t0",0)
@@ -689,9 +689,9 @@ class Integrationtests(casadiTestCase):
     x=SX("x")
     var = MX("var",2,1)
 
-    q = vertcat([x,SX("problem")])
+    q = horzcat([x,SX("problem")])
 
-    dq=vertcat([x,x])
+    dq=horzcat([x,x])
     f=SXFunction(daeIn(t=t,x=q),daeOut(ode=dq))
     f.init()
 
@@ -786,7 +786,7 @@ class Integrationtests(casadiTestCase):
     p=SX("p")
 
     dh = p+q[0]**2
-    f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=vertcat([dh ,q[0],dh])))
+    f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=horzcat([dh ,q[0],dh])))
     f.init()
     
     integrator = CVodesIntegrator(f)
@@ -813,7 +813,7 @@ class Integrationtests(casadiTestCase):
     J.setInput(p0,1)
     J.evaluate()
     outA=J.output().toArray()
-    f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=vertcat([dh ,q[0],(1+1e-9)*dh])))
+    f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=horzcat([dh ,q[0],(1+1e-9)*dh])))
     f.init()
     
     integrator = CVodesIntegrator(f)
@@ -1036,7 +1036,7 @@ class Integrationtests(casadiTestCase):
     q=ssym("q",2,1)
     p=ssym("p",3,1)
 
-    f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=vertcat([q[1],(p[0]-2*p[1]*cos(2*p[2]))*q[0]])))
+    f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=horzcat([q[1],(p[0]-2*p[1]*cos(2*p[2]))*q[0]])))
     f.init()
     
     integrator = CVodesIntegrator(f)
@@ -1086,7 +1086,7 @@ class Integrationtests(casadiTestCase):
     p=ssym("p",1,1)
     # y
     # y'
-    f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=vertcat([q[1],p[0]+q[1]**2 ])))
+    f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=horzcat([q[1],p[0]+q[1]**2 ])))
     f.init()
     
     integrator = CVodesIntegrator(f)

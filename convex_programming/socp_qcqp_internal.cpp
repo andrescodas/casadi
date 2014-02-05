@@ -158,7 +158,7 @@ void SOCPQCQPInternal::init(){
 
   // Create an socpsolver instance
   SOCPSolverCreator socpsolver_creator = getOption("socp_solver");
-  socpsolver_ = socpsolver_creator(socpStruct("g",vertcat(socp_g),"a",horzcat(input(QCQP_SOLVER_A).sparsity(),sp_sparse(nc_,1))));
+  socpsolver_ = socpsolver_creator(socpStruct("g",horzcat(socp_g),"a",vertcat(input(QCQP_SOLVER_A).sparsity(),sp_sparse(nc_,1))));
 
   //socpsolver_.setQCQPOptions();
   if(hasSetOption("socp_solver_options")){

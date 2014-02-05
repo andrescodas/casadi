@@ -58,7 +58,7 @@ u_ub =  inf * NP.ones(ni+1)
 u_guess =  0.0 * NP.ones(ni+1)
 
 # All variables
-v = vertcat([t,x,u])
+v = horzcat([t,x,u])
 v_lb = NP.concatenate([t_lb,x_lb,u_lb])
 v_ub = NP.concatenate([t_ub,x_ub,u_ub])
 v_guess = NP.concatenate([t_guess,x_guess,u_guess])
@@ -87,7 +87,7 @@ for i in range(ni):
   g.append(t[i+1] - t[i] - 0.5*h*u[i+1] - 0.5*h*u[i])
   g_lb.append(0)
   g_ub.append(0)
-g = vertcat(g)
+g = horzcat(g)
 g_lb = NP.array(g_lb)
 g_ub = NP.array(g_ub)
 

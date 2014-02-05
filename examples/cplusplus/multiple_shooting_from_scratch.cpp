@@ -55,7 +55,7 @@ int main(){
   // Declare variables
   SXMatrix u = ssym("u"); // control
   SXMatrix r = ssym("r"), s = ssym("s"); // states
-  SXMatrix x = vertcat(r,s);
+  SXMatrix x = horzcat(r,s);
 
   // Number of differential states
   int nx = x.size1();
@@ -84,7 +84,7 @@ int main(){
   int ns = 50;
 
   // ODE right hand side and quadrature
-  SXMatrix ode = vertcat((1 - s*s)*r - s + u, r);
+  SXMatrix ode = horzcat((1 - s*s)*r - s + u, r);
   SXMatrix quad = r*r + s*s + u*u;
   SXFunction rhs(daeIn("x",x,"p",u),daeOut("ode",ode,"quad",quad));
 
@@ -163,7 +163,7 @@ int main(){
   }
   
   // NLP 
-  MXFunction nlp(nlpIn("x",V),nlpOut("f",J,"g",vertcat(g)));
+  MXFunction nlp(nlpIn("x",V),nlpOut("f",J,"g",horzcat(g)));
   
   // Create an NLP solver instance
   IpoptSolver nlp_solver(nlp);

@@ -309,7 +309,7 @@ class SXtests(casadiTestCase):
     fun=lambda x,y: [x+y,x*y,x**2+y**3]
     x=SX("x")
     y=SX("y")
-    f=SXFunction([vertcat([x,y])],[vertcat(fun(x,y))])
+    f=SXFunction([horzcat([x,y])],[horzcat(fun(x,y))])
     f.init()
     L=[2,3]
     f.setInput(L)
@@ -339,7 +339,7 @@ class SXtests(casadiTestCase):
       self.assertEqual(str(f),'[((3-sin(sq(x)))-y), (sqrt(y)*x)]','SX representation is wrong')
     else:
       self.assertEqual(str(f),'[((3-sin((x*x)))-y), (sqrt(y)*x)]','SX representation is wrong'+str(f))
-    fcn = SXFunction([vertcat([x,y])],[vertcat(f)])
+    fcn = SXFunction([horzcat([x,y])],[horzcat(f)])
 
     # Set some options
     fcn.setOption("name","f")
@@ -401,7 +401,7 @@ class SXtests(casadiTestCase):
     x = SX("x")
     y = SX("y")
     
-    f = SXFunction([vertcat([x,y])],[vertcat([logic_and(x,y),logic_or(x,y),logic_not(x)])])
+    f = SXFunction([horzcat([x,y])],[horzcat([logic_and(x,y),logic_or(x,y),logic_not(x)])])
     f.init()
     
     
@@ -419,7 +419,7 @@ class SXtests(casadiTestCase):
     x = SX("x")
     y = SX("y")
     
-    f = SXFunction([vertcat([x,y])],[vertcat([x<y,x<=y,x>=y,x==y,x!=y])])
+    f = SXFunction([horzcat([x,y])],[horzcat([x<y,x<=y,x>=y,x==y,x!=y])])
     f.init()
     
     
@@ -476,9 +476,9 @@ class SXtests(casadiTestCase):
     self.message("vector(SXmatrix) typemaps constructors")
     y=SX("y")
     x=ssym("x",3,1)
-    vertcat([x,x])
-    vertcat([y,y])
-    vertcat([x,[]])
+    horzcat([x,x])
+    horzcat([y,y])
+    horzcat([x,[]])
     
   def test_eval(self):
     self.message("SXFunction eval")
@@ -651,32 +651,32 @@ class SXtests(casadiTestCase):
     y_=0.75
     
     def test(e,r):
-      f = SXFunction([vertcat([x,y]),vertcat([a,b])],[e])
+      f = SXFunction([horzcat([x,y]),horzcat([a,b])],[e])
       f.init()
       f.setInput([x_,y_],0)
       f.setInput([a_,b_],1)
       f.evaluate()
       self.assertAlmostEqual(f.getOutput()[0],r,10)
     
-    test(mtaylor(sin(x+y),vertcat([x,y]),vertcat([a,b]),0),sin(a_+b_))
-    test(mtaylor(sin(x+y),vertcat([x,y]),vertcat([a,b]),1),sin(a_+b_)+(cos(b_+a_)*(x_-a_)+cos(b_+a_)*(y_-b_)))
+    test(mtaylor(sin(x+y),horzcat([x,y]),horzcat([a,b]),0),sin(a_+b_))
+    test(mtaylor(sin(x+y),horzcat([x,y]),horzcat([a,b]),1),sin(a_+b_)+(cos(b_+a_)*(x_-a_)+cos(b_+a_)*(y_-b_)))
     
     def sol(x,y,a,b):
       return sin(b+a)+(cos(b+a)*(x-a)+cos(b+a)*(y-b))-(sin(b+a)*(x-a)**2+2*sin(b+a)*(y-b)*(x-a)+sin(b+a)*(y-b)**2)/2
       
-    test(mtaylor(sin(x+y),vertcat([x,y]),vertcat([a,b]),2),sol(x_,y_,a_,b_))
+    test(mtaylor(sin(x+y),horzcat([x,y]),horzcat([a,b]),2),sol(x_,y_,a_,b_))
     
     def sol(x,y,a,b):
       return sin(b+a)+(cos(b+a)*(x-a)+cos(b+a)*(y-b))-(sin(b+a)*(x-a)**2+2*sin(b+a)*(y-b)*(x-a)+sin(b+a)*(y-b)**2)/2-(cos(b+a)*(x-a)**3+3*cos(b+a)*(y-b)*(x-a)**2+3*cos(b+a)*(y-b)**2*(x-a)+cos(b+a)*(y-b)**3)/6
     
-    test(mtaylor(sin(x+y),vertcat([x,y]),vertcat([a,b]),3),sol(x_,y_,a_,b_))
+    test(mtaylor(sin(x+y),horzcat([x,y]),horzcat([a,b]),3),sol(x_,y_,a_,b_))
     
     def sol(x,y,a,b):
       return (-2*sin(b+a)*(x-a)*(y-b)-sin(b+a)*(x-a)**2)/2+cos(b+a)*(y-b)-(cos(b+a)*(x-a)**3)/6+cos(b+a)*(x-a)+sin(b+a)
       
-    test(mtaylor(sin(x+y),vertcat([x,y]),vertcat([a,b]),3,[1,2]),sol(x_,y_,a_,b_))
+    test(mtaylor(sin(x+y),horzcat([x,y]),horzcat([a,b]),3,[1,2]),sol(x_,y_,a_,b_))
     
-    test(mtaylor(sin(x+y),vertcat([x,y]),vertcat([0,0]),4,[1,2]),(-3*x_**2*y_-x_**3)/6+y_+x_)
+    test(mtaylor(sin(x+y),horzcat([x,y]),horzcat([0,0]),4,[1,2]),(-3*x_**2*y_-x_**3)/6+y_+x_)
     
   def test_issue107(self):
     self.message("Regression test for issue 107: +=")
@@ -923,9 +923,9 @@ class SXtests(casadiTestCase):
       
     self.assertTrue(isRegular(SXMatrix(DMatrix([0,1]))))
     self.assertFalse(isRegular(SXMatrix(DMatrix([0,Inf]))))
-    self.assertFalse(isRegular(vertcat([x,Inf])))
+    self.assertFalse(isRegular(horzcat([x,Inf])))
     with self.assertRaises(Exception):
-      self.assertFalse(isRegular(vertcat([x,x])))
+      self.assertFalse(isRegular(horzcat([x,x])))
       
       
   def test_getSymbols(self):
@@ -966,10 +966,10 @@ class SXtests(casadiTestCase):
     a_,b_ = f.input()
     f.evaluate()
     f.output()
-    self.checkarray(f.output(),vertcat([-b_/a_]))
+    self.checkarray(f.output(),horzcat([-b_/a_]))
 
     p = ssym("[a,b]")
-    r = poly_roots(vertcat([p,0]))
+    r = poly_roots(horzcat([p,0]))
     
     f = SXFunction([p],[r])
     f.init()
@@ -977,7 +977,7 @@ class SXtests(casadiTestCase):
     a_,b_ = f.input()
     f.evaluate()
     f.output()
-    self.checkarray(f.output(),vertcat([-b_/a_,0]))
+    self.checkarray(f.output(),horzcat([-b_/a_,0]))
     
     p = ssym("[a,b,c]")
     r = poly_roots(p)
@@ -991,7 +991,7 @@ class SXtests(casadiTestCase):
     x0 = (-b_-sqrt(d))/2/a_
     x1 = (-b_+sqrt(d))/2/a_
     f.output()
-    self.checkarray(f.output(),vertcat([x0,x1]))
+    self.checkarray(f.output(),horzcat([x0,x1]))
 
     p = ssym("[a,b,c,d]")
     r = poly_roots(p)

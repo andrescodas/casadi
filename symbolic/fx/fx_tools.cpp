@@ -215,7 +215,7 @@ Matrix<double> numSample1D(FX &fx, const Matrix<double> &grid) {
     fx.evaluate();
     ret[j] = Matrix<double>(fx.output());
   }
-  return horzcat(ret);
+  return vertcat(ret);
 }
     
 Matrix<double> numSample1DT(FX &fx, const Matrix<double> &grid) {

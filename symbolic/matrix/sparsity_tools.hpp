@@ -158,20 +158,20 @@ namespace CasADi{
   /** \brief Concatenate a list of sparsities vertically
   * Alternative terminology: vertical stack, vstack, vertical append, [a;b]
   */
-  CCSSparsity vertcat(const std::vector<CCSSparsity > &v);
+  CCSSparsity horzcat(const std::vector<CCSSparsity > &v);
 
   /** \brief Concatenate a list of sparsities horizontally
   * Alternative terminology: horizontal stack, hstack, horizontal append, [a b]
   */
-  CCSSparsity horzcat(const std::vector<CCSSparsity > &v);
+  CCSSparsity vertcat(const std::vector<CCSSparsity > &v);
 
   /** \brief   Construct a Sparsity with given blocks on the diagonal */
   CCSSparsity blkdiag(const std::vector< CCSSparsity > &v);
 
   #ifndef SWIG
-  CCSSparsity vertcat(const CCSSparsity &x, const CCSSparsity &y);
-
   CCSSparsity horzcat(const CCSSparsity &x, const CCSSparsity &y);
+
+  CCSSparsity vertcat(const CCSSparsity &x, const CCSSparsity &y);
   
   CCSSparsity blkdiag(const CCSSparsity &x, const CCSSparsity &y);
   #endif // SWIG

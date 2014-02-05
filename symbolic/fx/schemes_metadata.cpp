@@ -430,11 +430,11 @@ std::string getSchemeEntryName(InputOutputScheme scheme, int i) {
 std::string getSchemeEntryDoc(InputOutputScheme scheme, int i) {
   switch (scheme) {
     case SCHEME_DPLEInput: 
-      if(i==0) return "A matrices (vertcat when const_dim, blkdiag otherwise)";
-      if(i==1) return "V matrices (vertcat when const_dim, blkdiag otherwise)";
+      if(i==0) return "A matrices (horzcat when const_dim, blkdiag otherwise)";
+      if(i==1) return "V matrices (horzcat when const_dim, blkdiag otherwise)";
       break;
     case SCHEME_DPLEOutput: 
-      if(i==0) return "Lyapunov matrix (vertcat when const_dim, blkdiag otherwise) (cholesky of P if pos_def)";
+      if(i==0) return "Lyapunov matrix (horzcat when const_dim, blkdiag otherwise) (cholesky of P if pos_def)";
       break;
     case SCHEME_ControlledDAEInput: 
       if(i==0) return "Global physical time. (1-by-1)";

@@ -227,7 +227,7 @@ def T2WJ(T,p):
      #temp.append(c.mul(c.jacobian(R[:,k],p).T,R[:,i]).T)
      temp.append(c.mul(RT[i,:],c.jacobian(R[:,k],p)))
 
-  return c.vertcat(temp)
+  return c.horzcat(temp)
   
 class QuadcopterAnalysis:
   def __init__(self):
@@ -393,7 +393,7 @@ class QuadcopterModel:
     # Agular impulse H_1011
     H = mul(p["I"],w)    # Due to platform
     for i in range(NR):
-      H+= mul(p["rotors_I",i], w + vertcat([0,0,p["rotors_spin",i]*r[i]])) # Due to rotor i
+      H+= mul(p["rotors_I",i], w + horzcat([0,0,p["rotors_spin",i]*r[i]])) # Due to rotor i
 
     dH = mul(jacobian(H,w),dw) + mul(jacobian(H,q),dq) + mul(jacobian(H,r),dr) + casadi.cross(w,H)
 
@@ -406,13 +406,13 @@ class QuadcopterModel:
 
     # Make a vector of f ?
     #if quatnorm:
-    #    f = vertcat(f+[sumAll(q**2)-1])
+    #    f = horzcat(f+[sumAll(q**2)-1])
     #else:
-    #    f = vertcat(f)  
+    #    f = horzcat(f)  
 
     # ------------ Force model ------------
 
-    Fg = mul(R_01,vertcat([0,0,-g*m]))
+    Fg = mul(R_01,horzcat([0,0,-g*m]))
 
     F_total = Fg + sum(rotors_Faer)    # Total force acting on the platform
     C_total = SXMatrix([0,0,0])                    # Total torque acting on the platform
@@ -578,7 +578,7 @@ T,Tw = optvar[["T","Tw"]]
 print "number of variables", optvar.shape
 
 # A vertical stack of d-by-1 Langrange functions that together form a basis on the collocation interval tau = [0..1]
-Le = vertcat([numpy.prod([(tau - tau_root[r])/(tau_root[j]-tau_root[r]) for r in range(d) if not(r==j)]) for j in range(d)])
+Le = horzcat([numpy.prod([(tau - tau_root[r])/(tau_root[j]-tau_root[r]) for r in range(d) if not(r==j)]) for j in range(d)])
 L = SXFunction([tau],[Le])
 L.init()
 dL = L.jacobian(0,0)
@@ -599,14 +599,14 @@ def linear_combination(v,w):
 ### LPDE -- start
 
 # Disturbances have a standard deviation of 5% with respect to their nominal value
-Sigma = c.diag(vertcat([scaling_dist,scaling_states])**2)*analysis.noiserel
+Sigma = c.diag(horzcat([scaling_dist,scaling_states])**2)*analysis.noiserel
 
 K = ssym("K",controls.size,states.size)
 
 u = ssym("u",nu)
 x = ssym("x",ns)
 zj = [ ssym("z",ns) for i in range(d)]
-z = vertcat(zj)
+z = horzcat(zj)
 
 w = ssym("w",model.w.size)
 G = zj[0]-x
@@ -629,7 +629,7 @@ for j in range(1,d):
   G.append(dyn)
   
 
-F = mul(horzcat(zj),Lend)
+F = mul(vertcat(zj),Lend)
 
 Gf = SXFunction(customIO(x=x,z=z,w=w,p=model.p,K=K,delta=delta),[G,jacobian(G,x),jacobian(G,z),jacobian(G,model.w)])
 Gf.init()
@@ -655,7 +655,7 @@ par_ = par()
 par_["Xref"] = waypoints
 
 # Physical times at control intervals
-ts = vertcat([c.linspace(0,Tw,Ns+1),c.linspace(Tw,T,N-Ns+1)[1:]])
+ts = horzcat([c.linspace(0,Tw,Ns+1),c.linspace(Tw,T,N-Ns+1)[1:]])
 
 # Local speed of time
 dts = ts[1:]-ts[:-1]
@@ -696,7 +696,7 @@ F, Fz = Ff.call([z])
 [M] = linsys.call([Gz,Fz])
 
 Phix = mul(M,Gx)
-Phiw = mul(M,horzcat([Gw,Gx]))
+Phiw = mul(M,vertcat([Gw,Gx]))
 
 Pn = mul([Phix,P,Phix.T]) + mul([Phiw,SigmaMX,Phiw.T])
 
@@ -707,20 +707,20 @@ Pnf.init()
   
 for k in range(N):
   if k+1 < N:   #  Constraint coupling state at end of k and start of k+1
-    coupling.append(optvar["X",k+1,0]-mul(optvar["X",k,horzcat],Lend))
+    coupling.append(optvar["X",k+1,0]-mul(optvar["X",k,vertcat],Lend))
     
-    #G,Gx,Gz,Gw = Gf.call(customIO(x=optvar["X",k,0],z=optvar["X",k,vertcat],w=W,p=par["model"],K=optvar["K",k],delta=ts[k+1]-ts[k]))
+    #G,Gx,Gz,Gw = Gf.call(customIO(x=optvar["X",k,0],z=optvar["X",k,horzcat],w=W,p=par["model"],K=optvar["K",k],delta=ts[k+1]-ts[k]))
     
-    #F, Fz = Ff.call([optvar["X",k,vertcat]])
+    #F, Fz = Ff.call([optvar["X",k,horzcat]])
     
     #[M] = linsys.call([Gz,Fz])
     
     #Phix = mul(M,Gx)
-    #Phiw = mul(M,horzcat([Gw,Gx]))
+    #Phiw = mul(M,vertcat([Gw,Gx]))
     
     #Pn = mul([Phix,optvar["P",k],Phix.T]) + mul([Phiw,SigmaMX,Phiw.T])
     
-    [Pn] = Pnf.call(customIO(x=optvar["X",k,0],z=optvar["X",k,vertcat],w=W,p=par["model"],K=optvar["K",k],delta=ts[k+1]-ts[k],P=optvar["P",k])) 
+    [Pn] = Pnf.call(customIO(x=optvar["X",k,0],z=optvar["X",k,horzcat],w=W,p=par["model"],K=optvar["K",k],delta=ts[k+1]-ts[k],P=optvar["P",k])) 
     
     dynamics_lpde.append(optvar["P",k+1]-Pn)
 
@@ -744,7 +744,7 @@ for k in range(N):
 
 tsf  = MXFunction([optvar],[ts])
 tsf.init()
-tscf = MXFunction([optvar],[vertcat(tsc)])
+tscf = MXFunction([optvar],[horzcat(tsc)])
 tscf.init()
 
 # Memory consumption blows up when building up g
@@ -778,14 +778,14 @@ g = struct_MX([
 f = T
 
 # Favor control actions that don't deviate to much from a common mean
-f += 0.01 * sumAll( (optvar["U",horzcat].T-optvar["umean"])**2 )  # control regularisation
+f += 0.01 * sumAll( (optvar["U",vertcat].T-optvar["umean"])**2 )  # control regularisation
 
 # Favor positions close to unit quaternion
 q0 = DMatrix([0,0,0,1])
 f += 0.01 * sum( [ sumAll(q - q0)**2 for q in optvar["X",:,0,"q"] ] )
 
 # Favor small angular velocities
-f += 0.01 * sumAll( (optvar["X",horzcat,:,0,"w"].T)**2 )
+f += 0.01 * sumAll( (optvar["X",vertcat,:,0,"w"].T)**2 )
 
 nl = MXFunction(nlpIn(x=optvar,p=par),nlpOut(f=f,g=g))
 nl.setOption("verbose",True)

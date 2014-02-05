@@ -507,7 +507,7 @@ class typemaptests(casadiTestCase):
     x=SX("x") 
     dx=SX("dx")
 
-    f=SXFunction(daeIn(t=t, x=vertcat([x,dx])),[vertcat([dx,-x])])
+    f=SXFunction(daeIn(t=t, x=horzcat([x,dx])),[horzcat([dx,-x])])
     f.init()
 
     integrator = CVodesIntegrator(f)
@@ -548,13 +548,13 @@ class typemaptests(casadiTestCase):
     self.assertTrue(isinstance(N+C,SXMatrix))
     self.assertTrue(isinstance(C+N,SXMatrix))
     
-    f=SXFunction([vertcat([x,y])],[C+N])
+    f=SXFunction([horzcat([x,y])],[C+N])
     f.init()
     f.setInput([7,13])
     f.evaluate()
     self.checkarray(f.getOutput(),matrix([14,26]).T,"addition")
     
-    f=SXFunction([vertcat([x,y])],[N+C])
+    f=SXFunction([horzcat([x,y])],[N+C])
     f.init()
     f.setInput([7,13])
     f.evaluate()
@@ -574,13 +574,13 @@ class typemaptests(casadiTestCase):
     self.assertTrue(isinstance(D+C,SXMatrix))
   
       
-    f=SXFunction([vertcat([x,y])],[C+D])
+    f=SXFunction([horzcat([x,y])],[C+D])
     f.init()
     f.setInput([1,4])
     f.evaluate()
     self.checkarray(f.getOutput(),matrix([8,17]).T,"addition")
     
-    f=SXFunction([vertcat([x,y])],[D+C])
+    f=SXFunction([horzcat([x,y])],[D+C])
     f.init()
     f.setInput([1,4])
     f.evaluate()
@@ -677,18 +677,18 @@ class typemaptests(casadiTestCase):
     B[2:7:3,:7:4] = w
     self.checkarray(A,B,"get")
     
-  def test_vertcatprecedence(self):
+  def test_horzcatprecedence(self):
     self.message("Argument precedence DMatrix")
     a = DMatrix([1,2])
-    self.assertTrue(isinstance(vertcat([a,a]),DMatrix))
+    self.assertTrue(isinstance(horzcat([a,a]),DMatrix))
     
     a = DMatrix([1,2])
-    self.assertTrue(isinstance(vertcat([a,[1,2,3]]),DMatrix))
+    self.assertTrue(isinstance(horzcat([a,[1,2,3]]),DMatrix))
     
     
     a = MX([1,2])
-    print vertcat([a,[1,2,3]])
-    self.assertTrue(isinstance(vertcat([a,[1,2,3]]),MX))
+    print horzcat([a,[1,2,3]])
+    self.assertTrue(isinstance(horzcat([a,[1,2,3]]),MX))
     
   def test_issue190(self):
     self.message("regression test issue #190")
@@ -700,7 +700,7 @@ class typemaptests(casadiTestCase):
     MX("x") * numpy.array(1.0)
     
   def test_array_cat(self):
-    horzcat((ssym("x",4,3),ones((4,3))))
+    vertcat((ssym("x",4,3),ones((4,3))))
     
     
   def test_issue(self):

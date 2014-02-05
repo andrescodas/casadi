@@ -31,8 +31,8 @@ using namespace std;
 
 namespace CasADi{
 
-  MX vertcat(const vector<MX>& comp){
-    return MXNode::getVertcat(comp);
+  MX horzcat(const vector<MX>& comp){
+    return MXNode::getHorzcat(comp);
   }
 
   std::vector<MX> vertsplit(const MX& x, const std::vector<int>& offset){
@@ -57,11 +57,11 @@ namespace CasADi{
     return vertsplit(x,range(0,x.size1(),incr));
   }
 
-  MX horzcat(const vector<MX>& comp){
+  MX vertcat(const vector<MX>& comp){
     vector<MX> v(comp.size());
     for(int i=0; i<v.size(); ++i)
       v[i] = trans(comp[i]);
-    return trans(vertcat(v));
+    return trans(horzcat(v));
   }
   
   std::vector<MX> horzsplit(const MX& x, const std::vector<int>& offset){
@@ -91,13 +91,6 @@ namespace CasADi{
     return blocksplit(x,range(0,x.size1(),vert_incr),range(0,x.size2(),horz_incr));
   }
 
-  MX vertcat(const MX& a, const MX& b){
-    vector<MX> ab;
-    ab.push_back(a);
-    ab.push_back(b);
-    return vertcat(ab);
-  }
-
   MX horzcat(const MX& a, const MX& b){
     vector<MX> ab;
     ab.push_back(a);
@@ -105,24 +98,31 @@ namespace CasADi{
     return horzcat(ab);
   }
 
+  MX vertcat(const MX& a, const MX& b){
+    vector<MX> ab;
+    ab.push_back(a);
+    ab.push_back(b);
+    return vertcat(ab);
+  }
+
   MX veccat(const vector<MX>& comp) {
         MX (&f)(const MX&) = vec;
-    return vertcat(applymap(f,comp));
+    return horzcat(applymap(f,comp));
   }
 
   MX vecNZcat(const vector<MX>& comp) {
     MX (&f)(const MX&) = vecNZ;
-    return vertcat(applymap(vecNZ,comp));
+    return horzcat(applymap(vecNZ,comp));
   }
   
   MX flattencat(const vector<MX>& comp) {
         MX (&f)(const MX&) = flatten;
-    return vertcat(applymap(f,comp));
+    return horzcat(applymap(f,comp));
   }
 
   MX flattenNZcat(const vector<MX>& comp) {
     MX (&f)(const MX&) = flattenNZ;
-    return vertcat(applymap(flattenNZ,comp));
+    return horzcat(applymap(flattenNZ,comp));
   }
 
   MX norm_2(const MX &x){
@@ -302,8 +302,8 @@ namespace CasADi{
   bool isSymbolicSparse(const MX& ex){
     if(ex.isNull()){
       return false;
-    } else if(ex.getOp()==OP_VERTCAT){
-      // Check if the expression is a vertcat where all components are symbolic primitives
+    } else if(ex.getOp()==OP_HORZCAT){
+      // Check if the expression is a horzcat where all components are symbolic primitives
       for(int d=0; d<ex->ndep(); ++d){
         if(!ex->dep(d).isSymbolic()){
           return false;
@@ -330,10 +330,10 @@ namespace CasADi{
       return A;
   
     // First concatenate horizontally
-    MX col = horzcat(std::vector<MX >(m, A));
+    MX col = vertcat(std::vector<MX >(m, A));
   
     // Then vertically
-    return vertcat(std::vector<MX >(n, col));
+    return horzcat(std::vector<MX >(n, col));
   }
 
   /**
@@ -942,12 +942,12 @@ namespace CasADi{
   MX blockcat(const std::vector< std::vector<MX > > &v) {
     std::vector< MX > ret;
     for(int i=0; i<v.size(); ++i)
-      ret.push_back(horzcat(v[i]));
-    return vertcat(ret);
+      ret.push_back(vertcat(v[i]));
+    return horzcat(ret);
   }
   
   MX blockcat(const MX &A,const MX &B,const MX &C,const MX &D) {
-    return vertcat(horzcat(A,B),horzcat(C,D));
+    return horzcat(vertcat(A,B),vertcat(C,D));
   }
 
   MX det(const MX& A){

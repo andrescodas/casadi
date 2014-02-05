@@ -181,7 +181,7 @@ def minimize(f,gl=[],verbose=False):
   f = MXFunction([P],[A_le,b_le,A_eq,b_eq,A_nsd.T,b_nsd,A_f.T,b_f])
   f.init()
   
-  A = vertcat([A_le,A_eq])
+  A = horzcat([A_le,A_eq])
 
   if A.shape[1]==0:
     A = DMatrix.zeros(0,X.size)
@@ -196,7 +196,7 @@ def minimize(f,gl=[],verbose=False):
     makeSparse(patt)
     Fi.append(patt)
 
-  F = vertcat(Fi)
+  F = horzcat(Fi)
   
   a = DMatrix(f.output(5).sparsity(),1)
   makeDense(a)
@@ -229,10 +229,10 @@ def minimize(f,gl=[],verbose=False):
   
 
   # Set constraint bounds
-  solver.setInput(vertcat([-DMatrix.inf(f.output(1).shape),-f.output(3)]),"lba")
-  solver.setInput(vertcat([-f.output(1),-f.output(3)]),"uba")
+  solver.setInput(horzcat([-DMatrix.inf(f.output(1).shape),-f.output(3)]),"lba")
+  solver.setInput(horzcat([-f.output(1),-f.output(3)]),"uba")
   
-  solver.setInput(vertcat([f.output(0),f.output(2)]),"a")
+  solver.setInput(horzcat([f.output(0),f.output(2)]),"a")
     
   solver.input("f").set(f.output(4).data())
   solver.input("g").set((-f.output(5)).data())

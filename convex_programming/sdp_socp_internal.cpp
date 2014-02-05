@@ -141,7 +141,7 @@ void SDPSOCPInternal::init(){
   }
   
   std::vector<MX> out;
-  out.push_back(-vertcat(Fi));
+  out.push_back(-horzcat(Fi));
   out.push_back(blkdiag(G_d));
   
   std::vector<MX> syms;

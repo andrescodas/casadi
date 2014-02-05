@@ -113,15 +113,15 @@ int main(){
   DMatrix u_min  = -0.75*DMatrix::ones(nk);
   DMatrix u_max  =  1.00*DMatrix::ones(nk);
   DMatrix u_init =       DMatrix::zeros(nk);
-  DMatrix xv_min = vertcat(u_min,v_min);
-  DMatrix xv_max = vertcat(u_max,v_max);
-  DMatrix xv_init = vertcat(u_init,v_init);
-  DMatrix gv_min = vertcat(DMatrix::zeros(v.size()),g_min);
-  DMatrix gv_max = vertcat(DMatrix::zeros(v.size()),g_max);
+  DMatrix xv_min = horzcat(u_min,v_min);
+  DMatrix xv_max = horzcat(u_max,v_max);
+  DMatrix xv_init = horzcat(u_init,v_init);
+  DMatrix gv_min = horzcat(DMatrix::zeros(v.size()),g_min);
+  DMatrix gv_max = horzcat(DMatrix::zeros(v.size()),g_max);
   
   // Formulate the full-space NLP
-  SXFunction ffcn(vertcat(u,v),f);
-  SXFunction gfcn(vertcat(u,v),vertcat(v_def-v,g));
+  SXFunction ffcn(horzcat(u,v),f);
+  SXFunction gfcn(horzcat(u,v),horzcat(v_def-v,g));
 
   Dictionary qp_solver_options;
   qp_solver_options["printLevel"] = "none";

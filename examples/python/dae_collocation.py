@@ -113,7 +113,7 @@ dy = ssym("dy")
 dw = ssym("dw")
 
       
-res = vertcat([xddot[0] - dx,\
+res = horzcat([xddot[0] - dx,\
        xddot[1] - dy,\
        xddot[2] - dw,\
        m*xddot[3] + (x-w)*xa, \
@@ -373,7 +373,7 @@ for k in range(nk):
 Obj += lagrangeTerm        
 
 # NLP
-nlp = MXFunction(nlpIn(x=V),nlpOut(f=Obj,g=vertcat(g)))
+nlp = MXFunction(nlpIn(x=V),nlpOut(f=Obj,g=horzcat(g)))
 
 ## ----
 ## SOLVE THE NLP

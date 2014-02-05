@@ -171,7 +171,7 @@ namespace CasADi{
     F_in[DAE_Z] = v;
     vector<MX> F_out(DAE_NUM_OUT);
     F_out[DAE_ODE] = xf;
-    F_out[DAE_ALG] = vertcat(eq);
+    F_out[DAE_ALG] = horzcat(eq);
     F_out[DAE_QUAD] = qf;
     F_ = MXFunction(F_in,F_out);
     F_.init();
@@ -254,7 +254,7 @@ namespace CasADi{
       G_in[RDAE_RZ] = rv;
       vector<MX> G_out(RDAE_NUM_OUT);
       G_out[RDAE_ODE] = rxf;
-      G_out[RDAE_ALG] = vertcat(eq);
+      G_out[RDAE_ALG] = horzcat(eq);
       G_out[RDAE_QUAD] = -rqf; // why minus?
       G_ = MXFunction(G_in,G_out);
       G_.init();

@@ -92,7 +92,7 @@ class Simulatortests(casadiTestCase):
     sim = Simulator(integrator,out,tc)
     sim.init()
     
-    solution = SXFunction(integratorIn(x0=q, p=p),[vertcat([q*exp(t**3/(3*p)) for t in tc])])
+    solution = SXFunction(integratorIn(x0=q, p=p),[horzcat([q*exp(t**3/(3*p)) for t in tc])])
     solution.init()
     
     for f in [sim,solution]:
@@ -462,7 +462,7 @@ class Simulatortests(casadiTestCase):
     sim.setOption('integrator_options', {"reltol":1e-15,"abstol":1e-15,"fsens_err_con": True})
     sim.init()
     sim.setInput([2.3],"x0")
-    sim.setInput(vertcat([U,0]),"u")
+    sim.setInput(horzcat([U,0]),"u")
     sim.evaluate()
 
     tf = DMatrix(sim.getMinorT())

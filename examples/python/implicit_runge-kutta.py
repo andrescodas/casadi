@@ -41,7 +41,7 @@ x  = ssym("x",nx)  # state
 p  = ssym("u",np)  # control
 
 # ODE right hand side function
-ode = vertcat([(1 - x[1]*x[1])*x[0] - x[1] + p, \
+ode = horzcat([(1 - x[1]*x[1])*x[0] - x[1] + p, \
                x[0], \
                x[0]*x[0] + x[1]*x[1] + p*p])
 f = SXFunction(daeIn(x=x,p=p),daeOut(ode=ode))
@@ -112,7 +112,7 @@ for j in range(1,d+1):
   V_eq.append(h*f_j - xp_j)
 
 # Concatenate constraints
-V_eq = vertcat(V_eq)
+V_eq = horzcat(V_eq)
 
 # Root-finding function, implicitly defines V as a function of X0 and P
 vfcn = MXFunction([V,X0,P],[V_eq])

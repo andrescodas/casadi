@@ -108,7 +108,7 @@ void SDPSDQPInternal::init(){
   std::vector<MX> fi(n_+1);
   MX znp = DMatrix(n_+1,n_+1);
   for (int k=0;k<n_;++k) {
-    MX gk = vertcat(g_socp(ALL,k),DMatrix(1,1));
+    MX gk = horzcat(g_socp(ALL,k),DMatrix(1,1));
     MX fk = -blockcat(znp,gk,trans(gk),DMatrix(1,1));
     // TODO: replace with ALL
     fi.push_back(blkdiag(f_sdqp(range(f_sdqp.size2()*k,f_sdqp.size2()*(k+1)),range(f_sdqp.size2())),fk));
@@ -119,7 +119,7 @@ void SDPSDQPInternal::init(){
   
   fi.push_back(blkdiag(DMatrix(f_sdqp.size2(),f_sdqp.size2()),-fin));
   
-  MX h0 = vertcat(h_socp,DMatrix(1,1));
+  MX h0 = horzcat(h_socp,DMatrix(1,1));
   MX g = blockcat(f_socp*DMatrix::eye(n_+1),h0,trans(h0),f_socp);
   
   g = blkdiag(g_sdqp,g);
@@ -127,12 +127,12 @@ void SDPSDQPInternal::init(){
   IOScheme mappingIn("g_socp","h_socp","f_sdqp","g_sdqp");
   IOScheme mappingOut("f","g");
   
-  mapping_ = MXFunction(mappingIn("g_socp",g_socp,"h_socp",h_socp,"f_sdqp",f_sdqp,"g_sdqp",g_sdqp),mappingOut("f",vertcat(fi),"g",g));
+  mapping_ = MXFunction(mappingIn("g_socp",g_socp,"h_socp",h_socp,"f_sdqp",f_sdqp,"g_sdqp",g_sdqp),mappingOut("f",horzcat(fi),"g",g));
   mapping_.init();
 
   // Create an sdpsolver instance
   SDPSolverCreator sdpsolver_creator = getOption("sdp_solver");
-  sdpsolver_ = sdpsolver_creator(sdpStruct("g",mapping_.output("g").sparsity(),"f",mapping_.output("f").sparsity(),"a",horzcat(input(SDQP_SOLVER_A).sparsity(),sp_sparse(nc_,1))));
+  sdpsolver_ = sdpsolver_creator(sdpStruct("g",mapping_.output("g").sparsity(),"f",mapping_.output("f").sparsity(),"a",vertcat(input(SDQP_SOLVER_A).sparsity(),sp_sparse(nc_,1))));
 
   if(hasSetOption("sdp_solver_options")){
     sdpsolver_.setOption(getOption("sdp_solver_options"));

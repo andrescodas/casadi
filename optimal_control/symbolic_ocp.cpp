@@ -1160,7 +1160,7 @@ void SymbolicOCP::eliminateAlgebraic(){
 
   // Add to the beginning of the dependent variables (since the other dependent variable might depend on them)
   y.insert(y.begin(),z_exp.begin(),z_exp.end());
-  dep = vertcat(SXMatrix(f_exp),dep);
+  dep = horzcat(SXMatrix(f_exp),dep);
   
   // Save new algebraic equations
   z = z_imp;

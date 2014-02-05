@@ -175,8 +175,8 @@ def dot(self,*args):
 %rename(__paren__) indexed;
 %rename(__paren_asgn__) indexed_one_based_assignment;
 %rename(__paren_asgn__) indexed_assignment;
-%rename(__vertcat__) vertcat;
 %rename(__horzcat__) horzcat;
+%rename(__vertcat__) vertcat;
 #endif
 #ifdef SWIGPYTHON
 %rename(__Cgetitem__) indexed_zero_based;

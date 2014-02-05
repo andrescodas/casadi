@@ -31,7 +31,7 @@ from numpy import *
 x=SX("x")
 y=SX("y")
 
-nlp=SXFunction(nlpIn(x=vertcat([x,y])),nlpOut(f=(1-x)**2+100*(y-x**2)**2,g=x+y))
+nlp=SXFunction(nlpIn(x=horzcat([x,y])),nlpOut(f=(1-x)**2+100*(y-x**2)**2,g=x+y))
     
 #! Simple callback
 #! ===============

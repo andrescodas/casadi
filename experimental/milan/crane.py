@@ -60,11 +60,11 @@ duL = ssym("duL")       # winch control rate
 w = ssym("w",6)         # disturbances
 
 # State vector
-x = vertcat((xT,vT,xL,vL,theta,omega,uT,uL))
+x = horzcat((xT,vT,xL,vL,theta,omega,uT,uL))
 print "x = ", x
 
 # Controls
-u = vertcat((duT,duL,w))
+u = horzcat((duT,duL,w))
 print "u = ", u
 
 # Set up the MPC - Optimal control problem
@@ -107,7 +107,7 @@ dot_theta = omega
 dot_omega = 1.0 / xL * (-g * sin( theta ) - aT * cos( theta ) - 2 * vL * omega - c * omega / ( m * xL ) )
 dot_uT = duT
 dot_uL = duL
-xdot = vertcat((dot_xT,dot_vT,dot_xL,dot_vL,dot_theta,dot_omega,dot_uT,dot_uL))
+xdot = horzcat((dot_xT,dot_vT,dot_xL,dot_vL,dot_theta,dot_omega,dot_uT,dot_uL))
 print "xdot = ", xdot
 
 # ODE right hand side function

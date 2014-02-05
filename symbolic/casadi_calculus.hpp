@@ -87,7 +87,7 @@ namespace CasADi{
     OP_INNER_PROD,
 
     // Vertical concatenation
-    OP_VERTCAT,
+    OP_HORZCAT,
 
     // Vertical split
     OP_VERTSPLIT,

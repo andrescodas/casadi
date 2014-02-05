@@ -31,12 +31,12 @@ z = z_+x
 print type(z), z
 
 #! We need SXFuncion to manipulate the SX graph
-f = SXFunction([vertcat([x,y])],[z])
+f = SXFunction([horzcat([x,y])],[z])
 f.init()
 
 #! We can substitute a leaf in the graph
 w = SX("w")
-q = f.eval([vertcat([w,y])])[0]
+q = f.eval([horzcat([w,y])])[0]
 #! f.eval() returns a tuple with all outputs, we selected the first
 print type(q), q
 #! Note how q is now an SXMatrix

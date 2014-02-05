@@ -84,27 +84,27 @@ class Matrixtests(casadiTestCase):
 
     NP.dot(A.T,A)
     
-  def test_vertcat(self):
-    self.message("vertcat")
+  def test_horzcat(self):
+    self.message("horzcat")
     A = DMatrix(2,3,1)
     B = DMatrix(4,3)
-    C = vertcat([A,B])
+    C = horzcat([A,B])
     
-    self.checkarray(C.shape,(6,3),"vertcat shape")
-    self.assertEqual(C.size(),A.size(),"vertcat size")
+    self.checkarray(C.shape,(6,3),"horzcat shape")
+    self.assertEqual(C.size(),A.size(),"horzcat size")
     
-    self.assertRaises(RuntimeError,lambda : horzcat([A,B]))
+    self.assertRaises(RuntimeError,lambda : vertcat([A,B]))
     
-  def test_horzcat(self):
+  def test_vertcat(self):
     self.message("horcat")
     A = DMatrix(3,2,1)
     B = DMatrix(3,4)
-    C = horzcat([A,B])
+    C = vertcat([A,B])
     
-    self.checkarray(C.shape,(3,6),"horzcat shape")
-    self.assertEqual(C.size(),A.size(),"vertcat size")
+    self.checkarray(C.shape,(3,6),"vertcat shape")
+    self.assertEqual(C.size(),A.size(),"horzcat size")
     
-    self.assertRaises(RuntimeError,lambda : vertcat([A,B]))
+    self.assertRaises(RuntimeError,lambda : horzcat([A,B]))
     
     
   def test_veccat(self):
@@ -552,7 +552,7 @@ class Matrixtests(casadiTestCase):
   def test_Imatrix_operations(self):
     self.message("IMatrix operations")
     a = IMatrix(2,2,1)
-    b = horzcat([a,a])
+    b = vertcat([a,a])
     self.assertTrue(isinstance(b,IMatrix))
     
   def test_mul(self):
@@ -863,15 +863,15 @@ class Matrixtests(casadiTestCase):
     self.assertEqual(a.size1(),5)
     self.assertEqual(a.size2(),0)
     
-  def test_vertcat_empty(self):
+  def test_horzcat_empty(self):
     a = DMatrix(0,2)
-    v = vertcat([a,a])
+    v = horzcat([a,a])
     
     self.assertEqual(v.size1(),0)
     self.assertEqual(v.size2(),2)
 
     a = DMatrix(2,0)
-    v = vertcat([a,a])
+    v = horzcat([a,a])
     
     self.assertEqual(v.size1(),4)
     self.assertEqual(v.size2(),0)
@@ -974,7 +974,7 @@ class Matrixtests(casadiTestCase):
       random.seed(1)
       a = DMatrix(sA,[random.random() for i in range(sA.size())])
       A = ssym("a",a.sparsity())
-      for sB in [ sp_dense(a.size1(),1), vertcat([sp_dense(1,1),sp_sparse(a.size1()-1,1)]),sp_tril(a.size1()),sp_tril(a.size1()).T]:
+      for sB in [ sp_dense(a.size1(),1), horzcat([sp_dense(1,1),sp_sparse(a.size1()-1,1)]),sp_tril(a.size1()),sp_tril(a.size1()).T]:
 
         b = DMatrix(sB,[random.random() for i in range(sB.size())])
         B = ssym("B",b.sparsity())

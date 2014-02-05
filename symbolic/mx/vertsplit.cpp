@@ -163,7 +163,7 @@ namespace CasADi{
             v.push_back(MX::sparse(last_col-first_col,dep().size2()));
           }
         }
-        *adjSens[d][0] += vertcat(v);
+        *adjSens[d][0] += horzcat(v);
       }
     }
   }

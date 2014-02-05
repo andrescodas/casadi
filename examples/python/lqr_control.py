@@ -61,7 +61,7 @@ for i in range(ns):
   R.append(p)
   p = mul([A,p])
   
-R = horzcat(R)
+R = vertcat(R)
 
 # R must be of full rank
 _, s, _ = linalg.svd(R)
@@ -130,7 +130,7 @@ plot(tf,sim.getOutput()-out,linewidth=3)
 # for i in range(len(tf)):
 #   dev_est.append(mul(jacsim.getOutput()[i*ns:(i+1)*ns,:],x0_pert))
 
-# dev_est = horzcat(dev_est).T
+# dev_est = vertcat(dev_est).T
 # plot(tf,dev_est,'+k')
 # legend(('s1 dev', 's2 dev','s3 dev','s1 dev (est.)', 's2 dev (est.)','s3 dev (est.)'),loc='upper left')
 
@@ -173,7 +173,7 @@ plot(tf,sim.getOutput()-out,linewidth=3)
 # for i in range(len(tf)):
 #   dev_est.append(mul(jacsim.getOutput()[i*ns:(i+1)*ns,:],flatten(u_perturb)))
 
-# dev_est = horzcat(dev_est).T
+# dev_est = vertcat(dev_est).T
 # plot(tf,dev_est,'+k')
 # legend(('s1 dev', 's2 dev','s3 dev','s1 dev (est.)', 's2 dev (est.)','s3 dev (est.)'),loc='upper left')
 
@@ -188,8 +188,8 @@ plot(tf,sim.getOutput()-out,linewidth=3)
 #  http://www-control.eng.cam.ac.uk/jmm/3f2/handout4.pdf
 #  http://www.ece.rutgers.edu/~gajic/psfiles/chap5.pdf
 
-x0 = vertcat([1,0,0])
-xref_e = vertcat([1,0,0])
+x0 = horzcat([1,0,0])
+xref_e = horzcat([1,0,0])
 
 states = struct_ssym([
            entry("eAt",shape=(ns,ns)),
@@ -401,7 +401,7 @@ t = SX("t")
 
 figure(6)
 
-for k,yref in enumerate([ vertcat([-1,sqrt(t)]) , vertcat([-1,-0.5]), vertcat([-1,sin(t)])]):
+for k,yref in enumerate([ horzcat([-1,sqrt(t)]) , horzcat([-1,-0.5]), horzcat([-1,sin(t)])]):
   u = -mul(K,y) + mul(mul(K,F)+Nm,yref)
   rhs = mul(A,y)+mul(B,u)
   cdae = SXFunction(controldaeIn(t=t, x=y),[rhs])
@@ -438,7 +438,7 @@ for k,yref in enumerate([ vertcat([-1,sqrt(t)]) , vertcat([-1,-0.5]), vertcat([-
 #  To obtain a continous tracking reference,
 #  we augment statespace to construct it on the fly
 
-x0 = vertcat([1,0,0])
+x0 = horzcat([1,0,0])
 
 # Now simulate with open-loop controls
 states = struct_ssym([
@@ -536,7 +536,7 @@ mi = sim.getMajorIndex()
 controls_ = sim.getOutput(2)[mi[:-1],:]
 yref_     = sim.getOutput(3)[mi[:-1],:]
 
-u_ = horzcat([controls_,yref_])
+u_ = vertcat([controls_,yref_])
 
 x0 = DMatrix([1,0,0])
 

@@ -158,7 +158,7 @@ class NLPtests(casadiTestCase):
       y0 = DMatrix([0.1,0.4])
       yy = y + y0
       n=0.2
-      f=SXFunction([y,x],[vertcat([x-arcsin(yy[0]),yy[1]**2-yy[0]])])
+      f=SXFunction([y,x],[horzcat([x-arcsin(yy[0]),yy[1]**2-yy[0]])])
       f.init()
       solver=Solver(f)
       solver.setOption(options)
@@ -166,7 +166,7 @@ class NLPtests(casadiTestCase):
       solver.setInput(n)
       solver.evaluate()
       
-      refsol = SXFunction([y,x],[vertcat([sin(x),sqrt(sin(x))])-y0]) # ,sin(x)**2])
+      refsol = SXFunction([y,x],[horzcat([sin(x),sqrt(sin(x))])-y0]) # ,sin(x)**2])
       refsol.init()
       refsol.setInput(n)
       self.checkfx(solver,refsol,digits=5,sens_der=False,failmessage=message)
@@ -189,7 +189,7 @@ class NLPtests(casadiTestCase):
       if 'Kinsol' in str(Solver): continue
       if 'Newton' in str(Solver): continue
       x=ssym("x",2)
-      f=SXFunction([x],[vertcat([mul((x+3).T,(x-2)),mul((x-4).T,(x+vertcat([1,2])))])])
+      f=SXFunction([x],[horzcat([mul((x+3).T,(x-2)),mul((x-4).T,(x+horzcat([1,2])))])])
       f.init()
       
       solver=Solver(f)
@@ -200,7 +200,7 @@ class NLPtests(casadiTestCase):
       
       self.checkarray(solver.output(),DMatrix([-3.0/50*(sqrt(1201)-1),2.0/25*(sqrt(1201)-1)]),digits=6)
 
-      f=SXFunction([x],[vertcat([mul((x+3).T,(x-2)),mul((x-4).T,(x+vertcat([1,2])))])])
+      f=SXFunction([x],[horzcat([mul((x+3).T,(x-2)),mul((x-4).T,(x+horzcat([1,2])))])])
       f.init()
       
       solver=Solver(f)
@@ -216,7 +216,7 @@ class NLPtests(casadiTestCase):
     X0 = msym("X0")
     V = msym("V")
 
-    V_eq = vertcat([V[0]-X0])
+    V_eq = horzcat([V[0]-X0])
 
     # Root-finding function, implicitly defines V as a function of X0 and P
     vfcn = MXFunction([V,X0],[V_eq])
@@ -232,7 +232,7 @@ class NLPtests(casadiTestCase):
     ifcn.setOption("linear_solver",CSparse)
     ifcn.init()
 
-    #ifcn = MXFunction([X0],[vertcat([X0])])
+    #ifcn = MXFunction([X0],[horzcat([X0])])
     #ifcn.setOption("name","I")
     #ifcn.init()
     [V] = ifcn.eval([0,X0])

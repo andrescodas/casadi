@@ -64,7 +64,7 @@ def NPvec(x):
   return NP.reshape(x,NP.prod(x.shape),1)
 
 # All variables
-v = vertcat([vec(x),vec(y)])
+v = horzcat([vec(x),vec(y)])
 v_lb = NP.concatenate([NPvec(x_lb),NPvec(y_lb)])
 v_ub = NP.concatenate([NPvec(x_ub),NPvec(y_ub)])
 v_guess = NP.concatenate([NPvec(x_guess),NPvec(y_guess)])
@@ -130,7 +130,7 @@ for t in range(1,n):
 
 print "cons3"
 
-g = vertcat([cons1,cons2,cons3])
+g = horzcat([cons1,cons2,cons3])
 g_lb = NP.concatenate([cons1_lb,cons2_lb,cons3_lb])
 g_ub = NP.concatenate([cons1_ub,cons2_ub,cons3_ub])
 
