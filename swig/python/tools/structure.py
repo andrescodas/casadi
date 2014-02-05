@@ -64,9 +64,9 @@ def canonical(ind,s):
   else:
     return ind
     
-def flatten(e):
+def vec(e):
   if any(isinstance(i,list) for i in e):
-    return sum(map(flatten,e),[])
+    return sum(map(vec,e),[])
   else:
     return e
     
@@ -708,7 +708,7 @@ class CasadiStructure(Structure,CasadiStructureDerivable):
           hmap[a] = [m]
     self.size = k
     for k,v in hmap.iteritems():
-      hmap[k] = flattenNZcat(v)
+      hmap[k] = vecNZcat(v)
     
     self.map.update(hmap)
     
@@ -724,7 +724,7 @@ class CasadiStructure(Structure,CasadiStructureDerivable):
     class FlatIndexGetter(StructureGetter):
       @properGetitem
       def __getitem__(self,powerIndex):
-        return flatten(self.struct.traverseByPowerIndex(powerIndex,dispatcher=CasadiStructure.FlatIndexDispatcher(struct=self.struct)))
+        return vec(self.struct.traverseByPowerIndex(powerIndex,dispatcher=CasadiStructure.FlatIndexDispatcher(struct=self.struct)))
             
     self.i = IMatrixGetter(self)
     self.f = FlatIndexGetter(self)
@@ -840,7 +840,7 @@ class ssymStruct(CasadiStructured,MasterGettable):
       e = self.struct.getStructEntryByCanonicalIndex(i)
       s.append(ssym("_".join(map(str,i)),e.sparsity.size()))
         
-    self.master = flattenNZcat(s)
+    self.master = vecNZcat(s)
 
     for e in self.entries:
       if e.sym is not None:
@@ -979,9 +979,9 @@ class MXFlattencatStruct(CasadiStructured,MasterGettable):
         
     def inject(payload,canonicalIndex,extraIndex=None,entry=None):
       if extraIndex is not None:
-        raise Exception("An MX flattencat structure does not accept indexing on MX level for __setitem__.")
+        raise Exception("An MX veccat structure does not accept indexing on MX level for __setitem__.")
       if not hasattr(self,"sparsity"):
-        raise Exception("An MX flattencat structure __setitem__ accepts only objects that have sparsity.")
+        raise Exception("An MX veccat structure __setitem__ accepts only objects that have sparsity.")
       
       if canonicalIndex in self.mapping:
         if self.struct.map[canonicalIndex].sparsity()!=payload.sparsity():
@@ -1000,10 +1000,10 @@ class MXFlattencatStruct(CasadiStructured,MasterGettable):
     if any(e is None for e in self.storage):
       missing = filter(lambda k: self.storage[self.mapping[k]] is None,self.mapping.keys())
       
-      raise Exception("Problem in MX vecNZcat structure cat: missing expressions. The following entries are missing: %s" % str(missing))
+      raise Exception("Problem in MX flattenNZcat structure cat: missing expressions. The following entries are missing: %s" % str(missing))
       
     if self.dirty:
-      self.master_cached = flattenNZcat(self.storage)
+      self.master_cached = vecNZcat(self.storage)
 
     return self.master_cached
     

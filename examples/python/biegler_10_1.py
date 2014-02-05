@@ -101,7 +101,7 @@ for N in range(1,11):
   Z = ssym("Z",N,K+1)
     
   # Construct the NLP
-  x = vec(Z.T)
+  x = flatten(Z.T)
   g = SXMatrix()
   for i in range(N):
     for k in range(1,K+1):

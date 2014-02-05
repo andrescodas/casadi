@@ -29,7 +29,7 @@
 
 namespace CasADi{
     
-SXFunction vec (const SXFunction &a) {
+SXFunction flatten (const SXFunction &a) {
   // Pass null if input is null
   if (a.isNull()) return SXFunction();
   
@@ -37,13 +37,13 @@ SXFunction vec (const SXFunction &a) {
   std::vector<SXMatrix> symbolicInputSX = a.inputExpr();
   std::vector<SXMatrix> symbolicOutputSX = a.outputExpr();
   
-  // Apply vec to them
+  // Apply flatten to them
   for (int i=0;i<symbolicInputSX.size();++i)
-    symbolicInputSX[i] = vec(symbolicInputSX[i]);
+    symbolicInputSX[i] = flatten(symbolicInputSX[i]);
   for (int i=0;i<symbolicOutputSX.size();++i)
-    symbolicOutputSX[i] = vec(symbolicOutputSX[i]);
+    symbolicOutputSX[i] = flatten(symbolicOutputSX[i]);
     
-  // Make a new function with the vecced input/outputs
+  // Make a new function with the flattenced input/outputs
   SXFunction ret(symbolicInputSX,symbolicOutputSX);
   
   // Initialize it if a was
@@ -52,7 +52,7 @@ SXFunction vec (const SXFunction &a) {
 }
 
 
-MXFunction vec (const FX &a_) {
+MXFunction flatten (const FX &a_) {
   FX a = a_;
 
   // Pass null if input is null
@@ -60,27 +60,27 @@ MXFunction vec (const FX &a_) {
   
   // Get the MX inputs, only used for shape
   const std::vector<MX> &symbolicInputMX = a.symbolicInput();
-  // Have a vector with MX that have the shape of vec(symbolicInputMX )
+  // Have a vector with MX that have the shape of flatten(symbolicInputMX )
   std::vector<MX> symbolicInputMX_vec(a.getNumInputs());
   // Make vector valued MX's out of them
   std::vector<MX> symbolicInputMX_vec_reshape(a.getNumInputs());
 
-  // Apply the vec-transformation to the inputs
+  // Apply the flatten-transformation to the inputs
   for (int i=0;i<symbolicInputMX.size();++i) {
     std::stringstream s;
     s << "X_flat_" << i;
-    symbolicInputMX_vec[i] = MX(s.str(),vec(symbolicInputMX[i].sparsity()));
+    symbolicInputMX_vec[i] = MX(s.str(),flatten(symbolicInputMX[i].sparsity()));
     symbolicInputMX_vec_reshape[i] = trans(reshape(symbolicInputMX_vec[i],trans(symbolicInputMX[i].sparsity())));
   }
   
-  // Call the original function with the vecced inputs
+  // Call the original function with the flattenced inputs
   std::vector<MX> symbolicOutputMX = a.call(symbolicInputMX_vec_reshape);
   
-  // Apply the vec-transformation to the outputs
+  // Apply the flatten-transformation to the outputs
   for (int i=0;i<symbolicOutputMX.size();++i)
-    symbolicOutputMX[i] = vec(symbolicOutputMX[i]);
+    symbolicOutputMX[i] = flatten(symbolicOutputMX[i]);
     
-  // Make a new function with the vecced input/outputs
+  // Make a new function with the flattenced input/outputs
   MXFunction ret(symbolicInputMX_vec,symbolicOutputMX);
   
   // Initialize it if a was

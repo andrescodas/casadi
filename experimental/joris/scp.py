@@ -51,7 +51,7 @@ Lambd = ssym("lambda",nsd.sparsity())
 
 lag = f+mul(lambd.T,g)+trace(mul(Lambd,nsd))
 
-oracle = SXFunction(customIO(x=x,lambd=lambd,Lambd=Lambd),customIO(f=f,g=g,nsd=nsd,hess=hessian(lag,x), gradF=gradient(f,x), jacG= jacobian(g,x),jac_nsd=jacobian(vec(nsd),x)))
+oracle = SXFunction(customIO(x=x,lambd=lambd,Lambd=Lambd),customIO(f=f,g=g,nsd=nsd,hess=hessian(lag,x), gradF=gradient(f,x), jacG= jacobian(g,x),jac_nsd=jacobian(flatten(nsd),x)))
 oracle.init()
 
 lambda_k = DMatrix([0])

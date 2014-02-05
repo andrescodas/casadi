@@ -139,21 +139,21 @@ def kin_inv(T):
   return constr(vstack((hstack((R,-numpy.dot(R,trp(T)))),numpy.matrix([0,0,0,1]))))
 
 
-def vectorize(vec):
+def vectorize(flatten):
   """
   Make sure the result is something you can index with single index
   """
-  if hasattr(vec,"shape"):
-    if vec.shape[0] > 1 and vec.shape[1] > 1:
-      raise Exception("vectorize: got real matrix instead of vector like thing: %s" % str(vec))
-    if vec.shape[1] > 1:
-      vec = vec.T
-    if hasattr(vec,"tolist"):
-      vec = [ i[0] for i in vec.tolist()]
-  return vec
+  if hasattr(flatten,"shape"):
+    if flatten.shape[0] > 1 and flatten.shape[1] > 1:
+      raise Exception("vectorize: got real matrix instead of vector like thing: %s" % str(flatten))
+    if flatten.shape[1] > 1:
+      flatten = flatten.T
+    if hasattr(flatten,"tolist"):
+      flatten = [ i[0] for i in flatten.tolist()]
+  return flatten
 
-def skew(vec):
-  myvec = vectorize(vec)
+def skew(flatten):
+  myvec = vectorize(flatten)
 
   x = myvec[0]
   y = myvec[1]
@@ -353,7 +353,7 @@ class QuadcopterModel:
         p_["rotors_I",i] = casadi.diag([I_ref/2,I_ref/2,I_ref])
 
     if debug:
-        print p.vecNZcat()
+        print p.flattenNZcat()
         
     dist_ = dist(0)
         
@@ -446,7 +446,7 @@ class QuadcopterModel:
     
 
     
-    res = substitute(res,veccat(subs_before),veccat(subs_after))
+    res = substitute(res,flattencat(subs_before),flattencat(subs_after))
     
     # Make an explicit ode
     rhs = - casadi.solve(jacobian(res,dstates),substitute(res,dstates,0))

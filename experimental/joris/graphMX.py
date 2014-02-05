@@ -81,7 +81,7 @@ dotsave(z,filename='MX5.pdf')
 x = MX("x",3,3)
 y = MX("y")
 
-z = vec(x)
+z = flatten(x)
 
 zz = z+y
 

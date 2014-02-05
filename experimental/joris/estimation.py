@@ -64,8 +64,8 @@ dstates.q  = ssym("dq",4)
 q0,q1,q2,q3 = states.q
 
 # Helper variables to get to quaternions
-def skew(vec):
-  x,y,z = vec
+def skew(flatten):
+  x,y,z = flatten
   return SXMatrix([[0,-z,y],[z,0,-x],[-y,x,0]])
   
 rho = states.q[:3]
@@ -88,7 +88,7 @@ rhs[states.I_V] = mul(R,imu.a) - dstates.V
 rhs[states.I_q] = 0.5*mul(G,imu.w) - dstates.q
 
 # This is our DAE
-dae = SXFunction({'NUM':DAE_NUM_IN, DAE_T: t, DAE_Y: states.veccat(), DAE_YDOT: dstates.veccat(), DAE_P: imu.veccat()},[horzcat(rhs)])
+dae = SXFunction({'NUM':DAE_NUM_IN, DAE_T: t, DAE_Y: states.flattencat(), DAE_YDOT: dstates.flattencat(), DAE_P: imu.flattencat()},[horzcat(rhs)])
 
 # Let's generate some dummy measurements
 # First, we need dummy excitations.
@@ -104,7 +104,7 @@ sim.init()
 states.X_ = states.V_ = [0,0,0]  # Initial state to generate the dummy measurements
 states.q_ = [0,0,0,1]            
 
-sim.setInput(states.veccat_(),"x0")
+sim.setInput(states.flattencat_(),"x0")
 sim.input("v")[:,imu.i_a.T] = DMatrix([sin(tsm),cos(3*tsm),sin(2*tsm)]).T
 sim.input("v")[:,imu.i_w.T] = DMatrix([cos(3*tsm),sin(7*tsm),sin(11*tsm)]).T
 
@@ -117,7 +117,7 @@ reference_Xf   = sim.getOutput()[:,states.i_X.T]
 
 reference_X   = reference_Xf[sim.getCoarseIndex(),:]
 
-Rf = SXFunction([states.q],[vec(R)])
+Rf = SXFunction([states.q],[flatten(R)])
 Rf.init()
 reference_Rf = numSample1D(Rf,sim.getOutput()[:,states.i_q.T].T).T
 reference_R   = reference_Rf[sim.getCoarseIndex(),:]
@@ -185,14 +185,14 @@ for k,tk in enumerate(ts[:-1]):
     
 g.append(sumCols(optvar.X[0][states.i_q,0]**2) - 1)  # Add the quaternion norm constraint at the start
 
-g = SXFunction([optvar.veccat(),par.veccat()],[horzcat(g)])
+g = SXFunction([optvar.flattencat(),par.flattencat()],[horzcat(g)])
 g.init()
 
 J = g.jac(0,0)
 
 # Objective function
 f = sumAll( (vertcat([i[states.i_X,0] for i in optvar.X] + [optvar.X[-1][states.i_X,-1]]).T -par.Xref)**2 )
-f = SXFunction([optvar.veccat(),par.veccat()],[f])
+f = SXFunction([optvar.flattencat(),par.flattencat()],[f])
 f.init()
 
 class NLPSolutionInspector:
@@ -273,7 +273,7 @@ nlp.init()
 nlp.solve()
 for i in range(nk):  # intialize with (0,0,0,1) quaternion
   nlp.input("x0")[optvar.i_X[i][states.i_q[3],:]] = 1
-nlp.setInput(par.veccat_(),"p")
+nlp.setInput(par.flattencat_(),"p")
 nlp.setInput(0,"lbg")
 nlp.setInput(0,"ubg")
 nlp.solve()

@@ -30,8 +30,8 @@ C = MX("C")             # And an other little matrix
 D = MX("D",sp_tril(4))  # Triangular matrix
 
 
-L = veccat([A,B,C,D])
+L = flattencat([A,B,C,D])
 print L
 
 #! The following statement does the same:
-L = map(vecNZ,[A,B,C,D])
+L = map(flattenNZ,[A,B,C,D])

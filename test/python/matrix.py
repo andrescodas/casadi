@@ -108,7 +108,7 @@ class Matrixtests(casadiTestCase):
     
     
   def test_veccat(self):
-    self.message("vecccat")
+    self.message("flattenccat")
     A = DMatrix(2,3)
     A[0,1] = 2
     A[1,0] = 1
@@ -117,10 +117,10 @@ class Matrixtests(casadiTestCase):
     B[0,0] = 4
     B[1,0] = 5
     B[2,0] = 6
-    C = veccat([A,B])
+    C = flattencat([A,B])
     
-    self.checkarray(C.shape,(9,1),"veccat shape")
-    self.assertEqual(C.size(),A.size()+B.size(),"veccat size")
+    self.checkarray(C.shape,(9,1),"flattencat shape")
+    self.assertEqual(C.size(),A.size()+B.size(),"flattencat size")
     
     self.checkarray(tuple(C.data()),tuple(arange(1,7)),"numbers shape")
 
@@ -206,7 +206,7 @@ class Matrixtests(casadiTestCase):
     self.checkarray(DMatrix([1,3,2]).T,B,"non-monotonous")
     
   def test_vecNZcat(self):
-    self.message("vecNZcat")
+    self.message("flattenNZcat")
     A = DMatrix(2,3)
     A[0,1] = 2
     A[1,0] = 1
@@ -215,10 +215,10 @@ class Matrixtests(casadiTestCase):
     B[0,0] = 4
     B[1,0] = 5
     B[2,0] = 6
-    C = vecNZcat([A,B])
+    C = flattenNZcat([A,B])
     
-    self.checkarray(C.shape,(6,1),"vecNZcat shape")
-    self.assertEqual(C.size(),A.size()+B.size(),"vecNZcat size")
+    self.checkarray(C.shape,(6,1),"flattenNZcat shape")
+    self.assertEqual(C.size(),A.size()+B.size(),"flattenNZcat size")
     
     self.checkarray(tuple(C.data()),tuple(arange(1,7)),"numbers shape")
     

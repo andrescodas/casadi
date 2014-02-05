@@ -53,8 +53,8 @@ namespace CasADi{
   }
 
   vector<MX> FX::call(const MX &arg){
-    vector<MX> xvec(1,arg);
-    return call(xvec);
+    vector<MX> xflatten(1,arg);
+    return call(xflatten);
   }
 
   vector<MX> FX::call(const vector<MX> &arg){

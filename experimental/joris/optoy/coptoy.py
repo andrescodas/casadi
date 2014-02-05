@@ -135,7 +135,7 @@ def minimize(f,gl=[],verbose=False):
       raise Exception("Constrained type unknown. Use ==, >= or <= .")
       
   # Get an exhausive list of all casadi symbols that make up f and gl
-  vars = getSymbols(veccat([f]+g_le+g_eq+g_nsd))
+  vars = getSymbols(flattencat([f]+g_le+g_eq+g_nsd))
   
   
   

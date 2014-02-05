@@ -195,7 +195,7 @@ namespace CasADi{
     return  sp_triplet(n,m,col_new,row_new);
   }
 
-  CCSSparsity vec(const CCSSparsity& a){
+  CCSSparsity flatten(const CCSSparsity& a){
     return reshape(trans(a),a.numel(),1);
   }
 

@@ -24,37 +24,37 @@ from casadi import *
 import copy
 from types import *
 
-def flatten(l):
-  return [i for i in iter_flatten(l)]
+def vec(l):
+  return [i for i in iter_vec(l)]
  
-def iter_flatten(iterable):
+def iter_vec(iterable):
   if isinstance(iterable,list):
     for e in iterable:
       if isinstance(e, (list, tuple)):
-        for f in iter_flatten(e):
+        for f in iter_vec(e):
           yield f
       else:
         yield e
   else:
     yield iterable
     
-def iter_flatten_list(iterable):
+def iter_vec_list(iterable):
   if isinstance(iterable,list):
     for e in iterable:
       if isinstance(e, list):
-        for f in iter_flatten(e):
+        for f in iter_vec(e):
           yield f
       else:
         yield e
   else:
     yield iterable
     
-def iter_flatten_mutator(iterable,mutator=lambda i,x:x,counter=0):
+def iter_vec_mutator(iterable,mutator=lambda i,x:x,counter=0):
   if isinstance(iterable,list):    
     for i in range(len(iterable)):
       e = iterable[i] 
       if isinstance(e, (list, tuple)):
-        for c,f in iter_flatten_mutator(e,mutator,counter=counter):
+        for c,f in iter_vec_mutator(e,mutator,counter=counter):
           counter = c
           yield (counter,f)
           counter+=1
@@ -66,13 +66,13 @@ def iter_flatten_mutator(iterable,mutator=lambda i,x:x,counter=0):
      yield (counter,iterable)
      counter+=1 
       
-def iter_flatten_mutator_hierarchical(iterable,mutator=lambda i,j,x:x,counter=0,hierarchy=()):
+def iter_vec_mutator_hierarchical(iterable,mutator=lambda i,j,x:x,counter=0,hierarchy=()):
   if isinstance(iterable,list):    
     for i in range(len(iterable)):
       h = hierarchy + (i,)
       e = iterable[i] 
       if isinstance(e, (list, tuple)):
-        for c,f in iter_flatten_mutator_hierarchical(e,mutator,counter=counter,hierarchy=(i,) + hierarchy):
+        for c,f in iter_vec_mutator_hierarchical(e,mutator,counter=counter,hierarchy=(i,) + hierarchy):
           counter = c
           yield (counter,f)
           counter+=1
@@ -88,7 +88,7 @@ def iter_flatten_mutator_hierarchical(iterable,mutator=lambda i,j,x:x,counter=0,
 def map_nested_list(fun,iterable):
   if isinstance(iterable,list): 
     ret = copy.deepcopy(iterable)
-    for j in iter_flatten_mutator(ret,fun):
+    for j in iter_vec_mutator(ret,fun):
       pass
     return ret
   else:
@@ -98,7 +98,7 @@ def map_nested_list(fun,iterable):
 def map_nested_list_hierarchical(fun,iterable):
   if isinstance(iterable,list): 
     ret = copy.deepcopy(iterable)
-    for j in iter_flatten_mutator_hierarchical(ret,fun):
+    for j in iter_vec_mutator_hierarchical(ret,fun):
       pass
     return ret
   else:
@@ -151,7 +151,7 @@ class Variables(object):
             self._reverselookup2[offset:offset+size] = [ (k,)+i for i in obj._reverselookup2]
           elif isinstance(obj,list):
             result = map_nested_list_hierarchical(lambda flati, hieri, item: (hieri, item ) ,self.getindex(k))
-            for hierarchy, imatrix in iter_flatten_list(result):
+            for hierarchy, imatrix in iter_vec_list(result):
               for i,j in enumerate(list(imatrix)):
                 self._reverselookup[j] = (k,)+ hierarchy + ((i,),)
                 self._reverselookup2[j] = (k,)+ hierarchy + ((i,),)
@@ -278,7 +278,7 @@ class Variables(object):
             obj = self._d[k]
             if isinstance(obj,Variables):
                 raise Exception("Not implemented")
-            i = flatten(getattr(self,'i_'+k))
+            i = vec(getattr(self,'i_'+k))
             self._d[k] = map_nested_list(lambda c,x: self._V[i[c]],obj)
       
     def getindex(self,name):
@@ -291,7 +291,7 @@ class Variables(object):
         if name in self._indexCache:
           return self._indexCache[name]
 
-        offsets = flatten(self.getOffset(name))
+        offsets = vec(self.getOffset(name))
           
         if isinstance(self._d[name],Variables):
           res = IMatrix(range(offsets[0],offsets[0]+self._d[name].shape[0]))
@@ -308,7 +308,7 @@ class Variables(object):
       s = self.getSize(obj)
       
       i = IMatrix(self.getSparsity(obj),range(s))
-      ivec = vecNZ(i)
+      ivec = flattenNZ(i)
       i[ivec] = IMatrix(range(offset,s+offset))
       
       
@@ -323,7 +323,7 @@ class Variables(object):
            if k is name:
               break
            if isinstance(self._d[k],list):
-              i+=len(flatten(self._d[k]))
+              i+=len(vec(self._d[k]))
            else:
               i+=1 
 
@@ -339,7 +339,7 @@ class Variables(object):
 
         for k in self._order:
             if k == name:
-                sizes = [self.getSize(v) for v in iter_flatten(self._d[name])]
+                sizes = [self.getSize(v) for v in iter_vec(self._d[name])]
                 offsets = [i] * (len(sizes)+1)
                 
                 for j in range(len(sizes)):
@@ -388,15 +388,15 @@ class Variables(object):
         
     def getSparsity(self, obj = None):
         if obj is None:
-            return self.veccat().sparsity()
+            return self.flattencat().sparsity()
         elif hasattr(obj,'sparsity'):
             return obj.sparsity()
         else:
             return sp_dense(1,1)
         
-    def veccat(self):
+    def flattencat(self):
         """
-        Returns the result of a veccat operation to the list of all variables
+        Returns the result of a flattencat operation to the list of all variables
         """
         if not(self._frozen):
           raise Exception("You must first freeze() this Variables instance. This is for your own protection")
@@ -407,17 +407,17 @@ class Variables(object):
         for k in self._order:
             obj = self._d[k]
             if isinstance(obj,Variables):
-                l.append(obj.veccat())
+                l.append(obj.flattencat())
             elif isinstance(obj,list):
                 for v in obj:
                   l.append(v)
             else:
                 l.append(self._d[k])
-        return veccat(flatten(l))
+        return flattencat(vec(l))
         
-    def vecNZcat(self):
+    def flattenNZcat(self):
         """
-        Returns the result of a veccat operation to the list of all variables
+        Returns the result of a flattencat operation to the list of all variables
         """
         if not(self._frozen):
           raise Exception("You must first freeze() this Variables instance. This is for your own protection")
@@ -427,29 +427,29 @@ class Variables(object):
         for k in self._order:
             obj = self._d[k]
             if isinstance(obj,Variables):
-                l.append(obj.vecNZcat())
+                l.append(obj.flattenNZcat())
             elif isinstance(obj,list):
                 for v in obj:
                   l.append(v)
             else:
                 l.append(self._d[k])
-        return vecNZcat(flatten(l))
+        return flattenNZcat(vec(l))
 
-    def vecNZcat_(self):
+    def flattenNZcat_(self):
         """
-        Returns the result of a veccat operation to the list of all variables values
+        Returns the result of a flattencat operation to the list of all variables values
         """
         if not(self._frozen):
           raise Exception("You must first freeze() this Variables instance. This is for your own protection")
-        return self._numbers.vecNZcat()
+        return self._numbers.flattenNZcat()
         
-    def veccat_(self):
+    def flattencat_(self):
         """
-        Returns the result of a veccat operation to the list of all variables values
+        Returns the result of a flattencat operation to the list of all variables values
         """
         if not(self._frozen):
           raise Exception("You must first freeze() this Variables instance. This is for your own protection")
-        return self._numbers.veccat()
+        return self._numbers.flattencat()
         
     def __str__(self):
         if self._frozen:
@@ -526,35 +526,35 @@ class Numbers(object):
         
         getattr(self,name).set(value)
             
-  def vecNZcat(self):
+  def flattenNZcat(self):
       """
-      Returns the result of a veccat operation to the list of all variables values
+      Returns the result of a flattencat operation to the list of all variables values
       """
       l = []
       for k in self._variables._order:
           obj = self._variables._d[k]
           if isinstance(obj,Variables):
-              l.append(self._numbers[k].veccat())
+              l.append(self._numbers[k].flattencat())
           elif isinstance(obj,list):
-              l.append(vecNZcat(self._d_[k]))
+              l.append(flattenNZcat(self._d_[k]))
           else:
               l.append(self._d_[k])
-      return vecNZcat(flatten(l))
+      return flattenNZcat(vec(l))
       
-  def veccat(self):
+  def flattencat(self):
       """
-      Returns the result of a veccat operation to the list of all variables values
+      Returns the result of a flattencat operation to the list of all variables values
       """
       l = []
       for k in self._variables._order:
           obj = self._variables._d[k]
           if isinstance(obj,Variables):
-              l.append(self._numbers[k].veccat())
+              l.append(self._numbers[k].flattencat())
           elif isinstance(obj,list):
               l+=self._d_[k]
           else:
               l.append(self._d_[k])
-      return veccat(flatten(l))
+      return flattencat(vec(l))
       
   def setAll(self,value):
     for k in self._variables._order:

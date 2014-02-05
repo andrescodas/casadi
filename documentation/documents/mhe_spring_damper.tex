@@ -30,10 +30,10 @@ In the MHE example, we consider a simple mass-spring system. Measurements of the
 \end{equation*}
 where:
 \begin{itemize}
- \item $\vec{x}$ is the system state,
- \item $\vec{y}$ are the measurements,
- \item $\vec{u}$ is the control input,
- \item $\vec{w}$ is a noise term introduced to model the model uncertainty (i.e.~the process noise),
+ \item $\flatten{x}$ is the system state,
+ \item $\flatten{y}$ are the measurements,
+ \item $\flatten{u}$ is the control input,
+ \item $\flatten{w}$ is a noise term introduced to model the model uncertainty (i.e.~the process noise),
  \item $t$ is the current time,
  \item $\hat{x}(t-T)$ is an estimate for the state at the beginning of the horizon
  \item $Q_\mathrm{c}$ and $R_\mathrm{c}$ $S$ are the weighting matrices for the model and measurement noise and for the arrival cost respectively,
@@ -50,7 +50,7 @@ In the example, this example is discretized using multiple shooting, which resul
 \end{equation*}
 where
 \begin{itemize}
- \item $\phi$ integrates our model $f$, given the state $\vec{x}_k$, control input $\vec{u}_k$ and process noise $\vec{w}_k$, over one sampling interval, 
+ \item $\phi$ integrates our model $f$, given the state $\flatten{x}_k$, control input $\flatten{u}_k$ and process noise $\flatten{w}_k$, over one sampling interval, 
  \item N is the number of measurements in the considered time horizon, 
  \item $i$ is the current sampling index, and
  \item $Q_\mathrm{d}$ and $R_\mathrm{d}$ are the discretized versions of covariance matrices $Q_\mathrm{c}$ and $R_\mathrm{c}$, which might vary over the time horizon.

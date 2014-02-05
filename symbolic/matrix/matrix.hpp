@@ -79,7 +79,7 @@ namespace CasADi{
       The syntax tries to stay as close as possible to the ublas syntax  when it comes to vector/matrix operations.\n
 
       Index starts with 0.\n
-      Index flatten happens as follows: (i,j) -> k = j+i*size1()\n
+      Index vec happens as follows: (i,j) -> k = j+i*size1()\n
       Vectors are considered to be row vectors.\n
   
       The storage format is a (modified) compressed col storage (CCS) format. This way, a vector element can always be accessed in constant time.\n

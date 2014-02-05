@@ -455,18 +455,18 @@ namespace CasADi{
     vec_fcn_out.push_back(b_g);                               vec_g_ = n++;  
     casadi_assert(n==vec_fcn_out.size());
   
-    MXFunction vec_fcn(mfcn_in,vec_fcn_out);
-    vec_fcn.setOption("name","vec_fcn");
-    vec_fcn.init();
+    MXFunction flatten_fcn(mfcn_in,vec_fcn_out);
+    flatten_fcn.setOption("name","flatten_fcn");
+    flatten_fcn.init();
     if(verbose_){
-      cout << "Generated linearization function ( " << vec_fcn.getAlgorithmSize() << " nodes)." << endl;
+      cout << "Generated linearization function ( " << flatten_fcn.getAlgorithmSize() << " nodes)." << endl;
     }
   
     // Generate c code and load as DLL
     if(codegen_){
-      vec_fcn_ = dynamicCompilation(vec_fcn,"vec_fcn","linearization function",compiler);
+      vec_fcn_ = dynamicCompilation(flatten_fcn,"flatten_fcn","linearization function",compiler);
     } else {
-      vec_fcn_ = vec_fcn;
+      vec_fcn_ = flatten_fcn;
     }
 
     // Expression a + A*du in Lifted Newton (Section 2.1 in Alberspeyer2010)

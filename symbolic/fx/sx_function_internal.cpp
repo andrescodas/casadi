@@ -790,13 +790,13 @@ namespace CasADi{
     // Get all the inputs
     SXMatrix arg(0,1); 
     for(vector<SXMatrix>::const_iterator i=inputv_.begin(); i!=inputv_.end(); ++i){
-      arg.append(flatten(*i));
+      arg.append(vec(*i));
     }
  
     // Get all the outputs
     SXMatrix res(0,1); 
     for(vector<SXMatrix>::const_iterator i=outputv_.begin(); i!=outputv_.end(); ++i){
-      res.append(flatten(*i));
+      res.append(vec(*i));
     }
     
     // Generate an expression for the Jacobian

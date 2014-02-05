@@ -179,7 +179,7 @@ class ComplexityTests(casadiTestCase):
     
     self.complexity(setupfun,fun, 1)
 
-  def test_SXFunctionprodvec(self):
+  def test_SXFunctionprodflatten(self):
     return
     self.message("SXFunction prod row vectors")
     def setupfun(self,N):
@@ -207,7 +207,7 @@ class ComplexityTests(casadiTestCase):
     self.complexity(setupfun,fun, 1)
 
 
-  def test_MXFunctionprodvec(self):
+  def test_MXFunctionprodflatten(self):
     self.message("MXFunction prod")
     def setupfun(self,N):
       G = MX("G",N,1)

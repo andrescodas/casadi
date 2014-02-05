@@ -220,11 +220,11 @@ for k in range(nk):
   g_max.append(NP.zeros(Xk.size()))
 
 # Objective function: L(T)
-def totalEnergy(vec, k):
-  q  = vec[stateIdx(0,k)]
-  qd = vec[stateIdx(1,k)]
-  L  = vec[stateIdx(2,k)]
-  Ld = vec[stateIdx(3,k)]
+def totalEnergy(flatten, k):
+  q  = flatten[stateIdx(0,k)]
+  qd = flatten[stateIdx(1,k)]
+  L  = flatten[stateIdx(2,k)]
+  Ld = flatten[stateIdx(3,k)]
   ke = 0.5*mass*(L*L*qd*qd + Ld*Ld)
   pe = -mass*gravity*L*cos(q)
   return ke + pe

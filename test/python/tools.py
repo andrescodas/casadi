@@ -187,10 +187,10 @@ class Toolstests(casadiTestCase):
       self.checkarray(array(p.xother.i_a),DMatrix(0),"index")
       self.checkarray(array(p.xother.i_b),DMatrix([[1,0],[0,2]]),"index")
 
-      self.assertEqual(p.veccat().numel(),21)
-      self.assertEqual(p.veccat().size(),19)
-      self.assertEqual(p.vecNZcat().numel(),19)
-      self.assertEqual(p.vecNZcat().size(),19)
+      self.assertEqual(p.flattencat().numel(),21)
+      self.assertEqual(p.flattencat().size(),19)
+      self.assertEqual(p.flattenNZcat().numel(),19)
+      self.assertEqual(p.flattenNZcat().size(),19)
       self.assertEqual(p.getNumel(),21)
       self.assertEqual(p.getSize(),19)
       
@@ -215,7 +215,7 @@ class Toolstests(casadiTestCase):
         roundtrip = p.lookup(p.reverselookup(k))
         if not(isinstance(roundtrip,SX)):
           roundtrip = roundtrip.toScalar()
-        self.assertTrue(roundtrip.isEqual(p.vecNZcat()[k].toScalar()))
+        self.assertTrue(roundtrip.isEqual(p.flattenNZcat()[k].toScalar()))
       
       p.x_ = [5,8]
 
@@ -223,13 +223,13 @@ class Toolstests(casadiTestCase):
       p.z_ = DMatrix([[1,2,3,4],[5,6,7,8]])
 
 
-      A = p.vecNZcat_()
+      A = p.flattenNZcat_()
       
-      self.checkarray(A,DMatrix([5,8,0,7,7,0,0,0,0,0,0,1,5,2,6,3,7,4,8]),"vecNZcat")
+      self.checkarray(A,DMatrix([5,8,0,7,7,0,0,0,0,0,0,1,5,2,6,3,7,4,8]),"flattenNZcat")
       
-      A = p.veccat_()
+      A = p.flattencat_()
       
-      self.checkarray(A,DMatrix([5,8,0,7,0,0,7,0,0,0,0,0,0,1,5,2,6,3,7,4,8]),"veccat")
+      self.checkarray(A,DMatrix([5,8,0,7,0,0,7,0,0,0,0,0,0,1,5,2,6,3,7,4,8]),"flattencat")
       
       self.checkarray(A[p.i_z],p.z_,"indexing round trip")
       self.checkarray(A[p.o_xother + p.xother.i_b],p.xother.b_,"indexing round trip 2")
@@ -244,10 +244,10 @@ class Toolstests(casadiTestCase):
       p.freeze()
       
 
-      self.assertEqual(p.veccat().numel(),9)
-      self.assertEqual(p.veccat().size(),9)
-      self.assertEqual(p.vecNZcat().numel(),9)
-      self.assertEqual(p.vecNZcat().size(),9)
+      self.assertEqual(p.flattencat().numel(),9)
+      self.assertEqual(p.flattencat().size(),9)
+      self.assertEqual(p.flattenNZcat().numel(),9)
+      self.assertEqual(p.flattenNZcat().size(),9)
       self.assertEqual(p.getNumel(),9)
       self.assertEqual(p.getSize(),9)
       
@@ -279,18 +279,18 @@ class Toolstests(casadiTestCase):
         roundtrip = p.lookup(p.reverselookup(k))
         if not(isinstance(roundtrip,SX)):
           roundtrip = roundtrip.toScalar()
-        self.assertTrue(roundtrip.isEqual(p.vecNZcat()[k].toScalar()))
+        self.assertTrue(roundtrip.isEqual(p.flattenNZcat()[k].toScalar()))
         
       p.b_[1].setAll(4)
       
-      A = p.vecNZcat_()
+      A = p.flattenNZcat_()
  
-      self.checkarray(A,DMatrix([0,0,0,0,0,4,4,4,0]),"vecNZcat")
+      self.checkarray(A,DMatrix([0,0,0,0,0,4,4,4,0]),"flattenNZcat")
      
       p.b_[0].setAll(3)
-      A = p.veccat_()
+      A = p.flattencat_()
 
-      self.checkarray(A,DMatrix([0,0,3,3,3,4,4,4,0]),"vecNZcat")
+      self.checkarray(A,DMatrix([0,0,3,3,3,4,4,4,0]),"flattenNZcat")
       
       
       p = Variables()
@@ -321,15 +321,15 @@ class Toolstests(casadiTestCase):
       
       p.b_[1].setAll(4)
       
-      A = p.vecNZcat_()
+      A = p.flattenNZcat_()
  
-      self.checkarray(A,DMatrix([0,0,0,0,0,0,0,0,4,4,4,0]),"vecNZcat")
+      self.checkarray(A,DMatrix([0,0,0,0,0,0,0,0,4,4,4,0]),"flattenNZcat")
      
       p.b_[0].setAll(3)
       p.b_[0][2,0] = 9
-      A = p.veccat_()
+      A = p.flattencat_()
 
-      self.checkarray(A,DMatrix([0,0,3,3,9,3,3,3,4,4,4,0]),"vecNZcat")
+      self.checkarray(A,DMatrix([0,0,3,3,9,3,3,3,4,4,4,0]),"flattenNZcat")
 
       p = Variables()
       p.a = msym("a",2)
@@ -340,7 +340,7 @@ class Toolstests(casadiTestCase):
       p.c = msym("c")
       p.freeze()
       
-      f = MXFunction([p.veccat()],[p.a,p.b[0],p.b[1],p.c])
+      f = MXFunction([p.flattencat()],[p.a,p.b[0],p.b[1],p.c])
       f.init()
       
       f.input()[p.i_a]=[4,5]
@@ -382,7 +382,7 @@ class Toolstests(casadiTestCase):
         roundtrip = p.lookup(p.reverselookup(k))
         if not(isinstance(roundtrip,SX)):
           roundtrip = roundtrip.toScalar()
-        self.assertTrue(roundtrip.isEqual(p.vecNZcat()[k].toScalar()))
+        self.assertTrue(roundtrip.isEqual(p.flattenNZcat()[k].toScalar()))
         
         
       x = msym("a",2,3)
@@ -419,7 +419,7 @@ class Toolstests(casadiTestCase):
       
       p_.xother.a=12
 
-      self.checkarray(p_.vecNZcat(),DMatrix([4,5,12,0,0,3,3,3,3,3,3,0,0,0,0,0,0,0,0]),"vecNZcat")
+      self.checkarray(p_.flattenNZcat(),DMatrix([4,5,12,0,0,3,3,3,3,3,3,0,0,0,0,0,0,0,0]),"flattenNZcat")
       
   def test_structure(self):
   
@@ -953,14 +953,14 @@ class Toolstests(casadiTestCase):
     a = struct_ssym([entry("a",shape=(5,3)),entry("b",shape=(4,3))])
     b = a()
     
-    b["a",flatten] = range(15)
+    b["a",vec] = range(15)
     self.checkarray(b.cat,DMatrix(range(15)+[0]*12))
     
-    self.checkarray(b["a",flatten],DMatrix(range(15)))
-    
-    b["a",vec] = range(15)
-
     self.checkarray(b["a",vec],DMatrix(range(15)))
+    
+    b["a",flatten] = range(15)
+
+    self.checkarray(b["a",flatten],DMatrix(range(15)))
     
   def test_pickling(self):
     import pickle

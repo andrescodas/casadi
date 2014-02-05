@@ -143,7 +143,7 @@ void test_sx(){
   cout << "time to create graph: " << (t*1e3) << " ms, " << endl;
   
   time1 = clock();
-  SXFunction f(vec(x),detx);
+  SXFunction f(flatten(x),detx);
   f.setOption("live_variables",true);
   f.setOption("topological_sorting","depth-first");
   f.init();
@@ -155,7 +155,7 @@ void test_sx(){
 
   // Create a new function without live variables (a bug prevents them from working together with symbolic calculations)
   time1 = clock();
-  SXFunction f_nolive(vec(x),detx);
+  SXFunction f_nolive(flatten(x),detx);
   f_nolive.init();
   time2 = clock();
   t = double(time2 - time1)/CLOCKS_PER_SEC;
@@ -170,7 +170,7 @@ void test_sx(){
 
   // Differentiating symbolically
   time1 = clock();
-  SXFunction g(vec(x),grad);
+  SXFunction g(flatten(x),grad);
   g.setOption("live_variables",true);
   g.setOption("topological_sorting","depth-first");
   g.init();
@@ -181,7 +181,7 @@ void test_sx(){
   cout << "time to create gradient function: " << (t*1e3) << " ms, " << (t*1e9/nops_grad) << " ns per elementary operation" << endl;
 
   // Some "random" matrix as input
-  f.setInput(vec(x0(n)));
+  f.setInput(flatten(x0(n)));
 
   // Evaluate without derivatives
   int nrep = 1000;

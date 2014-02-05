@@ -1010,7 +1010,7 @@ namespace CasADi{
 
   //       // Forward sensitivities
   //       for (int d = 0; d < nfdir; ++d) {
-  //         MatType fsens_d = mul(J, flatten(fseed[d][iind]));
+  //         MatType fsens_d = mul(J, vec(fseed[d][iind]));
   //         if (!isZero(fsens_d)) {
   //           // Reshape sensitivity contribution if necessary
   //           if (od2 > 1)
@@ -1032,7 +1032,7 @@ namespace CasADi{
 
   //       // Adjoint sensitivities
   //       for (int d = 0; d < nadir; ++d) {
-  //         MatType asens_d = mul(trans(J), flatten(aseed[d][oind]));
+  //         MatType asens_d = mul(trans(J), vec(aseed[d][oind]));
   //         if (!isZero(asens_d)) {
   //           // Reshape sensitivity contribution if necessary
   //           if (id2 > 1)

@@ -31,10 +31,10 @@ namespace CasADi{
 
 /// @{
 /** \brief Make a vector-valued function out of a matrix-valued one.
-*  In spirit, this function is like applying vec() to all inputs outputs
+*  In spirit, this function is like applying flatten() to all inputs outputs
 */
-SXFunction vec (const SXFunction &a);
-MXFunction vec (const FX &a);
+SXFunction flatten (const SXFunction &a);
+MXFunction flatten (const FX &a);
 /// @}  
                 
 } // namespace CasADi

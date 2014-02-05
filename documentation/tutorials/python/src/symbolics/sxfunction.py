@@ -130,8 +130,8 @@ print f.getOutput()
 G=f.jac().T
 print G
 
-#$ Notice how G is a 2-nd order tensor $ {\buildrel\leftrightarrow\over{G}} = \vec{\nabla}{\vec{f}} = \frac{\partial [x*y, x+y]}{\partial [x , y]}$
-#$ Let's define $ \vec{v} = {\buildrel\leftrightarrow\over{G}} . \vec{p} $
+#$ Notice how G is a 2-nd order tensor $ {\buildrel\leftrightarrow\over{G}} = \flatten{\nabla}{\flatten{f}} = \frac{\partial [x*y, x+y]}{\partial [x , y]}$
+#$ Let's define $ \flatten{v} = {\buildrel\leftrightarrow\over{G}} . \flatten{p} $
 #! The evaluation of v can be efficiently achieved by automatic differentiation as follows:
 f.init()
 df = f.derivative(1,0)

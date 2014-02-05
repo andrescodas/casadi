@@ -62,7 +62,7 @@ def NPvec(x):
   return NP.reshape(x,NP.prod(x.shape),1)
 
 # All variables
-vv = horzcat([vec(x),vec(v),vec(f)])
+vv = horzcat([flatten(x),flatten(v),flatten(f)])
 vv_lb = NP.concatenate([NPvec(x_lb),NPvec(v_lb),NPvec(f_lb)])
 vv_ub = NP.concatenate([NPvec(x_ub),NPvec(v_ub),NPvec(f_ub)])
 vv_guess = NP.concatenate([NPvec(x_guess),NPvec(v_guess),NPvec(f_guess)])

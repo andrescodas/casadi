@@ -193,7 +193,7 @@ class Sparsitytests(casadiTestCase):
     
   def test_vec(self):
     return # This test doesn't make much sense
-    self.message("vec")
+    self.message("flatten")
     nza = set([  (0,0),
              (0,1),
              (2,0),
@@ -206,7 +206,7 @@ class Sparsitytests(casadiTestCase):
       a.getNZ(i[0],i[1])
       
     A=self.tomatrix(a).toArray()
-    B=self.tomatrix(vec(a)).toArray()
+    B=self.tomatrix(flatten(a)).toArray()
     B_=numpy.reshape(A,(20,1))
     
     self.checkarray(B,B_,"reshape")
@@ -264,7 +264,7 @@ class Sparsitytests(casadiTestCase):
     self.checkarray(array([0,1,2]),array(list(mapping)),"diag(vector)")
     
   def test_vecMX(self):
-    self.message("vec MXFunction")
+    self.message("flatten MXFunction")
     q = DMatrix([[1,2,3,4,9],[5,6,7,8,8],[9,10,11,12,6],[1,2,3,4,5]])
 
     X = MX("X",4,5)
@@ -273,17 +273,17 @@ class Sparsitytests(casadiTestCase):
     F.init()
     F.setInput(q,0)
     F.evaluate()
-    F_ = vec(F.getOutput(0))
+    F_ = flatten(F.getOutput(0))
 
-    G = vec(F)
-    G.setInput(vec(q),0)
+    G = flatten(F)
+    G.setInput(flatten(q),0)
     G.evaluate()
     G_ = G.getOutput()
 
-    self.checkarray(F_,G_,"vec MX")
+    self.checkarray(F_,G_,"flatten MX")
     
   def test_vecSX(self):
-    self.message("vec SXFunction")
+    self.message("flatten SXFunction")
     q = DMatrix([[1,2,3,4,9],[5,6,7,8,8],[9,10,11,12,6],[1,2,3,4,5]])
 
     X = ssym("X",4,5)
@@ -292,14 +292,14 @@ class Sparsitytests(casadiTestCase):
     F.init()
     F.setInput(q,0)
     F.evaluate()
-    F_ = vec(F.getOutput(0))
+    F_ = flatten(F.getOutput(0))
 
-    G = vec(F)
-    G.setInput(vec(q),0)
+    G = flatten(F)
+    G.setInput(flatten(q),0)
     G.evaluate()
     G_ = G.getOutput()
 
-    self.checkarray(F_,G_,"vec SX")
+    self.checkarray(F_,G_,"flatten SX")
     
   def test_sparsityindex(self):
     self.message("sparsity indexing")

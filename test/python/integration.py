@@ -1192,7 +1192,7 @@ class Integrationtests(casadiTestCase):
     
     
     
-    qeJf=MXFunction([q0,par],[vec(qeJ.call([q0,par])[0])])
+    qeJf=MXFunction([q0,par],[flatten(qeJ.call([q0,par])[0])])
     #qeJf.setOption("ad_mode","reverse")
     qeJf.init()
     
@@ -1218,13 +1218,13 @@ class Integrationtests(casadiTestCase):
     A = ssym("A",N,N)
     x = ssym("x",N)
 
-    ode = SXFunction(daeIn(x=x, p=vec(A)),daeOut(ode=mul(A,x)))
+    ode = SXFunction(daeIn(x=x, p=flatten(A)),daeOut(ode=mul(A,x)))
     I = CVodesIntegrator(ode)
     I.setOption("fsens_err_con", True)
     I.setOption('reltol',1e-12)
     I.init()
     I.setInput(x0_,"x0")
-    I.setInput(vec(A_),"p")
+    I.setInput(flatten(A_),"p")
     I.evaluate()
 
     q0=MX("q0",N)
@@ -1238,7 +1238,7 @@ class Integrationtests(casadiTestCase):
     H  = JT.jacobian(1)
     H.init()
     H.setInput(x0_,0)
-    H.setInput(vec(A_),1)
+    H.setInput(flatten(A_),1)
     H.evaluate()
 
     H1 = H.getOutput()
@@ -1247,7 +1247,7 @@ class Integrationtests(casadiTestCase):
     #H = qe.hessian(1)
     #H.init()
     #H.setInput(x0_,0)
-    #H.setInput(vec(A_),1)
+    #H.setInput(flatten(A_),1)
     #H.evaluate()
     #H2 = H.getOutput()
     

@@ -364,7 +364,7 @@ ld0 = lDotAtTauRoot[1:,0]
 lagrangeTerm = 0
 for k in range(nk):
     for i in range(nicp):
-        dQs = h*veccat([LagrangeTerm.call([0., XD[k][i][j], XA[k][i][j-1], U[k], P])[0] \
+        dQs = h*flattencat([LagrangeTerm.call([0., XD[k][i][j], XA[k][i][j-1], U[k], P])[0] \
                         for j in range(1,deg+1)])
         Qs = mul( ldInv, dQs)
         m = mul( Qs.T, lAtOne[1:])

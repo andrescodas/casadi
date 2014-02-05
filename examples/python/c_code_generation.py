@@ -35,7 +35,7 @@ else:
   
 x = ssym("x",7,7)
 f = det(x)
-x = vec(x)
+x = flatten(x)
 x0 = [random.rand() for xi in x.data()]
 
 fcn = SXFunction([x],[f])
