@@ -20,7 +20,7 @@
  *
  */
 
-#include "crs_sparsity_internal.hpp"
+#include "ccs_sparsity_internal.hpp"
 #include "sparsity_tools.hpp"
 #include "../stl_vector_tools.hpp"
 #include <climits>
@@ -34,57 +34,57 @@ using namespace std;
 
 namespace CasADi{
 
-  int CRSSparsityInternal::size() const{
+  int CCSSparsityInternal::size() const{
     return col_.size();
   }
     
-  int CRSSparsityInternal::numel() const{
+  int CCSSparsityInternal::numel() const{
     return nrow_*ncol_;
   }
     
-  void CRSSparsityInternal::repr(ostream &stream) const{
+  void CCSSparsityInternal::repr(ostream &stream) const{
     stream << "Compressed Row Storage: " << nrow_ << "-by-" << ncol_ << " matrix, " << col_.size() << " structural non-zeros";
   }
 
-  void CRSSparsityInternal::sanityCheck(bool complete) const{
-    casadi_assert_message(nrow_>=0 ,"CRSSparsityInternal: number of rows must be positive, but got " << nrow_ << ".");
-    casadi_assert_message(ncol_ >=0,"CRSSparsityInternal: number of cols must be positive, but got " << ncol_ << ".");
+  void CCSSparsityInternal::sanityCheck(bool complete) const{
+    casadi_assert_message(nrow_>=0 ,"CCSSparsityInternal: number of rows must be positive, but got " << nrow_ << ".");
+    casadi_assert_message(ncol_ >=0,"CCSSparsityInternal: number of cols must be positive, but got " << ncol_ << ".");
     if (rowind_.size() != nrow_+1) {
       std::stringstream s;
-      s << "CRSSparsityInternal:Compressed Row Storage is not sane. The following must hold:" << std::endl;
+      s << "CCSSparsityInternal:Compressed Row Storage is not sane. The following must hold:" << std::endl;
       s << "  rowind.size() = nrow + 1, but got   rowind.size() = " << rowind_.size() << "   and   nrow = "  << nrow_ << std::endl;
-      s << "  Note that the signature is as follows: CRSSparsity (nrow, ncol, col, rowind)." << std::endl;
+      s << "  Note that the signature is as follows: CCSSparsity (nrow, ncol, col, rowind)." << std::endl;
       casadi_error(s.str());
     }
     if (complete) {
   
       if (rowind_.size()>0) {
         for (int k=1;k<rowind_.size();k++) {
-          casadi_assert_message(rowind_[k]>=rowind_[k-1], "CRSSparsityInternal:Compressed Row Storage is not sane. rowind must be monotone. Note that the signature is as follows: CRSSparsity (nrow, ncol, col, rowind).");
+          casadi_assert_message(rowind_[k]>=rowind_[k-1], "CCSSparsityInternal:Compressed Row Storage is not sane. rowind must be monotone. Note that the signature is as follows: CCSSparsity (nrow, ncol, col, rowind).");
         }
       
-        casadi_assert_message(rowind_[0]==0, "CRSSparsityInternal:Compressed Row Storage is not sane. First element of rowind must be zero. Note that the signature is as follows: CRSSparsity (nrow, ncol, col, rowind).");
+        casadi_assert_message(rowind_[0]==0, "CCSSparsityInternal:Compressed Row Storage is not sane. First element of rowind must be zero. Note that the signature is as follows: CCSSparsity (nrow, ncol, col, rowind).");
         if (rowind_[(rowind_.size()-1)]!=col_.size()) {
           std::stringstream s;
-          s << "CRSSparsityInternal:Compressed Row Storage is not sane. The following must hold:" << std::endl;
+          s << "CCSSparsityInternal:Compressed Row Storage is not sane. The following must hold:" << std::endl;
           s << "  rowind[lastElement] = col.size(), but got   rowind[lastElement] = " << rowind_[(rowind_.size()-1)] << "   and   col.size() = "  << col_.size() << std::endl;
-          s << "  Note that the signature is as follows: CRSSparsity (nrow, ncol, col, rowind)." << std::endl;
+          s << "  Note that the signature is as follows: CCSSparsity (nrow, ncol, col, rowind)." << std::endl;
           casadi_error(s.str());
         }
         if (col_.size()>nrow_*ncol_) {
           std::stringstream s;
-          s << "CRSSparsityInternal:Compressed Row Storage is not sane. The following must hold:" << std::endl;
+          s << "CCSSparsityInternal:Compressed Row Storage is not sane. The following must hold:" << std::endl;
           s << "  col.size() <= nrow * ncol, but got   col.size()  = " << col_.size() << "   and   nrow * ncol = "  << nrow_*ncol_ << std::endl;
-          s << "  Note that the signature is as follows: CRSSparsity (nrow, ncol, col, rowind)." << std::endl;
+          s << "  Note that the signature is as follows: CCSSparsity (nrow, ncol, col, rowind)." << std::endl;
           casadi_error(s.str());
         }
       }
       for (int k=0;k<col_.size();k++) {
         if (col_[k]>=ncol_ || col_[k] < 0) {
           std::stringstream s;
-          s << "CRSSparsityInternal:Compressed Row Storage is not sane. The following must hold:" << std::endl;
+          s << "CCSSparsityInternal:Compressed Row Storage is not sane. The following must hold:" << std::endl;
           s << "  0 <= col[i] < ncol for each i, but got   col[i] = " << col_[k] << "   and   ncol = "  << ncol_ << std::endl;
-          s << "  Note that the signature is as follows: CRSSparsity (nrow, ncol, col, rowind)." << std::endl;
+          s << "  Note that the signature is as follows: CCSSparsity (nrow, ncol, col, rowind)." << std::endl;
           casadi_error(s.str());
         }
       }
@@ -93,14 +93,14 @@ namespace CasADi{
   }
 
 
-  void CRSSparsityInternal::print(ostream &stream) const{
+  void CCSSparsityInternal::print(ostream &stream) const{
     repr(stream);
     stream << endl;
     stream << "col:    " << col_ << endl;
     stream << "rowind: " << rowind_ << endl;
   }
 
-  vector<int> CRSSparsityInternal::getRow() const{
+  vector<int> CCSSparsityInternal::getRow() const{
     vector<int> row(size());
     for(int r=0; r<nrow_; ++r){
       for(int el = rowind_[r]; el < rowind_[r+1]; ++el){
@@ -110,14 +110,14 @@ namespace CasADi{
     return row;
   }
 
-  CRSSparsity CRSSparsityInternal::transpose() const{
+  CCSSparsity CCSSparsityInternal::transpose() const{
     // Dummy mapping
     vector<int> mapping;
 
     return transpose(mapping);
   }
 
-  CRSSparsity CRSSparsityInternal::transpose(vector<int>& mapping, bool invert_mapping) const{
+  CCSSparsity CCSSparsityInternal::transpose(vector<int>& mapping, bool invert_mapping) const{
     // Get the sparsity of the transpose in sparse triplet form
     const vector<int>& trans_row = col_;
     vector<int> trans_col = getRow();
@@ -127,7 +127,7 @@ namespace CasADi{
 
   }
 
-  std::vector<int> CRSSparsityInternal::eliminationTree(bool ata) const{
+  std::vector<int> CCSSparsityInternal::eliminationTree(bool ata) const{
     // Allocate result
     vector<int> parent(nrow_);
   
@@ -175,7 +175,7 @@ namespace CasADi{
   
   }
 
-  int CRSSparsityInternal::depthFirstSearch(int j, int top, std::vector<int>& xi, std::vector<int>& pstack, const std::vector<int>& pinv, std::vector<bool>& marked) const{
+  int CCSSparsityInternal::depthFirstSearch(int j, int top, std::vector<int>& xi, std::vector<int>& pstack, const std::vector<int>& pinv, std::vector<bool>& marked) const{
     int head = 0;
   
     // initialize the recursion stack
@@ -230,11 +230,11 @@ namespace CasADi{
     return (top) ;
   }
 
-  int CRSSparsityInternal::stronglyConnectedComponents(std::vector<int>& p, std::vector<int>& r) const{
+  int CCSSparsityInternal::stronglyConnectedComponents(std::vector<int>& p, std::vector<int>& r) const{
     // NOTE: This implementation has been copied from CSparse and then modified, it needs cleaning up to be proper C++
     vector<int> tmp;
 
-    CRSSparsity AT = transpose();
+    CCSSparsity AT = transpose();
   
     vector<int> xi(2*nrow_+1);
     vector<int>& Blk = xi;
@@ -303,7 +303,7 @@ namespace CasADi{
     return nb;
   }
 
-  void CRSSparsityInternal::breadthFirstSearch(int n, std::vector<int>& wi, std::vector<int>& wj, std::vector<int>& queue, const std::vector<int>& imatch, const std::vector<int>& jmatch, int mark) const{
+  void CCSSparsityInternal::breadthFirstSearch(int n, std::vector<int>& wi, std::vector<int>& wj, std::vector<int>& queue, const std::vector<int>& imatch, const std::vector<int>& jmatch, int mark) const{
     // NOTE: This implementation has been copied from CSparse and then modified, it needs cleaning up to be proper C++
     int head = 0, tail = 0, j, i, p, j2 ;
   
@@ -322,13 +322,13 @@ namespace CasADi{
     // quick return if no unmatched nodes
     if(tail == 0) return;
   
-    CRSSparsity trans;
-    const CRSSparsityInternal *C;
+    CCSSparsity trans;
+    const CCSSparsityInternal *C;
     if(mark == 1){
       C = this;
     } else {
       trans = transpose();
-      C = static_cast<const CRSSparsityInternal *>(trans.get());
+      C = static_cast<const CCSSparsityInternal *>(trans.get());
     }
   
     // while queue is not empty
@@ -360,7 +360,7 @@ namespace CasADi{
     }
   }
 
-  void CRSSparsityInternal::matched(int n, const std::vector<int>& wj, const std::vector<int>& imatch, std::vector<int>& p, std::vector<int>& q, std::vector<int>& cc, std::vector<int>& rr, int set, int mark){
+  void CCSSparsityInternal::matched(int n, const std::vector<int>& wj, const std::vector<int>& imatch, std::vector<int>& p, std::vector<int>& q, std::vector<int>& cc, std::vector<int>& rr, int set, int mark){
     // NOTE: This implementation has been copied from CSparse and then modified, it needs cleaning up to be proper C++
     int kc = cc[set];
     int kr = rr[set-1] ;
@@ -376,7 +376,7 @@ namespace CasADi{
     rr[set] = kr ;
   }
 
-  void CRSSparsityInternal::unmatched(int m, const std::vector<int>& wi, std::vector<int>& p, std::vector<int>& rr, int set){
+  void CCSSparsityInternal::unmatched(int m, const std::vector<int>& wi, std::vector<int>& p, std::vector<int>& rr, int set){
     // NOTE: This implementation has been copied from CSparse and then modified, it needs cleaning up to be proper C++
     int i, kr = rr[set] ;
     for (i=0; i<m; i++) 
@@ -386,13 +386,13 @@ namespace CasADi{
     rr[set+1] = kr;
   }
 
-  int CRSSparsityInternal::rprune(int i, int j, double aij, void *other){
+  int CCSSparsityInternal::rprune(int i, int j, double aij, void *other){
     // NOTE: This implementation has been copied from CSparse and then modified, it needs cleaning up to be proper C++
     vector<int> &rr = *static_cast<vector<int> *>(other);
     return (i >= rr[1] && i < rr[2]) ;
   }
 
-  void CRSSparsityInternal::augmentingPath(int k, std::vector<int>& jmatch, int *cheap, std::vector<int>& w, int *js, int *is, int *ps) const{
+  void CCSSparsityInternal::augmentingPath(int k, std::vector<int>& jmatch, int *cheap, std::vector<int>& w, int *js, int *is, int *ps) const{
     // NOTE: This implementation has been copied from CSparse and then modified, it needs cleaning up to be proper C++
 
     int found = 0, p, i = -1, head = 0, j ;
@@ -459,7 +459,7 @@ namespace CasADi{
         jmatch[is[p]] = js[p];
   }
 
-  void CRSSparsityInternal::maxTransversal(std::vector<int>& imatch, std::vector<int>& jmatch, CRSSparsity& trans, int seed) const{
+  void CCSSparsityInternal::maxTransversal(std::vector<int>& imatch, std::vector<int>& jmatch, CCSSparsity& trans, int seed) const{
     // NOTE: This implementation has been copied from CSparse and then modified, it needs cleaning up to be proper C++
 
     int n2 = 0, m2 = 0;
@@ -499,7 +499,7 @@ namespace CasADi{
       trans = transpose();
   
     // Get pointer to sparsity
-    const CRSSparsityInternal* C = m2 < n2 ? static_cast<const CRSSparsityInternal*>(trans.get()) : this;
+    const CCSSparsityInternal* C = m2 < n2 ? static_cast<const CCSSparsityInternal*>(trans.get()) : this;
   
     std::vector<int>& Cjmatch = m2 < n2 ? imatch : jmatch;
     std::vector<int>& Cimatch = m2 < n2 ? jmatch : imatch;
@@ -541,9 +541,9 @@ namespace CasADi{
         Cimatch[Cjmatch[i]] = i;
   }
 
-  int CRSSparsityInternal::dulmageMendelsohn(std::vector<int>& rowperm, std::vector<int>& colperm, std::vector<int>& rowblock, std::vector<int>& colblock, std::vector<int>& coarse_rowblock, std::vector<int>& coarse_colblock, int seed) const{
+  int CCSSparsityInternal::dulmageMendelsohn(std::vector<int>& rowperm, std::vector<int>& colperm, std::vector<int>& rowblock, std::vector<int>& colblock, std::vector<int>& coarse_rowblock, std::vector<int>& coarse_colblock, int seed) const{
     // The transpose of the expression
-    CRSSparsity trans;
+    CCSSparsity trans;
   
     // Part 1: Maximum matching
 
@@ -611,7 +611,7 @@ namespace CasADi{
     vector<int> pinv = invertPermutation(colperm);
 
     // C=A(p,q) (it will hold A(R2,C2))
-    CRSSparsity C = permute(pinv, rowperm, 0);
+    CCSSparsity C = permute(pinv, rowperm, 0);
 
     vector<int>& rowind_C = C.rowindRef();
 
@@ -695,7 +695,7 @@ namespace CasADi{
     return nb2;
   }
 
-  std::vector<int> CRSSparsityInternal::randomPermutation(int n, int seed){
+  std::vector<int> CCSSparsityInternal::randomPermutation(int n, int seed){
     // Return object
     std::vector<int> p;
   
@@ -727,7 +727,7 @@ namespace CasADi{
     return p;
   }
 
-  std::vector<int> CRSSparsityInternal::invertPermutation(const std::vector<int>& p){
+  std::vector<int> CCSSparsityInternal::invertPermutation(const std::vector<int>& p){
     // pinv = p', or p = pinv'
 
     // allocate result
@@ -741,9 +741,9 @@ namespace CasADi{
     return pinv;
   }
 
-  CRSSparsity CRSSparsityInternal::permute(const std::vector<int>& pinv, const std::vector<int>& q, int values) const{
+  CCSSparsity CCSSparsityInternal::permute(const std::vector<int>& pinv, const std::vector<int>& q, int values) const{
     // alloc result
-    CRSSparsity C = CRSSparsity(nrow_,ncol_);
+    CCSSparsity C = CCSSparsity(nrow_,ncol_);
   
     // Row offset
     vector<int>& rowind_C = C.rowindRef();
@@ -769,7 +769,7 @@ namespace CasADi{
     return C;
   }
 
-  int CRSSparsityInternal::drop(int (*fkeep) (int, int, double, void *), void *other){
+  int CCSSparsityInternal::drop(int (*fkeep) (int, int, double, void *), void *other){
     int nz = 0;
   
     for(int j = 0; j<nrow_; ++j){
@@ -791,7 +791,7 @@ namespace CasADi{
     return nz ;
   }
 
-  int CRSSparsityInternal::leaf (int i, int j, const int *first, int *maxfirst, int *prevleaf, int *ancestor, int *jleaf){
+  int CCSSparsityInternal::leaf (int i, int j, const int *first, int *maxfirst, int *prevleaf, int *ancestor, int *jleaf){
     int q, s, sparent, jprev ;
     if (!first || !maxfirst || !prevleaf || !ancestor || !jleaf) return (-1) ;
     *jleaf = 0 ;
@@ -810,7 +810,7 @@ namespace CasADi{
     return (q) ;                    /* q = least common ancester (jprev,j) */
   }
 
-  int CRSSparsityInternal::vcount(std::vector<int>& pinv, std::vector<int>& parent, std::vector<int>& leftmost, int& S_m2, double& S_lnz) const{
+  int CCSSparsityInternal::vcount(std::vector<int>& pinv, std::vector<int>& parent, std::vector<int>& leftmost, int& S_m2, double& S_lnz) const{
     int i, k, p, pa;
     int n = nrow_, m = ncol_;
     const int* Ap = &rowind_.front();
@@ -910,7 +910,7 @@ namespace CasADi{
     return 1;
   }
 
-  std::vector<int> CRSSparsityInternal::postorder(const std::vector<int>& parent, int n){
+  std::vector<int> CCSSparsityInternal::postorder(const std::vector<int>& parent, int n){
     int j, k = 0, *head, *next, *stack ;
   
     // allocate result
@@ -948,7 +948,7 @@ namespace CasADi{
     return post;
   }
 
-  int CRSSparsityInternal::depthFirstSearchAndPostorder(int j, int k, int *head, const int *next, int *post, int *stack){
+  int CCSSparsityInternal::depthFirstSearchAndPostorder(int j, int k, int *head, const int *next, int *post, int *stack){
     int i, p, top = 0;
   
     // place j on the stack
@@ -979,7 +979,7 @@ namespace CasADi{
     return k;
   }
 
-  void CRSSparsityInternal::init_ata(const int *post, int *w, int **head, int **next) const{
+  void CCSSparsityInternal::init_ata(const int *post, int *w, int **head, int **next) const{
     int i, k, p, m = nrow_, n = ncol_;
     const int *ATp = &rowind_.front();
     const int *ATi = &col_.front();
@@ -1001,7 +1001,7 @@ namespace CasADi{
 
 #define HEAD(k,j) (ata ? head [k] : j)
 #define NEXT(J)   (ata ? next [J] : -1)
-  std::vector<int> CRSSparsityInternal::counts(const int *parent, const int *post, int ata) const{
+  std::vector<int> CCSSparsityInternal::counts(const int *parent, const int *post, int ata) const{
     int i, j, k, n, m, J, s, p, q, jleaf, *maxfirst, *prevleaf, *ancestor, *head = NULL, *next = NULL, *first;
 
     m = ncol_;
@@ -1016,7 +1016,7 @@ namespace CasADi{
     vector<int> w(s);
   
     // AT = A'
-    CRSSparsity AT = transpose();
+    CCSSparsity AT = transpose();
 
     ancestor = &w.front();
     maxfirst = &w.front()+n;
@@ -1085,7 +1085,7 @@ namespace CasADi{
 #undef HEAD
 #undef NEXT
 
-  int CRSSparsityInternal::wclear (int mark, int lemax, int *w, int n){
+  int CCSSparsityInternal::wclear (int mark, int lemax, int *w, int n){
     int k ;
     if (mark < 2 || (mark + lemax < 0))
       {
@@ -1095,13 +1095,13 @@ namespace CasADi{
     return (mark) ;     /* at this point, w [0..n-1] < mark holds */
   }
 
-  int CRSSparsityInternal::diag (int i, int j, double aij, void *other){
+  int CCSSparsityInternal::diag (int i, int j, double aij, void *other){
     return (i != j) ;
   }
 
 #define CS_FLIP(i) (-(i)-2)
 
-  std::vector<int> CRSSparsityInternal::approximateMinimumDegree(int order) const{
+  std::vector<int> CCSSparsityInternal::approximateMinimumDegree(int order) const{
   
     int *Cp, *Ci, *last, *len, *nv, *next, *head, *elen, *degree, *w;
     int *hhead, d, dk, dext, lemax = 0, e, elenk, eln, i, j, k, k1;
@@ -1111,13 +1111,13 @@ namespace CasADi{
     unsigned int h;
 
     //-- Construct matrix C -----------------------------------------------
-    CRSSparsity AT = transpose() ;              // compute A'
+    CCSSparsity AT = transpose() ;              // compute A'
   
     int m = ncol_;
     int n = nrow_;
     int dense = std::max(16, 10 * int(sqrt(double(n)))) ;   // find dense threshold
     dense = std::min(n-2, dense);
-    CRSSparsity C;
+    CCSSparsity C;
     if(order == 1 && n == m){
       // C = A+A
       C = patternCombine(AT,false,false);
@@ -1149,17 +1149,17 @@ namespace CasADi{
       AT_col.resize(p2);
     
       // A2 = AT'
-      CRSSparsity A2 = AT->transpose();
+      CCSSparsity A2 = AT->transpose();
     
       // C=A'*A with no dense rows
       C = AT->multiply(A2);
     } else {
       // C=A'*A
-      C = AT->multiply(shared_from_this<CRSSparsity>());
+      C = AT->multiply(shared_from_this<CCSSparsity>());
     }
   
     // Free memory
-    AT = CRSSparsity();
+    AT = CCSSparsity();
     // drop diagonal entries
     C->drop(diag, NULL);
   
@@ -1667,7 +1667,7 @@ namespace CasADi{
     return P;
   }
 
-  int CRSSparsityInternal::scatter(int j, std::vector<int>& w, int mark, CRSSparsity& C, int nz) const{
+  int CCSSparsityInternal::scatter(int j, std::vector<int>& w, int mark, CCSSparsity& C, int nz) const{
     int i, p;
     const int *Ap = &rowind_.front();
     const int *Ai = &col_.front();
@@ -1688,7 +1688,7 @@ namespace CasADi{
     return nz;
   }
 
-  CRSSparsity CRSSparsityInternal::multiply(const CRSSparsity& B) const{
+  CCSSparsity CCSSparsityInternal::multiply(const CCSSparsity& B) const{
     int nz = 0;
     casadi_assert_message(nrow_ == B.size2(), "Dimension mismatch.");
     int m = ncol_;
@@ -1702,7 +1702,7 @@ namespace CasADi{
     vector<int> w(m);
 
     // allocate result
-    CRSSparsity C(n,m);
+    CCSSparsity C(n,m);
     C.rowindRef().resize(anz + bnz);
   
     int* Cp = &C.rowindRef().front();
@@ -1726,7 +1726,7 @@ namespace CasADi{
     return C;
   }
 
-  void CRSSparsityInternal::prefactorize(int order, int qr, std::vector<int>& S_pinv, std::vector<int>& S_q, std::vector<int>& S_parent, std::vector<int>& S_cp, std::vector<int>& S_leftmost, int& S_m2, double& S_lnz, double& S_unz) const{
+  void CCSSparsityInternal::prefactorize(int order, int qr, std::vector<int>& S_pinv, std::vector<int>& S_q, std::vector<int>& S_parent, std::vector<int>& S_cp, std::vector<int>& S_leftmost, int& S_m2, double& S_lnz, double& S_unz) const{
     int k;
     int n = nrow_;
     vector<int> post;
@@ -1738,12 +1738,12 @@ namespace CasADi{
 
     // QR symbolic analysis
     if (qr){
-      CRSSparsity C;
+      CCSSparsity C;
       if(order!=0){
         std::vector<int> pinv_tmp;
         C = permute(pinv_tmp, S_q, 0);
       } else {
-        C = shared_from_this<CRSSparsity>();
+        C = shared_from_this<CCSSparsity>();
       }
     
       // etree of C'*C, where C=A(:,q)
@@ -1771,10 +1771,10 @@ namespace CasADi{
     }
   }
 
-  CRSSparsity CRSSparsityInternal::diag(std::vector<int>& mapping) const{
+  CCSSparsity CCSSparsityInternal::diag(std::vector<int>& mapping) const{
     if (nrow_==ncol_) {
       // Return object
-      CRSSparsity ret(0,1);
+      CCSSparsity ret(0,1);
       ret.reserve(std::min(size(),nrow_),nrow_);
     
       // Mapping
@@ -1804,15 +1804,15 @@ namespace CasADi{
       return ret;
     
     } else if (nrow_==1 || ncol_==1) {
-      CRSSparsity trans;
-      const CRSSparsityInternal *sp;
+      CCSSparsity trans;
+      const CCSSparsityInternal *sp;
     
       // Have a row vector
       if(nrow_ == 1){
         sp = this;
       } else {
         trans = transpose();
-        sp = static_cast<const CRSSparsityInternal *>(trans.get());
+        sp = static_cast<const CCSSparsityInternal *>(trans.get());
       }
     
       // Return object
@@ -1835,13 +1835,13 @@ namespace CasADi{
       }
       std::fill(rowind.begin()+i_prev+1,rowind.end(),size());
     
-      return CRSSparsity(sp->ncol_,sp->ncol_,col,rowind);
+      return CCSSparsity(sp->ncol_,sp->ncol_,col,rowind);
     } else {
       casadi_error("diag: wrong argument shape. Expecting square matrix or vector-like, but got " << dimString() << " instead.");
     }
   }
 
-  std::string CRSSparsityInternal::dimString() const { 
+  std::string CCSSparsityInternal::dimString() const { 
     std::stringstream ss;
     if (numel()==size()) {
       ss << nrow_ << "-by-" << ncol_ << " (dense)";
@@ -1851,18 +1851,18 @@ namespace CasADi{
     return ss.str();
   }
 
-  CRSSparsity CRSSparsityInternal::patternProduct(const CRSSparsity& y_trans) const{
+  CCSSparsity CCSSparsityInternal::patternProduct(const CCSSparsity& y_trans) const{
     // Dimensions
     int x_nrow = nrow_;
     int y_ncol = y_trans.size1();
 
     // Quick return if both are dense
     if(dense() && y_trans.dense()){
-      return CRSSparsity(x_nrow,y_ncol,!empty() && !y_trans.empty());
+      return CCSSparsity(x_nrow,y_ncol,!empty() && !y_trans.empty());
     }
   
     // return object
-    CRSSparsity ret(x_nrow,y_ncol);
+    CCSSparsity ret(x_nrow,y_ncol);
   
     // Get the vectors for the return pattern
     vector<int>& c = ret.colRef();
@@ -1938,9 +1938,9 @@ namespace CasADi{
     return ret;
   }
 
-  CRSSparsity CRSSparsityInternal::patternProduct(const CRSSparsity& y_trans, vector< vector< pair<int,int> > >& mapping) const{
+  CCSSparsity CCSSparsityInternal::patternProduct(const CCSSparsity& y_trans, vector< vector< pair<int,int> > >& mapping) const{
     // return object
-    CRSSparsity ret = patternProduct(y_trans);
+    CCSSparsity ret = patternProduct(y_trans);
   
     // Get the vectors for the return pattern
     const vector<int>& c = ret.col();
@@ -1984,23 +1984,23 @@ namespace CasADi{
     return ret;
   }
 
-  bool CRSSparsityInternal::scalar(bool scalar_and_dense) const{
+  bool CCSSparsityInternal::scalar(bool scalar_and_dense) const{
     return nrow_==1 && ncol_==1 && (!scalar_and_dense || size()==1);
   }
 
-  bool CRSSparsityInternal::dense() const{
+  bool CCSSparsityInternal::dense() const{
     return size() == numel();
   }
   
-  bool CRSSparsityInternal::empty() const{
+  bool CCSSparsityInternal::empty() const{
     return numel()==0;
   }
   
-  bool CRSSparsityInternal::null() const{
+  bool CCSSparsityInternal::null() const{
     return nrow_==0 && ncol_==0;
   }
 
-  bool CRSSparsityInternal::diagonal() const{
+  bool CCSSparsityInternal::diagonal() const{
     // Check if matrix is square
     if(nrow_ != ncol_) return false;
     
@@ -2023,11 +2023,11 @@ namespace CasADi{
     return true;
   }
 
-  bool CRSSparsityInternal::square() const{
+  bool CCSSparsityInternal::square() const{
     return nrow_ == ncol_;
   }
 
-  int CRSSparsityInternal::sizeU() const{
+  int CCSSparsityInternal::sizeU() const{
     int nnz = 0;
     for(int r=0; r<nrow_; ++r){
       for(int el = rowind_[r]; el < rowind_[r+1]; ++el){
@@ -2037,7 +2037,7 @@ namespace CasADi{
     return nnz;
   }
   
-  int CRSSparsityInternal::sizeD() const{
+  int CCSSparsityInternal::sizeD() const{
     int nnz = 0;
     for(int r=0; r<nrow_; ++r){
       for(int el = rowind_[r]; el < rowind_[r+1]; ++el){
@@ -2047,7 +2047,7 @@ namespace CasADi{
     return nnz;
   }
 
-  int CRSSparsityInternal::sizeL() const{
+  int CCSSparsityInternal::sizeL() const{
     int nnz = 0;
     for(int r=0; r<nrow_; ++r){
       for(int el = rowind_[r]; el < rowind_[r+1] && col_[el]<=r; ++el){
@@ -2057,11 +2057,11 @@ namespace CasADi{
     return nnz;
   }
 
-  std::pair<int,int> CRSSparsityInternal::shape() const{
+  std::pair<int,int> CCSSparsityInternal::shape() const{
     return std::pair<int,int>(nrow_,ncol_);
   }
 
-  vector<int> CRSSparsityInternal::erase(const vector<int>& ii, const vector<int>& jj){
+  vector<int> CCSSparsityInternal::erase(const vector<int>& ii, const vector<int>& jj){
     if (!inBounds(ii,nrow_)) {
       casadi_error("Slicing [ii,jj] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
@@ -2146,7 +2146,7 @@ namespace CasADi{
     return mapping;
   }
 
-  vector<int> CRSSparsityInternal::getNZ(const vector<int>& ii, const vector<int>& jj) const{
+  vector<int> CCSSparsityInternal::getNZ(const vector<int>& ii, const vector<int>& jj) const{
     if (!inBounds(ii,nrow_)) {
       casadi_error("Slicing [ii,jj] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
@@ -2181,7 +2181,7 @@ namespace CasADi{
     return ret;
   }
 
-  CRSSparsity CRSSparsityInternal::sub(const vector<int>& ii, const vector<int>& jj, vector<int>& mapping) const{
+  CCSSparsity CCSSparsityInternal::sub(const vector<int>& ii, const vector<int>& jj, vector<int>& mapping) const{
     if (!inBounds(ii,nrow_)) {
       casadi_error("Slicing [ii,jj] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
@@ -2203,7 +2203,7 @@ namespace CasADi{
 
   }
 
-  CRSSparsity CRSSparsityInternal::sub2(const vector<int>& ii, const vector<int>& jj, vector<int>& mapping) const{
+  CCSSparsity CCSSparsityInternal::sub2(const vector<int>& ii, const vector<int>& jj, vector<int>& mapping) const{
     std::vector<int> jj_sorted;
     std::vector<int> jj_sorted_index;
 
@@ -2258,7 +2258,7 @@ namespace CasADi{
   
     std::vector<int> sp_mapping;
     std::vector<int> mapping_ = mapping;
-    CRSSparsity ret = sp_triplet(ii.size(),jj.size(),rows,cols,sp_mapping);
+    CCSSparsity ret = sp_triplet(ii.size(),jj.size(),rows,cols,sp_mapping);
   
     for (int i=0;i<mapping.size();++i)
       mapping[i] = mapping_[sp_mapping[i]];
@@ -2267,7 +2267,7 @@ namespace CasADi{
     return ret;
   }
 
-  CRSSparsity CRSSparsityInternal::sub1(const vector<int>& ii, const vector<int>& jj, vector<int>& mapping) const{
+  CCSSparsity CCSSparsityInternal::sub1(const vector<int>& ii, const vector<int>& jj, vector<int>& mapping) const{
 
     std::vector<int> jj_sorted;
     std::vector<int> jj_sorted_index;
@@ -2321,7 +2321,7 @@ namespace CasADi{
   
     std::vector<int> sp_mapping;
     std::vector<int> mapping_ = mapping;
-    CRSSparsity ret = sp_triplet(ii.size(),jj.size(),rows,cols,sp_mapping);
+    CCSSparsity ret = sp_triplet(ii.size(),jj.size(),rows,cols,sp_mapping);
   
     for (int i=0;i<mapping.size();++i)
       mapping[i] = mapping_[sp_mapping[i]];
@@ -2330,17 +2330,17 @@ namespace CasADi{
     return ret;
   }
 
-  CRSSparsity CRSSparsityInternal::patternCombine(const CRSSparsity& y, bool f0x_is_zero, bool fx0_is_zero) const{
+  CCSSparsity CCSSparsityInternal::patternCombine(const CCSSparsity& y, bool f0x_is_zero, bool fx0_is_zero) const{
     static vector<unsigned char> mapping;
     return patternCombineGen1<false>(y, f0x_is_zero, fx0_is_zero, mapping);
   }
 
-  CRSSparsity CRSSparsityInternal::patternCombine(const CRSSparsity& y, bool f0x_is_zero, bool fx0_is_zero, vector<unsigned char>& mapping) const{
+  CCSSparsity CCSSparsityInternal::patternCombine(const CCSSparsity& y, bool f0x_is_zero, bool fx0_is_zero, vector<unsigned char>& mapping) const{
     return patternCombineGen1<true>(y, f0x_is_zero, fx0_is_zero, mapping);    
   }
   
   template<bool with_mapping>
-  CRSSparsity CRSSparsityInternal::patternCombineGen1(const CRSSparsity& y, bool f0x_is_zero, bool fx0_is_zero, std::vector<unsigned char>& mapping) const{
+  CCSSparsity CCSSparsityInternal::patternCombineGen1(const CCSSparsity& y, bool f0x_is_zero, bool fx0_is_zero, std::vector<unsigned char>& mapping) const{
 
     // Quick return if identical
     if(isEqual(y)){
@@ -2365,7 +2365,7 @@ namespace CasADi{
   }
   
   template<bool with_mapping, bool f0x_is_zero, bool fx0_is_zero>
-  CRSSparsity CRSSparsityInternal::patternCombineGen(const CRSSparsity& y, vector<unsigned char>& mapping) const{
+  CCSSparsity CCSSparsityInternal::patternCombineGen(const CCSSparsity& y, vector<unsigned char>& mapping) const{
 
     // Assert dimensions
     casadi_assert_message(nrow_==y.size1() && ncol_==y.size2(), "Dimension mismatch");
@@ -2426,10 +2426,10 @@ namespace CasADi{
     }
     
     // Return cached object
-    return CRSSparsity(nrow_, ncol_, ret_col, ret_rowind);
+    return CCSSparsity(nrow_, ncol_, ret_col, ret_rowind);
   }
 
-  bool CRSSparsityInternal::isEqual(const CRSSparsity& y) const{
+  bool CCSSparsityInternal::isEqual(const CCSSparsity& y) const{
     // Quick true if the objects are the same
     if(this == y.get()) return true;  
   
@@ -2437,10 +2437,10 @@ namespace CasADi{
     return isEqual(y.size1(),y.size2(),y.col(),y.rowind());
   }
   
-  CRSSparsity CRSSparsityInternal::patternInverse() const {
+  CCSSparsity CCSSparsityInternal::patternInverse() const {
     // Quick return clauses
-    if (empty()) return CRSSparsity(nrow_,ncol_,true);
-    if (dense()) return CRSSparsity(nrow_,ncol_,false);
+    if (empty()) return CCSSparsity(nrow_,ncol_,true);
+    if (dense()) return CCSSparsity(nrow_,ncol_,false);
     
     // Sparsity of the result
     std::vector<int> col_ret;
@@ -2473,11 +2473,11 @@ namespace CasADi{
     }
     
     // Return result
-    return CRSSparsity(nrow_,ncol_,col_ret,rowind_ret);    
+    return CCSSparsity(nrow_,ncol_,col_ret,rowind_ret);    
   }
 
 
-  bool CRSSparsityInternal::isEqual(int nrow, int ncol, const std::vector<int>& col, const std::vector<int>& rowind) const{
+  bool CCSSparsityInternal::isEqual(int nrow, int ncol, const std::vector<int>& col, const std::vector<int>& rowind) const{
     // First check dimensions and number of non-zeros
     if(size()!=col.size() || nrow_!=nrow || ncol_!=ncol)
       return false;
@@ -2498,14 +2498,14 @@ namespace CasADi{
     return true;
   }
 
-  void CRSSparsityInternal::reserve(int nnz, int nrow){
+  void CCSSparsityInternal::reserve(int nnz, int nrow){
     col_.reserve(nnz);
     rowind_.reserve(nrow+1);
   }
 
-  void CRSSparsityInternal::append(const CRSSparsity& sp){
+  void CCSSparsityInternal::append(const CCSSparsity& sp){
     // Assert dimensions
-    casadi_assert_message(ncol_==sp.size2(),"CRSSparsityInternal::append: Dimension mismatch. You attempt to append a shape " << sp.dimString() << " to a shape " << dimString() << ". The number of columns must match.");
+    casadi_assert_message(ncol_==sp.size2(),"CCSSparsityInternal::append: Dimension mismatch. You attempt to append a shape " << sp.dimString() << " to a shape " << dimString() << ". The number of columns must match.");
   
     // Get current number of non-zeros
     int sz = size();
@@ -2523,7 +2523,7 @@ namespace CasADi{
     nrow_ += sp.size1();
   }
 
-  void CRSSparsityInternal::enlargeRows(int nrow, const std::vector<int>& ii){
+  void CCSSparsityInternal::enlargeRows(int nrow, const std::vector<int>& ii){
     // Assert dimensions
     casadi_assert(ii.size() == nrow_);
 
@@ -2557,7 +2557,7 @@ namespace CasADi{
     }
   }
 
-  void CRSSparsityInternal::enlargeColumns(int ncol, const std::vector<int>& jj){
+  void CCSSparsityInternal::enlargeColumns(int ncol, const std::vector<int>& jj){
     // Assert dimensions
     casadi_assert(jj.size() == ncol_);
   
@@ -2570,7 +2570,7 @@ namespace CasADi{
     }
   }
 
-  CRSSparsity CRSSparsityInternal::makeDense(std::vector<int>& mapping) const{
+  CCSSparsity CCSSparsityInternal::makeDense(std::vector<int>& mapping) const{
     mapping.resize(size());
     for(int i=0; i<nrow_; ++i){
       for(int el=rowind_[i]; el<rowind_[i+1]; ++el){
@@ -2579,10 +2579,10 @@ namespace CasADi{
       }
     }
   
-    return CRSSparsity(nrow_,ncol_,true);
+    return CCSSparsity(nrow_,ncol_,true);
   }
 
-  int CRSSparsityInternal::getNZ(int i, int j) const{
+  int CCSSparsityInternal::getNZ(int i, int j) const{
     casadi_assert_message(i<nrow_,"First index (" << i  << ") out of bounds. Attempting to slice [" << i << "," << j << " ] out of shape " << dimString() << ".");
     casadi_assert_message(j<ncol_,"Second index (" << j  << ") out of bounds.  Attempting to slice [" << i << "," << j << " ] out of shape " << dimString() << ".");
   
@@ -2609,9 +2609,9 @@ namespace CasADi{
     return -1;
   }
 
-  CRSSparsity CRSSparsityInternal::reshape(int n, int m) const{
+  CCSSparsity CCSSparsityInternal::reshape(int n, int m) const{
     casadi_assert_message(numel() == n*m, "reshape: number of elements must remain the same. Old shape is " << dimString() << ". New shape is " << n << "x" << m << "=" << n*m << ".");
-    CRSSparsity ret(n,m);
+    CCSSparsity ret(n,m);
     ret.reserve(size(), n);
   
     std::vector<int> row(size());
@@ -2633,7 +2633,7 @@ namespace CasADi{
     return sp_triplet(n,m,row,col);
   }
 
-  void CRSSparsityInternal::resize(int nrow, int ncol){
+  void CCSSparsityInternal::resize(int nrow, int ncol){
     if(nrow != nrow_ || ncol != ncol_){
       if(nrow < nrow_ || ncol < ncol_){
         // Row and column index of the new
@@ -2671,7 +2671,7 @@ namespace CasADi{
     }
   }
 
-  bool CRSSparsityInternal::columnsSequential(bool strictly) const{
+  bool CCSSparsityInternal::columnsSequential(bool strictly) const{
     for(int i=0; i<nrow_; ++i){
       int lastcol = -1;
       for(int k=rowind_[i]; k<rowind_[i+1]; ++k){
@@ -2693,7 +2693,7 @@ namespace CasADi{
     return true;
   }
 
-  void CRSSparsityInternal::removeDuplicates(std::vector<int>& mapping){
+  void CCSSparsityInternal::removeDuplicates(std::vector<int>& mapping){
     casadi_assert(mapping.size()==size());
   
     // Nonzero counter without duplicates
@@ -2741,7 +2741,7 @@ namespace CasADi{
     mapping.resize(k_strict);
   }
 
-  void CRSSparsityInternal::getElements(std::vector<int>& loc, bool row_major) const{
+  void CCSSparsityInternal::getElements(std::vector<int>& loc, bool row_major) const{
 
     // Element for each nonzero
     loc.resize(size());
@@ -2765,7 +2765,7 @@ namespace CasADi{
     }
   }
 
-  void CRSSparsityInternal::getNZInplace(std::vector<int>& indices) const{
+  void CCSSparsityInternal::getNZInplace(std::vector<int>& indices) const{
     // Quick return if no elements
     if(indices.empty()) return;
 
@@ -2836,7 +2836,7 @@ namespace CasADi{
     fill(it,indices.end(),-1);
   }
 
-  CRSSparsity CRSSparsityInternal::unidirectionalColoring(const CRSSparsity& AT, int cutoff) const{
+  CCSSparsity CCSSparsityInternal::unidirectionalColoring(const CCSSparsity& AT, int cutoff) const{
   
     // Allocate temporary vectors
     vector<int> forbiddenColors;
@@ -2888,13 +2888,13 @@ namespace CasADi{
         
         // Cutoff if too many colors
         if(forbiddenColors.size()>cutoff){
-          return CRSSparsity();
+          return CCSSparsity();
         }
       }
     }
   
     // Create return sparsity containing the coloring
-    CRSSparsity ret(forbiddenColors.size(),nrow_);
+    CCSSparsity ret(forbiddenColors.size(),nrow_);
     vector<int>& rowind = ret.rowindRef();
     vector<int>& col = ret.colRef();
   
@@ -2924,7 +2924,7 @@ namespace CasADi{
     return ret;
   }
   
-  CRSSparsity CRSSparsityInternal::starColoring2(int ordering, int cutoff) const{
+  CCSSparsity CCSSparsityInternal::starColoring2(int ordering, int cutoff) const{
     
     // TODO What we need here, is a distance-2 smallest last ordering
     // Reorder, if necessary
@@ -2935,10 +2935,10 @@ namespace CasADi{
       vector<int> ord = largestFirstOrdering();
 
       // Create a new sparsity pattern 
-      CRSSparsity sp_permuted = pmult(ord,true,true,true);
+      CCSSparsity sp_permuted = pmult(ord,true,true,true);
     
       // Star coloring for the permuted matrix
-      CRSSparsity ret_permuted = sp_permuted.starColoring2(0);
+      CCSSparsity ret_permuted = sp_permuted.starColoring2(0);
         
       // Permute result back
       return ret_permuted.pmult(ord,false,true,false);
@@ -3073,7 +3073,7 @@ namespace CasADi{
 
         // Cutoff if too many colors
         if(forbiddenColors.size()>cutoff){
-          return CRSSparsity();
+          return CCSSparsity();
         }
       }
       
@@ -3143,7 +3143,7 @@ namespace CasADi{
     }
     
     // Create return sparsity containing the coloring
-    CRSSparsity ret(forbiddenColors.size(),nrow_);
+    CCSSparsity ret(forbiddenColors.size(),nrow_);
     vector<int>& rowind = ret.rowindRef();
     vector<int>& col = ret.colRef();
   
@@ -3175,7 +3175,7 @@ namespace CasADi{
   }
   
 
-  CRSSparsity CRSSparsityInternal::starColoring(int ordering, int cutoff) const{
+  CCSSparsity CCSSparsityInternal::starColoring(int ordering, int cutoff) const{
     // Reorder, if necessary
     if(ordering!=0){
       casadi_assert(ordering==1);
@@ -3184,10 +3184,10 @@ namespace CasADi{
       vector<int> ord = largestFirstOrdering();
 
       // Create a new sparsity pattern 
-      CRSSparsity sp_permuted = pmult(ord,true,true,true);
+      CCSSparsity sp_permuted = pmult(ord,true,true,true);
     
       // Star coloring for the permuted matrix
-      CRSSparsity ret_permuted = sp_permuted.starColoring(0);
+      CCSSparsity ret_permuted = sp_permuted.starColoring(0);
         
       // Permute result back
       return ret_permuted.pmult(ord,false,true,false);
@@ -3268,7 +3268,7 @@ namespace CasADi{
 
         // Cutoff if too many colors
         if(forbiddenColors.size()>cutoff){
-          return CRSSparsity();
+          return CCSSparsity();
         }
       }
   
@@ -3281,7 +3281,7 @@ namespace CasADi{
     return sp_triplet(num_colors,nrow_,color,range(color.size()));
   }
 
-  std::vector<int> CRSSparsityInternal::largestFirstOrdering() const{
+  std::vector<int> CCSSparsityInternal::largestFirstOrdering() const{
     vector<int> degree = rowind_;
     int max_degree = 0;
     for(int k=0; k<nrow_; ++k){
@@ -3316,7 +3316,7 @@ namespace CasADi{
     return reverse_ordering;
   }
 
-  CRSSparsity CRSSparsityInternal::pmult(const std::vector<int>& p, bool permute_rows, bool permute_columns, bool invert_permutation) const{
+  CCSSparsity CCSSparsityInternal::pmult(const std::vector<int>& p, bool permute_rows, bool permute_columns, bool invert_permutation) const{
     // Invert p, possibly
     vector<int> p_inv;
     if(invert_permutation){
@@ -3367,7 +3367,7 @@ namespace CasADi{
     return sp_triplet(nrow_,ncol_,new_row,new_col);
   }
 
-  bool CRSSparsityInternal::isTranspose(const CRSSparsityInternal& y) const{
+  bool CCSSparsityInternal::isTranspose(const CCSSparsityInternal& y) const{
     // Assert dimensions and number of nonzeros
     if(nrow_!=y.ncol_ || ncol_!=y.nrow_ || size()!=y.size())
       return false;
@@ -3409,7 +3409,7 @@ namespace CasADi{
     return true;
   }
 
-  void CRSSparsityInternal::spyMatlab(const std::string& mfile_name) const{
+  void CCSSparsityInternal::spyMatlab(const std::string& mfile_name) const{
     // Create the .m file
     ofstream mfile;
     mfile.open(mfile_name.c_str());
@@ -3455,7 +3455,7 @@ namespace CasADi{
     mfile.close();
   }
 
-  std::size_t CRSSparsityInternal::hash() const{
+  std::size_t CCSSparsityInternal::hash() const{
     return hash_sparsity(nrow_,ncol_,col_,rowind_);
   }
 

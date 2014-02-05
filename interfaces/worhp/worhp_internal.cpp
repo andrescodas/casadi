@@ -347,7 +347,7 @@ namespace CasADi{
     if (exact_hessian_ /*worhp_w_.HM.NeedStructure*/) { // not initialized
 
       // Get the sparsity pattern of the Hessian
-      const CRSSparsity& spHessLag = this->spHessLag();
+      const CCSSparsity& spHessLag = this->spHessLag();
       const vector<int>& rowind = spHessLag.rowind();
       const vector<int>& col = spHessLag.col();
 
@@ -391,13 +391,13 @@ namespace CasADi{
 
     if (worhp_w_.HM.NeedStructure) {
       // Get the sparsity pattern of the Hessian
-      const CRSSparsity& spHessLag = this->spHessLag();
+      const CCSSparsity& spHessLag = this->spHessLag();
       const vector<int>& rowind = spHessLag.rowind();
       const vector<int>& col = spHessLag.col();
 
       int nz=0;
       
-      // Upper triangular part of the Hessian (note CCS -> CRS format change)
+      // Upper triangular part of the Hessian (note CCS -> CCS format change)
       for(int r=0; r<nx_; ++r){
         for(int el=rowind[r]; el<rowind[r+1]; ++el){
           if(col[el]>r){
@@ -851,7 +851,7 @@ namespace CasADi{
         values_diagonal[r] = 0.;
       }
 
-      // Upper triangular part of the Hessian (note CCS -> CRS format change)
+      // Upper triangular part of the Hessian (note CCS -> CCS format change)
       for(int r=0; r<nx_; ++r){
         for(int el=rowind[r]; el<rowind[r+1]; ++el){
           if(col[el]>r){

@@ -85,7 +85,7 @@ namespace CasADi{
     casadi_assert_warning(getNumOutputs()<10000, "Function " << getOption("name") << " has a large number of outputs. Changing the problem formulation is strongly encouraged.");  
 
     // Resize the matrix that holds the sparsity of the Jacobian blocks
-    jac_sparsity_ = jac_sparsity_compact_ = Matrix<CRSSparsity>(getNumInputs(),getNumOutputs());
+    jac_sparsity_ = jac_sparsity_compact_ = Matrix<CCSSparsity>(getNumInputs(),getNumOutputs());
     jac_ = jac_compact_ = Matrix<WeakRef>(getNumInputs(),getNumOutputs());
   
     if(hasSetOption("user_data")){
@@ -356,7 +356,7 @@ namespace CasADi{
     for(int i=begin; i<end; ++i) r |= s[i];
   }
 
-  CRSSparsity FXInternal::getJacSparsityPlain(int iind, int oind){
+  CCSSparsity FXInternal::getJacSparsityPlain(int iind, int oind){
     // Number of nonzero inputs
     int nz_in = input(iind).size();
     
@@ -485,7 +485,7 @@ namespace CasADi{
     for(int ind=0; ind<getNumOutputs(); ++ind) output(ind).setZero();
 
     // Construct sparsity pattern
-    CRSSparsity ret = sp_triplet(nz_out, nz_in,use_fwd ? jrow : jcol, use_fwd ? jcol : jrow);
+    CCSSparsity ret = sp_triplet(nz_out, nz_in,use_fwd ? jrow : jcol, use_fwd ? jcol : jrow);
     
     casadi_log("Formed Jacobian sparsity pattern (dimension " << ret.shape() << ", " << ret.size() << " nonzeros, " << 100*double(ret.size())/double(ret.size1())/double(ret.size2()) << " \% nonzeros).");
     casadi_log("FXInternal::getJacSparsity end ");
@@ -494,7 +494,7 @@ namespace CasADi{
     return ret;
   }
 
-  CRSSparsity FXInternal::getJacSparsityHierarchicalSymm(int iind, int oind){
+  CCSSparsity FXInternal::getJacSparsityHierarchicalSymm(int iind, int oind){
     casadi_assert(spCanEvaluate(true));
 
     // Number of nonzero inputs
@@ -524,7 +524,7 @@ namespace CasADi{
     // In each iteration, subdivide each coarse block in this many fine blocks
     int subdivision = bvec_size;
 
-    CRSSparsity r = sp_dense(1,1);
+    CCSSparsity r = sp_dense(1,1);
     
     // The size of a block
     int granularity = nz;
@@ -543,7 +543,7 @@ namespace CasADi{
       // Clear the fine block structure
       fine.clear();
       
-      CRSSparsity D = r.starColoring();
+      CCSSparsity D = r.starColoring();
 
       casadi_log("Star coloring on " << r.dimString() << ": " << D.size1() << " <-> " << D.size2());
       
@@ -645,7 +645,7 @@ namespace CasADi{
             std::reverse(lookup_value.begin(),lookup_value.end());
             IMatrix duplicates = IMatrix::sparse(lookup_row,lookup_col,lookup_value,coarse.size(),bvec_size) - lookup;
             makeSparse(duplicates);
-            SubMatrix<Matrix<int>,CRSSparsity,int> temp(lookup,duplicates.sparsity(),0);
+            SubMatrix<Matrix<int>,CCSSparsity,int> temp(lookup,duplicates.sparsity(),0);
             temp = -bvec_size;
               
             // Propagate the dependencies
@@ -720,7 +720,7 @@ namespace CasADi{
     return r;
   }
 
-  CRSSparsity FXInternal::getJacSparsityHierarchical(int iind, int oind){
+  CCSSparsity FXInternal::getJacSparsityHierarchical(int iind, int oind){
     // Number of nonzero inputs
     int nz_in = input(iind).size();
     
@@ -756,7 +756,7 @@ namespace CasADi{
     // In each iteration, subdivide each coarse block in this many fine blocks
     int subdivision = bvec_size;
 
-    CRSSparsity r = sp_dense(1,1);
+    CCSSparsity r = sp_dense(1,1);
     
     // The size of a block
     int granularity_col = nz_in;
@@ -787,14 +787,14 @@ namespace CasADi{
       fine_row.clear();
     
       // r transpose will be needed in the algorithm
-      CRSSparsity rT = r.transpose();
+      CCSSparsity rT = r.transpose();
       
       /**       Decide which ad_mode to take           */
       
       // Forward mode
-      CRSSparsity D1 = rT.unidirectionalColoring(r);
+      CCSSparsity D1 = rT.unidirectionalColoring(r);
       // Adjoint mode
-      CRSSparsity D2 = r.unidirectionalColoring(rT);
+      CCSSparsity D2 = r.unidirectionalColoring(rT);
       
       casadi_log("Coloring on " << r.dimString() << " (fwd seeps: " << D1.size1() << " , adj sweeps: " << D2.size2() << ")");
       
@@ -839,7 +839,7 @@ namespace CasADi{
       for(int i=0; i<nz_seed; ++i) seed_v[i]=0;
       
       // Choose the active jacobian coloring scheme
-      CRSSparsity D = use_fwd ? D1 : D2;
+      CCSSparsity D = use_fwd ? D1 : D2;
       
       // Adjoint mode amounts to swapping
       if (!use_fwd) {
@@ -1017,7 +1017,7 @@ namespace CasADi{
     return r;
   }
 
-  CRSSparsity FXInternal::getJacSparsity(int iind, int oind, bool symmetric){
+  CCSSparsity FXInternal::getJacSparsity(int iind, int oind, bool symmetric){
     // Check if we are able to propagate dependencies through the function
     if(spCanEvaluate(true) || spCanEvaluate(false)){
 
@@ -1034,11 +1034,11 @@ namespace CasADi{
 
     } else {
       // Dense sparsity by default
-      return CRSSparsity(output(oind).size(),input(iind).size(),true);
+      return CCSSparsity(output(oind).size(),input(iind).size(),true);
     }
   }
 
-  void FXInternal::setJacSparsity(const CRSSparsity& sp, int iind, int oind, bool compact){
+  void FXInternal::setJacSparsity(const CCSSparsity& sp, int iind, int oind, bool compact){
     if(compact){
       jac_sparsity_compact_.elem(iind,oind) = sp;
     } else {
@@ -1046,11 +1046,11 @@ namespace CasADi{
     }
   }
 
-  CRSSparsity& FXInternal::jacSparsity(int iind, int oind, bool compact, bool symmetric){
+  CCSSparsity& FXInternal::jacSparsity(int iind, int oind, bool compact, bool symmetric){
     casadi_assert_message(isInit(),"Function not initialized.");
 
     // Get an owning reference to the block
-    CRSSparsity jsp = compact ? jac_sparsity_compact_.elem(iind,oind) : jac_sparsity_.elem(iind,oind);
+    CCSSparsity jsp = compact ? jac_sparsity_compact_.elem(iind,oind) : jac_sparsity_.elem(iind,oind);
 
     // Generate, if null
     if(jsp.isNull()){
@@ -1062,7 +1062,7 @@ namespace CasADi{
       } else {
       
         // Get the compact sparsity pattern
-        CRSSparsity sp = jacSparsity(iind,oind,true,symmetric);
+        CCSSparsity sp = jacSparsity(iind,oind,true,symmetric);
 
         // Enlarge if sparse output 
         if(output(oind).numel()!=sp.size1()){
@@ -1093,22 +1093,22 @@ namespace CasADi{
   
     // If still null, not dependent
     if(jsp.isNull()){
-      jsp = CRSSparsity(output(oind).size(),input(iind).size());
+      jsp = CCSSparsity(output(oind).size(),input(iind).size());
     }
 
     // Return a reference to the block
-    CRSSparsity& jsp_ref = compact ? jac_sparsity_compact_.elem(iind,oind) : jac_sparsity_.elem(iind,oind);
+    CCSSparsity& jsp_ref = compact ? jac_sparsity_compact_.elem(iind,oind) : jac_sparsity_.elem(iind,oind);
     jsp_ref = jsp;
     return jsp_ref;
   }
 
-  void FXInternal::getPartition(int iind, int oind, CRSSparsity& D1, CRSSparsity& D2, bool compact, bool symmetric){
+  void FXInternal::getPartition(int iind, int oind, CCSSparsity& D1, CCSSparsity& D2, bool compact, bool symmetric){
     log("FXInternal::getPartition begin");
   
     // Sparsity pattern with transpose
-    CRSSparsity &A = jacSparsity(iind,oind,compact,symmetric);
+    CCSSparsity &A = jacSparsity(iind,oind,compact,symmetric);
     vector<int> mapping;
-    CRSSparsity AT = symmetric ? A : A.transpose(mapping);
+    CCSSparsity AT = symmetric ? A : A.transpose(mapping);
     mapping.clear();
   
     // Which AD mode?
@@ -1158,7 +1158,7 @@ namespace CasADi{
             if(verbose()) cout << "Forward mode coloring interrupted (more than " << best_coloring << " needed)." << endl; 
           } else {
             if(verbose()) cout << "Forward mode coloring completed: " << D1.size1() << " directional derivatives needed (" << A.size2() << " without coloring)." << endl;
-            D2 = CRSSparsity();
+            D2 = CCSSparsity();
             best_coloring = D1.size1();
           }
         } else {
@@ -1169,7 +1169,7 @@ namespace CasADi{
             if(verbose()) cout << "Adjoint mode coloring interrupted (more than " << max_colorings_to_test << " needed)." << endl; 
           } else {
             if(verbose()) cout << "Adjoint mode coloring completed: " << D2.size1() << " directional derivatives needed (" << A.size1() << " without coloring)." << endl;
-            D1 = CRSSparsity();
+            D1 = CCSSparsity();
             best_coloring = D2.size1();
           }
         }
@@ -1392,7 +1392,7 @@ namespace CasADi{
           continue;
         
         // Get the sparsity of the Jacobian block
-        CRSSparsity& sp = jacSparsity(iind, oind, true, false);
+        CCSSparsity& sp = jacSparsity(iind, oind, true, false);
         if (sp.isNull() || sp.size() == 0)
           continue; // Skip if zero
         const int d1 = sp.size1();
@@ -1899,7 +1899,7 @@ namespace CasADi{
       // Need to create a new symbolic primitive
 
       // Sparsity pattern for the symbolic input
-      CRSSparsity sp_arg(0,1);
+      CCSSparsity sp_arg(0,1);
 
       // Append the sparsity patterns, keep track of row offsets
       vector<int> row_offset(1,0);
@@ -2154,7 +2154,7 @@ namespace CasADi{
     // Get the sparsity pattern of all inputs
     for(int i=0; i<n_io; ++i){
       // Get the sparsity pattern
-      const CRSSparsity& sp = i<n_i ? input(i).sparsity() : output(i-n_i).sparsity();
+      const CCSSparsity& sp = i<n_i ? input(i).sparsity() : output(i-n_i).sparsity();
       
       // Print the sparsity pattern or retrieve the index of an existing pattern
       int ind = gen.addSparsity(sp);

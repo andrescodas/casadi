@@ -26,7 +26,7 @@
 #include "slice.hpp"
 #include "submatrix.hpp"
 #include "nonzeros.hpp"
-#include "crs_sparsity.hpp"
+#include "ccs_sparsity.hpp"
 #include "sparsity_tools.hpp"
 #include "../casadi_math.hpp"
 
@@ -48,9 +48,9 @@ namespace CasADi{
   Index flatten happens as follows: (i,j) -> k = j+i*size2()\n
   Vectors are considered to be column vectors.\n
   
-  The storage format is a (modified) compressed row storage (CRS) format. This way, a vector element can always be accessed in constant time.\n
+  The storage format is a (modified) compressed row storage (CCS) format. This way, a vector element can always be accessed in constant time.\n
   
-  The sparsity can be accessed with CRSSparsity& sparsity()\n
+  The sparsity can be accessed with CCSSparsity& sparsity()\n
   
   \author Joel Andersson 
   \date 2012    
@@ -109,10 +109,10 @@ class GenericMatrix{
     bool square() const;
 
     /** \brief Get the sparsity pattern */
-    const CRSSparsity& sparsity() const;
+    const CCSSparsity& sparsity() const;
 
     /** \brief Access the sparsity, make a copy if there are multiple references to it */
-    CRSSparsity& sparsityRef();
+    CCSSparsity& sparsityRef();
 
     #ifndef SWIG
     /** \brief  Get vector nonzero or slice of nonzeros */
@@ -128,7 +128,7 @@ class GenericMatrix{
     const MatType operator()(const I& i) const{ return static_cast<const MatType*>(this)->sub(i,0);}
 
     /** \brief  Get Sparsity slice */
-    const MatType operator()(const CRSSparsity& sp) const{ return static_cast<const MatType*>(this)->sub(sp); }
+    const MatType operator()(const CCSSparsity& sp) const{ return static_cast<const MatType*>(this)->sub(sp); }
     
     /** \brief  Get Matrix element or slice */
     template<typename I, typename J>
@@ -139,7 +139,7 @@ class GenericMatrix{
     SubMatrix<MatType,I,int> operator()(const I& i){ return SubMatrix<MatType,I,int>(static_cast<MatType&>(*this),i,0); }
 
     /** \brief  Access Sparsity slice */
-    SubMatrix<MatType,CRSSparsity,int> operator()(const CRSSparsity& sp){ return SubMatrix<MatType,CRSSparsity,int>(static_cast<MatType&>(*this),sp,0); }
+    SubMatrix<MatType,CCSSparsity,int> operator()(const CCSSparsity& sp){ return SubMatrix<MatType,CCSSparsity,int>(static_cast<MatType&>(*this),sp,0); }
       
     /** \brief  Access Matrix element or slice */
     template<typename I, typename J>
@@ -150,19 +150,19 @@ class GenericMatrix{
     static MatType sym(const std::string& name, int n=1, int m=1);
 
     /** \brief Create a vector of length p with with matrices with symbolic variables of given sparsity */
-    static std::vector<MatType > sym(const std::string& name, const CRSSparsity& sp, int p);
+    static std::vector<MatType > sym(const std::string& name, const CCSSparsity& sp, int p);
 
     /** \brief Create a vector of length p with n-by-m matrices with symbolic variables */
     static std::vector<MatType > sym(const std::string& name, int n, int m, int p);
 
     /** \brief Create an matrix with symbolic variables, given a sparsity pattern */
-    static MatType sym(const std::string& name, const CRSSparsity& sp);
+    static MatType sym(const std::string& name, const CCSSparsity& sp);
     
     /** \brief Matrix-matrix multiplication.
     * Attempts to identify quick returns on matrix-level and 
     * delegates to MatType::mul_full if no such quick returns are found.
     */
-    MatType mul_smart(const MatType& y, const CRSSparsity& sp_z) const;
+    MatType mul_smart(const MatType& y, const CCSSparsity& sp_z) const;
     
 };
 
@@ -170,12 +170,12 @@ class GenericMatrix{
 // Implementations
 
 template<typename MatType>
-const CRSSparsity& GenericMatrix<MatType>::sparsity() const{
+const CCSSparsity& GenericMatrix<MatType>::sparsity() const{
   return static_cast<const MatType*>(this)->sparsity();
 }
 
 template<typename MatType>
-CRSSparsity& GenericMatrix<MatType>::sparsityRef(){
+CCSSparsity& GenericMatrix<MatType>::sparsityRef(){
   return static_cast<MatType*>(this)->sparsityRef();
 }
 
@@ -250,7 +250,7 @@ bool GenericMatrix<MatType>::square() const{
 }
 
 template<typename MatType>
-MatType GenericMatrix<MatType>::mul_smart(const MatType& y, const CRSSparsity &sp_z) const {
+MatType GenericMatrix<MatType>::mul_smart(const MatType& y, const CCSSparsity &sp_z) const {
   const MatType& x = *static_cast<const MatType*>(this);
   
   if (!(x.scalar() || y.scalar())) {
@@ -304,7 +304,7 @@ template<typename MatType>
 MatType GenericMatrix<MatType>::sym(const std::string& name, int n, int m){ return sym(name,sp_dense(n,m));}
 
 template<typename MatType>
-std::vector<MatType> GenericMatrix<MatType>::sym(const std::string& name, const CRSSparsity& sp, int p){
+std::vector<MatType> GenericMatrix<MatType>::sym(const std::string& name, const CCSSparsity& sp, int p){
   std::vector<MatType> ret(p);
   std::stringstream ss;
   for(int k=0; k<p; ++k){
@@ -319,7 +319,7 @@ template<typename MatType>
 std::vector<MatType > GenericMatrix<MatType>::sym(const std::string& name, int n, int m, int p){ return sym(name,sp_dense(n,m),p);}
 
 template<typename MatType>
-MatType GenericMatrix<MatType>::sym(const std::string& name, const CRSSparsity& sp){ throw CasadiException("\"sym\" not defined for instantiation");}
+MatType GenericMatrix<MatType>::sym(const std::string& name, const CCSSparsity& sp){ throw CasadiException("\"sym\" not defined for instantiation");}
 
 } // namespace CasADi
 

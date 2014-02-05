@@ -132,7 +132,7 @@ SnoptInterface::init()
 	SXFunction gradF(Ftotal.jacobian());
 
 	vector<int> rowind,col;
-	gradF.output().sparsity().getSparsityCRS(rowind,col);
+	gradF.output().sparsity().getSparsityCCS(rowind,col);
 
 	// split jacobian into constant and nonconstant elements (linear and nonlinear parts of F)
 	vector<doublereal> A_;

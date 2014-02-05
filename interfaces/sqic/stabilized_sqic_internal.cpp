@@ -44,7 +44,7 @@ StabilizedSQICInternal* StabilizedSQICInternal::clone() const{
   return node;
 }
   
-StabilizedSQICInternal::StabilizedSQICInternal(const std::vector<CRSSparsity>& st) : StabilizedQPSolverInternal(st){
+StabilizedSQICInternal::StabilizedSQICInternal(const std::vector<CCSSparsity>& st) : StabilizedQPSolverInternal(st){
   is_init_ = false;
 }
 
@@ -116,7 +116,7 @@ void StabilizedSQICInternal::init(){
   for (int i=0;i<locH_.size();++i) locH_[i]+=1;
   
   // Sparsity of augmented linear constraint matrix
-  CRSSparsity A_ = trans(vertcat(st_[QP_STRUCT_A],sp_dense(1,n_)));
+  CCSSparsity A_ = trans(vertcat(st_[QP_STRUCT_A],sp_dense(1,n_)));
   locA_ = A_.rowind();
   indA_ = A_.col();
   

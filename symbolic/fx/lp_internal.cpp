@@ -31,10 +31,10 @@ using namespace std;
 namespace CasADi{
 
 // Constructor
-LPSolverInternal::LPSolverInternal(const std::vector<CRSSparsity> &st) : st_(st) {
+LPSolverInternal::LPSolverInternal(const std::vector<CCSSparsity> &st) : st_(st) {
   casadi_assert_message(st_.size()==LP_STRUCT_NUM,"Problem structure mismatch");
   
-  const CRSSparsity& A = st_[LP_STRUCT_A];
+  const CCSSparsity& A = st_[LP_STRUCT_A];
  
   n_ = A.size2();
   nc_ = A.size1();

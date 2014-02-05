@@ -480,7 +480,7 @@ namespace CasADi{
       if (values == NULL) {
         int nz=0;
         vector<int> rowind,col;
-        hessLag_.output().sparsity().getSparsityCRS(rowind,col);
+        hessLag_.output().sparsity().getSparsityCCS(rowind,col);
         for(int r=0; r<rowind.size()-1; ++r)
           for(int el=rowind[r]; el<rowind[r+1]; ++el){
             if(col[el]<=r){
@@ -533,7 +533,7 @@ namespace CasADi{
       if (values == NULL) {
         int nz=0;
         vector<int> rowind,col;
-        jacG.output().sparsity().getSparsityCRS(rowind,col);
+        jacG.output().sparsity().getSparsityCCS(rowind,col);
         for(int r=0; r<rowind.size()-1; ++r)
           for(int el=rowind[r]; el<rowind[r+1]; ++el){
             iRow[nz] = r;
@@ -768,7 +768,7 @@ namespace CasADi{
         int nv = 0;
       
         // Loop over the rows
-        const CRSSparsity& spHessLag = this->spHessLag();
+        const CCSSparsity& spHessLag = this->spHessLag();
         const vector<int>& rowind = spHessLag.rowind();
         for(int i=0; i<rowind.size()-1; ++i){
           // If the row contains any non-zeros, the corresponding variable appears nonlinearily
@@ -791,7 +791,7 @@ namespace CasADi{
       int el = 0;
     
       // Loop over the rows
-      const CRSSparsity& spHessLag = this->spHessLag();
+      const CCSSparsity& spHessLag = this->spHessLag();
       const vector<int>& rowind = spHessLag.rowind();
       for(int i=0; i<rowind.size()-1; ++i){
         // If the row contains any non-zeros, the corresponding variable appears nonlinearily

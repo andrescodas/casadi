@@ -31,13 +31,13 @@ using namespace std;
 namespace CasADi{
 
 // Constructor
-QCQPSolverInternal::QCQPSolverInternal(const std::vector<CRSSparsity> &st) : st_(st) {
+QCQPSolverInternal::QCQPSolverInternal(const std::vector<CCSSparsity> &st) : st_(st) {
 
   casadi_assert_message(st_.size()==QCQP_STRUCT_NUM,"Problem structure mismatch");
   
-  const CRSSparsity& A = st_[QCQP_STRUCT_A];
-  const CRSSparsity& P = st_[QCQP_STRUCT_P];
-  const CRSSparsity& H = st_[QCQP_STRUCT_H];
+  const CCSSparsity& A = st_[QCQP_STRUCT_A];
+  const CCSSparsity& P = st_[QCQP_STRUCT_P];
+  const CCSSparsity& H = st_[QCQP_STRUCT_H];
   
   n_ = H.size2();
   nc_ = A.isNull() ? 0 : A.size1();
@@ -64,8 +64,8 @@ QCQPSolverInternal::QCQPSolverInternal(const std::vector<CRSSparsity> &st) : st_
   nq_ = P.size1() / n_;
 
   // Sparsity
-  CRSSparsity x_sparsity = sp_dense(n_,1);
-  CRSSparsity bounds_sparsity = sp_dense(nc_,1);
+  CCSSparsity x_sparsity = sp_dense(n_,1);
+  CCSSparsity bounds_sparsity = sp_dense(nc_,1);
   
   // Input arguments
   setNumInputs(QCQP_SOLVER_NUM_IN);

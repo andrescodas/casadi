@@ -42,7 +42,7 @@ public:
   virtual CplexInternal* clone() const;
   
   /// Constructor using sparsity patterns
-  explicit CplexInternal(const std::vector<CRSSparsity>& st);
+  explicit CplexInternal(const std::vector<CCSSparsity>& st);
 
   /// Destructor
   virtual ~CplexInternal();
@@ -57,7 +57,7 @@ public:
   virtual void evaluate();
 
   /// Converts CasADi sparsity to Cplex sparsity
-  static void toCplexSparsity(const CRSSparsity& sp_trans, std::vector<int> &matbeg, std::vector<int>& matcnt, std::vector<int>& matind);
+  static void toCplexSparsity(const CCSSparsity& sp_trans, std::vector<int> &matbeg, std::vector<int>& matcnt, std::vector<int>& matind);
   
 protected:
   

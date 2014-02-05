@@ -26,7 +26,7 @@
 #include "symbolic/fx/external_function.hpp"
 #include "symbolic/sx/sx_tools.hpp"
 #include "symbolic/mx/mx_tools.hpp"
-#include "symbolic/matrix/crs_sparsity_internal.hpp"
+#include "symbolic/matrix/ccs_sparsity_internal.hpp"
 #include "symbolic/matrix/sparsity_tools.hpp"
 #include "interfaces/csparse/csparse.hpp"
 extern "C"{
@@ -79,7 +79,7 @@ int main(){
   }
   
   // Create sparsity pattern
-  CRSSparsity C1 = sp_triplet(nrow, ncol, row, col);
+  CCSSparsity C1 = sp_triplet(nrow, ncol, row, col);
 
   // This is the bcsstk01 matrix from CSparse
   int nrow2 = 48;
@@ -110,7 +110,7 @@ int main(){
                   2.16916666667e+09,-2.5e+06,6.47105806113e+04,2.39928529451e+06,1.40838195984e+05,3.50487988027e+06,5.17922131816e+05,-4.79857058902e+06,4.57738374749e+06,1.34990274700e+05,2.47238730198e+09,9.61679848804e+08,-1.09779731332e+08,5.31278103775e+08};
 
   vector<int> mapping;
-  CRSSparsity C2 = sp_triplet(nrow2, ncol2, vector<int>(row2,row2+224), vector<int>(col2,col2+224),mapping);
+  CCSSparsity C2 = sp_triplet(nrow2, ncol2, vector<int>(row2,row2+224), vector<int>(col2,col2+224),mapping);
   vector<double> valv(mapping.size());
   for(int k=0; k<valv.size(); ++k){
     valv[k] = val2[mapping[k]];
@@ -136,7 +136,7 @@ int main(){
   int col3[10] = {0,1,0,1,2,4,2,3,3,4};
   int nrow3 = 10;
   int ncol3 = 5;
-  CRSSparsity S3(nrow3,ncol3,vector<int>(col3,col3+10),vector<int>(rowind3,rowind3+11));
+  CCSSparsity S3(nrow3,ncol3,vector<int>(col3,col3+10),vector<int>(rowind3,rowind3+11));
   
   IMatrix(S3,1).printDense();
 

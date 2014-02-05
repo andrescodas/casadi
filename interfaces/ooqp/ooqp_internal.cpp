@@ -71,7 +71,7 @@ OOQPInternal* OOQPInternal::clone() const{
   return node;
 }
   
-OOQPInternal::OOQPInternal(const std::vector<CRSSparsity>& st) : QPSolverInternal(st){
+OOQPInternal::OOQPInternal(const std::vector<CCSSparsity>& st) : QPSolverInternal(st){
   addOption("print_level",OT_INTEGER,0,"Print level. OOQP listens to print_level 0, 10 and 100");
   addOption("mutol",OT_REAL,1e-8,"tolerance as provided with setMuTol to OOQP");
   addOption("artol",OT_REAL,1e-8,"tolerance as provided with setArTol to OOQP");
@@ -122,7 +122,7 @@ void OOQPInternal::evaluate() {
   
   // Pass on QP_SOLVER_A
   vector<int> rowind,col;
-  A_.sparsity().getSparsityCRS(rowind,col);
+  A_.sparsity().getSparsityCCS(rowind,col);
   int k_orig = 0;
   int k_new = 0;
   for(int r=0; r<rowind.size()-1; ++r) {

@@ -60,7 +60,7 @@ public:
   CSparseCholesky();
   
   /// Create a linear solver given a sparsity pattern
-  CSparseCholesky(const CRSSparsity& sp, int nrhs=1);
+  CSparseCholesky(const CCSSparsity& sp, int nrhs=1);
   
   /** \brief  Access internal functions and data members */
   CSparseCholeskyInternal* operator->();
@@ -75,7 +75,7 @@ public:
   void solveL(double* x, int nrhs, bool transpose);
   
   /// Obtain a symbolic Cholesky factorization
-  CRSSparsity getFactorizationSparsity(bool transpose=false) const;
+  CCSSparsity getFactorizationSparsity(bool transpose=false) const;
   
   /// Obtain a numeric Cholesky factorization
   DMatrix getFactorization(bool transpose=false) const;
@@ -84,7 +84,7 @@ public:
   #ifdef SWIG
   %callback("%s_cb");
   #endif
-  static LinearSolver creator(const CRSSparsity& sp){ return CSparseCholesky(sp);}
+  static LinearSolver creator(const CCSSparsity& sp){ return CSparseCholesky(sp);}
   #ifdef SWIG
   %nocallback;
   #endif

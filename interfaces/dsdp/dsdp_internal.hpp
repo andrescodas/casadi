@@ -41,7 +41,7 @@ public:
   virtual DSDPInternal* clone() const;
   
   /** \brief  Create a new Solver */
-  explicit DSDPInternal(const std::vector<CRSSparsity> &st);
+  explicit DSDPInternal(const std::vector<CCSSparsity> &st);
 
   /** \brief  Destructor */
   virtual ~DSDPInternal();

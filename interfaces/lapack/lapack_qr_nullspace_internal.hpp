@@ -36,7 +36,7 @@ namespace CasADi{
   public:
   
     /** \brief  Constructor */
-    LapackQRNullspaceInternal(const CRSSparsity & A_sp, int nfwd=0, int nadj=0);
+    LapackQRNullspaceInternal(const CCSSparsity & A_sp, int nfwd=0, int nadj=0);
   
     /** \brief  Destructor */
     virtual ~LapackQRNullspaceInternal();
@@ -45,7 +45,7 @@ namespace CasADi{
     virtual LapackQRNullspaceInternal* clone() const;
     
     /** \brief  Create a new solver */
-    virtual LapackQRNullspaceInternal* create(const CRSSparsity & A_sp_) const{ return new LapackQRNullspaceInternal(A_sp_);}
+    virtual LapackQRNullspaceInternal* create(const CCSSparsity & A_sp_) const{ return new LapackQRNullspaceInternal(A_sp_);}
 
     /** \brief  initialize */
     virtual void init();

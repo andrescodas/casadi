@@ -35,19 +35,19 @@ namespace CasADi{
   class MX;
   template<class T> class Matrix;
   class FX;
-  class CRSSparsity;
+  class CCSSparsity;
   template<class T> class LPStructIOSchemeVector;
-  typedef LPStructIOSchemeVector<CRSSparsity> LPStructure;
+  typedef LPStructIOSchemeVector<CCSSparsity> LPStructure;
   template<class T> class QPStructIOSchemeVector;
-  typedef QPStructIOSchemeVector<CRSSparsity> QPStructure;
+  typedef QPStructIOSchemeVector<CCSSparsity> QPStructure;
   template<class T> class QCQPStructIOSchemeVector;
-  typedef QCQPStructIOSchemeVector<CRSSparsity> QCQPStructure;
+  typedef QCQPStructIOSchemeVector<CCSSparsity> QCQPStructure;
   template<class T> class SDPStructIOSchemeVector;
-  typedef SDPStructIOSchemeVector<CRSSparsity> SDPStructure;
+  typedef SDPStructIOSchemeVector<CCSSparsity> SDPStructure;
   template<class T> class SOCPStructIOSchemeVector;
-  typedef SOCPStructIOSchemeVector<CRSSparsity> SOCPStructure;
+  typedef SOCPStructIOSchemeVector<CCSSparsity> SOCPStructure;
   template<class T> class SDQPStructIOSchemeVector;
-  typedef SDQPStructIOSchemeVector<CRSSparsity> SDQPStructure;
+  typedef SDQPStructIOSchemeVector<CCSSparsity> SDQPStructure;
   class NLPSolver;
   class LinearSolver;
   class Integrator;
@@ -69,7 +69,7 @@ namespace CasADi{
   typedef NLPSolver (*NLPSolverCreator)(const FX& nlp);
 
   /// Function pointer to a linear solver creator function
-  typedef LinearSolver (*linearSolverCreator)(const CRSSparsity& sparsity, int nrhs);
+  typedef LinearSolver (*linearSolverCreator)(const CCSSparsity& sparsity, int nrhs);
   
   /// Function pointer to a LP solver creator function
   typedef LPSolver (*LPSolverCreator)(const LPStructure& st);

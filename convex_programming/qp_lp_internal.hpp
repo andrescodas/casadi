@@ -40,7 +40,7 @@ public:
   virtual QPLPInternal* clone() const;
   
   /** \brief  Create a new Solver */
-  explicit QPLPInternal(const std::vector<CRSSparsity> &st);
+  explicit QPLPInternal(const std::vector<CCSSparsity> &st);
 
   /** \brief  Destructor */
   virtual ~QPLPInternal();

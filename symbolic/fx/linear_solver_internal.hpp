@@ -34,7 +34,7 @@ namespace CasADi{
   class LinearSolverInternal : public FXInternal{
   public:
     // Constructor
-    LinearSolverInternal(const CRSSparsity& sparsity, int nrhs);
+    LinearSolverInternal(const CCSSparsity& sparsity, int nrhs);
         
     // Destructor
     virtual ~LinearSolverInternal();

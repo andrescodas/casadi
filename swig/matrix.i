@@ -37,7 +37,7 @@
 #endif // SWIGOCTAVE
 
 %{
-#include "symbolic/matrix/crs_sparsity.hpp"
+#include "symbolic/matrix/ccs_sparsity.hpp"
 #include "symbolic/matrix/matrix.hpp"
 #include <sstream>
 #include "symbolic/casadi_exception.hpp"
@@ -370,7 +370,7 @@ binopsFull(const CasADi::MX & b,,CasADi::MX,CasADi::MX)
 
 
 // Logic for pickling
-%extend CRSSparsity {
+%extend CCSSparsity {
 
   %pythoncode %{
     def __setstate__(self, state):
@@ -390,7 +390,7 @@ binopsFull(const CasADi::MX & b,,CasADi::MX,CasADi::MX)
 
   %pythoncode %{
     def __setstate__(self, state):
-        sp = CRSSparsity.__new__(CRSSparsity)
+        sp = CCSSparsity.__new__(CCSSparsity)
         sp.__setstate__(state["sparsity"])
         self.__init__(sp,state["data"])
 
@@ -404,7 +404,7 @@ binopsFull(const CasADi::MX & b,,CasADi::MX,CasADi::MX)
 
   %pythoncode %{
     def __setstate__(self, state):
-        sp = CRSSparsity.__new__(CRSSparsity)
+        sp = CCSSparsity.__new__(CCSSparsity)
         sp.__setstate__(state["sparsity"])
         self.__init__(sp,state["data"])
 

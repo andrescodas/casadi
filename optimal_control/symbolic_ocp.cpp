@@ -886,7 +886,7 @@ void SymbolicOCP::sortODE(){
   // Find out which differential equation depends on which differential state
   SXFunction f(der(x),ode);
   f.init();
-  CRSSparsity sp = f.jacSparsity();
+  CCSSparsity sp = f.jacSparsity();
   
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
@@ -914,7 +914,7 @@ void SymbolicOCP::sortALG(){
   // Find out which algebraic equation depends on which algebraic state
   SXFunction f(var(z),alg);
   f.init();
-  CRSSparsity sp = f.jacSparsity();
+  CCSSparsity sp = f.jacSparsity();
   
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
@@ -943,7 +943,7 @@ void SymbolicOCP::sortDependentParameters(){
   SXMatrix v = var(pd);
   SXFunction f(v,v-binding(pd));
   f.init();
-  CRSSparsity sp = f.jacSparsity();
+  CCSSparsity sp = f.jacSparsity();
   
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
@@ -972,7 +972,7 @@ void SymbolicOCP::makeExplicit(){
   f.init();
 
   // Get the sparsity of the Jacobian which can be used to determine which variable can be calculated from which other
-  CRSSparsity sp = f.jacSparsity();
+  CCSSparsity sp = f.jacSparsity();
 
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
@@ -1064,7 +1064,7 @@ void SymbolicOCP::eliminateAlgebraic(){
   f.init();
 
   // Get the sparsity of the Jacobian which can be used to determine which variable can be calculated from which other
-  CRSSparsity sp = f.jacSparsity();
+  CCSSparsity sp = f.jacSparsity();
 
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;

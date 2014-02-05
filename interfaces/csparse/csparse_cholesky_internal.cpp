@@ -26,7 +26,7 @@
 using namespace std;
 namespace CasADi{
 
-  CSparseCholeskyInternal::CSparseCholeskyInternal(const CRSSparsity& sparsity, int nrhs)  : LinearSolverInternal(sparsity,nrhs){
+  CSparseCholeskyInternal::CSparseCholeskyInternal(const CCSSparsity& sparsity, int nrhs)  : LinearSolverInternal(sparsity,nrhs){
     L_ = 0;
     S_ = 0;
 
@@ -69,7 +69,7 @@ namespace CasADi{
   }
 
 
-  CRSSparsity CSparseCholeskyInternal::getFactorizationSparsity(bool transpose) const {
+  CCSSparsity CSparseCholeskyInternal::getFactorizationSparsity(bool transpose) const {
     casadi_assert(S_);
     int n = AT_.n;
     int nzmax = S_->cp[n];
@@ -96,7 +96,7 @@ namespace CasADi{
       Li [p] = k ;    
     }
     Lp [n] = S_->cp [n] ; 
-    CRSSparsity ret(n, n, rowind, col);
+    CCSSparsity ret(n, n, rowind, col);
 
     return transpose? ret : trans(ret);
   
@@ -114,7 +114,7 @@ namespace CasADi{
     std::copy(L->i,L->i+nz,col.begin());
     std::vector< double > data(nz);
     std::copy(L->x,L->x+nz,data.begin());
-    DMatrix ret(CRSSparsity(m, n, col, rowind),data); 
+    DMatrix ret(CCSSparsity(m, n, col, rowind),data); 
     
     return transpose? ret : trans(ret);
   }

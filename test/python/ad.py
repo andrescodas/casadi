@@ -47,8 +47,8 @@ class ADtests(casadiTestCase):
     inp[4,0]=z
     inp[5,0]=w
     
-    sp = CRSSparsity(6,1,[0, 0, 0, 0],[0, 1, 1, 2, 2, 3, 4])
-    spT = CRSSparsity(1,6,[0, 2, 4, 5],[0, 4])
+    sp = CCSSparsity(6,1,[0, 0, 0, 0],[0, 1, 1, 2, 2, 3, 4])
+    spT = CCSSparsity(1,6,[0, 2, 4, 5],[0, 4])
     
     self.sxinputs = {
        "column" : {

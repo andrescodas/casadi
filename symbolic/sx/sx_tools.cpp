@@ -384,7 +384,7 @@ bool dependsOn(const SXMatrix& ex, const SXMatrix &arg){
 
   SXFunction temp(arg,ex);
   temp.init();
-  CRSSparsity Jsp = temp.jacSparsity();
+  CCSSparsity Jsp = temp.jacSparsity();
   return Jsp.size()!=0;
 }
 
@@ -641,7 +641,7 @@ SXMatrix ssym(const std::string& name, const std::pair<int,int> & nm) {
   return ssym(name,nm.first,nm.second);
 }
 
-SXMatrix ssym(const std::string& name, const CRSSparsity& sp){
+SXMatrix ssym(const std::string& name, const CCSSparsity& sp){
   // Create a dense n-by-m matrix
   vector<SX> retv;
   
@@ -688,7 +688,7 @@ SXMatrix ssym(const std::string& name, const CRSSparsity& sp){
   }
 }
 
-std::vector<SXMatrix> ssym(const std::string& name, const CRSSparsity& sp, int p){
+std::vector<SXMatrix> ssym(const std::string& name, const CCSSparsity& sp, int p){
   std::vector<SXMatrix> ret(p);
   stringstream ss;
   for(int k=0; k<p; ++k){
@@ -699,7 +699,7 @@ std::vector<SXMatrix> ssym(const std::string& name, const CRSSparsity& sp, int p
   return ret;
 }
 
-std::vector<std::vector<SXMatrix> > ssym(const std::string& name, const CRSSparsity& sp, int p, int r){
+std::vector<std::vector<SXMatrix> > ssym(const std::string& name, const CCSSparsity& sp, int p, int r){
   std::vector<std::vector<SXMatrix> > ret(r);
   for(int k=0; k<r; ++k){
     stringstream ss;
@@ -796,7 +796,7 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
   fcn.init();
   
   // Get the sparsity pattern of the Jacobian (no need to actually form the Jacobian)
-  CRSSparsity Jsp = fcn.jacSparsity();
+  CCSSparsity Jsp = fcn.jacSparsity();
   
   // Free the function
   fcn = SXFunction();
@@ -871,7 +871,7 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
     // Multiply this expression with a new dummy vector and take the jacobian to find out which variables enter nonlinearily
     SXFunction fcnb_nonlin(xb,inner_prod(fcnb_dep,ssym("dum2",fcnb_dep.size())));
     fcnb_nonlin.init();
-    CRSSparsity sp_nonlin = fcnb_nonlin.jacSparsity();
+    CCSSparsity sp_nonlin = fcnb_nonlin.jacSparsity();
     
     // Get the subsets of variables that appear nonlinearily
     vector<bool> nonlin(sp_nonlin.size2(),false);

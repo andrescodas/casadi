@@ -39,7 +39,7 @@ QPOasesInternal* QPOasesInternal::clone() const{
   return node;
 }
   
-QPOasesInternal::QPOasesInternal(const std::vector<CRSSparsity>& st) : QPSolverInternal(st){
+QPOasesInternal::QPOasesInternal(const std::vector<CCSSparsity>& st) : QPSolverInternal(st){
   addOption("nWSR",                   OT_INTEGER,     GenericType(), "The maximum number of working set recalculations to be performed during the initial homotopy. Default is 5(nx + nc)");
   addOption("CPUtime",                OT_REAL,        GenericType(), "The maximum allowed CPU time in seconds for the whole initialisation (and the actually required one on output). Disabled if unset.");
 

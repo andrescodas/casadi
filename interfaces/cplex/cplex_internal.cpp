@@ -34,7 +34,7 @@ namespace CasADi{
 
 using namespace std;
 
-CplexInternal::CplexInternal(const std::vector<CRSSparsity>& st) : QPSolverInternal(st){
+CplexInternal::CplexInternal(const std::vector<CCSSparsity>& st) : QPSolverInternal(st){
   // Options available
   addOption("qp_method",    OT_STRING, "automatic", "Determines which CPLEX algorithm to use.","automatic|primal_simplex|dual_simplex|network|barrier|sifting|concurrent|crossover");
   addOption("dump_to_file",   OT_BOOLEAN,        false, "Dumps QP to file in CPLEX format.");
@@ -46,8 +46,8 @@ CplexInternal::CplexInternal(const std::vector<CRSSparsity>& st) : QPSolverInter
   addOption("warm_start",      OT_BOOLEAN,            false, "Use warm start with simplex methods (affects only the simplex methods).");
   addOption("convex",          OT_BOOLEAN,             true, "Indicates if the QP is convex or not (affects only the barrier method).");
   
-  const CRSSparsity& A = st_[QP_STRUCT_A];
-  const CRSSparsity& H = st_[QP_STRUCT_H];
+  const CCSSparsity& A = st_[QP_STRUCT_A];
+  const CCSSparsity& H = st_[QP_STRUCT_H];
   
   // Initializing members
   // Number of vars
@@ -144,7 +144,7 @@ void CplexInternal::init(){
   rstat_.resize(NUMROWS_);
 
   // Matrix A (Cplex reqests its transpose)
-  CRSSparsity AT_sparsity = input(QP_SOLVER_A).sparsity().transpose(AT_nonzero_mapping_);
+  CCSSparsity AT_sparsity = input(QP_SOLVER_A).sparsity().transpose(AT_nonzero_mapping_);
   toCplexSparsity(AT_sparsity,matbeg_,matcnt_,matind_);
   matval_.resize(input(QP_SOLVER_A).size());
   
@@ -357,7 +357,7 @@ void CplexInternal::freeCplex(){
   }
 }
 
-void CplexInternal::toCplexSparsity(const CRSSparsity& sp_trans, vector<int> &matbeg, vector<int>& matcnt, vector<int>& matind){
+void CplexInternal::toCplexSparsity(const CCSSparsity& sp_trans, vector<int> &matbeg, vector<int>& matcnt, vector<int>& matind){
   // Get sparsity
   int ncol = sp_trans.size1();
   //int nrow = sp_trans.size2();

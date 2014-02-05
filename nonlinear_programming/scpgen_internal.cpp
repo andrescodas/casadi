@@ -527,7 +527,7 @@ namespace CasADi{
     }  
   
     // Allocate QP data
-    CRSSparsity sp_tr_B_obj = mat_fcn_.output(mat_hes_).sparsity().transpose();
+    CCSSparsity sp_tr_B_obj = mat_fcn_.output(mat_hes_).sparsity().transpose();
     qpH_ = DMatrix(sp_tr_B_obj.patternProduct(sp_tr_B_obj));
     qpA_ = mat_fcn_.output(mat_jac_);
     qpB_.resize(ng_);

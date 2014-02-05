@@ -29,7 +29,7 @@ namespace CasADi{
   LapackQRDense::LapackQRDense(){
   }
 
-  LapackQRDense::LapackQRDense(const CRSSparsity& sparsity, int nrhs){
+  LapackQRDense::LapackQRDense(const CCSSparsity& sparsity, int nrhs){
     assignNode(new LapackQRDenseInternal(sparsity,nrhs));
   }
  
@@ -41,7 +41,7 @@ namespace CasADi{
     return static_cast<const LapackQRDenseInternal*>(FX::operator->());
   }
 
-  LapackQRDenseInternal::LapackQRDenseInternal(const CRSSparsity& sparsity, int nrhs) : LinearSolverInternal(sparsity,nrhs){
+  LapackQRDenseInternal::LapackQRDenseInternal(const CCSSparsity& sparsity, int nrhs) : LinearSolverInternal(sparsity,nrhs){
   }
 
   LapackQRDenseInternal::~LapackQRDenseInternal(){

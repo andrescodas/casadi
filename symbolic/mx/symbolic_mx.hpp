@@ -39,7 +39,7 @@ class SymbolicMX : public MXNode{
     explicit SymbolicMX(const std::string& name, int n=1, int m=1);
 
     /** \brief  Constructors */
-    explicit SymbolicMX(const std::string& name, const CRSSparsity & sp);
+    explicit SymbolicMX(const std::string& name, const CCSSparsity & sp);
 
     /// Destructor
     virtual ~SymbolicMX(){}

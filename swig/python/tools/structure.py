@@ -1083,7 +1083,7 @@ class CasadiStructEntry(StructEntry):
           raise Exception("The 'shape' argument, if present, must be an integer, a tuple of 1 or 2 integers, a sparsity pattern.")
         else:
           self.sparsity = sp_dense(*shape)
-      elif isinstance(shape,CRSSparsity):
+      elif isinstance(shape,CCSSparsity):
         self.sparsity = shape
       else:
         raise Exception("The 'shape' argument, if present, must be an integer, a tuple of 1 or 2 integers, or a sparsity pattern. Got %s " % str(shape))

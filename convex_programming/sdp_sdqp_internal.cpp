@@ -39,7 +39,7 @@ SDPSDQPInternal* SDPSDQPInternal::clone() const{
   return node;
 }
   
-SDPSDQPInternal::SDPSDQPInternal(const std::vector<CRSSparsity> &st) : SDQPSolverInternal(st) {
+SDPSDQPInternal::SDPSDQPInternal(const std::vector<CCSSparsity> &st) : SDQPSolverInternal(st) {
 
   addOption("sdp_solver",       OT_SDPSOLVER, GenericType(), "The SDPSolver used to solve the SDQPs.");
   addOption("sdp_solver_options",       OT_DICTIONARY, GenericType(), "Options to be passed to the SDPSOlver");

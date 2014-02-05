@@ -40,16 +40,16 @@ namespace CasADi{
   class ConstantMX : public MXNode{
   public:
     /// Destructor
-    explicit ConstantMX(const CRSSparsity& sp);
+    explicit ConstantMX(const CCSSparsity& sp);
 
     /// Destructor
     virtual ~ConstantMX() = 0;
 
     // Creator (all values are the same integer)
-    static ConstantMX* create(const CRSSparsity& sp, int val);
+    static ConstantMX* create(const CCSSparsity& sp, int val);
 
     // Creator (all values are the same floating point value)
-    static ConstantMX* create(const CRSSparsity& sp, double val);
+    static ConstantMX* create(const CCSSparsity& sp, double val);
 
     // Creator (values may be different)
     static ConstantMX* create(const Matrix<double>& val);
@@ -158,7 +158,7 @@ namespace CasADi{
   public:
     
     /** \brief  Constructor */
-    explicit Constant(const CRSSparsity& sp, Value v = Value()) : ConstantMX(sp), v_(v){}
+    explicit Constant(const CCSSparsity& sp, Value v = Value()) : ConstantMX(sp), v_(v){}
 
     /// Destructor
     virtual ~Constant(){}
@@ -195,10 +195,10 @@ namespace CasADi{
     }
 
     /// Get densification
-    virtual MX getSetSparse(const CRSSparsity& sp) const;
+    virtual MX getSetSparse(const CCSSparsity& sp) const;
 
     /// Get the nonzeros of matrix
-    virtual MX getGetNonzeros(const CRSSparsity& sp, const std::vector<int>& nz) const;
+    virtual MX getGetNonzeros(const CCSSparsity& sp, const std::vector<int>& nz) const;
     
     /// Assign the nonzeros of a matrix to another matrix
     virtual MX getSetNonzeros(const MX& y, const std::vector<int>& nz) const;
@@ -213,14 +213,14 @@ namespace CasADi{
     virtual MX getBinary(int op, const MX& y, bool ScX, bool ScY) const;
     
     /// Reshape
-    virtual MX getReshape(const CRSSparsity& sp) const;
+    virtual MX getReshape(const CCSSparsity& sp) const;
 
     /** \brief The actual numerical value */
     Value v_;
   };
   
   template<typename Value>
-  MX Constant<Value>::getReshape(const CRSSparsity& sp) const{
+  MX Constant<Value>::getReshape(const CCSSparsity& sp) const{
     return MX::create(new Constant<Value>(sp,v_)); 
   }
 
@@ -259,7 +259,7 @@ namespace CasADi{
       casadi_math<double>::fun(op,size()> 0 ? v_.value: 0,0,ret);
       
       if (ret!=0) {
-        CRSSparsity f = sp_dense(y.size1(),y.size2());
+        CCSSparsity f = sp_dense(y.size1(),y.size2());
         MX yy = y.setSparse(f);
         return MX(f,shared_from_this<MX>())->getBinary(op,yy,false,false);
       }
@@ -271,7 +271,7 @@ namespace CasADi{
         grow = ret!=0;
       }
       if (grow) {
-        CRSSparsity f = sp_dense(size1(),size2());
+        CCSSparsity f = sp_dense(size1(),size2());
         MX xx = shared_from_this<MX>().setSparse(f);
         return xx->getBinary(op,MX(f,y),false,false);
       }
@@ -338,7 +338,7 @@ namespace CasADi{
   }
   
   template<typename Value>
-  MX Constant<Value>::getGetNonzeros(const CRSSparsity& sp, const std::vector<int>& nz) const{
+  MX Constant<Value>::getGetNonzeros(const CCSSparsity& sp, const std::vector<int>& nz) const{
     if(v_.value!=0){
       // Check if any "holes"
       for(std::vector<int>::const_iterator k=nz.begin(); k!=nz.end(); ++k){
@@ -362,7 +362,7 @@ namespace CasADi{
   }
 
   template<typename Value>
-  MX Constant<Value>::getSetSparse(const CRSSparsity& sp) const{
+  MX Constant<Value>::getSetSparse(const CCSSparsity& sp) const{
     if(isZero()){
       return MX::create(new Constant<Value>(sp,v_));
     } else if (sp.dense()) {

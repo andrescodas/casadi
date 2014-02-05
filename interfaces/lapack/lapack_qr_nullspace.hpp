@@ -42,7 +42,7 @@ namespace CasADi{
     LapackQRNullspace();
 
     /// Default constructor 
-    LapackQRNullspace(const CRSSparsity& A_sp);
+    LapackQRNullspace(const CCSSparsity& A_sp);
     
     /// Access functions of the node.
     LapackQRNullspaceInternal* operator->();

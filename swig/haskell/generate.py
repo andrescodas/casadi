@@ -372,8 +372,8 @@ for (name,pars,rettype,docs) in functions:
     tainted_types[p] = True
   tainted_types[t] = True
   target = tools
-  if "Vec" in t and (t.endswith("CRSSparsity") or name.endswith("In") or name.endswith("Out")):
-    #name = name[:-len("CRSSparsity")]
+  if "Vec" in t and (t.endswith("CCSSparsity") or name.endswith("In") or name.endswith("Out")):
+    #name = name[:-len("CCSSparsity")]
     target = ioschemehelpers
   elif "Vec" in t and t.endswith("MX") :
     #name = name[:-len("MX")]

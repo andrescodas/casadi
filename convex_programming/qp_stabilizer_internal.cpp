@@ -36,7 +36,7 @@ QPStabilizerInternal* QPStabilizerInternal::clone() const{
   return node;
 }
   
-QPStabilizerInternal::QPStabilizerInternal(const std::vector<CRSSparsity> &st) : StabilizedQPSolverInternal(st) {
+QPStabilizerInternal::QPStabilizerInternal(const std::vector<CCSSparsity> &st) : StabilizedQPSolverInternal(st) {
 
   addOption("qp_solver",       OT_QPSOLVER, GenericType(), "The QPSOlver used to solve the Stabilized QPs.");
   addOption("qp_solver_options",       OT_DICTIONARY, GenericType(), "Options to be passed to the QPSOlver");
@@ -112,8 +112,8 @@ void QPStabilizerInternal::init(){
 
   StabilizedQPSolverInternal::init();
 
-  CRSSparsity H_sparsity_qp = blkdiag(st_[QP_STRUCT_H],sp_diag(nc_));
-  CRSSparsity A_sparsity_qp = horzcat(st_[QP_STRUCT_A],sp_diag(nc_));
+  CCSSparsity H_sparsity_qp = blkdiag(st_[QP_STRUCT_H],sp_diag(nc_));
+  CCSSparsity A_sparsity_qp = horzcat(st_[QP_STRUCT_A],sp_diag(nc_));
     
   QPSolverCreator qp_solver_creator = getOption("qp_solver");
   qp_solver_ = qp_solver_creator(qpStruct("h",H_sparsity_qp,"a",A_sparsity_qp));

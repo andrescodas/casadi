@@ -29,7 +29,7 @@ namespace CasADi{
   LapackQRNullspace::LapackQRNullspace(){
   }
 
-  LapackQRNullspace::LapackQRNullspace(const CRSSparsity& A_sp) {
+  LapackQRNullspace::LapackQRNullspace(const CCSSparsity& A_sp) {
     assignNode(new LapackQRNullspaceInternal(A_sp));
   }
   

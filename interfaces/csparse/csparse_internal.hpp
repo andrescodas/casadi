@@ -39,7 +39,7 @@ namespace CasADi{
   public:
     
     // Create a linear solver given a sparsity pattern and a number of right hand sides
-    CSparseInternal(const CRSSparsity& sp, int nrhs);
+    CSparseInternal(const CCSSparsity& sp, int nrhs);
 
     // Copy constructor
     CSparseInternal(const CSparseInternal& linsol);

@@ -31,7 +31,7 @@
 using namespace std;
 namespace CasADi{
 
-  SymbolicQRInternal::SymbolicQRInternal(const CRSSparsity& sparsity, int nrhs) : LinearSolverInternal(sparsity,nrhs){
+  SymbolicQRInternal::SymbolicQRInternal(const CCSSparsity& sparsity, int nrhs) : LinearSolverInternal(sparsity,nrhs){
     addOption("codegen",           OT_BOOLEAN,  false,               "C-code generation");
     addOption("compiler",          OT_STRING,    "gcc -fPIC -O2",    "Compiler command to be used for compiling generated code");
   }

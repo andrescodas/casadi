@@ -34,7 +34,7 @@ namespace CasADi{
 
   Vertsplit::Vertsplit(const MX& x, const std::vector<int>& offset) : offset_(offset){
     setDependencies(x);
-    setSparsity(CRSSparsity(1, 1, true));
+    setSparsity(CCSSparsity(1, 1, true));
     
     // Add trailing elemement if needed
     if(offset_.back()!=x.size1()){
@@ -67,7 +67,7 @@ namespace CasADi{
       col.resize(rowind.back());
       copy(col_x.begin()+rowind_x[first_row],col_x.begin()+rowind_x[last_row],col.begin());
       
-      CRSSparsity sp(nrow,ncol,col,rowind);
+      CCSSparsity sp(nrow,ncol,col,rowind);
       output_sparsity_.push_back(sp);
     }
   }

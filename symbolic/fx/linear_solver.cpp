@@ -28,7 +28,7 @@ namespace CasADi{
   LinearSolver::LinearSolver(){
   }
 
-  LinearSolver::LinearSolver(const CRSSparsity& sp, int nrhs){
+  LinearSolver::LinearSolver(const CCSSparsity& sp, int nrhs){
     assignNode(new LinearSolverInternal(sp,nrhs));
   }
 

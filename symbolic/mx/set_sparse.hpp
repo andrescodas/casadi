@@ -34,7 +34,7 @@ namespace CasADi{
   public:
 
     /** \brief  Constructor */
-    SetSparse(const MX& x, const CRSSparsity& sp);
+    SetSparse(const MX& x, const CCSSparsity& sp);
 
     /** \brief  Destructor */
     virtual ~SetSparse(){}

@@ -32,7 +32,7 @@
 #include "../sx/sx_tools.hpp"
 #include "../sx/sx_node.hpp"
 #include "../casadi_types.hpp"
-#include "../matrix/crs_sparsity_internal.hpp"
+#include "../matrix/ccs_sparsity_internal.hpp"
 #include "../profiling.hpp"
 #include "../casadi_options.hpp"
 

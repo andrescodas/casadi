@@ -82,10 +82,10 @@ namespace CasADi{
       Index flatten happens as follows: (i,j) -> k = j+i*size2()\n
       Vectors are considered to be column vectors.\n
   
-      The storage format is a (modified) compressed row storage (CRS) format. This way, a vector element can always be accessed in constant time.\n
+      The storage format is a (modified) compressed row storage (CCS) format. This way, a vector element can always be accessed in constant time.\n
   
       Matrix<T> is polymorphic with a std::vector<T> that contain all non-identical-zero elements.\n
-      The sparsity can be accessed with CRSSparsity& sparsity()\n
+      The sparsity can be accessed with CCSSparsity& sparsity()\n
   
       \author Joel Andersson 
       \date 2010        
@@ -119,10 +119,10 @@ namespace CasADi{
     explicit Matrix(const std::vector< std::vector<T> >& m);
     
     /// sparse matrix with a given sparsity
-    explicit Matrix(const CRSSparsity& sparsity, const T& val=0);
+    explicit Matrix(const CCSSparsity& sparsity, const T& val=0);
     
     /// sparse matrix with a given sparsity and non-zero elements.
-    Matrix(const CRSSparsity& sparsity, const std::vector<T>& d);
+    Matrix(const CCSSparsity& sparsity, const std::vector<T>& d);
     
     /** \brief Check if the dimensions and rowind,col vectors are compatible.
      * \param complete  set to true to also check elementwise
@@ -203,13 +203,13 @@ namespace CasADi{
 
     /** \brief  Create an expression from an stl vector  */
     template<typename A>
-    Matrix(const std::vector<A>& x) : sparsity_(CRSSparsity(x.size(),1,true)), data_(std::vector<T>(x.size())){
+    Matrix(const std::vector<A>& x) : sparsity_(CCSSparsity(x.size(),1,true)), data_(std::vector<T>(x.size())){
       copy(x.begin(),x.end(),begin());
     }
 
     /** \brief  Create a non-vector expression from an stl vector */
     template<typename A>
-    Matrix(const std::vector<A>& x,  int n, int m) : sparsity_(CRSSparsity(n,m,true)), data_(std::vector<T>(x.size())){
+    Matrix(const std::vector<A>& x,  int n, int m) : sparsity_(CCSSparsity(n,m,true)), data_(std::vector<T>(x.size())){
       if(x.size() != n*m) throw CasadiException("Matrix::Matrix(const std::vector<T>& x,  int n, int m): dimension mismatch");
       copy(x.begin(),x.end(),begin());
     }
@@ -217,12 +217,12 @@ namespace CasADi{
     /** \brief  ublas vector */
 #ifdef HAVE_UBLAS
     template<typename T, typename A>
-    explicit Matrix<T>(const ublas::vector<A> &x) : sparsity_(CRSSparsity(x.size(),1,true)), data_(std::vector<T>(x.size())){
+    explicit Matrix<T>(const ublas::vector<A> &x) : sparsity_(CCSSparsity(x.size(),1,true)), data_(std::vector<T>(x.size())){
       copy(x.begin(),x.end(),begin());
     }
 
     template<typename T, typename A>
-    explicit Matrix<T>(const ublas::matrix<A> &x) : sparsity_(CRSSparsity(x.size1(),x.size2(),true)), data_(std::vector<T>(numel())){
+    explicit Matrix<T>(const ublas::matrix<A> &x) : sparsity_(CCSSparsity(x.size1(),x.size2(),true)), data_(std::vector<T>(numel())){
       copy(x.begin(),x.end(),begin());
       return ret;
     }
@@ -302,7 +302,7 @@ namespace CasADi{
     const Matrix<T> sub(const Slice& i, const Matrix<int>& k) const {return sub(i.getAll(size1()),k);}
     const Matrix<T> sub(const Matrix<int>& k, const Slice& j) const {return sub(k,j.getAll(size2()));}
     const Matrix<T> sub(const Matrix<int>& i, const Matrix<int>& j) const;
-    const Matrix<T> sub(const CRSSparsity& sp, int dummy = 0) const;
+    const Matrix<T> sub(const CCSSparsity& sp, int dummy = 0) const;
     //@}
 
     //@{
@@ -319,7 +319,7 @@ namespace CasADi{
     void setSub(const Matrix<T>& m, const Slice& i, const Matrix<int>& j) {return setSub(m,i.getAll(size1()),j);}
     void setSub(const Matrix<T>& m, const Matrix<int>& i, const Slice& j) {return setSub(m,i,j.getAll(size2()));}
     void setSub(const Matrix<T>& m, const Matrix<int>& i, const Matrix<int>& j);
-    void setSub(const Matrix<T>& m, const CRSSparsity& sp, int dummy);
+    void setSub(const Matrix<T>& m, const CCSSparsity& sp, int dummy);
     //@}
 
     //@{
@@ -383,7 +383,7 @@ namespace CasADi{
     const Matrix<T> indexed(const Matrix<int>& i, const Matrix<int>& j) const{ 
       return (*this)(i,j);
     }
-    const Matrix<T> indexed(const CRSSparsity &sp) const{ return (*this)(sp); }
+    const Matrix<T> indexed(const CCSSparsity &sp) const{ return (*this)(sp); }
     
     /// set a non-zero
     void indexed_one_based_assignment(int k, const T & m){ at(k-1) = m;}
@@ -417,9 +417,9 @@ namespace CasADi{
     void indexed_assignment( const Matrix<int>& i, const Matrix<int>& j, const Matrix<T>& m){
       (*this)(i,j) = m;
     } 
-    void indexed_assignment(const CRSSparsity &sp,const Matrix<T>& m){
+    void indexed_assignment(const CCSSparsity &sp,const Matrix<T>& m){
       // (*this)(sp) = m;   // VC2010 compiler errors
-          SubMatrix<Matrix<T>,CRSSparsity,int> temp(*this,sp,0);
+          SubMatrix<Matrix<T>,CCSSparsity,int> temp(*this,sp,0);
           temp = m;
     }
     //@}
@@ -466,10 +466,10 @@ namespace CasADi{
     //@}
     
     /// Matrix-matrix product
-    Matrix<T> mul_full(const Matrix<T> &y, const CRSSparsity & sp_z=CRSSparsity()) const;
+    Matrix<T> mul_full(const Matrix<T> &y, const CCSSparsity & sp_z=CCSSparsity()) const;
 
     /// Matrix-matrix product
-    Matrix<T> mul(const Matrix<T> &y, const CRSSparsity & sp_z=CRSSparsity()) const;
+    Matrix<T> mul(const Matrix<T> &y, const CCSSparsity & sp_z=CCSSparsity()) const;
     
     /// Matrix-matrix product, no memory allocation: z += mul(x,y)
     static void mul_no_alloc_nn(const Matrix<T>& x, const Matrix<T> &y, Matrix<T>& z);
@@ -582,10 +582,10 @@ namespace CasADi{
     const T* ptr() const{ return empty() ? static_cast<const T*>(0) : &front();}
         
     /// Const access the sparsity - reference to data member
-    const CRSSparsity& sparsity() const{ return sparsity_; }
+    const CCSSparsity& sparsity() const{ return sparsity_; }
     
     /// Access the sparsity, make a copy if there are multiple references to it
-    CRSSparsity& sparsityRef();
+    CCSSparsity& sparsityRef();
     
     /** \brief  Set the non-zero elements, scalar */
     void set(T val, Sparsity sp=SPARSE);
@@ -681,28 +681,28 @@ namespace CasADi{
     
     //@{
     /** \brief  create a dense matrix with all zeros */
-    static Matrix<T> zeros(const CRSSparsity& sp);
+    static Matrix<T> zeros(const CCSSparsity& sp);
     static Matrix<T> zeros(int nrow, int ncol=1);
     static Matrix<T> zeros(const std::pair<int,int>& nm);
     //@}
 
     //@{
     /** \brief  create a matrix with all ones */
-    static Matrix<T> ones(const CRSSparsity& sp);
+    static Matrix<T> ones(const CCSSparsity& sp);
     static Matrix<T> ones(int nrow, int ncol=1);
     static Matrix<T> ones(const std::pair<int,int>& nm);
     //@}
 
     //@{
     /** \brief  create a matrix with all inf */
-    static Matrix<T> inf(const CRSSparsity& sp);
+    static Matrix<T> inf(const CCSSparsity& sp);
     static Matrix<T> inf(int nrow=1, int ncol=1);
     static Matrix<T> inf(const std::pair<int,int>& nm);
     //@}
     
     //@{
     /** \brief  create a matrix with all nan */
-    static Matrix<T> nan(const CRSSparsity& sp);
+    static Matrix<T> nan(const CCSSparsity& sp);
     static Matrix<T> nan(int nrow=1, int ncol=1);
     static Matrix<T> nan(const std::pair<int,int>& nm);
     //@}
@@ -727,8 +727,8 @@ namespace CasADi{
     // @}
     
   private:
-    /// Sparsity of the matrix in a compressed row storage (CRS) format
-    CRSSparsity sparsity_;
+    /// Sparsity of the matrix in a compressed row storage (CCS) format
+    CCSSparsity sparsity_;
     
     /// Nonzero elements
     std::vector<T> data_;

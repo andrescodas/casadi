@@ -21,13 +21,13 @@
  */
 
 #include "csparse_internal.hpp"
-#include "symbolic/matrix/crs_sparsity_internal.hpp"
+#include "symbolic/matrix/ccs_sparsity_internal.hpp"
 #include "symbolic/stl_vector_tools.hpp"
 
 using namespace std;
 namespace CasADi{
 
-CSparseInternal::CSparseInternal(const CRSSparsity& sparsity)  : LinearSolverInternal(sparsity){
+CSparseInternal::CSparseInternal(const CCSSparsity& sparsity)  : LinearSolverInternal(sparsity){
   N_ = 0;
   S_ = 0;
 }

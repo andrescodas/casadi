@@ -63,10 +63,10 @@ namespace CasADi{
     explicit MX(const std::string& name, const std::pair<int,int> &nm);
 
     /** \brief  Construct a symbolic matrix (matrix variable) */
-    explicit MX(const std::string& name, const CRSSparsity & sp);
+    explicit MX(const std::string& name, const CCSSparsity & sp);
 
     /** \brief  Construct MX with a given sparsity */
-    explicit MX(const CRSSparsity& sp, const MX& val=0);
+    explicit MX(const CCSSparsity& sp, const MX& val=0);
     
     /** \brief  Create scalar constant (also implicit type conversion) */
     MX(double x);
@@ -133,7 +133,7 @@ namespace CasADi{
     const MX indexed(const Matrix<int> &k) const{ 
       return (*this)(k);
     }
-    const MX indexed(const CRSSparsity &sp) const{ 
+    const MX indexed(const CCSSparsity &sp) const{ 
       return (*this)(sp);
     }
     const MX indexed(const Slice &i, const Matrix<int>& k) const{ return (*this)(i,k); }
@@ -172,7 +172,7 @@ namespace CasADi{
     void indexed_zero_based_assignment(const Matrix<int>& k, const MX &m){
       (*this)[k] = m;
     }
-    void indexed_assignment(const CRSSparsity& sp, const MX &m){
+    void indexed_assignment(const CCSSparsity& sp, const MX &m){
       (*this)(sp) = m;
     }
     void indexed_assignment(const Slice &i, const Matrix<int>& j, const MX& m){
@@ -196,10 +196,10 @@ namespace CasADi{
     typedef MX ScalarType;
 
     /** \brief Get the sparsity pattern */
-    const CRSSparsity& sparsity() const;
+    const CCSSparsity& sparsity() const;
 
     /// Access the sparsity, make a copy if there are multiple references to it
-    CRSSparsity& sparsityRef();
+    CCSSparsity& sparsityRef();
 
     /** \brief Erase a submatrix */
     void erase(const std::vector<int>& ii, const std::vector<int>& jj);
@@ -317,28 +317,28 @@ namespace CasADi{
   
     //@{
     /** \brief  Dense matrix of all zeros */
-    static MX zeros(const CRSSparsity& sp);
+    static MX zeros(const CCSSparsity& sp);
     static MX zeros(int nrow, int ncol=1); 
     static MX zeros(const std::pair<int, int> &nm);
     //@}
 
     //@{
     /** \brief  Matrix of all ones */  
-    static MX ones(const CRSSparsity& sp);
+    static MX ones(const CCSSparsity& sp);
     static MX ones(int nrow, int ncol=1); 
     static MX ones(const std::pair<int, int> &nm);
     //@}
 
     //@{
     /** \brief  create a matrix with all inf */
-    static MX inf(const CRSSparsity& sp);
+    static MX inf(const CCSSparsity& sp);
     static MX inf(int nrow=1, int ncol=1);
     static MX inf(const std::pair<int,int>& nm);
     //@}
   
     //@{
     /** \brief  create a matrix with all nan */
-    static MX nan(const CRSSparsity& sp);
+    static MX nan(const CCSSparsity& sp);
     static MX nan(int nrow=1, int ncol=1);
     static MX nan(const std::pair<int,int>& nm);
     //@}
@@ -357,7 +357,7 @@ namespace CasADi{
     const MX sub(const std::vector<int>& i, int j) const;
     const MX sub(const std::vector<int>& i, const std::vector<int>& j) const;
     const MX sub(const Matrix<int>& k, int dummy=0) const;
-    const MX sub(const CRSSparsity& sp, int dummy=0) const;
+    const MX sub(const CCSSparsity& sp, int dummy=0) const;
     const MX sub(const std::vector<int>& i, const Matrix<int>& j) const;
     const MX sub(const Matrix<int>& k, const std::vector<int>& j) const;
     const MX sub(const Slice& i, int j) const {return sub(i.getAll(size1()),j);}
@@ -378,7 +378,7 @@ namespace CasADi{
     //void setSub(const MX& m, const Slice& i, const Matrix<int>& k) {return setSub(m,i.getAll(size1()),k);}
     //void setSub(const MX& m, const Matrix<int>& k, const Slice& j) {return setSub(m,k,j.getAll(size2()));}
     void setSub(const MX& m, const Matrix<int>& i, const Matrix<int>& j);
-    void setSub(const MX& m, const CRSSparsity& sp, int dummy);
+    void setSub(const MX& m, const CCSSparsity& sp, int dummy);
     
     MX getNZ(int k) const;
     MX getNZ(const std::vector<int>& k) const;
@@ -406,8 +406,8 @@ namespace CasADi{
     MX __constpow__(const MX& b) const;
     MX __mrdivide__  (const MX& b) const;
     MX __mpower__(const MX& b) const;
-    MX mul(const MX& y, const CRSSparsity &sp_z=CRSSparsity()) const;
-    MX mul_full(const MX& y, const CRSSparsity &sp_z=CRSSparsity()) const;
+    MX mul(const MX& y, const CCSSparsity &sp_z=CCSSparsity()) const;
+    MX mul_full(const MX& y, const CCSSparsity &sp_z=CCSSparsity()) const;
     MX inner_prod(const MX& y) const;
     MX outer_prod(const MX& y) const;
     MX constpow(const MX& y) const;
@@ -452,7 +452,7 @@ namespace CasADi{
     MX attachAssert(const MX& y,const std::string &fail_message="") const;
 
     /** \brief Set sparse */
-    MX setSparse(const CRSSparsity& sp, bool intersect=false) const;
+    MX setSparse(const CCSSparsity& sp, bool intersect=false) const;
 
     /** \brief Make dense */
     MX makeDense(const MX& val = 0) const;

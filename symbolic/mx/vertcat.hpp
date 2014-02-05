@@ -70,7 +70,7 @@ namespace CasADi{
     virtual int getOp() const{ return OP_VERTCAT;}
 
     /// Get the nonzeros of matrix
-    virtual MX getGetNonzeros(const CRSSparsity& sp, const std::vector<int>& nz) const;
+    virtual MX getGetNonzeros(const CCSSparsity& sp, const std::vector<int>& nz) const;
 
     /** \brief Check if two nodes are equivalent up to a given depth */
     virtual bool isEqual(const MXNode* node, int depth) const{ return sameOpAndDeps(node,depth);}

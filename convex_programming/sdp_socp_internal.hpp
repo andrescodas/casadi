@@ -40,7 +40,7 @@ public:
   virtual SDPSOCPInternal* clone() const;
   
   /** \brief  Create a new Solver */
-  explicit SDPSOCPInternal(const std::vector<CRSSparsity> &st);
+  explicit SDPSOCPInternal(const std::vector<CCSSparsity> &st);
 
   /** \brief  Destructor */
   virtual ~SDPSOCPInternal();

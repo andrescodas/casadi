@@ -48,13 +48,13 @@ public:
 
   //@{
   /** \brief  Create a function with input/output schemes given */
-  explicit CustomFunction(const CustomEvaluate &c_fcn, const std::vector<CRSSparsity> &inputscheme, const std::vector<CRSSparsity> &outputscheme);
+  explicit CustomFunction(const CustomEvaluate &c_fcn, const std::vector<CCSSparsity> &inputscheme, const std::vector<CCSSparsity> &outputscheme);
   
-  explicit CustomFunction(const CustomEvaluate &c_fcn, const IOSchemeVector< CRSSparsity > &inputscheme, const std::vector<CRSSparsity> &outputscheme);
+  explicit CustomFunction(const CustomEvaluate &c_fcn, const IOSchemeVector< CCSSparsity > &inputscheme, const std::vector<CCSSparsity> &outputscheme);
   
-  explicit CustomFunction(const CustomEvaluate &c_fcn, const std::vector<CRSSparsity> &inputscheme, const IOSchemeVector< CRSSparsity > &outputscheme);
+  explicit CustomFunction(const CustomEvaluate &c_fcn, const std::vector<CCSSparsity> &inputscheme, const IOSchemeVector< CCSSparsity > &outputscheme);
   
-  explicit CustomFunction(const CustomEvaluate &c_fcn, const IOSchemeVector< CRSSparsity > &inputscheme, const IOSchemeVector< CRSSparsity > &outputscheme);
+  explicit CustomFunction(const CustomEvaluate &c_fcn, const IOSchemeVector< CCSSparsity > &inputscheme, const IOSchemeVector< CCSSparsity > &outputscheme);
   //@}
   
   /** \brief  Create a function, user sets inputs outputs manually */

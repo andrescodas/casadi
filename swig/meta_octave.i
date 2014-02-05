@@ -136,7 +136,7 @@ int meta< CasADi::Matrix<double> >::as(const octave_value& p,CasADi::Matrix<doub
     for (int k=0;k<cidx.size();k++) cidx[k]=mat.cidx(k);
     for (int k=0;k<ridx.size();k++) ridx[k]=mat.ridx(k);
     
-    CasADi::CRSSparsity A = CasADi::CRSSparsity(mat.cols(),mat.rows(),ridx,cidx);
+    CasADi::CCSSparsity A = CasADi::CCSSparsity(mat.cols(),mat.rows(),ridx,cidx);
     CasADi::Matrix<double> ret = CasADi::Matrix<double>(A,data);
     
     m = ret.trans();

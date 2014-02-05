@@ -61,7 +61,7 @@ namespace CasADi{
     bool exact_hessian_;
 
     // Sparsity pattern of the transpose of jacG
-    CRSSparsity spJacG_T_;
+    CCSSparsity spJacG_T_;
     std::vector<int> jacG_tmp_;
   
     std::map<int,std::string> status_;

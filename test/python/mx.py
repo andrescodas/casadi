@@ -515,7 +515,7 @@ class MXtests(casadiTestCase):
     
     self.message(":sparse")
       
-    sp=CRSSparsity(3,4,[1,2,1],[0,2,2,3])
+    sp=CCSSparsity(3,4,[1,2,1],[0,2,2,3])
     x=MX("X",sp)
     sx0=[0.738,0.39,0.99]
     x0=DMatrix(3,4,[1,2,1],[0,2,2,3],[0.738,0.39,0.99]).toArray()
@@ -618,7 +618,7 @@ class MXtests(casadiTestCase):
 
   def test_MXSparse(self):
       self.message("MX unary operations, sparse")
-      sp=CRSSparsity(3,4,[1,2,1],[0,2,2,3])
+      sp=CCSSparsity(3,4,[1,2,1],[0,2,2,3])
       
       x=MX("x",sp)
       if scipy_available:
@@ -634,8 +634,8 @@ class MXtests(casadiTestCase):
       
   def test_MXbinarySparse(self):
       self.message("SXMatrix binary operations")
-      spx=CRSSparsity(3,4,[1,2,1],[0,2,2,3])
-      spy=CRSSparsity(3,4,[0,2,3],[0,2,2,3])
+      spx=CCSSparsity(3,4,[1,2,1],[0,2,2,3])
+      spy=CCSSparsity(3,4,[0,2,3],[0,2,2,3])
       xx=MX("x",spx)
       yy=MX("y",spy)
       if scipy_available:
@@ -667,8 +667,8 @@ class MXtests(casadiTestCase):
     f.evaluate()
     self.checkarray(f.getOutput(),xn,"unite dense")
  
-    spx=CRSSparsity(3,4,[1,2,1],[0,2,2,3])
-    spy=CRSSparsity(3,4,[0,2,2],[0,1,2,3])
+    spx=CCSSparsity(3,4,[1,2,1],[0,2,2,3])
+    spy=CCSSparsity(3,4,[0,2,2],[0,1,2,3])
 
     nx=DMatrix(spx,0)
     for k in range(nx.size()):
@@ -951,7 +951,7 @@ class MXtests(casadiTestCase):
     numpy.random.seed(42)
     
     def randsparsity(m,n):
-      sp = CRSSparsity(m,n)
+      sp = CCSSparsity(m,n)
       for i in range((n*m)/2):
         sp.getNZ(numpy.random.randint(m),numpy.random.randint(n))
       return sp
@@ -1023,7 +1023,7 @@ class MXtests(casadiTestCase):
     numpy.random.seed(42)
     
     def randsparsity(m,n):
-      sp = CRSSparsity(m,n)
+      sp = CCSSparsity(m,n)
       for k in range((n*m)/2):
         i = numpy.random.randint(m)
         j = numpy.random.randint(n)
@@ -2008,7 +2008,7 @@ class MXtests(casadiTestCase):
       
       #self.checkarray(DMatrix(sp_tril(4),1),DMatrix(sp_dense(4,4),1))
       
-      for sp in [sp_dense(0,0),sp_dense(0,2),sp_dense(2,0),sp_dense(1,1),sp_dense(2,2), CRSSparsity(3,4,[1,2,1],[0,2,2,3])]:
+      for sp in [sp_dense(0,0),sp_dense(0,2),sp_dense(2,0),sp_dense(1,1),sp_dense(2,2), CCSSparsity(3,4,[1,2,1],[0,2,2,3])]:
         for v in [0,1,0.2]:
           x_ = DMatrix(sp,v)
           
@@ -2033,14 +2033,14 @@ class MXtests(casadiTestCase):
               # At least as sparse as DMatrix calculus
               self.assertTrue(min(c)>=0,str([sp,v,name]))
 
-      for sp in [sp_sparse(1,1),sp_dense(1,1),sp_sparse(3,4),sp_dense(3,4), CRSSparsity(3,4,[1,2,1],[0,2,2,3])]:
+      for sp in [sp_sparse(1,1),sp_dense(1,1),sp_sparse(3,4),sp_dense(3,4), CCSSparsity(3,4,[1,2,1],[0,2,2,3])]:
         for v1 in [0,1,0.2,-0.2]:
           x1_ = DMatrix(sp,v1)
           xx1 = msym("x",sp.size1(),sp.size2())
           x1=xx1[sp]
           xx1s = ssym("x",sp.size1(),sp.size2())
           x1s=xx1s[sp]
-          for sp2 in [sp_sparse(1,1),sp_dense(1,1),sp_sparse(3,4),sp_dense(3,4), CRSSparsity(3,4,[1,2,1],[0,2,2,3])]:
+          for sp2 in [sp_sparse(1,1),sp_dense(1,1),sp_sparse(3,4),sp_dense(3,4), CCSSparsity(3,4,[1,2,1],[0,2,2,3])]:
             for v2 in [0,1,0.2,-0.2]:
               x2_ = DMatrix(sp2,v2)
               xx2 = msym("x",sp2.size1(),sp2.size2())
@@ -2082,7 +2082,7 @@ class MXtests(casadiTestCase):
       
       #self.checkarray(DMatrix(sp_tril(4),1),DMatrix(sp_dense(4,4),1))
       
-      for sp in [sp_dense(0,0),sp_dense(0,2),sp_dense(2,0),sp_dense(1,1),sp_dense(2,2), CRSSparsity(3,4,[1,2,1],[0,2,2,3])]:
+      for sp in [sp_dense(0,0),sp_dense(0,2),sp_dense(2,0),sp_dense(1,1),sp_dense(2,2), CCSSparsity(3,4,[1,2,1],[0,2,2,3])]:
         for v in [0,1,0.2]:
           x_ = DMatrix(sp,v)
           
@@ -2104,11 +2104,11 @@ class MXtests(casadiTestCase):
               # At least as sparse as DMatrix calculus
               self.assertTrue(min(c)>=0,str([sp,v,name]))
         
-      for sp in [sp_dense(1,1),sp_sparse(1,1),sp_sparse(3,4),sp_dense(3,4), CRSSparsity(3,4,[1,2,1],[0,2,2,3])]:
+      for sp in [sp_dense(1,1),sp_sparse(1,1),sp_sparse(3,4),sp_dense(3,4), CCSSparsity(3,4,[1,2,1],[0,2,2,3])]:
         for v1 in [0,1,0.2,-0.2]:
           x1_ = DMatrix(sp,v1)
           x1=MX(sp,v1)
-          for sp2 in [sp_dense(1,1),sp_sparse(1,1),sp_sparse(3,4),sp_dense(3,4), CRSSparsity(3,4,[1,2,1],[0,2,2,3])]:
+          for sp2 in [sp_dense(1,1),sp_sparse(1,1),sp_sparse(3,4),sp_dense(3,4), CCSSparsity(3,4,[1,2,1],[0,2,2,3])]:
             for v2 in [0,1,0.2,-0.2]:
               x2_ = DMatrix(sp2,v2)
               x2=MX(sp2,v2)

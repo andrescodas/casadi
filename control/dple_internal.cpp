@@ -35,7 +35,7 @@ OUTPUTSCHEME(DPLEOutput)
 using namespace std;
 namespace CasADi{
 
-  DpleInternal::DpleInternal(const std::vector< CRSSparsity > & A, const std::vector< CRSSparsity > &V,int nfwd, int nadj) : A_(A), V_(V), nfwd_(nfwd), nadj_(nadj) {
+  DpleInternal::DpleInternal(const std::vector< CCSSparsity > & A, const std::vector< CCSSparsity > &V,int nfwd, int nadj) : A_(A), V_(V), nfwd_(nfwd), nadj_(nadj) {
 
     // set default options
     setOption("name","unnamed_dple_solver"); // name of the function 
@@ -96,7 +96,7 @@ namespace CasADi{
     }
     
     // Allocate outputs
-    std::vector<CRSSparsity> P; 
+    std::vector<CCSSparsity> P; 
     for (int k=0;k<K_;++k) {
       P.push_back(sp_dense(V_[k].size1(),V_[k].size1()));
     }

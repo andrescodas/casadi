@@ -193,16 +193,16 @@ namespace CasADi{
     virtual MX getOutput(int oind) const;
 
     /// Get the sparsity
-    const CRSSparsity& sparsity() const;
+    const CCSSparsity& sparsity() const;
 
     /// Get the sparsity of output oind
-    virtual const CRSSparsity& sparsity(int oind) const;
+    virtual const CCSSparsity& sparsity(int oind) const;
     
     /** \brief Is the node nonlinear */
     virtual bool isNonLinear(){return false;}
     
     /// Set the sparsity
-    void setSparsity(const CRSSparsity& sparsity);
+    void setSparsity(const CCSSparsity& sparsity);
     
     /// Get number of temporary variables needed
     virtual void nTmp(size_t& ni, size_t& nr){ ni=0; nr=0;}
@@ -241,7 +241,7 @@ namespace CasADi{
     int size2() const;
 
     /// Convert scalar to matrix
-    inline static MX toMatrix(const MX& x, const CRSSparsity& sp){
+    inline static MX toMatrix(const MX& x, const CCSSparsity& sp){
       if(x.shape()==sp.shape()){
         return x;
       } else {
@@ -282,13 +282,13 @@ namespace CasADi{
     virtual MX getTranspose() const;
 
     /// Reshape
-    virtual MX getReshape(const CRSSparsity& sp) const;
+    virtual MX getReshape(const CCSSparsity& sp) const;
     
     /** \brief Matrix multiplication
     *  
     *  The optinal argument sp_z will be used as the sparsity pattern of the result
     */
-    virtual MX getMultiplication(const MX& y, const CRSSparsity& sp_z=CRSSparsity()) const;
+    virtual MX getMultiplication(const MX& y, const CCSSparsity& sp_z=CCSSparsity()) const;
 
     /** \brief Solve a system of linear equations
     *
@@ -300,7 +300,7 @@ namespace CasADi{
     virtual MX getSolve(const MX& r, bool tr, const LinearSolver& linear_solver) const;
 
     /// Get the nonzeros of matrix
-    virtual MX getGetNonzeros(const CRSSparsity& sp, const std::vector<int>& nz) const;
+    virtual MX getGetNonzeros(const CCSSparsity& sp, const std::vector<int>& nz) const;
 
     /// Assign the nonzeros of a matrix to another matrix
     virtual MX getSetNonzeros(const MX& y, const std::vector<int>& nz) const;
@@ -315,7 +315,7 @@ namespace CasADi{
     virtual MX getSubAssign(const MX& y, const Slice& i, const Slice& j) const;    
 
     /// Create set sparse
-    virtual MX getSetSparse(const CRSSparsity& sp) const;
+    virtual MX getSetSparse(const CCSSparsity& sp) const;
     
     /// Get a unary operation
     virtual MX getUnary(int op) const;
@@ -360,7 +360,7 @@ namespace CasADi{
     std::vector<MX> dep_;
     
     /** \brief  The sparsity pattern */
-    CRSSparsity sparsity_;
+    CCSSparsity sparsity_;
 
     /** \brief  Propagate sparsity, no work */
     virtual void propagateSparsity(DMatrixPtrV& input, DMatrixPtrV& output, bool fwd);

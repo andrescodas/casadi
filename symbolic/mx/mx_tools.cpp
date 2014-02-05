@@ -141,7 +141,7 @@ namespace CasADi{
     return x->getNormInf();
   }
 
-  MX mul(const MX &x, const MX &y, const CRSSparsity& sp_z){
+  MX mul(const MX &x, const MX &y, const CCSSparsity& sp_z){
     return x.mul(y,sp_z);
   }
 
@@ -219,7 +219,7 @@ namespace CasADi{
       return reshape(x,x.sparsity().reshape(n,m));
   }
 
-  MX reshape(const MX &x, const CRSSparsity& sp){
+  MX reshape(const MX &x, const CCSSparsity& sp){
     // quick return if already the right shape
     if(sp==x.sparsity())
       return x;
@@ -270,7 +270,7 @@ namespace CasADi{
   MX unite(const MX& A, const MX& B){
     // Join the sparsity patterns
     std::vector<unsigned char> mapping;
-    CRSSparsity sp = A.sparsity().patternUnion(B.sparsity(),mapping);
+    CCSSparsity sp = A.sparsity().patternUnion(B.sparsity(),mapping);
   
     // Split up the mapping
     std::vector<int> nzA,nzB;
@@ -337,10 +337,10 @@ namespace CasADi{
   }
 
   /**
-     MX clip(const MX& A, const CRSSparsity& sp) {
+     MX clip(const MX& A, const CCSSparsity& sp) {
      // Join the sparsity patterns
      std::vector<int> mapping;
-     CRSSparsity sp = A.sparsity().patternIntersection(sp,mapping);
+     CCSSparsity sp = A.sparsity().patternIntersection(sp,mapping);
   
      // Split up the mapping
      std::vector<int> nzA,nzB;
@@ -407,7 +407,7 @@ namespace CasADi{
     return P;
   }
 
-  std::pair<MX, std::vector<MX> > createParent(const std::vector<CRSSparsity> &deps) {
+  std::pair<MX, std::vector<MX> > createParent(const std::vector<CCSSparsity> &deps) {
     // Collect the sizes of the depenencies
     std::vector<int> index(deps.size()+1,0);
     for (int k=0;k<deps.size();k++) {
@@ -438,7 +438,7 @@ namespace CasADi{
     std::vector<int> mapping;
   
     // Get the sparsity
-    CRSSparsity sp = x.sparsity().diag(mapping);
+    CCSSparsity sp = x.sparsity().diag(mapping);
   
     // Create a reference to the nonzeros
     return x->getGetNonzeros(sp,mapping);
@@ -523,7 +523,7 @@ namespace CasADi{
     return MX(x);
   }
 
-  MX msym(const std::string& name, const CRSSparsity& sp) {
+  MX msym(const std::string& name, const CCSSparsity& sp) {
     return MX(name,sp);
   }
 
@@ -620,7 +620,7 @@ namespace CasADi{
     }  
   }
 
-  std::vector<MX> msym(const std::string& name, const CRSSparsity& sp, int p){
+  std::vector<MX> msym(const std::string& name, const CCSSparsity& sp, int p){
     std::vector<MX> ret(p);
     for(int k=0; k<p; ++k){
       stringstream ss;
@@ -630,7 +630,7 @@ namespace CasADi{
     return ret;
   }
 
-  std::vector<std::vector<MX> > msym(const std::string& name, const CRSSparsity& sp, int p, int r){
+  std::vector<std::vector<MX> > msym(const std::string& name, const CCSSparsity& sp, int p, int r){
     std::vector<std::vector<MX> > ret(r);
     for(int k=0; k<r; ++k){
       stringstream ss;
@@ -1010,7 +1010,7 @@ namespace CasADi{
   }
   
   MX kron(const MX& a, const MX& b) {
-    const CRSSparsity &a_sp = a.sparsity();
+    const CCSSparsity &a_sp = a.sparsity();
     MX filler(b.size1(),b.size2());
     std::vector< std::vector< MX > > blocks(a.size1(),std::vector< MX >(a.size2(),filler));
     for (int i=0;i<a.size1();++i) {

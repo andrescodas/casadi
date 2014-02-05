@@ -28,7 +28,7 @@ using namespace std;
 namespace CasADi{
 
   
-  LapackQRNullspaceInternal::LapackQRNullspaceInternal(const CRSSparsity& A_sp, int nfwd, int nadj) : NullspaceInternal(A_sp), nfwd_(nfwd), nadj_(nadj) {
+  LapackQRNullspaceInternal::LapackQRNullspaceInternal(const CCSSparsity& A_sp, int nfwd, int nadj) : NullspaceInternal(A_sp), nfwd_(nfwd), nadj_(nadj) {
   
     setOption("dense",true);
   
@@ -44,7 +44,7 @@ namespace CasADi{
     casadi_assert(dense_);
     setNumInputs((1+nfwd_) + nadj_);
     
-    CRSSparsity dense = output(0).sparsity();
+    CCSSparsity dense = output(0).sparsity();
     
     for (int i=0;i<nfwd_+1;++i) {
       input(i)=DMatrix(A_sp_);

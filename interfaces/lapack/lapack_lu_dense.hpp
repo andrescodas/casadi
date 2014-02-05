@@ -59,7 +59,7 @@ namespace CasADi{
     LapackLUDense();
   
     /// Create a linear solver given a sparsity pattern
-    explicit LapackLUDense(const CRSSparsity& sparsity, int nrhs=1);
+    explicit LapackLUDense(const CCSSparsity& sparsity, int nrhs=1);
     
     /// Access functions of the node
     LapackLUDenseInternal* operator->();
@@ -69,7 +69,7 @@ namespace CasADi{
 #ifdef SWIG
     %callback("%s_cb");
 #endif
-    static LinearSolver creator(const CRSSparsity& sp, int nrhs){ return LapackLUDense(sp,nrhs);}
+    static LinearSolver creator(const CCSSparsity& sp, int nrhs){ return LapackLUDense(sp,nrhs);}
 #ifdef SWIG
     %nocallback;
 #endif
@@ -94,7 +94,7 @@ namespace CasADi{
   class LapackLUDenseInternal : public LinearSolverInternal{
   public:
     // Create a linear solver given a sparsity pattern and a number of right hand sides
-    LapackLUDenseInternal(const CRSSparsity& sparsity, int nrhs);
+    LapackLUDenseInternal(const CCSSparsity& sparsity, int nrhs);
 
     // Clone
     virtual LapackLUDenseInternal* clone() const;

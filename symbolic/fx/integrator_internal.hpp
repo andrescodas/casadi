@@ -99,10 +99,10 @@ namespace CasADi{
     AugOffset getAugOffset(int nfwd, int nadj);
 
     // Create sparsity pattern of the extended Jacobian (forward problem)
-    CRSSparsity spJacF();
+    CCSSparsity spJacF();
 
     // Create sparsity pattern of the extended Jacobian (backward problem)
-    CRSSparsity spJacG();
+    CCSSparsity spJacG();
   
     //@{
     // Shorthands

@@ -51,7 +51,7 @@ public:
   virtual OOQPInternal* clone() const;
   
   /** \brief  Create a new Solver */
-  explicit OOQPInternal(const std::vector<CRSSparsity>& st);
+  explicit OOQPInternal(const std::vector<CCSSparsity>& st);
 
   /** \brief  Destructor */
   virtual ~OOQPInternal();

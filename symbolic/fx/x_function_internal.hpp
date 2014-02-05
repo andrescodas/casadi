@@ -580,7 +580,7 @@ namespace CasADi{
     if(verbose()) std::cout << "XFunctionInternal::jac allocated return value" << std::endl;
   
     // Get a bidirectional partition
-    CRSSparsity D1, D2;
+    CCSSparsity D1, D2;
     getPartition(iind,oind,D1,D2,true,symmetric);
     if(verbose()) std::cout << "XFunctionInternal::jac graph coloring completed" << std::endl;
 
@@ -602,7 +602,7 @@ namespace CasADi{
     std::vector<std::vector<MatType> > fseed, aseed, fsens, asens;
   
     // Get the sparsity of the Jacobian block
-    const CRSSparsity& jsp = jacSparsity(iind,oind,true,symmetric);
+    const CCSSparsity& jsp = jacSparsity(iind,oind,true,symmetric);
     const std::vector<int>& jsp_rowind = jsp.rowind();
     const std::vector<int>& jsp_col = jsp.col();
   
@@ -617,7 +617,7 @@ namespace CasADi{
     // Get transposes and mappings for jacobian sparsity pattern if we are using forward mode
     if(verbose())   std::cout << "XFunctionInternal::jac transposes and mapping" << std::endl;
     std::vector<int> mapping;
-    CRSSparsity jsp_trans;
+    CCSSparsity jsp_trans;
     if(nfdir>0){
       jsp_trans = jsp.transpose(mapping);
     }

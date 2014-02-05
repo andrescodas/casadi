@@ -28,10 +28,10 @@ using namespace std;
 namespace CasADi{
 
 SymbolicMX::SymbolicMX(const std::string& name, int n, int m) : name_(name) {
-  setSparsity(CRSSparsity(n,m,true));
+  setSparsity(CCSSparsity(n,m,true));
 }
 
-SymbolicMX::SymbolicMX(const std::string& name, const CRSSparsity & sp) : name_(name) {
+SymbolicMX::SymbolicMX(const std::string& name, const CCSSparsity & sp) : name_(name) {
   setSparsity(sp);
 }
 

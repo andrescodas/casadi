@@ -38,7 +38,7 @@ OUTPUTSCHEME(DPLEOutput)
 using namespace std;
 namespace CasADi{
 
-  PsdIndefDpleInternal::PsdIndefDpleInternal(const std::vector< CRSSparsity > & A, const std::vector< CRSSparsity > &V, int nfwd, int nadj) : DpleInternal(A,V, nfwd, nadj) {
+  PsdIndefDpleInternal::PsdIndefDpleInternal(const std::vector< CCSSparsity > & A, const std::vector< CCSSparsity > &V, int nfwd, int nadj) : DpleInternal(A,V, nfwd, nadj) {
   
     // set default options
     setOption("name","unnamed_psd_indef_dple_solver"); // name of the function 
@@ -100,7 +100,7 @@ namespace CasADi{
       for (int i=0;i<3;++i) {
         int np = std::pow(2,i);
           
-        CRSSparsity sp;
+        CCSSparsity sp;
         if (K_==1) {
           sp = sp_dense(np,np);
         } else {
@@ -125,7 +125,7 @@ namespace CasADi{
             
           }
  
-          sp = CRSSparsity(np*K_,np*K_,col,row_ind);
+          sp = CCSSparsity(np*K_,np*K_,col,row_ind);
         }
         LinearSolver solver = linear_solver_creator(sp,1);
         solver.init();

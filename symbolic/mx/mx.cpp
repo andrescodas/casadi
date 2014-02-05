@@ -62,15 +62,15 @@ namespace CasADi{
     assignNode(new SymbolicMX(name,nm.first,nm.second));
   }
 
-  MX::MX(const string& name, const CRSSparsity & sp){
+  MX::MX(const string& name, const CCSSparsity & sp){
     assignNode(new SymbolicMX(name,sp));
   }
 
   MX::MX(int nrow, int ncol){
-    assignNode(new Constant<CompiletimeConst<0> >(CRSSparsity(nrow,ncol)));
+    assignNode(new Constant<CompiletimeConst<0> >(CCSSparsity(nrow,ncol)));
   }
 
-  MX::MX(const CRSSparsity& sp, const MX& val){
+  MX::MX(const CCSSparsity& sp, const MX& val){
     // Make sure that val is dense and scalar
     casadi_assert(val.scalar());
   
@@ -122,7 +122,7 @@ namespace CasADi{
     vector<int> mapping;
   
     // Get the sparsity pattern
-    CRSSparsity sp = sparsity().sub(ii,jj,mapping);
+    CCSSparsity sp = sparsity().sub(ii,jj,mapping);
  
     // Create return MX
     return (*this)->getGetNonzeros(sp,mapping);
@@ -140,9 +140,9 @@ namespace CasADi{
   const MX MX::sub(int i, int j) const{
     int ind = sparsity().getNZ(i,j);
     if (ind>=0) {
-      return (*this)->getGetNonzeros(CRSSparsity::getScalar(),vector<int>(1,ind));
+      return (*this)->getGetNonzeros(CCSSparsity::getScalar(),vector<int>(1,ind));
     } else {
-      return (*this)->getGetNonzeros(CRSSparsity::getScalarSparse(),vector<int>(0));
+      return (*this)->getGetNonzeros(CCSSparsity::getScalarSparse(),vector<int>(0));
     }
   }
 
@@ -189,8 +189,8 @@ namespace CasADi{
     return ret;
   }
 
-  const MX MX::sub(const CRSSparsity& sp, int dummy) const {
-    casadi_assert_message(size1()==sp.size1() && size2()==sp.size2(),"sub(CRSSparsity sp): shape mismatch. This matrix has shape " << size1() << " x " << size2() << ", but supplied sparsity index has shape " << sp.size1() << " x " << sp.size2() << "." );
+  const MX MX::sub(const CCSSparsity& sp, int dummy) const {
+    casadi_assert_message(size1()==sp.size1() && size2()==sp.size2(),"sub(CCSSparsity sp): shape mismatch. This matrix has shape " << size1() << " x " << size2() << ", but supplied sparsity index has shape " << sp.size1() << " x " << sp.size2() << "." );
     vector<unsigned char> mappingc; // Mapping that will be filled by patternunion
     
     // Quick return if sparsity matches MX's sparsity
@@ -298,8 +298,8 @@ namespace CasADi{
       casadi_error("setSub[.,i,jj] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
-    //CRSSparsity result_sparsity = repmat(i,1,jj.size()).sparsity();
-    CRSSparsity result_sparsity = horzcat(std::vector< Matrix<int> >(jj.size(),i)).sparsity();
+    //CCSSparsity result_sparsity = repmat(i,1,jj.size()).sparsity();
+    CCSSparsity result_sparsity = horzcat(std::vector< Matrix<int> >(jj.size(),i)).sparsity();
   
     casadi_assert_message(result_sparsity == m.sparsity(),"setSub(.,Imatrix" << i.dimString() << ",Ivector(length=" << jj.size() << "),Matrix<T>)::Dimension mismatch. The sparsity of repmat(Imatrix,1," << jj.size() << ") = " << result_sparsity.dimString()  << " must match the sparsity of MX = "  << m.dimString() << ".");
 
@@ -327,8 +327,8 @@ namespace CasADi{
       casadi_error("setSub[.,ii,j] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
-    //CRSSparsity result_sparsity = repmat(j,ii.size(),1).sparsity();
-    CRSSparsity result_sparsity = vertcat(std::vector< Matrix<int> >(ii.size(),j)).sparsity();
+    //CCSSparsity result_sparsity = repmat(j,ii.size(),1).sparsity();
+    CCSSparsity result_sparsity = vertcat(std::vector< Matrix<int> >(ii.size(),j)).sparsity();
   
     casadi_assert_message(result_sparsity == m.sparsity(),"setSub(Ivector(length=" << ii.size() << "),Imatrix" << j.dimString() << ",MX)::Dimension mismatch. The sparsity of repmat(Imatrix," << ii.size() << ",1) = " << result_sparsity.dimString() << " must match the sparsity of Matrix<T> = " << m.dimString() << ".");
   
@@ -360,8 +360,8 @@ namespace CasADi{
     }
   }
 
-  void MX::setSub(const MX& m, const CRSSparsity& sp, int dummy) {
-    casadi_assert_message(size1()==sp.size1() && size2()==sp.size2(),"setSub(.,CRSSparsity sp): shape mismatch. This matrix has shape " << size1() << " x " << size2() << ", but supplied sparsity index has shape " << sp.size1() << " x " << sp.size2() << "." );
+  void MX::setSub(const MX& m, const CCSSparsity& sp, int dummy) {
+    casadi_assert_message(size1()==sp.size1() && size2()==sp.size2(),"setSub(.,CCSSparsity sp): shape mismatch. This matrix has shape " << size1() << " x " << size2() << ", but supplied sparsity index has shape " << sp.size1() << " x " << sp.size2() << "." );
     
     // If m is scalar
     if(m.scalar()){
@@ -402,7 +402,7 @@ namespace CasADi{
   }
 
   MX MX::getNZ(const vector<int>& k) const{
-    CRSSparsity sp(k.size(),1,true);
+    CCSSparsity sp(k.size(),1,true);
   
     for (int i=0;i<k.size();i++) {
       casadi_assert_message(k[i] < size(),"Mapping::assign: index vector reaches " << k[i] << ", while dependant is only of size " << size());
@@ -413,7 +413,7 @@ namespace CasADi{
   }
 
   MX MX::getNZ(const Matrix<int>& k) const{
-    CRSSparsity sp(k.size(),1,true);
+    CCSSparsity sp(k.size(),1,true);
     MX ret = (*this)->getGetNonzeros(sp,k.data());
     return ret;
   }
@@ -523,11 +523,11 @@ namespace CasADi{
     return zeros(nm.first,nm.second);
   }
 
-  MX MX::zeros(const CRSSparsity& sp){
+  MX MX::zeros(const CCSSparsity& sp){
     return create(ConstantMX::create(sp,0));
   }
 
-  MX MX::ones(const CRSSparsity& sp){
+  MX MX::ones(const CCSSparsity& sp){
     return create(ConstantMX::create(sp,1));
   }
 
@@ -547,7 +547,7 @@ namespace CasADi{
     return inf(nm.first,nm.second);
   }
 
-  MX MX::inf(const CRSSparsity& sp){
+  MX MX::inf(const CCSSparsity& sp){
     return create(ConstantMX::create(sp,numeric_limits<double>::infinity()));
   }
 
@@ -559,12 +559,12 @@ namespace CasADi{
     return nan(nm.first,nm.second);
   }
 
-  MX MX::nan(const CRSSparsity& sp){
+  MX MX::nan(const CCSSparsity& sp){
     return create(ConstantMX::create(sp,numeric_limits<double>::quiet_NaN()));
   }
 
   MX MX::eye(int n){
-    Matrix<double> I(CRSSparsity::createDiagonal(n),1);
+    Matrix<double> I(CCSSparsity::createDiagonal(n),1);
     return MX(I);
   }
 
@@ -581,11 +581,11 @@ namespace CasADi{
   MX::MX(const MX& x) : SharedObject(x){
   }
 
-  const CRSSparsity& MX::sparsity() const{
+  const CCSSparsity& MX::sparsity() const{
     return (*this)->sparsity();
   }
 
-  CRSSparsity& MX::sparsityRef(){
+  CCSSparsity& MX::sparsityRef(){
     // Since we can potentially change the behavior of the MX node, we must make a deep copy if there are other references
     makeUnique();
   
@@ -596,7 +596,7 @@ namespace CasADi{
 
   void MX::erase(const vector<int>& ii, const vector<int>& jj){
     // Get sparsity of the new matrix
-    CRSSparsity sp = sparsity();
+    CCSSparsity sp = sparsity();
   
     // Erase from sparsity pattern
     vector<int> mapping = sp.erase(ii,jj);
@@ -609,7 +609,7 @@ namespace CasADi{
   }
 
   void MX::enlarge(int nrow, int ncol, const vector<int>& ii, const vector<int>& jj){
-    CRSSparsity sp = sparsity();
+    CCSSparsity sp = sparsity();
     sp.enlarge(nrow,ncol,ii,jj);
   
     MX ret = (*this)->getGetNonzeros(sp,range(size()));
@@ -621,16 +621,16 @@ namespace CasADi{
     casadi_assert(val.scalar());
     casadi_assert(val.dense());
   
-    CRSSparsity sp(nrow,ncol,true);
+    CCSSparsity sp(nrow,ncol,true);
     *this = val->getGetNonzeros(sp,vector<int>(sp.size(),0));
   }
 
-  MX MX::mul_full(const MX& y, const CRSSparsity &z) const{
+  MX MX::mul_full(const MX& y, const CCSSparsity &z) const{
     const MX& x = *this;
     return x->getMultiplication(y,z);
   }
   
-  MX MX::mul(const MX& y, const CRSSparsity &z) const {
+  MX MX::mul(const MX& y, const CCSSparsity &z) const {
     return mul_smart(y, z);
   }
 
@@ -922,7 +922,7 @@ namespace CasADi{
     return (*this)->getOutput(oind);
   }
 
-  MX MX::setSparse(const CRSSparsity& sp, bool intersect) const{
+  MX MX::setSparse(const CCSSparsity& sp, bool intersect) const{
     if(isNull() || empty() || (sp==sparsity())){
       return *this;
     } else {

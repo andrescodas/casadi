@@ -890,9 +890,9 @@ namespace CasADi{
     integrator.setOption(dictionary());
   }
 
-  CRSSparsity IntegratorInternal::spJacF(){
+  CCSSparsity IntegratorInternal::spJacF(){
     // Start with the sparsity pattern of the ODE part
-    CRSSparsity ret = f_.jacSparsity(DAE_X,DAE_ODE);
+    CCSSparsity ret = f_.jacSparsity(DAE_X,DAE_ODE);
     
     // Add diagonal to get interdependencies
     ret = ret.patternUnion(sp_diag(nx_));
@@ -901,17 +901,17 @@ namespace CasADi{
     if(nz_==0) return ret;
 
     // Add contribution from algebraic variables and equations
-    CRSSparsity jac_ode_z = f_.jacSparsity(DAE_Z,DAE_ODE);
-    CRSSparsity jac_alg_x = f_.jacSparsity(DAE_X,DAE_ALG);
-    CRSSparsity jac_alg_z = f_.jacSparsity(DAE_Z,DAE_ALG);
+    CCSSparsity jac_ode_z = f_.jacSparsity(DAE_Z,DAE_ODE);
+    CCSSparsity jac_alg_x = f_.jacSparsity(DAE_X,DAE_ALG);
+    CCSSparsity jac_alg_z = f_.jacSparsity(DAE_Z,DAE_ALG);
     ret = horzcat(ret,jac_ode_z);
     ret.append(horzcat(jac_alg_x,jac_alg_z));
     return ret;
   }
 
-  CRSSparsity IntegratorInternal::spJacG(){
+  CCSSparsity IntegratorInternal::spJacG(){
     // Start with the sparsity pattern of the ODE part
-    CRSSparsity ret = g_.jacSparsity(RDAE_RX,RDAE_ODE);
+    CCSSparsity ret = g_.jacSparsity(RDAE_RX,RDAE_ODE);
     
     // Add diagonal to get interdependencies
     ret = ret.patternUnion(sp_diag(nrx_));
@@ -920,9 +920,9 @@ namespace CasADi{
     if(nrz_==0) return ret;
 
     // Add contribution from algebraic variables and equations
-    CRSSparsity jac_ode_z = g_.jacSparsity(RDAE_RZ,RDAE_ODE);
-    CRSSparsity jac_alg_x = g_.jacSparsity(RDAE_RX,RDAE_ALG);
-    CRSSparsity jac_alg_z = g_.jacSparsity(RDAE_RZ,RDAE_ALG);
+    CCSSparsity jac_ode_z = g_.jacSparsity(RDAE_RZ,RDAE_ODE);
+    CCSSparsity jac_alg_x = g_.jacSparsity(RDAE_RX,RDAE_ALG);
+    CCSSparsity jac_alg_z = g_.jacSparsity(RDAE_RZ,RDAE_ALG);
     ret = horzcat(ret,jac_ode_z);
     ret.append(horzcat(jac_alg_x,jac_alg_z));
     return ret;

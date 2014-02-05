@@ -37,7 +37,7 @@ namespace CasADi{
     
     // Construct the sparsity
     casadi_assert(!x.empty());
-    CRSSparsity sp = x.front().sparsity();
+    CCSSparsity sp = x.front().sparsity();
     for(vector<MX>::const_iterator i=x.begin()+1; i!=x.end(); ++i){
       sp.append(i->sparsity());
     }
@@ -139,7 +139,7 @@ namespace CasADi{
     casadi_assert(nz_offset == size());
   }
 
-  MX Vertcat::getGetNonzeros(const CRSSparsity& sp, const std::vector<int>& nz) const{
+  MX Vertcat::getGetNonzeros(const CCSSparsity& sp, const std::vector<int>& nz) const{
     // Get the first nonnegative nz
     int nz_test = -1;
     for(vector<int>::const_iterator i=nz.begin(); i!=nz.end(); ++i){

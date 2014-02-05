@@ -33,7 +33,7 @@ class SDPSolverInternal : public FXInternal{
   public:
 
     // Constructor
-    SDPSolverInternal(const std::vector<CRSSparsity>& st);
+    SDPSolverInternal(const std::vector<CCSSparsity>& st);
     
     // Destructor
     virtual ~SDPSolverInternal() = 0;
@@ -59,7 +59,7 @@ class SDPSolverInternal : public FXInternal{
   protected:
   
     /// Problem structure
-    std::vector<CRSSparsity> st_;
+    std::vector<CCSSparsity> st_;
     
     /// Size of decision variable vector
     int n_;

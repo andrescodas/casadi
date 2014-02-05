@@ -43,7 +43,7 @@ namespace CasADi{
    * inspect the trace of it. sp_z diagonal will be more efficient then. 
    */
   template<class T>
-  Matrix<T> mul(const Matrix<T> &x, const Matrix<T> &y, const CRSSparsity& sp_z=CRSSparsity());
+  Matrix<T> mul(const Matrix<T> &x, const Matrix<T> &y, const CCSSparsity& sp_z=CCSSparsity());
 
   /// Matrix product of n matrices
   template<class T>
@@ -104,7 +104,7 @@ namespace CasADi{
   Matrix<T> reshape(const Matrix<T>& a, const std::vector<int> sz);
 
   template<class T>
-  Matrix<T> reshape(const Matrix<T>& a, const CRSSparsity& sp);
+  Matrix<T> reshape(const Matrix<T>& a, const CCSSparsity& sp);
 
   template<class T>
   T trace(const Matrix<T>& a);
@@ -498,7 +498,7 @@ namespace CasADi{
 
   /** \brief Create a new matrix with a given sparsity pattern but with the nonzeros taken from an existing matrix */
   template<typename T>
-  Matrix<T> project(const Matrix<T>& A, const CRSSparsity& sparsity);
+  Matrix<T> project(const Matrix<T>& A, const CCSSparsity& sparsity);
 
   /// Obtain the structural rank of a sparsity-pattern
   template<typename T>
@@ -520,7 +520,7 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> mul(const Matrix<T> &x, const Matrix<T> &y, const CRSSparsity &sp_z){
+  Matrix<T> mul(const Matrix<T> &x, const Matrix<T> &y, const CCSSparsity &sp_z){
     return x.mul(y,sp_z);
   }
 
@@ -579,7 +579,7 @@ namespace CasADi{
 
   template<class T>
   bool isTril(const Matrix<T> &A){
-    // TODO: Move implementation to CRSSparsity as it does not depend on the matrix entries 
+    // TODO: Move implementation to CCSSparsity as it does not depend on the matrix entries 
     // loop over rows
     for(int i=0; i<A.size1(); ++i){
       if(A.rowind(i) != A.rowind(i+1)){ // if there are any elements of the row
@@ -596,7 +596,7 @@ namespace CasADi{
 
   template<class T>
   bool isTriu(const Matrix<T> &A){
-    // TODO: Move implementation to CRSSparsity as it does not depend on the matrix entries 
+    // TODO: Move implementation to CCSSparsity as it does not depend on the matrix entries 
     // loop over rows
     for(int i=0; i<A.size1(); ++i){
       if(A.rowind(i) != A.rowind(i+1)){ // if there are any elements of the row
@@ -743,7 +743,7 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> reshape(const Matrix<T>& a, int n, int m){
-    CRSSparsity sp = a.sparsity().reshape(n,m);
+    CCSSparsity sp = a.sparsity().reshape(n,m);
     return Matrix<T>(sp,a.data());
   }
 
@@ -754,7 +754,7 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> reshape(const Matrix<T>& x, const CRSSparsity& sp){
+  Matrix<T> reshape(const Matrix<T>& x, const CCSSparsity& sp){
     // quick return if already the right shape
     if(sp==x.sparsity())
       return x;
@@ -846,7 +846,7 @@ namespace CasADi{
       std::vector<int> col_s(rowind[stop]-rowind[start]);
       std::copy(col.begin()+rowind[start],col.begin()+rowind[stop],col_s.begin());
     
-      CRSSparsity s(stop-start,v.size2(),col_s,rowind_s);
+      CCSSparsity s(stop-start,v.size2(),col_s,rowind_s);
       Matrix<T> r(s);
     
       // data for the submatrix: a portion of the original data
@@ -1240,7 +1240,7 @@ namespace CasADi{
   
   template<class T>
   Matrix<T> kron(const Matrix<T>& a, const Matrix<T>& b) {
-    const CRSSparsity &a_sp = a.sparsity();
+    const CCSSparsity &a_sp = a.sparsity();
     Matrix<T> filler(b.size1(),b.size2());
     std::vector< std::vector< Matrix<T> > > blocks(a.size1(),std::vector< Matrix<T> >(a.size2(),filler));
     for (int i=0;i<a.size1();++i) {
@@ -1349,7 +1349,7 @@ namespace CasADi{
     // Nonzero mapping
     std::vector<int> mapping;
     // Get the sparsity
-    CRSSparsity sp = A.sparsity().diag(mapping);
+    CCSSparsity sp = A.sparsity().diag(mapping);
   
     Matrix<T> ret = Matrix<T>(sp);
   
@@ -1362,7 +1362,7 @@ namespace CasADi{
   Matrix<T> blkdiag(const std::vector< Matrix<T> > &A) {
     std::vector<T> data;
   
-    std::vector<CRSSparsity> sp;
+    std::vector<CCSSparsity> sp;
     for (int i=0;i<A.size();++i) {
       data.insert(data.end(),A[i].data().begin(),A[i].data().end());
       sp.push_back(A[i].sparsity());
@@ -1389,7 +1389,7 @@ namespace CasADi{
   Matrix<T> unite(const Matrix<T>& A, const Matrix<T>& B){
     // Join the sparsity patterns
     std::vector<unsigned char> mapping;
-    CRSSparsity sp = A.sparsity().patternUnion(B.sparsity(),mapping);
+    CCSSparsity sp = A.sparsity().patternUnion(B.sparsity(),mapping);
   
     // Create return matrix
     Matrix<T> ret(sp);
@@ -1542,7 +1542,7 @@ namespace CasADi{
   }
 
   template<typename T>
-  Matrix<T> project(const Matrix<T>& A, const CRSSparsity& sparsity){
+  Matrix<T> project(const Matrix<T>& A, const CCSSparsity& sparsity){
     // Check dimensions
     if(!(A.empty() && sparsity.numel()==0)){
       casadi_assert_message(A.size1()==sparsity.size1() && A.size2()==sparsity.size2(),
