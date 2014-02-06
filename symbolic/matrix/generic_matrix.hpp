@@ -90,7 +90,7 @@ class GenericMatrix{
     
     #ifndef SWIG  
     /** \brief  Get the shape */
-    std::pair<int,int> shapeWWW() const;
+    std::pair<int,int> shape() const;
     #endif
 
     /** \brief  Check if the matrix expression is empty, i.e. one of its dimensions is 0 */
@@ -215,8 +215,8 @@ int GenericMatrix<MatType>::size2() const{
 }
 
 template<typename MatType>
-std::pair<int,int> GenericMatrix<MatType>::shapeWWW() const{
-  return sparsity().shapeWWW();
+std::pair<int,int> GenericMatrix<MatType>::shape() const{
+  return sparsity().shape();
 }
 
 template<typename MatType>

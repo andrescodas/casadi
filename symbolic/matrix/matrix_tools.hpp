@@ -942,7 +942,7 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> inner_prod(const Matrix<T> &x, const Matrix<T> &y){
-    casadi_assert_message(x.shapeWWW()==y.shapeWWW(), "inner_prod: Dimension mismatch");
+    casadi_assert_message(x.shape()==y.shape(), "inner_prod: Dimension mismatch");
     return sumAll(x*y);
   }
 

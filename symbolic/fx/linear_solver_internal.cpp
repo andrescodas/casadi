@@ -121,7 +121,7 @@ namespace CasADi{
     // Nondifferentiated output
     if(!output_given){
       if(CasADi::isZero(B)){
-        X = MX::sparseWWW(B.shapeWWW());
+        X = MX::sparseWWW(B.shape());
       } else {
         X = solve(A,B,tr);
       }
@@ -145,7 +145,7 @@ namespace CasADi{
       
       // Simplifiy if zero
       if(CasADi::isZero(rhs_d)){
-        *fwdSens[d][0] = MX::sparseWWW(rhs_d.shapeWWW());
+        *fwdSens[d][0] = MX::sparseWWW(rhs_d.shape());
       } else {
         rhs.push_back(rhs_d);
         rhs_ind.push_back(d);

@@ -485,7 +485,7 @@ namespace CasADi{
         return toMatrix(getBinary(op,y,false,true),sparsity());
       }
     } else {
-      casadi_assert_message(sparsity().shapeWWW() == y.sparsity().shapeWWW(), "Dimension mismatch.");
+      casadi_assert_message(sparsity().shape() == y.sparsity().shape(), "Dimension mismatch.");
       if(sparsity()==y.sparsity()){
         // Matching sparsities
         return getBinary(op,y,false,false);

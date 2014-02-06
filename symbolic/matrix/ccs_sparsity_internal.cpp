@@ -2057,7 +2057,7 @@ namespace CasADi{
     return nnz;
   }
 
-  std::pair<int,int> CCSSparsityInternal::shapeWWW() const{
+  std::pair<int,int> CCSSparsityInternal::shape() const{
     return std::pair<int,int>(nrow_,ncol_);
   }
 

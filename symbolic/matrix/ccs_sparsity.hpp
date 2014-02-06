@@ -190,7 +190,7 @@ namespace CasADi{
     
 #ifndef SWIG
     /** \brief  Get the shape */
-    std::pair<int,int> shapeWWW() const;
+    std::pair<int,int> shape() const;
 #endif
     /// @}
 

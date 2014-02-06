@@ -161,7 +161,7 @@ namespace CasADi{
     using B::numel;
     using B::size1;
     using B::size2;
-    using B::shapeWWW;
+    using B::shape;
     using B::empty;
     using B::scalar;
     using B::dense;
