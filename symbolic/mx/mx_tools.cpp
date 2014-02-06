@@ -216,7 +216,7 @@ namespace CasADi{
     if(n==x.size2() && m==x.size1())
       return x;
     else
-      return reshape(x,x.sparsity().reshapeQQQ(m,n));
+      return reshape(x,x.sparsity().reshape(m,n));
   }
 
   MX reshape(const MX &x, const CCSSparsity& sp){

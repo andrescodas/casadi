@@ -1904,7 +1904,7 @@ namespace CasADi{
       // Append the sparsity patterns, keep track of col offsets
       vector<int> col_offset(1,0);
       for(int i=0; i<getNumInputs(); ++i){
-        sp_arg.append(input(i).sparsity().reshapeQQQ(1,input(i).numel()));
+        sp_arg.append(input(i).sparsity().reshape(1,input(i).numel()));
         col_offset.push_back(sp_arg.numel());
       }
       

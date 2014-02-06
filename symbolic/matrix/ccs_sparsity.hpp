@@ -218,10 +218,10 @@ namespace CasADi{
     std::vector<int> getCol() const;
     
     /// Resize
-    void resizeQQQ(int nrow, int ncol);
+    void resize(int nrow, int ncol);
     
     /// Reshape a sparsity, order of nonzeros remains the same
-    CCSSparsity reshapeQQQ(int nrow, int ncol) const;
+    CCSSparsity reshape(int nrow, int ncol) const;
     
     /** \brief Get the index of a non-zero element
         Add the element if it does not exist and copy object if it's not unique */

@@ -1784,7 +1784,7 @@ namespace CasADi{
       for(int i=0; i<ncol_; ++i){
       
         // Enlarge the return matrix
-        ret.resizeQQQ(1,i+1);
+        ret.resize(1,i+1);
     
         // Get to the right nonzero of the col
         int el = colind_[i];
