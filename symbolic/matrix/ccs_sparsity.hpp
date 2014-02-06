@@ -119,7 +119,7 @@ namespace CasADi{
     
     /// Create a diagonal matrix
     static CCSSparsity createDiagonal(int n);
-    static CCSSparsity createDiagonal(int n, int m);
+    static CCSSparsity createDiagonal(int m, int n);
     
     /** Get the diagonal of the matrix/create a diagonal matrix (mapping will contain the nonzero mapping)
         When the input is square, the diagonal elements are returned.

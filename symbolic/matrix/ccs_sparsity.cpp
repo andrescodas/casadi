@@ -428,7 +428,7 @@ namespace CasADi{
     return createDiagonal(n,n);
   }
 
-  CCSSparsity CCSSparsity::createDiagonal(int n, int m){
+  CCSSparsity CCSSparsity::createDiagonal(int m, int n){
     CCSSparsity ret(m,n);
   
     // Set rows
