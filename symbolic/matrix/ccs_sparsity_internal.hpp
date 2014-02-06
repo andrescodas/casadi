@@ -201,7 +201,7 @@ namespace CasADi{
     bool isEqual(const CCSSparsity& y) const;
 
     /// Check if two sparsity patterns are the same
-    bool isEqual(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind) const;
+    bool isEqual(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row) const;
 
     /// Enlarge the matrix along the first dimension (i.e. insert cols)
     void enlargeColumns(int ncol, const std::vector<int>& ii);

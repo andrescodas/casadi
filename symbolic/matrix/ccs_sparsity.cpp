@@ -361,8 +361,8 @@ namespace CasADi{
     return (*this)->isEqual(y);
   }
 
-  bool CCSSparsity::isEqual(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind) const{
-    return (*this)->isEqual(ncol,nrow,row,colind);
+  bool CCSSparsity::isEqual(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row) const{
+    return (*this)->isEqual(nrow,ncol,colind,row);
   }
 
   CCSSparsity CCSSparsity::operator+(const CCSSparsity& b) const {
@@ -595,7 +595,7 @@ namespace CasADi{
           CCSSparsity ref = shared_cast<CCSSparsity>(wref.shared());
         
           // Check if the pattern matches
-          if(ref.isEqual(ncol,nrow,row,colind)){
+          if(ref.isEqual(nrow,ncol,colind,row)){
           
             // Found match!
             assignNode(ref.get());
@@ -633,7 +633,7 @@ namespace CasADi{
               CCSSparsity ref = shared_cast<CCSSparsity>(j->second.shared());
             
               // Match found if sparsity matches
-              if(ref.isEqual(ncol,nrow,row,colind)){
+              if(ref.isEqual(nrow,ncol,colind,row)){
                 assignNode(ref.get());
                 return;
               }

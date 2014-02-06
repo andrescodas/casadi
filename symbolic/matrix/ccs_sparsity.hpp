@@ -111,7 +111,7 @@ namespace CasADi{
     /** \brief Clear the cache */
     static void clearCache();
 
-    /** \brief Check if the dimensions and colind,row vectors are compatible.
+    /** \brief Check if the dimensions and colind, row vectors are compatible.
      * \param complete  set to true to also check elementwise
      * throws an error as possible result
      */
@@ -143,7 +143,7 @@ namespace CasADi{
     /// \name Check if two sparsity patterns are identical
     /// @{
     bool isEqual(const CCSSparsity& y) const;
-    bool isEqual(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind) const;
+    bool isEqual(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row) const;
     bool operator==(const CCSSparsity& y) const{ return isEqual(y);}
     /// @}
     

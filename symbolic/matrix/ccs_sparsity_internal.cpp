@@ -2434,7 +2434,7 @@ namespace CasADi{
     if(this == y.get()) return true;  
   
     // Otherwise, compare the patterns
-    return isEqual(y.size2(),y.size1(),y.row(),y.colind());
+    return isEqual(y.size1(),y.size2(),y.colind(),y.row());
   }
   
   CCSSparsity CCSSparsityInternal::patternInverse() const {
@@ -2477,7 +2477,7 @@ namespace CasADi{
   }
 
 
-  bool CCSSparsityInternal::isEqual(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind) const{
+  bool CCSSparsityInternal::isEqual(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row) const{
     // First check dimensions and number of non-zeros
     if(size()!=row.size() || ncol_!=ncol || nrow_!=nrow)
       return false;
