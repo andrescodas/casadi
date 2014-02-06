@@ -480,7 +480,7 @@ namespace CasADi{
 
   CCSSparsity sp_unit(int n, int el){
     CCSSparsity ret = sp_sparse(n,1);
-    ret.getNZ(el,0);
+    ret.getNZQQQ(0,el);
     return ret;
   }
   

@@ -37,7 +37,7 @@ namespace CasADi{
 
   template<class T>
   const T& Matrix<T>::elem(int i, int j) const{
-    int ind = sparsity().getNZ(i,j);
+    int ind = sparsity().getNZQQQ(j,i);
     if(ind==-1)
       return casadi_limits<T>::zero;
     else
@@ -54,7 +54,7 @@ namespace CasADi{
   template<class T>
   T& Matrix<T>::elem(int i, int j){
     int oldsize = sparsity().size();
-    int ind = sparsityRef().getNZ(i,j);
+    int ind = sparsityRef().getNZQQQ(j,i);
     if(oldsize != sparsity().size())
       data().insert(begin()+ind,T(0));
     return at(ind);
@@ -145,7 +145,7 @@ namespace CasADi{
 
   template<class T>
   const Matrix<T> Matrix<T>::sub(const CCSSparsity& sp, int dummy) const {
-    casadi_assert_message(size2()==sp.size2() && size1()==sp.size1(),"sub(CCSSparsity sp): shape mismatch. This matrix has shape " << size2() << " x " << size1() << ", but supplied sparsity index has shape " << sp.size2() << " x " << sp.size1() << "." );
+    casadi_assert_message(size1()==sp.size1() && size2()==sp.size2(),"sub(CCSSparsity sp): shape mismatch. This matrix has shape " << size1() << " x " << size2() << ", but supplied sparsity index has shape " << sp.size1() << " x " << sp.size2() << "." );
     Matrix<T> ret(sp);
 
     std::vector<unsigned char> mapping; // Mapping that will be filled by patternunion

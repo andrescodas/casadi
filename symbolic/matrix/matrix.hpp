@@ -281,7 +281,7 @@ namespace CasADi{
     const T getElement(int i, int j=0) const{ return elem(i,j);}
     
     /// Returns true if the matrix has a non-zero at location i,j
-    bool hasNZ(int i, int j) const { return sparsity().hasNZ(i,j); }
+    bool hasNZQQQ(int j, int i) const { return sparsity().hasNZQQQ(j,i); }
 
     /// Returns the truth value of a Matrix
     bool __nonzero__() const;

@@ -228,10 +228,10 @@ namespace CasADi{
     CCSSparsity sub(const std::vector<int>& ii, const std::vector<int>& jj, std::vector<int>& mapping) const;
 
     /// Get the index of an existing non-zero element
-    int getNZ(int i, int j) const;
+    int getNZQQQ(int j, int i) const;
     
     /// Get a set of non-zero element - does bounds checking
-    std::vector<int> getNZ(const std::vector<int>& ii, const std::vector<int>& jj) const;
+    std::vector<int> getNZQQQ(const std::vector<int>& jj, const std::vector<int>& ii) const;
 
     /// Get the nonzero index for a set of elements (see descripion in public class)
     void getNZInplace(std::vector<int>& indices) const;

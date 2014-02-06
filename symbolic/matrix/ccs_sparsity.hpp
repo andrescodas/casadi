@@ -225,24 +225,22 @@ namespace CasADi{
     
     /** \brief Get the index of a non-zero element
         Add the element if it does not exist and copy object if it's not unique */
-    int getNZ(int i, int j);
+    int getNZQQQ(int j, int i);
     
     /** \brief Get the index of an existing non-zero element
         return -1 if the element does not exists */
-    int getNZ(int i, int j) const;
+    int getNZQQQ(int j, int i) const;
 
     /// Returns true if the pattern has a non-zero at location i,j
-    bool hasNZ(int i, int j) const;
+    bool hasNZQQQ(int j, int i) const;
 
     /** \brief Get a set of non-zero element
         return -1 if the element does not exists */
-    std::vector<int> getNZ(const std::vector<int>& ii, const std::vector<int>& jj) const;
-    //    std::vector<int> getNZNew(std::vector<int> i, std::vector<int> j);
-    //    std::vector<int> getNZNew(std::vector<int> i, std::vector<int> j) const;
+    std::vector<int> getNZQQQ(const std::vector<int>& jj, const std::vector<int>& ii) const;
 
     /** \brief Get the nonzero index for a set of elements
         The index vector is used both for input and outputs and must be sorted by increasing
-        nonzero index, i.e. col-wise.
+        nonzero index, i.e. column-wise.
         Elements not found in the sparsity pattern are set to -1.
     */
     void getNZInplace(std::vector<int>& indices) const;
