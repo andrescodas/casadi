@@ -82,7 +82,7 @@ namespace CasADi{
       Index vec happens as follows: (i,j) -> k = j+i*size1()\n
       Vectors are considered to be row vectors.\n
   
-      The storage format is a (modified) compressed col storage (CCS) format. This way, a vector element can always be accessed in constant time.\n
+      The storage format is a (modified) compressed column storage (CCS) format. This way, a vector element can always be accessed in constant time.\n
   
       Matrix<T> is polymorphic with a std::vector<T> that contain all non-identical-zero elements.\n
       The sparsity can be accessed with CCSSparsity& sparsity()\n
@@ -203,13 +203,13 @@ namespace CasADi{
 
     /** \brief  Create an expression from an stl vector  */
     template<typename A>
-    Matrix(const std::vector<A>& x) : sparsity_(CCSSparsity(x.size(),1,true)), data_(std::vector<T>(x.size())){
+    Matrix(const std::vector<A>& x) : sparsity_(CCSSparsity::QQQ(1,x.size(),true)), data_(std::vector<T>(x.size())){
       copy(x.begin(),x.end(),begin());
     }
 
     /** \brief  Create a non-vector expression from an stl vector */
     template<typename A>
-    Matrix(const std::vector<A>& x,  int n, int m) : sparsity_(CCSSparsity(n,m,true)), data_(std::vector<T>(x.size())){
+    Matrix(const std::vector<A>& x,  int n, int m) : sparsity_(CCSSparsity::QQQ(m,n,true)), data_(std::vector<T>(x.size())){
       if(x.size() != n*m) throw CasadiException("Matrix::Matrix(const std::vector<T>& x,  int n, int m): dimension mismatch");
       copy(x.begin(),x.end(),begin());
     }
@@ -217,12 +217,12 @@ namespace CasADi{
     /** \brief  ublas vector */
 #ifdef HAVE_UBLAS
     template<typename T, typename A>
-    explicit Matrix<T>(const ublas::vector<A> &x) : sparsity_(CCSSparsity(x.size(),1,true)), data_(std::vector<T>(x.size())){
+    explicit Matrix<T>(const ublas::vector<A> &x) : sparsity_(CCSSparsity::QQQ(1,x.size(),true)), data_(std::vector<T>(x.size())){
       copy(x.begin(),x.end(),begin());
     }
 
     template<typename T, typename A>
-    explicit Matrix<T>(const ublas::matrix<A> &x) : sparsity_(CCSSparsity(x.size2(),x.size1(),true)), data_(std::vector<T>(numel())){
+    explicit Matrix<T>(const ublas::matrix<A> &x) : sparsity_(CCSSparsity::QQQ(x.size1(),x.size2(),true)), data_(std::vector<T>(numel())){
       copy(x.begin(),x.end(),begin());
       return ret;
     }
@@ -727,7 +727,7 @@ namespace CasADi{
     // @}
     
   private:
-    /// Sparsity of the matrix in a compressed col storage (CCS) format
+    /// Sparsity of the matrix in a compressed column storage (CCS) format
     CCSSparsity sparsity_;
     
     /// Nonzero elements

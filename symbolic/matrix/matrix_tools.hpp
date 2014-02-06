@@ -846,7 +846,7 @@ namespace CasADi{
       std::vector<int> row_s(colind[stop]-colind[start]);
       std::copy(row.begin()+colind[start],row.begin()+colind[stop],row_s.begin());
     
-      CCSSparsity s(stop-start,v.size1(),row_s,colind_s);
+      CCSSparsity s = CCSSparsity::QQQ(v.size1(),stop-start,colind_s,row_s);
       Matrix<T> r(s);
     
       // data for the submatrix: a portion of the original data

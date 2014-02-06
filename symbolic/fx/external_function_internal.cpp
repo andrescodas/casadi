@@ -88,7 +88,7 @@ ExternalFunctionInternal::ExternalFunctionInternal(const std::string& bin_name) 
     vector<int> rowv(row,row+nnz);
     
     // Sparsity
-    CCSSparsity sp(ncol,nrow,rowv,colindv);
+    CCSSparsity sp = CCSSparsity::QQQ(nrow,ncol,colindv,rowv);
     
     // Save to inputs/outputs
     if(i<n_in){

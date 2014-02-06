@@ -249,7 +249,7 @@ namespace CasADi{
       if(r_nz.size()==0){
         res = MX::sparse(osp.shape());
       } else {
-        CCSSparsity f_sp(osp.size2(),osp.size1(),r_row,r_colind);
+        CCSSparsity f_sp = CCSSparsity::QQQ(osp.size1(),osp.size2(),r_colind,r_row);
         res = arg->getGetNonzeros(f_sp,r_nz);
       }
     }

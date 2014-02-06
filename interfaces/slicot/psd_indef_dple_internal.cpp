@@ -125,7 +125,7 @@ namespace CasADi{
             
           }
  
-          sp = CCSSparsity(np*K_,np*K_,row,col_ind);
+          sp = CCSSparsity::QQQ(np*K_,np*K_,col_ind,row);
         }
         LinearSolver solver = linear_solver_creator(sp,1);
         solver.init();

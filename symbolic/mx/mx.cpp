@@ -67,7 +67,7 @@ namespace CasADi{
   }
 
   MX::MX(int ncol, int nrow){
-    assignNode(new Constant<CompiletimeConst<0> >(CCSSparsity(ncol,nrow)));
+    assignNode(new Constant<CompiletimeConst<0> >(CCSSparsity::QQQ(nrow,ncol)));
   }
 
   MX::MX(const CCSSparsity& sp, const MX& val){
@@ -402,7 +402,7 @@ namespace CasADi{
   }
 
   MX MX::getNZ(const vector<int>& k) const{
-    CCSSparsity sp(k.size(),1,true);
+    CCSSparsity sp = CCSSparsity::QQQ(1,k.size(),true);
   
     for (int i=0;i<k.size();i++) {
       casadi_assert_message(k[i] < size(),"Mapping::assign: index vector reaches " << k[i] << ", while dependant is only of size " << size());
@@ -413,7 +413,7 @@ namespace CasADi{
   }
 
   MX MX::getNZ(const Matrix<int>& k) const{
-    CCSSparsity sp(k.size(),1,true);
+    CCSSparsity sp = CCSSparsity::QQQ(1,k.size(),true);
     MX ret = (*this)->getGetNonzeros(sp,k.data());
     return ret;
   }
@@ -621,7 +621,7 @@ namespace CasADi{
     casadi_assert(val.scalar());
     casadi_assert(val.dense());
   
-    CCSSparsity sp(ncol,nrow,true);
+    CCSSparsity sp = CCSSparsity::QQQ(nrow,ncol,true);
     *this = val->getGetNonzeros(sp,vector<int>(sp.size(),0));
   }
 
