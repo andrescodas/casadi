@@ -98,7 +98,7 @@ namespace CasADi{
       if(ret[i].null()){
         ret[i] = MX(0,0);
       } else if(ret[i].size()==0){
-        ret[i] = MX::sparse(ret[i].shape());
+        ret[i] = MX::sparseWWW(ret[i].shapeWWW());
       }
     }
     return ret;

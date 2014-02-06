@@ -313,6 +313,8 @@ namespace CasADi{
     /** \brief  Sparse matrix of all zeros */
     static MX sparse(int ncol, int nrow=1);
     static MX sparse(const std::pair<int, int> &nm);
+    static MX sparseWWW(const std::pair<int, int> &nm){ return sparse(std::pair<int,int>(nm.second,nm.first));}
+
     //@}
   
     //@{
@@ -320,6 +322,7 @@ namespace CasADi{
     static MX zeros(const CCSSparsity& sp);
     static MX zeros(int ncol, int nrow=1); 
     static MX zeros(const std::pair<int, int> &nm);
+    static MX zerosWWW(const std::pair<int, int> &nm){ return zeros(std::pair<int,int>(nm.second,nm.first));}
     //@}
 
     //@{
@@ -327,6 +330,7 @@ namespace CasADi{
     static MX ones(const CCSSparsity& sp);
     static MX ones(int ncol, int nrow=1); 
     static MX ones(const std::pair<int, int> &nm);
+    static MX onesWWW(const std::pair<int, int> &nm){ return ones(std::pair<int,int>(nm.second,nm.first));}
     //@}
 
     //@{
@@ -334,6 +338,7 @@ namespace CasADi{
     static MX inf(const CCSSparsity& sp);
     static MX inf(int ncol=1, int nrow=1);
     static MX inf(const std::pair<int,int>& nm);
+    static MX infWWW(const std::pair<int, int> &nm){ return inf(std::pair<int,int>(nm.second,nm.first));}
     //@}
   
     //@{
@@ -341,6 +346,7 @@ namespace CasADi{
     static MX nan(const CCSSparsity& sp);
     static MX nan(int ncol=1, int nrow=1);
     static MX nan(const std::pair<int,int>& nm);
+    static MX nanWWW(const std::pair<int, int> &nm){ return nan(std::pair<int,int>(nm.second,nm.first));}
     //@}
   
     //@{

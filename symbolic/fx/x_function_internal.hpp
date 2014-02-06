@@ -509,7 +509,7 @@ namespace CasADi{
 
     // Quick return if trivially empty
     if(input(iind).size()==0 || output(oind).size()==0 || jacSparsity(iind,oind,true,false).size()==0){
-      return MatType::sparse(input(iind).shape());
+      return MatType::sparseWWW(input(iind).shapeWWW());
     }
 
     // Dummy forward seeds and sensitivities

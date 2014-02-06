@@ -131,9 +131,9 @@ namespace CasADi{
     casadi_assert_warning(f_.input(DAE_X).dense(),"Sparse states in integrators are experimental");
 
     // Consistency checks
-    casadi_assert_message(f_.output(DAE_ODE).shape()==x0().shape(),"Inconsistent dimensions. Expecting DAE_ODE output of shape " << x0().shape() << ", but got " << f_.output(DAE_ODE).shape() << " instead.");
+    casadi_assert_message(f_.output(DAE_ODE).shapeWWW()==x0().shapeWWW(),"Inconsistent dimensions. Expecting DAE_ODE output of shape " << x0().shapeWWW() << ", but got " << f_.output(DAE_ODE).shapeWWW() << " instead.");
     casadi_assert(f_.output(DAE_ODE).sparsity()==x0().sparsity());
-    casadi_assert_message(f_.output(DAE_ALG).shape()==z0().shape(),"Inconsistent dimensions. Expecting DAE_ALG output of shape " << z0().shape() << ", but got " << f_.output(DAE_ALG).shape() << " instead.");
+    casadi_assert_message(f_.output(DAE_ALG).shapeWWW()==z0().shapeWWW(),"Inconsistent dimensions. Expecting DAE_ALG output of shape " << z0().shapeWWW() << ", but got " << f_.output(DAE_ALG).shapeWWW() << " instead.");
     casadi_assert(f_.output(DAE_ALG).sparsity()==z0().sparsity());
     if(!g_.isNull()){
       casadi_assert(g_.input(RDAE_P).sparsity()==p().sparsity());

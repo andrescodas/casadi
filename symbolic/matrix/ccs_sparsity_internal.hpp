@@ -159,7 +159,7 @@ namespace CasADi{
     int sizeD() const;
     
     /// Shape
-    std::pair<int,int> shape() const;
+    std::pair<int,int> shapeWWW() const;
     
     /// Is scalar?
     bool scalar(bool scalar_and_dense) const;

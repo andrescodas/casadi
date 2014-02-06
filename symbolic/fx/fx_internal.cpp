@@ -487,7 +487,7 @@ namespace CasADi{
     // Construct sparsity pattern
     CCSSparsity ret = sp_triplet(nz_out, nz_in,use_fwd ? jcol : jrow, use_fwd ? jrow : jcol);
     
-    casadi_log("Formed Jacobian sparsity pattern (dimension " << ret.shape() << ", " << ret.size() << " nonzeros, " << 100*double(ret.size())/double(ret.size2())/double(ret.size1()) << " \% nonzeros).");
+    casadi_log("Formed Jacobian sparsity pattern (dimension " << ret.shapeWWW() << ", " << ret.size() << " nonzeros, " << 100*double(ret.size())/double(ret.size1())/double(ret.size2()) << " \% nonzeros).");
     casadi_log("FXInternal::getJacSparsity end ");
     
     // Return sparsity pattern
@@ -715,7 +715,7 @@ namespace CasADi{
     }
     
     casadi_log("Number of sweeps: " << nsweeps );
-    casadi_log("Formed Jacobian sparsity pattern (dimension " << r.shape() << ", " << r.size() << " nonzeros, " << 100*double(r.size())/double(r.size2())/double(r.size1()) << " \% nonzeros).");
+    casadi_log("Formed Jacobian sparsity pattern (dimension " << r.shapeWWW() << ", " << r.size() << " nonzeros, " << 100*double(r.size())/double(r.size2())/double(r.size1()) << " \% nonzeros).");
     
     return r;
   }
@@ -1012,7 +1012,7 @@ namespace CasADi{
       hasrun = true;
     }
     casadi_log("Number of sweeps: " << nsweeps );
-    casadi_log("Formed Jacobian sparsity pattern (dimension " << r.shape() << ", " << r.size() << " nonzeros, " << 100*double(r.size())/double(r.size2())/double(r.size1()) << " \% nonzeros).");
+    casadi_log("Formed Jacobian sparsity pattern (dimension " << r.shapeWWW() << ", " << r.size() << " nonzeros, " << 100*double(r.size())/double(r.size1())/double(r.size2()) << " \% nonzeros).");
     
     return r;
   }
@@ -1601,15 +1601,15 @@ namespace CasADi{
     int ind=0;
     for(int d=-1; d<nfwd; ++d){
       for(int i=0; i<getNumInputs(); ++i, ++ind){
-        if(ret.input(ind).shape()!=input(i).shape()){
-          casadi_error("Incorrect shape for " << ret << " input " << ind << " \"" << i_names.at(ind) << "\". Expected " << input(i).shape() << " but got " << ret.input(ind).shape());
+        if(ret.input(ind).shapeWWW()!=input(i).shapeWWW()){
+          casadi_error("Incorrect shape for " << ret << " input " << ind << " \"" << i_names.at(ind) << "\". Expected " << input(i).shapeWWW() << " but got " << ret.input(ind).shapeWWW());
         }
       }
     }
     for(int d=0; d<nadj; ++d){
       for(int i=0; i<getNumOutputs(); ++i, ++ind){
-        if(ret.input(ind).shape()!=output(i).shape()){
-          casadi_error("Incorrect shape for " << ret << " input " << ind << " \"" << i_names.at(ind) << "\". Expected " << output(i).shape() << " but got " << ret.input(ind).shape());
+        if(ret.input(ind).shapeWWW()!=output(i).shapeWWW()){
+          casadi_error("Incorrect shape for " << ret << " input " << ind << " \"" << i_names.at(ind) << "\". Expected " << output(i).shapeWWW() << " but got " << ret.input(ind).shapeWWW());
         }
       }
     }
@@ -1618,15 +1618,15 @@ namespace CasADi{
     ind=0;
     for(int d=-1; d<nfwd; ++d){
       for(int i=0; i<getNumOutputs(); ++i, ++ind){
-        if(ret.output(ind).shape()!=output(i).shape()){
-          casadi_error("Incorrect shape for " << ret << " output " << ind << " \"" <<  o_names.at(ind) << "\". Expected " << output(i).shape() << " but got " << ret.output(ind).shape());
+        if(ret.output(ind).shapeWWW()!=output(i).shapeWWW()){
+          casadi_error("Incorrect shape for " << ret << " output " << ind << " \"" <<  o_names.at(ind) << "\". Expected " << output(i).shapeWWW() << " but got " << ret.output(ind).shapeWWW());
         }
       }
     }
     for(int d=0; d<nadj; ++d){
       for(int i=0; i<getNumInputs(); ++i, ++ind){
-        if(ret.output(ind).shape()!=input(i).shape()){
-          casadi_error("Incorrect shape for " << ret << " output " << ind << " \"" << o_names.at(ind) << "\". Expected " << input(i).shape() << " but got " << ret.output(ind).shape());
+        if(ret.output(ind).shapeWWW()!=input(i).shapeWWW()){
+          casadi_error("Incorrect shape for " << ret << " output " << ind << " \"" << o_names.at(ind) << "\". Expected " << input(i).shapeWWW() << " but got " << ret.output(ind).shapeWWW());
         }
       }
     }

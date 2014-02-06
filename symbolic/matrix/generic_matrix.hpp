@@ -84,13 +84,13 @@ class GenericMatrix{
     int size(Sparsity sp) const;
     
     /** \brief Get string representation of dimensions.
-    The representation is (ncol x nrow = numel | size)
+    The representation is (nrow x ncol = numel | size)
     */
     std::string dimString() const;
     
     #ifndef SWIG  
     /** \brief  Get the shape */
-    std::pair<int,int> shape() const;
+    std::pair<int,int> shapeWWW() const;
     #endif
 
     /** \brief  Check if the matrix expression is empty, i.e. one of its dimensions is 0 */
@@ -205,18 +205,18 @@ int GenericMatrix<MatType>::numel() const{
 }
 
 template<typename MatType>
-int GenericMatrix<MatType>::size2() const{
-  return sparsity().size2();
-}
-
-template<typename MatType>
 int GenericMatrix<MatType>::size1() const{
   return sparsity().size1();
 }
 
 template<typename MatType>
-std::pair<int,int> GenericMatrix<MatType>::shape() const{
-  return sparsity().shape();
+int GenericMatrix<MatType>::size2() const{
+  return sparsity().size2();
+}
+
+template<typename MatType>
+std::pair<int,int> GenericMatrix<MatType>::shapeWWW() const{
+  return sparsity().shapeWWW();
 }
 
 template<typename MatType>

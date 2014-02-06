@@ -190,7 +190,7 @@ namespace CasADi{
     
 #ifndef SWIG
     /** \brief  Get the shape */
-    std::pair<int,int> shape() const;
+    std::pair<int,int> shapeWWW() const;
 #endif
     /// @}
 
@@ -468,7 +468,7 @@ namespace CasADi{
     CCSSparsity pmult(const std::vector<int>& p, bool permute_cols=true, bool permute_rows=true, bool invert_permutation=false) const;
       
     /// Get the dimension as a string
-    std::string dimString()         const;
+    std::string dimString() const;
     
     /** \brief Print a textual representation of sparsity
      */

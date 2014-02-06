@@ -95,7 +95,7 @@ class ADtests(casadiTestCase):
       return [X]
 
     def testje(xyz):
-      print horzcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]]).shape
+      print horzcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]]).shapeQQQ
       
     self.mxoutputs = {
        "row": {
@@ -457,7 +457,7 @@ class ADtests(casadiTestCase):
 
     f=SXFunction([inp],[horzcat([x+y,x,y])])
     f.init()
-    print f.input().shape
+    print f.input().shapeQQQ
     J=f.jacobian(0,0)
     
     

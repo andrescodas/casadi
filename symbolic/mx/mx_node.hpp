@@ -242,7 +242,7 @@ namespace CasADi{
 
     /// Convert scalar to matrix
     inline static MX toMatrix(const MX& x, const CCSSparsity& sp){
-      if(x.shape()==sp.shape()){
+      if(x.shapeWWW()==sp.shapeWWW()){
         return x;
       } else {
         return MX(sp,x);

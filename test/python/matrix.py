@@ -90,7 +90,7 @@ class Matrixtests(casadiTestCase):
     B = DMatrix(4,3)
     C = horzcat([A,B])
     
-    self.checkarray(C.shape,(6,3),"horzcat shape")
+    self.checkarray(C.shapeQQQ,(3,6),"horzcat shape")
     self.assertEqual(C.size(),A.size(),"horzcat size")
     
     self.assertRaises(RuntimeError,lambda : vertcat([A,B]))
@@ -101,7 +101,7 @@ class Matrixtests(casadiTestCase):
     B = DMatrix(3,4)
     C = vertcat([A,B])
     
-    self.checkarray(C.shape,(3,6),"vertcat shape")
+    self.checkarray(C.shapeQQQ,(6,3),"vertcat shape")
     self.assertEqual(C.size(),A.size(),"horzcat size")
     
     self.assertRaises(RuntimeError,lambda : horzcat([A,B]))
@@ -119,7 +119,7 @@ class Matrixtests(casadiTestCase):
     B[2,0] = 6
     C = flattencat([A,B])
     
-    self.checkarray(C.shape,(9,1),"flattencat shape")
+    self.checkarray(C.shapeQQQ,(1,9),"flattencat shape")
     self.assertEqual(C.size(),A.size()+B.size(),"flattencat size")
     
     self.checkarray(tuple(C.data()),tuple(arange(1,7)),"numbers shape")
@@ -217,7 +217,7 @@ class Matrixtests(casadiTestCase):
     B[2,0] = 6
     C = flattenNZcat([A,B])
     
-    self.checkarray(C.shape,(6,1),"flattenNZcat shape")
+    self.checkarray(C.shapeQQQ,(1,6),"flattenNZcat shape")
     self.assertEqual(C.size(),A.size()+B.size(),"flattenNZcat size")
     
     self.checkarray(tuple(C.data()),tuple(arange(1,7)),"numbers shape")
@@ -564,18 +564,18 @@ class Matrixtests(casadiTestCase):
     
     D = mul([A])
     
-    self.assertEqual(D.shape[0],4)
-    self.assertEqual(D.shape[1],3)
+    self.assertEqual(D.shapeQQQ[0],3)
+    self.assertEqual(D.shapeQQQ[1],4)
 
     D = mul([A,B])
     
-    self.assertEqual(D.shape[0],4)
-    self.assertEqual(D.shape[1],8)
+    self.assertEqual(D.shapeQQQ[0],8)
+    self.assertEqual(D.shapeQQQ[1],4)
     
     D = mul([A,B,C])
     
-    self.assertEqual(D.shape[0],4)
-    self.assertEqual(D.shape[1],7)
+    self.assertEqual(D.shapeQQQ[0],7)
+    self.assertEqual(D.shapeQQQ[1],4)
     
   def test_remove(self):
     self.message("remove")

@@ -156,12 +156,12 @@ namespace CasADi{
 
     /// Expose base class functions
     using B::size;
-    using B::sizeU;
     using B::sizeL;
+    using B::sizeU;
     using B::numel;
-    using B::size2;
     using B::size1;
-    using B::shape;
+    using B::size2;
+    using B::shapeWWW;
     using B::empty;
     using B::scalar;
     using B::dense;
@@ -666,6 +666,7 @@ namespace CasADi{
     /** \brief  create a sparse matrix with all zeros */
     static Matrix<T> sparse(int ncol, int nrow=1);
     static Matrix<T> sparse(const std::pair<int,int>& nm);
+    static Matrix<T> sparseWWW(const std::pair<int, int> &nm){ return sparse(std::pair<int,int>(nm.second,nm.first));}
     //@}
     
     /* \brief Construct a sparse matrix from triplet form
@@ -677,6 +678,9 @@ namespace CasADi{
     /// \brief Construct a sparse matrix from triplet form
     static Matrix<T> sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d, int n, int m);
     static Matrix<T> sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d, const std::pair<int,int>& nm);
+    static Matrix<T> sparseWWW(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d, const std::pair<int,int>& nm){
+      return sparse(col,row,d,std::pair<int,int>(nm.second,nm.first));
+    }
     //@}
     
     //@{
@@ -684,6 +688,7 @@ namespace CasADi{
     static Matrix<T> zeros(const CCSSparsity& sp);
     static Matrix<T> zeros(int ncol, int nrow=1);
     static Matrix<T> zeros(const std::pair<int,int>& nm);
+    static Matrix<T> zerosWWW(const std::pair<int, int> &nm){ return zeros(std::pair<int,int>(nm.second,nm.first));}
     //@}
 
     //@{
@@ -691,6 +696,7 @@ namespace CasADi{
     static Matrix<T> ones(const CCSSparsity& sp);
     static Matrix<T> ones(int ncol, int nrow=1);
     static Matrix<T> ones(const std::pair<int,int>& nm);
+    static Matrix<T> onesWWW(const std::pair<int, int> &nm){ return ones(std::pair<int,int>(nm.second,nm.first));}
     //@}
 
     //@{
@@ -698,6 +704,7 @@ namespace CasADi{
     static Matrix<T> inf(const CCSSparsity& sp);
     static Matrix<T> inf(int ncol=1, int nrow=1);
     static Matrix<T> inf(const std::pair<int,int>& nm);
+    static Matrix<T> infWWW(const std::pair<int, int> &nm){ return inf(std::pair<int,int>(nm.second,nm.first));}
     //@}
     
     //@{
@@ -705,6 +712,7 @@ namespace CasADi{
     static Matrix<T> nan(const CCSSparsity& sp);
     static Matrix<T> nan(int ncol=1, int nrow=1);
     static Matrix<T> nan(const std::pair<int,int>& nm);
+    static Matrix<T> nanWWW(const std::pair<int, int> &nm){ return nan(std::pair<int,int>(nm.second,nm.first));}
     //@}
 
     //@{

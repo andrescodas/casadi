@@ -127,8 +127,8 @@ namespace CasADi{
     return (*this)->size();
   }
     
-  std::pair<int,int> CCSSparsity::shape() const{
-    return (*this)->shape();
+  std::pair<int,int> CCSSparsity::shapeWWW() const{
+    return (*this)->shapeWWW();
   }
     
   const vector<int>& CCSSparsity::row() const{
