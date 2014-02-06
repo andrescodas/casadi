@@ -1015,7 +1015,7 @@ namespace CasADi{
     std::vector< std::vector< MX > > blocks(a.size2(),std::vector< MX >(a.size1(),filler));
     for (int i=0;i<a.size2();++i) {
       for (int j=0;j<a.size1();++j) {
-        int k = a_sp.getNZQQQ(j,i);
+        int k = a_sp.getNZ(j,i);
         if (k!=-1) {
           blocks[i][j] = a[k]*b;
         }

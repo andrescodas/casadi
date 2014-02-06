@@ -1056,7 +1056,7 @@ namespace CasADi{
         // ri[j] = inner_prod(qj,ai); // Classical Gram-Schmidt
      
         // Remove projection in direction j
-        if (ri.hasNZQQQ(j,0))
+        if (ri.hasNZ(j,0))
           qi -= ri(0,j) * qj;
       }
 
@@ -1131,10 +1131,10 @@ namespace CasADi{
         for(int k=0; k<b.size1(); ++k){ // for every right hand side
           for(int kk=Acolind[i]; kk<Acolind[i+1] && Arow[kk]<i; ++kk){ 
             int j = Arow[kk];
-            if (x.hasNZQQQ(k,j))
+            if (x.hasNZ(k,j))
               x(i,k) -= Adata[kk]*x(j,k);
           }
-          if (x.hasNZQQQ(k,i))
+          if (x.hasNZ(k,i))
             x(i,k) /= A(i,i);
         }
       }
@@ -1149,10 +1149,10 @@ namespace CasADi{
         for(int k=0; k<b.size1(); ++k){ // for every right hand side
           for(int kk=Acolind[i+1]-1; kk>=Acolind[i] && Arow[kk]>i; --kk){
             int j = Arow[kk]; 
-            if (x.hasNZQQQ(k,j))
+            if (x.hasNZ(k,j))
               x(i,k) -= Adata[kk]*x(j,k);
           }
-          if (x.hasNZQQQ(k,i))
+          if (x.hasNZ(k,i))
             x(i,k) /= A(i,i);
         }
       }
@@ -1245,7 +1245,7 @@ namespace CasADi{
     std::vector< std::vector< Matrix<T> > > blocks(a.size2(),std::vector< Matrix<T> >(a.size1(),filler));
     for (int i=0;i<a.size2();++i) {
       for (int j=0;j<a.size1();++j) {
-        int k = a_sp.getNZQQQ(j,i);
+        int k = a_sp.getNZ(j,i);
         if (k!=-1) {
           blocks[i][j] = a[k]*b;
         }

@@ -41,11 +41,11 @@ class Sparsitytests(casadiTestCase):
     
     a = CCSSparsity(5,4)
     for i in nza:
-      a.getNZQQQ(i[1],i[0])
+      a.getNZ(i[1],i[0])
       
     b = CCSSparsity(5,4)  
     for i in nzb:
-      b.getNZQQQ(i[1],i[0])
+      b.getNZ(i[1],i[0])
       
     w = UCharVector()
     c=a.patternUnion(b,w)
@@ -79,11 +79,11 @@ class Sparsitytests(casadiTestCase):
     
     a = CCSSparsity(5,4)
     for i in nza:
-      a.getNZQQQ(i[1],i[0])
+      a.getNZ(i[1],i[0])
       
     b = CCSSparsity(5,4)  
     for i in nzb:
-      b.getNZQQQ(i[1],i[0])
+      b.getNZ(i[1],i[0])
     
     c=a.patternIntersection(b)
     for k in range(c.size()):
@@ -102,7 +102,7 @@ class Sparsitytests(casadiTestCase):
     
     a = CCSSparsity(5,4)
     for i in nza:
-      a.getNZQQQ(i[1],i[0])
+      a.getNZ(i[1],i[0])
       
     A = DMatrix(a,1)
     Ad = DMatrix(array(A))
@@ -154,7 +154,7 @@ class Sparsitytests(casadiTestCase):
     
     a = CCSSparsity(5,4)
     for i in nza:
-      a.getNZQQQ(i[1],i[0])
+      a.getNZ(i[1],i[0])
       
     b = sp_triplet(4,5,[i[0] for i in nza],[i[1] for i in nza])
     self.checkarray(self.tomatrix(a),self.tomatrix(b),"colrow")
@@ -167,7 +167,7 @@ class Sparsitytests(casadiTestCase):
     a = CCSSparsity(5,4)
     for i in r:
       for j in c:
-        a.getNZQQQ(j,i)
+        a.getNZ(j,i)
       
     b = sp_colrow(r,c,4,5)
     self.checkarray(self.tomatrix(a),self.tomatrix(b),"colrow")
@@ -183,7 +183,7 @@ class Sparsitytests(casadiTestCase):
     
     a = CCSSparsity(5,4)
     for i in nza:
-      a.getNZQQQ(i[1],i[0])
+      a.getNZ(i[1],i[0])
       
     A=self.tomatrix(a).toArray()
     B=self.tomatrix(casadi.reshape(a,2,10)).toArray()
@@ -203,7 +203,7 @@ class Sparsitytests(casadiTestCase):
     
     a = CCSSparsity(5,4)
     for i in nza:
-      a.getNZQQQ(i[1],i[0])
+      a.getNZ(i[1],i[0])
       
     A=self.tomatrix(a).toArray()
     B=self.tomatrix(flatten(a)).toArray()
@@ -227,9 +227,9 @@ class Sparsitytests(casadiTestCase):
   def test_diag(self):
     self.message("diag")
     A = CCSSparsity(5,5)
-    A.getNZQQQ(1,1)
-    A.getNZQQQ(4,2)
-    A.getNZQQQ(3,3)
+    A.getNZ(1,1)
+    A.getNZ(4,2)
+    A.getNZ(3,3)
     
     sp, mapping = A.diag()
     B = DMatrix(sp,1)
@@ -240,9 +240,9 @@ class Sparsitytests(casadiTestCase):
     #print B
     
     A = CCSSparsity(1,5)
-    A.getNZQQQ(0,1)
-    A.getNZQQQ(0,2)
-    A.getNZQQQ(0,4)
+    A.getNZ(0,1)
+    A.getNZ(0,2)
+    A.getNZ(0,4)
     
     sp, mapping = A.diag()
     B = DMatrix(sp,1)
@@ -252,9 +252,9 @@ class Sparsitytests(casadiTestCase):
     self.checkarray(array([0,1,2]),array(list(mapping)),"diag(vector)")
     
     A = CCSSparsity(5,1)
-    A.getNZQQQ(1,0)
-    A.getNZQQQ(2,0)
-    A.getNZQQQ(4,0)
+    A.getNZ(1,0)
+    A.getNZ(2,0)
+    A.getNZ(4,0)
     
     sp, mapping = A.diag()
     B = DMatrix(sp,1)
@@ -314,7 +314,7 @@ class Sparsitytests(casadiTestCase):
     
     a = CCSSparsity(5,5)
     for i in nza:
-      a.getNZQQQ(i[1],i[0])
+      a.getNZ(i[1],i[0])
       
     b = ssym("b",a)
     
@@ -347,7 +347,7 @@ class Sparsitytests(casadiTestCase):
     
     a = CCSSparsity(5,5)
     for i in nza:
-      a.getNZQQQ(i[1],i[0])
+      a.getNZ(i[1],i[0])
       
     b = msym("b",a)
     
@@ -377,7 +377,7 @@ class Sparsitytests(casadiTestCase):
     
     a = CCSSparsity(5,4)
     for i in nza:
-      a.getNZQQQ(i[1],i[0])
+      a.getNZ(i[1],i[0])
       
     A1, B1= a.getSparsityCRS()
     

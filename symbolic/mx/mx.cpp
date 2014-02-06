@@ -138,7 +138,7 @@ namespace CasADi{
   }
 
   const MX MX::sub(int i, int j) const{
-    int ind = sparsity().getNZQQQ(j,i);
+    int ind = sparsity().getNZ(j,i);
     if (ind>=0) {
       return (*this)->getGetNonzeros(CCSSparsity::getScalar(),vector<int>(1,ind));
     } else {

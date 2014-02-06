@@ -1796,7 +1796,7 @@ namespace CasADi{
       
         // Add element if nonzero on diagonal
         if(row_[el]==i){
-          ret.getNZQQQ(0,i);
+          ret.getNZ(0,i);
           mapping.push_back(el);
         }
       }
@@ -2146,7 +2146,7 @@ namespace CasADi{
     return mapping;
   }
 
-  vector<int> CCSSparsityInternal::getNZQQQ(const vector<int>& jj, const vector<int>& ii) const{
+  vector<int> CCSSparsityInternal::getNZ(const vector<int>& jj, const vector<int>& ii) const{
     if (!inBounds(ii,ncol_)) {
       casadi_error("Slicing [ii,jj] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
@@ -2582,7 +2582,7 @@ namespace CasADi{
     return CCSSparsity(nrow_,ncol_,true);
   }
 
-  int CCSSparsityInternal::getNZQQQ(int j, int i) const{
+  int CCSSparsityInternal::getNZ(int j, int i) const{
     casadi_assert_message(i<ncol_,"First index (" << j  << ") out of bounds. Attempting to slice [" << j << "," << i << " ] out of shape " << dimString() << ".");
     casadi_assert_message(j<nrow_,"Second index (" << i  << ") out of bounds.  Attempting to slice [" << j << "," << i << " ] out of shape " << dimString() << ".");
   

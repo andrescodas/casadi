@@ -37,7 +37,7 @@ namespace CasADi{
 
   template<class T>
   const T& Matrix<T>::elem(int i, int j) const{
-    int ind = sparsity().getNZQQQ(j,i);
+    int ind = sparsity().getNZ(j,i);
     if(ind==-1)
       return casadi_limits<T>::zero;
     else
@@ -54,7 +54,7 @@ namespace CasADi{
   template<class T>
   T& Matrix<T>::elem(int i, int j){
     int oldsize = sparsity().size();
-    int ind = sparsityRef().getNZQQQ(j,i);
+    int ind = sparsityRef().getNZ(j,i);
     if(oldsize != sparsity().size())
       data().insert(begin()+ind,T(0));
     return at(ind);

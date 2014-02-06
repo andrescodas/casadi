@@ -166,7 +166,7 @@ namespace CasADi{
     (*this)->resize(nrow,ncol);
   }
 
-  int CCSSparsity::getNZQQQ(int j, int i){
+  int CCSSparsity::getNZ(int j, int i){
     casadi_assert_message(i<size2() && j<size1(),"Indices out of bounds");
 
     if (i<0) i += size2();
@@ -208,21 +208,21 @@ namespace CasADi{
     return ind;
   }
 
-  bool CCSSparsity::hasNZQQQ(int j, int i) const {
-    return (*this)->getNZQQQ(j,i)!=-1;
+  bool CCSSparsity::hasNZ(int j, int i) const {
+    return (*this)->getNZ(j,i)!=-1;
   }
 
 
-  int CCSSparsity::getNZQQQ(int j, int i) const{
-    return (*this)->getNZQQQ(j,i);
+  int CCSSparsity::getNZ(int j, int i) const{
+    return (*this)->getNZ(j,i);
   }
 
   CCSSparsity CCSSparsity::reshape(int nrow, int ncol) const{
     return (*this)->reshape(nrow,ncol);
   }
 
-  vector<int> CCSSparsity::getNZQQQ(const vector<int>& jj, const vector<int>& ii) const{
-    return (*this)->getNZQQQ(jj,ii);
+  vector<int> CCSSparsity::getNZ(const vector<int>& jj, const vector<int>& ii) const{
+    return (*this)->getNZ(jj,ii);
   }
 
   bool CCSSparsity::scalar(bool scalar_and_dense) const{
@@ -494,7 +494,7 @@ namespace CasADi{
   void CCSSparsity::spy(std::ostream &stream) const {
     for (int i=0;i<size2();++i) {
       for (int j=0;j<size1();++j) {
-        stream << (getNZQQQ(j,i)==-1? "." : "*");
+        stream << (getNZ(j,i)==-1? "." : "*");
       }
       stream << std::endl;
     }
