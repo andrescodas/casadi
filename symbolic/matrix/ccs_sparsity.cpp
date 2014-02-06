@@ -67,7 +67,7 @@ namespace CasADi{
     return ret;
   }
 
-  CCSSparsity::CCSSparsity(int ncol, int nrow, bool dense){
+  CCSSparsity::CCSSparsity(int nrow, int ncol, bool dense){
     vector<int> row, colind(ncol+1,0);
     if(dense){
       row.resize(ncol*nrow);
@@ -82,7 +82,7 @@ namespace CasADi{
     assignCached(ncol, nrow, row, colind);
   }
 
-  CCSSparsity::CCSSparsity(int ncol, int nrow, const vector<int>& row, const vector<int>& colind){
+  CCSSparsity::CCSSparsity(int nrow, int ncol, const vector<int>& colind, const vector<int>& row){
     assignCached(ncol, nrow, row, colind);
   }
 
@@ -429,7 +429,7 @@ namespace CasADi{
   }
 
   CCSSparsity CCSSparsity::createDiagonal(int n, int m){
-    CCSSparsity ret(n,m);
+    CCSSparsity ret(m,n);
   
     // Set rows
     vector<int> &c = ret.rowRef();

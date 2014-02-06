@@ -743,7 +743,7 @@ namespace CasADi{
 
   CCSSparsity CCSSparsityInternal::permute(const std::vector<int>& pinv, const std::vector<int>& q, int values) const{
     // alloc result
-    CCSSparsity C = CCSSparsity::QQQ(nrow_,ncol_);
+    CCSSparsity C(nrow_,ncol_);
   
     // Col offset
     vector<int>& colind_C = C.colindRef();
@@ -1702,7 +1702,7 @@ namespace CasADi{
     vector<int> w(m);
 
     // allocate result
-    CCSSparsity C = CCSSparsity::QQQ(m,n);
+    CCSSparsity C(m,n);
     C.colindRef().resize(anz + bnz);
   
     int* Cp = &C.colindRef().front();
@@ -1774,7 +1774,7 @@ namespace CasADi{
   CCSSparsity CCSSparsityInternal::diag(std::vector<int>& mapping) const{
     if (ncol_==nrow_) {
       // Return object
-      CCSSparsity ret = CCSSparsity::QQQ(1,0);
+      CCSSparsity ret(1,0);
       ret.reserve(std::min(size(),ncol_),ncol_);
     
       // Mapping
@@ -1835,7 +1835,7 @@ namespace CasADi{
       }
       std::fill(colind.begin()+i_prev+1,colind.end(),size());
     
-      return CCSSparsity::QQQ(sp->nrow_,sp->nrow_,colind,row);
+      return CCSSparsity(sp->nrow_,sp->nrow_,colind,row);
     } else {
       casadi_error("diag: wrong argument shape. Expecting square matrix or vector-like, but got " << dimString() << " instead.");
     }
@@ -1858,11 +1858,11 @@ namespace CasADi{
 
     // Quick return if both are dense
     if(dense() && y_trans.dense()){
-      return CCSSparsity::QQQ(y_nrow,x_ncol,!empty() && !y_trans.empty());
+      return CCSSparsity(y_nrow,x_ncol,!empty() && !y_trans.empty());
     }
   
     // return object
-    CCSSparsity ret = CCSSparsity::QQQ(y_nrow,x_ncol);
+    CCSSparsity ret(y_nrow,x_ncol);
   
     // Get the vectors for the return pattern
     vector<int>& c = ret.rowRef();
@@ -2426,7 +2426,7 @@ namespace CasADi{
     }
     
     // Return cached object
-    return CCSSparsity::QQQ(nrow_, ncol_, ret_colind, ret_row);
+    return CCSSparsity(nrow_, ncol_, ret_colind, ret_row);
   }
 
   bool CCSSparsityInternal::isEqual(const CCSSparsity& y) const{
@@ -2439,8 +2439,8 @@ namespace CasADi{
   
   CCSSparsity CCSSparsityInternal::patternInverse() const {
     // Quick return clauses
-    if (empty()) return CCSSparsity::QQQ(nrow_,ncol_,true);
-    if (dense()) return CCSSparsity::QQQ(nrow_,ncol_,false);
+    if (empty()) return CCSSparsity(nrow_,ncol_,true);
+    if (dense()) return CCSSparsity(nrow_,ncol_,false);
     
     // Sparsity of the result
     std::vector<int> row_ret;
@@ -2473,7 +2473,7 @@ namespace CasADi{
     }
     
     // Return result
-    return CCSSparsity::QQQ(nrow_,ncol_,colind_ret,row_ret);    
+    return CCSSparsity(nrow_,ncol_,colind_ret,row_ret);    
   }
 
 
@@ -2579,7 +2579,7 @@ namespace CasADi{
       }
     }
   
-    return CCSSparsity::QQQ(nrow_,ncol_,true);
+    return CCSSparsity(nrow_,ncol_,true);
   }
 
   int CCSSparsityInternal::getNZ(int i, int j) const{
@@ -2611,7 +2611,7 @@ namespace CasADi{
 
   CCSSparsity CCSSparsityInternal::reshape(int n, int m) const{
     casadi_assert_message(numel() == n*m, "reshape: number of elements must remain the same. Old shape is " << dimString() << ". New shape is " << n << "x" << m << "=" << n*m << ".");
-    CCSSparsity ret = CCSSparsity::QQQ(m,n);
+    CCSSparsity ret(m,n);
     ret.reserve(size(), n);
   
     std::vector<int> col(size());
@@ -2894,7 +2894,7 @@ namespace CasADi{
     }
   
     // Create return sparsity containing the coloring
-    CCSSparsity ret = CCSSparsity::QQQ(ncol_,forbiddenColors.size());
+    CCSSparsity ret(ncol_,forbiddenColors.size());
     vector<int>& colind = ret.colindRef();
     vector<int>& row = ret.rowRef();
   
@@ -3143,7 +3143,7 @@ namespace CasADi{
     }
     
     // Create return sparsity containing the coloring
-    CCSSparsity ret = CCSSparsity::QQQ(ncol_,forbiddenColors.size());
+    CCSSparsity ret(ncol_,forbiddenColors.size());
     vector<int>& colind = ret.colindRef();
     vector<int>& row = ret.rowRef();
   

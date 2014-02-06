@@ -391,7 +391,7 @@ namespace CasADi{
   
     if(size2()!=n || size1()!=m){
       // Also resize
-      sparsity_ = CCSSparsity::QQQ(m,n,true);
+      sparsity_ = CCSSparsity(m,n,true);
       std::fill(data().begin(),data().end(),val);
       data().resize(n*m, val);
     } else {
@@ -414,7 +414,7 @@ namespace CasADi{
       }
       
       // Save the new sparsity pattern
-      sparsity_ = CCSSparsity::QQQ(m,n,true);
+      sparsity_ = CCSSparsity(m,n,true);
     }
   }
 
@@ -424,7 +424,7 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T>::Matrix() : sparsity_(CCSSparsity::QQQ(0,0,false)){
+  Matrix<T>::Matrix() : sparsity_(CCSSparsity(0,0,false)){
   }
 
   template<class T>
@@ -432,11 +432,11 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T>::Matrix(const std::vector<T>& x) : sparsity_(CCSSparsity::QQQ(1,x.size(),true)), data_(x){
+  Matrix<T>::Matrix(const std::vector<T>& x) : sparsity_(CCSSparsity(1,x.size(),true)), data_(x){
   }
 
   template<class T>
-  Matrix<T>::Matrix(const std::vector<T>& x, int n, int m) : sparsity_(CCSSparsity::QQQ(m,n,true)), data_(x){
+  Matrix<T>::Matrix(const std::vector<T>& x, int n, int m) : sparsity_(CCSSparsity(m,n,true)), data_(x){
     casadi_assert_message(x.size() == n*m, "Dimension mismatch." << std::endl << "You supplied a vector of length " << x.size() << ", but " << n << " x " << m << " = " << n*m);
   }
 
@@ -448,16 +448,16 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T>::Matrix(int n, int m) : sparsity_(CCSSparsity::QQQ(m,n,false)){
+  Matrix<T>::Matrix(int n, int m) : sparsity_(CCSSparsity(m,n,false)){
   }
 
   template<class T>
-  Matrix<T>::Matrix(int n, int m, const T& val) : sparsity_(CCSSparsity::QQQ(m,n,true)), data_(std::vector<T>(n*m, val)){
+  Matrix<T>::Matrix(int n, int m, const T& val) : sparsity_(CCSSparsity(m,n,true)), data_(std::vector<T>(n*m, val)){
   }
 
   template<class T>
   void Matrix<T>::makeEmpty(int n, int m){
-    sparsity_ = CCSSparsity::QQQ(m,n,false);
+    sparsity_ = CCSSparsity(m,n,false);
     data().clear();
   }
 
@@ -661,16 +661,16 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::clear(){
-    sparsity_ = CCSSparsity::QQQ(0,0,false);
+    sparsity_ = CCSSparsity(0,0,false);
     data().clear();
   }
 
   template<class T>
-  Matrix<T>::Matrix(double val) : sparsity_(CCSSparsity::QQQ(1,1,true)), data_(std::vector<T>(1,val)) {
+  Matrix<T>::Matrix(double val) : sparsity_(CCSSparsity(1,1,true)), data_(std::vector<T>(1,val)) {
   }
 
   template<class T>
-  Matrix<T>::Matrix(int n, int m, const std::vector<int>& row, const std::vector<int>& colind, const std::vector<T>& d) : sparsity_(CCSSparsity::QQQ(m,n,colind,row)), data_(d){
+  Matrix<T>::Matrix(int n, int m, const std::vector<int>& row, const std::vector<int>& colind, const std::vector<T>& d) : sparsity_(CCSSparsity(m,n,colind,row)), data_(d){
     if(data_.size() != sparsity_.size())
       data_.resize(sparsity_.size()); // Why not throw an error?
     sanityCheck(true);
@@ -693,7 +693,7 @@ namespace CasADi{
     }
     if (m==-1) m=1;
   
-    sparsity_ = CCSSparsity::QQQ(m,n,true);
+    sparsity_ = CCSSparsity(m,n,true);
   
     data().resize(n*m);
 

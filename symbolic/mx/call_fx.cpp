@@ -45,7 +45,7 @@ namespace CasADi {
     }
 
     setDependencies(arg);
-    setSparsity(CCSSparsity::QQQ(1, 1, true));
+    setSparsity(CCSSparsity(1, 1, true));
   }
 
   CallFX* CallFX::clone() const {

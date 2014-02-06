@@ -94,18 +94,11 @@ namespace CasADi{
     /// Default constructor
     explicit CCSSparsity(int dummy=0);
     
-#ifndef SWIG
-  private:
     /// Construct a sparsity pattern (sparse/dense)
-    CCSSparsity(int ncol, int nrow, bool dense=false);
+    CCSSparsity(int nrow, int ncol, bool dense=false);
 
     /// Construct a sparsity pattern from vectors
-    CCSSparsity(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind);
-#endif
-  public:
-    static CCSSparsity QQQ(int nrow, int ncol, bool dense=false){ return CCSSparsity(ncol,nrow,dense);}
-    static CCSSparsity QQQ(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row){ return CCSSparsity(ncol,nrow,row,colind);}
-    
+    CCSSparsity(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row);
 
 #ifndef SWIG
     /** \brief  Create from node */

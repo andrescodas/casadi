@@ -31,19 +31,19 @@ using namespace std;
 namespace CasADi{
   
   CCSSparsity sp_dense(int n, int m) {
-    return CCSSparsity::QQQ(m,n,true);
+    return CCSSparsity(m,n,true);
   }
 
   CCSSparsity sp_sparse(int n, int m) {
-    return CCSSparsity::QQQ(m,n,false);
+    return CCSSparsity(m,n,false);
   }
 
   CCSSparsity sp_dense(const std::pair<int,int> &nm) {
-    return CCSSparsity::QQQ(nm.second,nm.first,true);
+    return CCSSparsity(nm.second,nm.first,true);
   }
 
   CCSSparsity sp_sparse(const std::pair<int,int> &nm) {
-    return CCSSparsity::QQQ(nm.second,nm.first,false);
+    return CCSSparsity(nm.second,nm.first,false);
   }
 
   CCSSparsity sp_tril(int n) {
@@ -66,7 +66,7 @@ namespace CasADi{
     for (int i=1;i<n+1;i++)
       colind[i]=colind[i-1]+1+(c++);
 
-    return CCSSparsity::QQQ(n,n,colind,row);
+    return CCSSparsity(n,n,colind,row);
   }
 
   CCSSparsity sp_diag(int n){
@@ -82,7 +82,7 @@ namespace CasADi{
     }
     colind.back() = el;
 
-    return CCSSparsity::QQQ(n,n,colind,row);
+    return CCSSparsity(n,n,colind,row);
   }
 
   CCSSparsity sp_band(int n, int p) {
@@ -105,13 +105,13 @@ namespace CasADi{
       colind[i]=max(min(i+offset,nc),0);
     }
   
-    return CCSSparsity::QQQ(n,n,colind,row);
+    return CCSSparsity(n,n,colind,row);
   
   }
 
   CCSSparsity sp_banded(int n, int p) {
     // This is not an efficient implementation
-    CCSSparsity ret = CCSSparsity::QQQ(n,n);
+    CCSSparsity ret = CCSSparsity(n,n);
     for (int i=-p;i<=p;++i) {
       ret = ret + sp_band(n,i);
     }
@@ -155,7 +155,7 @@ namespace CasADi{
                    "The " << k << "th entry of col (" << col[k] << ") was bigger or equal to the specified total number of cols (" << ncol << ")"
                    );
     }
-    return CCSSparsity::QQQ(nrow, ncol, colind, row_new);
+    return CCSSparsity(nrow, ncol, colind, row_new);
   }
 
   std::vector<int> getNZDense(const CCSSparsity &sp) {
@@ -259,7 +259,7 @@ namespace CasADi{
     casadi_assert_message(col.size()==row.size(),"inconsistent lengths");
 
     // Create the return sparsity pattern and access vectors
-    CCSSparsity ret = CCSSparsity::QQQ(nrow,ncol);
+    CCSSparsity ret = CCSSparsity(nrow,ncol);
     vector<int> &r_colind = ret.colindRef();
     vector<int> &r_row = ret.rowRef();
     r_row.reserve(row.size());
@@ -459,7 +459,7 @@ namespace CasADi{
     const int *row = v + 2 + ncol+1;
     
     // Construct sparsity pattern
-    return CCSSparsity::QQQ(nrow, ncol, vector<int>(colind,colind+ncol+1),vector<int>(row,row+nnz));
+    return CCSSparsity(nrow, ncol, vector<int>(colind,colind+ncol+1),vector<int>(row,row+nnz));
   }
   
   int rank(const CCSSparsity& a) {
@@ -534,7 +534,7 @@ namespace CasADi{
       nz+= v[i].size();
     }
     
-    return CCSSparsity::QQQ(m,n,colind,row);
+    return CCSSparsity(m,n,colind,row);
   }
   
   CCSSparsity blkdiag(const CCSSparsity &a, const CCSSparsity &b) {

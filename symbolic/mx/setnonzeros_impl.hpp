@@ -248,7 +248,7 @@ namespace CasADi{
       // If anything to set/add
       if(!r_nz.empty()){
         // Create a sparsity pattern from vectors
-        CCSSparsity f_sp = CCSSparsity::QQQ(isp.size1(),isp.size2(),r_colind,r_row);
+        CCSSparsity f_sp(isp.size1(),isp.size2(),r_colind,r_row);
         asens += aseed->getGetNonzeros(f_sp,r_nz);
         if(!Add){
           aseed = MX::zeros(f_sp)->getSetNonzeros(aseed,r_nz);

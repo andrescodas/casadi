@@ -375,7 +375,7 @@ binopsFull(const CasADi::MX & b,,CasADi::MX,CasADi::MX)
   %pythoncode %{
     def __setstate__(self, state):
         if state:
-          self.QQQ(state["nrow"],state["ncol"],state["colind"],state["row"])
+          self.__init__(state["nrow"],state["ncol"],state["colind"],state["row"])
         else:
           self.__init__()
 

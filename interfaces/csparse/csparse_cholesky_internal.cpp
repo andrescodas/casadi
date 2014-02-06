@@ -96,7 +96,7 @@ namespace CasADi{
       Li [p] = k ;    
     }
     Lp [n] = S_->cp [n] ; 
-    CCSSparsity ret = CCSSparsity::QQQ(n, n, row, colind); // BUG?
+    CCSSparsity ret(n, n, row, colind); // BUG?
 
     return transpose? ret : trans(ret);
   
@@ -114,7 +114,7 @@ namespace CasADi{
     std::copy(L->i,L->i+nz,row.begin());
     std::vector< double > data(nz);
     std::copy(L->x,L->x+nz,data.begin());
-    DMatrix ret(CCSSparsity::QQQ(n, m, colind, row),data); 
+    DMatrix ret(CCSSparsity(n, m, colind, row),data); 
     
     return transpose? ret : trans(ret);
   }

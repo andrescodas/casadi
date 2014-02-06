@@ -1034,7 +1034,7 @@ namespace CasADi{
 
     } else {
       // Dense sparsity by default
-      return CCSSparsity::QQQ(input(iind).size(),output(oind).size(),true);
+      return CCSSparsity(input(iind).size(),output(oind).size(),true);
     }
   }
 
@@ -1093,7 +1093,7 @@ namespace CasADi{
   
     // If still null, not dependent
     if(jsp.isNull()){
-      jsp = CCSSparsity::QQQ(input(iind).size(),output(oind).size());
+      jsp = CCSSparsity(input(iind).size(),output(oind).size());
     }
 
     // Return a reference to the block
@@ -1899,7 +1899,7 @@ namespace CasADi{
       // Need to create a new symbolic primitive
 
       // Sparsity pattern for the symbolic input
-      CCSSparsity sp_arg = CCSSparsity::QQQ(1,0);
+      CCSSparsity sp_arg = CCSSparsity(1,0);
 
       // Append the sparsity patterns, keep track of col offsets
       vector<int> col_offset(1,0);
