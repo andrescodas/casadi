@@ -379,7 +379,7 @@ class Sparsitytests(casadiTestCase):
     for i in nza:
       a.getNZ(i[1],i[0])
       
-    A1, B1= a.getSparsityCRSQQQ()
+    A1, B1= a.getSparsityCRS()
     
     A2, B2 = (a.T).getSparsityCCS()
     

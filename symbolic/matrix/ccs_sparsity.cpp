@@ -271,12 +271,12 @@ namespace CasADi{
     row = this->row();
   }
 
-  void CCSSparsity::getSparsityCRSQQQ(std::vector<int>& rowind, std::vector<int>& col) const {
+  void CCSSparsity::getSparsityCRS(std::vector<int>& rowind, std::vector<int>& col) const {
     transpose().getSparsityCCS(rowind,col);
   }
     
 
-  void CCSSparsity::getSparsityQQQ(vector<int>& row, vector<int>& col) const{
+  void CCSSparsity::getSparsity(vector<int>& row, vector<int>& col) const{
     row = this->row();
     col = this->getCol();
   }

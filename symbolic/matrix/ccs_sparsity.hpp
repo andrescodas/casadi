@@ -254,16 +254,16 @@ namespace CasADi{
 
     /// Get the sparsity in CCS format
 #ifndef SWIG
-    void getSparsityCRSQQQ(std::vector<int>& rowind, std::vector<int>& col) const;
+    void getSparsityCRS(std::vector<int>& rowind, std::vector<int>& col) const;
 #else // SWIG
-    void getSparsityCRSQQQ(std::vector<int>& OUTPUT, std::vector<int>& OUTPUT) const;
+    void getSparsityCRS(std::vector<int>& OUTPUT, std::vector<int>& OUTPUT) const;
 #endif // SWIG
 
     /// Get the sparsity in sparse triplet format
 #ifndef SWIG
-    void getSparsityQQQ(std::vector<int>& row, std::vector<int>& col) const;
+    void getSparsity(std::vector<int>& row, std::vector<int>& col) const;
 #else // SWIG
-    void getSparsityQQQ(std::vector<int>& OUTPUT, std::vector<int>& OUTPUT) const;
+    void getSparsity(std::vector<int>& OUTPUT, std::vector<int>& OUTPUT) const;
 #endif // SWIG
 
     /** \brief Get a submatrix
