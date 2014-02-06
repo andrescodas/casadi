@@ -2609,10 +2609,10 @@ namespace CasADi{
     return -1;
   }
 
-  CCSSparsity CCSSparsityInternal::reshape(int n, int m) const{
-    casadi_assert_message(numel() == n*m, "reshape: number of elements must remain the same. Old shape is " << dimString() << ". New shape is " << n << "x" << m << "=" << n*m << ".");
-    CCSSparsity ret(m,n);
-    ret.reserve(size(), n);
+  CCSSparsity CCSSparsityInternal::reshape(int nrow, int ncol) const{
+    casadi_assert_message(numel() == nrow*ncol, "reshape: number of elements must remain the same. Old shape is " << dimString() << ". New shape is " << nrow << "x" << ncol << "=" << nrow*ncol << ".");
+    CCSSparsity ret(nrow,ncol);
+    ret.reserve(size(),ncol);
   
     std::vector<int> col(size());
     std::vector<int> row(size());
@@ -2624,16 +2624,16 @@ namespace CasADi{
         int k_ret = j+i*nrow_;
       
         // Col and row in the new matrix
-        int i_ret = k_ret/m;
-        int j_ret = k_ret%m;
+        int i_ret = k_ret/nrow;
+        int j_ret = k_ret%nrow;
         col[el] = i_ret;
         row[el] = j_ret;
       }
     }
-    return sp_triplet(n,m,col,row);
+    return sp_triplet(ncol,nrow,col,row);
   }
 
-  void CCSSparsityInternal::resize(int ncol, int nrow){
+  void CCSSparsityInternal::resize(int nrow, int ncol){
     if(ncol != ncol_ || nrow != nrow_){
       if(ncol < ncol_ || nrow < nrow_){
         // Col and row index of the new

@@ -163,7 +163,7 @@ namespace CasADi{
     
   void CCSSparsity::resize(int nrow, int ncol){
     makeUnique();
-    (*this)->resize(ncol,nrow);
+    (*this)->resize(nrow,ncol);
   }
 
   int CCSSparsity::getNZ(int i, int j){
@@ -218,44 +218,8 @@ namespace CasADi{
   }
 
   CCSSparsity CCSSparsity::reshape(int nrow, int ncol) const{
-    return (*this)->reshape(ncol,nrow);
+    return (*this)->reshape(nrow,ncol);
   }
-
-  // vector<int> CCSSparsity::getNZNew(vector<int> i, vector<int> j){
-  //   vector<int> ret;
-  //   ret.reserve(i.size());
-  // 
-  //     // Quick return if matrix is dense
-  //   if(numel()==size()){
-  //     for(int k=0; k<i.size(); ++k)
-  //       ret.push_back(j[k]+i[k]*size1());
-  //     return ret;
-  //   }
-  // 
-  //   // Very inefficient algorithm
-  //   for(int k=0; k<i.size(); ++k){
-  //     ret.push_back(getNZ(i[k],j[k]));
-  //   }
-  //   return ret;
-  // }
-  // 
-  // vector<int> CCSSparsity::getNZNew(vector<int> i, vector<int> j) const{
-  //   vector<int> ret;
-  //   ret.reserve(i.size());
-  // 
-  //     // Quick return if matrix is dense
-  //   if(numel()==size()){
-  //     for(int k=0; k<i.size(); ++k)
-  //       ret.push_back(j[k]+i[k]*size1());
-  //     return ret;
-  //   }
-  // 
-  //   // Very inefficient algorithm
-  //   for(int k=0; k<i.size(); ++k){
-  //     ret.push_back(getNZ(i[k],j[k]));
-  //   }
-  //   return ret;
-  // }
 
   vector<int> CCSSparsity::getNZ(const vector<int>& ii, const vector<int>& jj) const{
     return (*this)->getNZ(ii,jj);

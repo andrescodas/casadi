@@ -129,10 +129,10 @@ namespace CasADi{
     std::vector<int> getCol() const;
 
     /// Resize
-    void resize(int ncol, int nrow);
+    void resize(int nrow, int ncol);
     
     /// Reshape a sparsity, order of nonzeros remains the same
-    CCSSparsity reshape(int n, int m) const;
+    CCSSparsity reshape(int nrow, int ncol) const;
 
     /// Pattern union
     //CCSSparsity patternCombine(const CCSSparsity& y, std::vector<unsigned char>& mapping, bool f00_is_zero, bool f0x_is_zero, bool fx0_is_zero) const;
