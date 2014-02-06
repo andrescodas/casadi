@@ -110,7 +110,7 @@ class Misctests(casadiTestCase):
 
     y = CCSSparsity(x)
         
-    x.resize(2,8)
+    x.resizeQQQ(8,2)
     
     self.assertFalse(id(x)==id(y))
     self.assertTrue(x.numel(),y.numel())
@@ -154,7 +154,7 @@ class Misctests(casadiTestCase):
 
     y = copy.copy(x)
         
-    x.resize(2,8)
+    x.resizeQQQ(8,2)
     
     self.assertFalse(id(x)==id(y))
     self.assertTrue(x.numel(),y.numel())
@@ -197,7 +197,7 @@ class Misctests(casadiTestCase):
 
     y = copy.deepcopy(x)
         
-    x.resize(2,8)
+    x.resizeQQQ(8,2)
     
     self.assertFalse(id(x)==id(y))
     self.assertTrue(x.numel(),y.numel())

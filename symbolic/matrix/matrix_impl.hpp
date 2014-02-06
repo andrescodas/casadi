@@ -656,7 +656,7 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::resize(int n_, int m_){
-    sparsity_.resize(n_,m_);
+    sparsity_.resizeQQQ(m_,n_);
   }
 
   template<class T>

@@ -743,7 +743,7 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> reshape(const Matrix<T>& a, int n, int m){
-    CCSSparsity sp = a.sparsity().reshape(n,m);
+    CCSSparsity sp = a.sparsity().reshapeQQQ(m,n);
     return Matrix<T>(sp,a.data());
   }
 

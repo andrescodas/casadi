@@ -161,7 +161,7 @@ namespace CasADi{
     (*this)->sanityCheck(complete);
   }
     
-  void CCSSparsity::resize(int ncol, int nrow){
+  void CCSSparsity::resizeQQQ(int nrow, int ncol){
     makeUnique();
     (*this)->resize(ncol,nrow);
   }
@@ -217,8 +217,8 @@ namespace CasADi{
     return (*this)->getNZ(i,j);
   }
 
-  CCSSparsity CCSSparsity::reshape(int n, int m) const{
-    return (*this)->reshape(n,m);
+  CCSSparsity CCSSparsity::reshapeQQQ(int nrow, int ncol) const{
+    return (*this)->reshape(ncol,nrow);
   }
 
   // vector<int> CCSSparsity::getNZNew(vector<int> i, vector<int> j){

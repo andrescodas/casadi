@@ -200,28 +200,28 @@ namespace CasADi{
     /** \brief Get the row of a non-zero element */
     int row(int el) const;
     
-    /** \brief Get a reference to the colindex of all col element (see class description) */
+    /** \brief Get a reference to the colindex of all column element (see class description) */
     const std::vector<int>& colind() const;
 
     /** \brief  Get a reference to the colindex of col i (see class description) */
     int colind(int i) const;
 
-    /// Get a reference to the rows of all non-zero element (copy if not unique!)
+    /** \brief Get a reference to the rows of all non-zero element (copy if not unique!) */
     std::vector<int>& rowRef();
     
-    /// Get a reference to the colindex of all col element (copy if not unique!)
+    /** \brief Get a reference to the colindex of all column element (copy if not unique!) */
     std::vector<int>& colindRef();
     
-    /** \brief Get the col for each non-zero entry
+    /** \brief Get the column for each non-zero entry
         Together with the row-vector, this vector gives the sparsity of the matrix in
-        sparse triplet format, i.e. the col and row for each non-zero elements  */
+        sparse triplet format, i.e. the column and row for each non-zero elements  */
     std::vector<int> getCol() const;
     
     /// Resize
-    void resize(int ncol, int nrow);
+    void resizeQQQ(int nrow, int ncol);
     
     /// Reshape a sparsity, order of nonzeros remains the same
-    CCSSparsity reshape(int n, int m) const;
+    CCSSparsity reshapeQQQ(int nrow, int ncol) const;
     
     /** \brief Get the index of a non-zero element
         Add the element if it does not exist and copy object if it's not unique */
