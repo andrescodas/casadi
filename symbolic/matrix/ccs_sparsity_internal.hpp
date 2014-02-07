@@ -275,19 +275,19 @@ namespace CasADi{
     /// Perform a star coloring of a symmetric matrix: An improved distance-2 coloring algorithm (Algorithm 4.1 in A. H. GEBREMEDHIN, A. TARAFDAR, F. MANNE, A. POTHEN)
     CCSSparsity starColoring2(int ordering, int cutoff) const;
 
-    /// Order the cols by decreasing degree
+    /// Order the columns by decreasing degree
     std::vector<int> largestFirstOrdering() const;
 
-    /// Permute cols and/or rows
+    /// Permute rows and/or columns
     CCSSparsity pmult(const std::vector<int>& p, bool permute_rows=true, bool permute_cols=true, bool invert_permutation=false) const;
     
     /// Generate a script for Matlab or Octave which visualizes the sparsity using the spy command
     void spyMatlab(const std::string& mfile) const;
  private: 
     /// Time complexity: O(ii.size()*jj.size())
-    CCSSparsity sub1(const std::vector<int>& ii, const std::vector<int>& jj, std::vector<int>& mapping) const;
-    /// Time complexity: O(ii.size()*(nnz per col))
-    CCSSparsity sub2(const std::vector<int>& ii, const std::vector<int>& jj, std::vector<int>& mapping) const;
+    CCSSparsity sub1(const std::vector<int>& jj, const std::vector<int>& ii, std::vector<int>& mapping) const;
+    /// Time complexity: O(ii.size()*(nnz per column))
+    CCSSparsity sub2(const std::vector<int>& jj, const std::vector<int>& ii, std::vector<int>& mapping) const;
 };
 
 } // namespace CasADi
