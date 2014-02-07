@@ -245,9 +245,9 @@ namespace CasADi{
     return (*this)->sub(jj,ii,mapping);
   }
 
-  vector<int> CCSSparsity::eraseQQQ(const vector<int>& jj, const vector<int>& ii){
+  vector<int> CCSSparsity::erase(const vector<int>& jj, const vector<int>& ii){
     makeUnique();
-    return (*this)->eraseQQQ(jj,ii);
+    return (*this)->erase(jj,ii);
   }
 
   int CCSSparsity::sizeL() const{
@@ -373,7 +373,7 @@ namespace CasADi{
     return ret;
   }
 
-  void CCSSparsity::enlargeQQQ(int nrow, int ncol, const vector<int>& jj, const vector<int>& ii){
+  void CCSSparsity::enlarge(int nrow, int ncol, const vector<int>& jj, const vector<int>& ii){
     enlargeColumns(ncol,ii);
     enlargeRows(nrow,jj);
   }

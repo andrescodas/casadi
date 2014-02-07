@@ -1221,7 +1221,7 @@ namespace CasADi{
   template<class T>
   void Matrix<T>::erase(const std::vector<int>& ii, const std::vector<int>& jj){
     // Erase from sparsity pattern
-    std::vector<int> mapping = sparsityRef().eraseQQQ(jj,ii);
+    std::vector<int> mapping = sparsityRef().erase(jj,ii);
   
     // Update non-zero entries
     for(int k=0; k<mapping.size(); ++k)
@@ -1253,7 +1253,7 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::enlarge(int ncol, int nrow, const std::vector<int>& ii, const std::vector<int>& jj){
-    sparsityRef().enlargeQQQ(nrow,ncol,jj,ii);
+    sparsityRef().enlarge(nrow,ncol,jj,ii);
   }
 
   template<class T>

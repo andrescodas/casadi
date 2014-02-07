@@ -328,7 +328,7 @@ namespace CasADi{
     
         B[jj,ii] == A 
     */
-    void enlargeQQQ(int nrow, int ncol, const std::vector<int>& jj, const std::vector<int>& ii);
+    void enlarge(int nrow, int ncol, const std::vector<int>& jj, const std::vector<int>& ii);
 
     /** \brief Enlarge the matrix along the first dimension (i.e. insert rows) */
     void enlargeRows(int nrow, const std::vector<int>& jj);
@@ -340,7 +340,7 @@ namespace CasADi{
     CCSSparsity makeDense(std::vector<int>& mapping) const;
 
     /** \brief Erase rows and/or columns of a matrix */
-    std::vector<int> eraseQQQ(const std::vector<int>& jj, const std::vector<int>& ii);
+    std::vector<int> erase(const std::vector<int>& jj, const std::vector<int>& ii);
 
     /// Append another sparsity patten vertically
     void append(const CCSSparsity& sp);
