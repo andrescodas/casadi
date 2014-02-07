@@ -43,14 +43,13 @@ namespace CasADi{
   }
 
   /** \brief Hash a sparsity pattern */
-  std::size_t hash_sparsity(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind);
+  std::size_t hash_sparsity(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row);
 
   /**
      \brief Create a dense rectangular sparsity pattern
   **/
   CCSSparsity sp_dense(int n, int m=1);
   
-
   /**
      \brief Create a dense rectangular sparsity pattern
   **/

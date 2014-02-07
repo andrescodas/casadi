@@ -3456,7 +3456,7 @@ namespace CasADi{
   }
 
   std::size_t CCSSparsityInternal::hash() const{
-    return hash_sparsity(ncol_,nrow_,row_,colind_);
+    return hash_sparsity(nrow_,ncol_,colind_,row_);
   }
 
   

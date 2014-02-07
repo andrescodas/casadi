@@ -528,7 +528,7 @@ namespace CasADi{
     }
 
     // Hash the pattern
-    std::size_t h = hash_sparsity(ncol,nrow,row,colind);
+    std::size_t h = hash_sparsity(nrow,ncol,colind,row);
 
     // Get a reference to the cache
     CachingMap& cache = getCache();
