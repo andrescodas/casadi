@@ -139,7 +139,7 @@ namespace CasADi{
     // Make sure that inputs are symbolic
     for(int i=0; i<inputv.size(); ++i){
       if (inputv[i].isNull()) {
-        inputv_[i] = MatType::sym("empty",0,0);
+        inputv_[i] = MatType::symQQQ("empty",0,0);
       } else if (inputv[i].empty()) {
         // That's okay
       } else if(!isSymbolicSparse(inputv[i])){
@@ -916,7 +916,7 @@ namespace CasADi{
         ss << iind;
       
         // Save to matrix
-        *i = MatType::sym(ss.str(),i->sparsity());
+        *i = MatType::symQQQ(ss.str(),i->sparsity());
       
       }
     }
@@ -937,7 +937,7 @@ namespace CasADi{
         ss << oind;
 
         // Save to matrix
-        *i = MatType::sym(ss.str(),i->sparsity());
+        *i = MatType::symQQQ(ss.str(),i->sparsity());
       
       }
     }

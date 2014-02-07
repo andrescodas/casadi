@@ -39,11 +39,11 @@ namespace CasADi{
   }
     
   int CCSSparsityInternal::numel() const{
-    return ncol_*nrow_;
+    return nrow_*ncol_;
   }
     
   void CCSSparsityInternal::repr(ostream &stream) const{
-    stream << "Compressed Column Storage: " << ncol_ << "-by-" << nrow_ << " matrix, " << row_.size() << " structural non-zeros";
+    stream << "Compressed Column Storage: " << nrow_ << "-by-" << ncol_ << " matrix, " << row_.size() << " structural non-zeros";
   }
 
   void CCSSparsityInternal::sanityCheck(bool complete) const{
@@ -96,8 +96,8 @@ namespace CasADi{
   void CCSSparsityInternal::print(ostream &stream) const{
     repr(stream);
     stream << endl;
-    stream << "row:    " << row_ << endl;
     stream << "colind: " << colind_ << endl;
+    stream << "row:    " << row_ << endl;
   }
 
   vector<int> CCSSparsityInternal::getCol() const{
@@ -1843,9 +1843,9 @@ namespace CasADi{
   std::string CCSSparsityInternal::dimString() const { 
     std::stringstream ss;
     if (numel()==size()) {
-      ss << ncol_ << "-by-" << nrow_ << " (dense)";
+      ss << nrow_ << "-by-" << ncol_ << " (dense)";
     } else {
-      ss << ncol_ << "-by-" << nrow_ << " (" << size() << "/" << numel() << " nz)";
+      ss << nrow_ << "-by-" << ncol_ << " (" << size() << "/" << numel() << " nz)";
     }
     return ss.str();
   }
