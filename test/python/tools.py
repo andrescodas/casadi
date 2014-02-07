@@ -495,11 +495,11 @@ class Toolstests(casadiTestCase):
     self.assertEqual(len(s["x"]),5)
     self.assertEqual(len(s["y"]),6)
     self.assertTrue(s.cat.at(1).getName().startswith("y"))
-    s = struct_ssym([entry("x",shape=(3,2)),entry("y",shape=2),entry("z",shape=sp_dense(3)),entry("w",shape=sp_tril(5))])
+    s = struct_ssym([entry("x",shape=(3,2)),entry("y",shape=2),entry("z",shape=sp_denseQQQ(1,3)),entry("w",shape=sp_tril(5))])
     self.assertEqual(s.size,6+2+3+15)
-    self.assertTrue(s["x"].sparsity()==sp_dense(3,2))
-    self.assertTrue(s["y"].sparsity()==sp_dense(2,1))
-    self.assertTrue(s["z"].sparsity()==sp_dense(3,1))
+    self.assertTrue(s["x"].sparsity()==sp_denseQQQ(2,3))
+    self.assertTrue(s["y"].sparsity()==sp_denseQQQ(1,2))
+    self.assertTrue(s["z"].sparsity()==sp_denseQQQ(1,3))
     self.assertTrue(s["w"].sparsity()==sp_tril(5))
     
     x  = ssym("x",2)
@@ -626,11 +626,11 @@ class Toolstests(casadiTestCase):
     self.assertEqual(len(s["y"]),6)
    
     
-    s = struct_msym([entry("x",shape=(3,2)),entry("y",shape=2),entry("z",shape=sp_dense(3)),entry("w",shape=sp_tril(5))])
+    s = struct_msym([entry("x",shape=(3,2)),entry("y",shape=2),entry("z",shape=sp_denseQQQ(1,3)),entry("w",shape=sp_tril(5))])
     self.assertEqual(s.size,6+2+3+15)
-    self.assertTrue(s["x"].sparsity()==sp_dense(3,2))
-    self.assertTrue(s["y"].sparsity()==sp_dense(2,1))
-    self.assertTrue(s["z"].sparsity()==sp_dense(3,1))
+    self.assertTrue(s["x"].sparsity()==sp_denseQQQ(2,3))
+    self.assertTrue(s["y"].sparsity()==sp_denseQQQ(1,2))
+    self.assertTrue(s["z"].sparsity()==sp_denseQQQ(1,3))
     self.assertTrue(s["w"].sparsity()==sp_tril(5))
     
     x  = msym("x",2)
@@ -692,10 +692,10 @@ class Toolstests(casadiTestCase):
                 entry('x'),
                 entry('y'),
                 entry('z'),
-                entry('u',shape=sp_dense(4)),
+                entry('u',shape=sp_denseQQQ(1,4)),
                 entry('v',repeat=[4,2]),
                 entry('w',repeat=[6]),
-                entry('p',repeat=[9],shape=sp_dense(6))
+                entry('p',repeat=[9],shape=sp_denseQQQ(1,6))
              ],order=['x','y','z','u',('v','w'),'p'])
              
     shooting = struct_ssym([entry('X',struct=states,repeat=[4,5]),entry('U',repeat=[3])],order=[('X','U')])

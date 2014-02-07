@@ -634,7 +634,7 @@ void fill(SXMatrix& mat, const SX& val){
 // }
 
 SXMatrix ssym(const std::string& name, int n, int m){
-  return ssym(name,sp_dense(n,m));
+  return ssym(name,sp_denseQQQ(m,n));
 }
 
 SXMatrix ssym(const std::string& name, const std::pair<int,int> & nm) {
@@ -710,11 +710,11 @@ std::vector<std::vector<SXMatrix> > ssym(const std::string& name, const CCSSpars
 }
 
 std::vector<SXMatrix> ssym(const std::string& name, int n, int m, int p){
-  return  ssym(name,sp_dense(n,m),p);
+  return  ssym(name,sp_denseQQQ(m,n),p);
 }
 
 std::vector<std::vector<SXMatrix> > ssym(const std::string& name, int n, int m, int p, int r){
-  return ssym(name,sp_dense(n,m),p,r);
+  return ssym(name,sp_denseQQQ(m,n),p,r);
 }
 
 SXMatrix taylor(const SXMatrix& ex,const SXMatrix& x, const SXMatrix& a, int order) {

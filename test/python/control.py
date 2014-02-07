@@ -57,7 +57,7 @@ class ControlTests(casadiTestCase):
           V_ = [mul(v,v.T) for v in [DMatrix(numpy.random.random((n,n))) for i in range(K)]]
           
           
-          solver = Solver([sp_dense(n,n) for i in range(K)],[sp_dense(n,n) for i in range(K)])
+          solver = Solver([sp_denseQQQ(n,n) for i in range(K)],[sp_denseQQQ(n,n) for i in range(K)])
           solver.setOption(options)
           solver.setOption("ad_mode","forward")
           solver.init()
@@ -114,7 +114,7 @@ class ControlTests(casadiTestCase):
           V_ = [mul(v,v.T) for v in [DMatrix(numpy.random.random((n,n))) for i in range(K)]]
           
           
-          solver = Solver([sp_dense(n,n) for i in range(K)],[sp_dense(n,n) for i in range(K)])
+          solver = Solver([sp_denseQQQ(n,n) for i in range(K)],[sp_denseQQQ(n,n) for i in range(K)])
           solver.setOption(options)
           solver.init()
           solver.setInput(horzcat(A_),DPLE_A)

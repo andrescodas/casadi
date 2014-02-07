@@ -30,20 +30,20 @@ using namespace std;
 
 namespace CasADi{
   
-  CCSSparsity sp_dense(int n, int m) {
-    return CCSSparsity(m,n,true);
+  CCSSparsity sp_denseQQQ(int nrow, int ncol) {
+    return CCSSparsity(nrow,ncol,true);
   }
 
-  CCSSparsity sp_sparse(int n, int m) {
-    return CCSSparsity(m,n,false);
+  CCSSparsity sp_sparseQQQ(int nrow, int ncol) {
+    return CCSSparsity(nrow,ncol,false);
   }
 
-  CCSSparsity sp_dense(const std::pair<int,int> &nm) {
-    return CCSSparsity(nm.second,nm.first,true);
+  CCSSparsity sp_denseQQQ(const std::pair<int,int> &nm) {
+    return CCSSparsity(nm.first,nm.second,true);
   }
 
-  CCSSparsity sp_sparse(const std::pair<int,int> &nm) {
-    return CCSSparsity(nm.second,nm.first,false);
+  CCSSparsity sp_sparseQQQ(const std::pair<int,int> &nm) {
+    return CCSSparsity(nm.first,nm.second,false);
   }
 
   CCSSparsity sp_tril(int n) {
@@ -118,7 +118,7 @@ namespace CasADi{
     return ret;
   }
 
-  CCSSparsity sp_colrow(const std::vector<int>& col_, const std::vector<int>& row_, int ncol, int nrow) {
+  CCSSparsity sp_colrowQQQ(const std::vector<int>& row_, const std::vector<int>& col_, int nrow, int ncol) {
     std::vector<int> col = col_;
     std::vector<int> row = row_;
     
@@ -192,7 +192,7 @@ namespace CasADi{
       row_new[k] = z%m;
     }
   
-    return  sp_triplet(n,m,col_new,row_new);
+    return  sp_tripletQQQ(m,n,row_new,col_new);
   }
 
   CCSSparsity flatten(const CCSSparsity& a){
@@ -229,7 +229,7 @@ namespace CasADi{
         cnt++;
       }
     }
-    return sp_triplet(a.size2(), a.size1(), new_col, new_row);
+    return sp_tripletQQQ(a.size1(), a.size2(), new_row, new_col);
   
   }
 
@@ -254,7 +254,7 @@ namespace CasADi{
     return ret;
   }
 
-  CCSSparsity sp_triplet(int ncol, int nrow, const std::vector<int>& col, const std::vector<int>& row, std::vector<int>& mapping, bool invert_mapping){
+  CCSSparsity sp_tripletQQQ(int nrow, int ncol, const std::vector<int>& row, const std::vector<int>& col, std::vector<int>& mapping, bool invert_mapping){
     // Assert dimensions
     casadi_assert_message(col.size()==row.size(),"inconsistent lengths");
 
@@ -400,9 +400,9 @@ namespace CasADi{
   }
 
 
-  CCSSparsity sp_triplet(int n, int m, const std::vector<int>& col, const std::vector<int>& row){
+  CCSSparsity sp_tripletQQQ(int nrow, int ncol, const std::vector<int>& row, const std::vector<int>& col){
     std::vector<int> mapping;
-    return sp_triplet(n,m,col,row,mapping,false);
+    return sp_tripletQQQ(nrow,ncol,row,col,mapping,false);
   }
 
 
@@ -474,7 +474,7 @@ namespace CasADi{
   }
 
   CCSSparsity sp_unit(int n, int el){
-    CCSSparsity ret = sp_sparse(n,1);
+    CCSSparsity ret = sp_sparseQQQ(1,n);
     ret.getNZ(0,el);
     return ret;
   }

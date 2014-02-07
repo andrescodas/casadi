@@ -48,23 +48,22 @@ namespace CasADi{
   /**
      \brief Create a dense rectangular sparsity pattern
   **/
-  CCSSparsity sp_dense(int n, int m=1);
+  CCSSparsity sp_denseQQQ(int nrow, int ncol); // ncol=1
   
   /**
-     \brief Create a dense rectangular sparsity pattern
+     \brief Create a dense sparsity pattern
   **/
-  CCSSparsity sp_dense(const std::pair<int,int> &nm );
-  
+  CCSSparsity sp_denseQQQ(const std::pair<int,int> &nm );
 
   /**
-     \brief Create a sparse rectangular sparsity pattern
+     \brief Create a sparse sparsity pattern
   **/
-  CCSSparsity sp_sparse(int n, int m=1);
+  CCSSparsity sp_sparseQQQ(int nrow, int ncol); // ncol=1
   
   /**
-     \brief Create a dense rectangular sparsity pattern
+     \brief Create a dense sparsity pattern
   **/
-  CCSSparsity sp_sparse(const std::pair<int,int> &nm);
+  CCSSparsity sp_sparseQQQ(const std::pair<int,int> &nm);
   
   /**
      \brief Create the sparsity pattern for a unit vector of length n and a nonzero on position el
@@ -103,7 +102,7 @@ namespace CasADi{
   /** \brief Construct a block sparsity pattern from (col,row) vectors
       
    */
-  CCSSparsity sp_colrow(const std::vector<int>& col, const std::vector<int>& row,int ncol, int nrow);
+  CCSSparsity sp_colrowQQQ(const std::vector<int>& row, const std::vector<int>& col, int nrow, int ncol);
   
   
   /** \brief Get the indices of all non-zero elements as they would appear in a Dense matrix  
@@ -141,13 +140,13 @@ namespace CasADi{
   /**
      \brief Create a sparsity pattern given the nonzeros in sparse triplet form
   **/
-  CCSSparsity sp_triplet(int n, int m, const std::vector<int>& col, const std::vector<int>& row, std::vector<int>& mapping, bool invert_mapping=false);
+  CCSSparsity sp_tripletQQQ(int nrow, int ncol, const std::vector<int>& row, const std::vector<int>& col, std::vector<int>& mapping, bool invert_mapping=false);
   
   /**
      \brief Create a sparsity pattern given the nonzeros in sparse triplet form (no nonzero mapping)
      rows_are_sorted==true means that the row entries already in increasing order for each col and without any duplicates
   **/
-  CCSSparsity sp_triplet(int n, int m, const std::vector<int>& col, const std::vector<int>& row);
+  CCSSparsity sp_tripletQQQ(int nrow, int ncol, const std::vector<int>& row, const std::vector<int>& col);
   
   
   /** \brief Get the sparsity resulting from a matrix multiplication

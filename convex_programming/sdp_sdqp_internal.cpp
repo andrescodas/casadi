@@ -132,7 +132,7 @@ void SDPSDQPInternal::init(){
 
   // Create an sdpsolver instance
   SDPSolverCreator sdpsolver_creator = getOption("sdp_solver");
-  sdpsolver_ = sdpsolver_creator(sdpStruct("g",mapping_.output("g").sparsity(),"f",mapping_.output("f").sparsity(),"a",vertcat(input(SDQP_SOLVER_A).sparsity(),sp_sparse(nc_,1))));
+  sdpsolver_ = sdpsolver_creator(sdpStruct("g",mapping_.output("g").sparsity(),"f",mapping_.output("f").sparsity(),"a",vertcat(input(SDQP_SOLVER_A).sparsity(),sp_sparseQQQ(1,nc_))));
 
   if(hasSetOption("sdp_solver_options")){
     sdpsolver_.setOption(getOption("sdp_solver_options"));

@@ -123,8 +123,7 @@ namespace CasADi{
     vector<int> trans_row = getCol();
 
     // Create the sparsity pattern
-    return sp_triplet(nrow_,ncol_,trans_col,trans_row,mapping,invert_mapping);
-
+    return sp_tripletQQQ(ncol_,nrow_,trans_row,trans_col,mapping,invert_mapping);
   }
 
   std::vector<int> CCSSparsityInternal::eliminationTree(bool ata) const{
@@ -2258,7 +2257,7 @@ namespace CasADi{
   
     std::vector<int> sp_mapping;
     std::vector<int> mapping_ = mapping;
-    CCSSparsity ret = sp_triplet(ii.size(),jj.size(),cols,rows,sp_mapping);
+    CCSSparsity ret = sp_tripletQQQ(jj.size(),ii.size(),rows,cols,sp_mapping);
   
     for (int i=0;i<mapping.size();++i)
       mapping[i] = mapping_[sp_mapping[i]];
@@ -2321,7 +2320,7 @@ namespace CasADi{
   
     std::vector<int> sp_mapping;
     std::vector<int> mapping_ = mapping;
-    CCSSparsity ret = sp_triplet(ii.size(),jj.size(),cols,rows,sp_mapping);
+    CCSSparsity ret = sp_tripletQQQ(jj.size(),ii.size(),rows,cols,sp_mapping);
   
     for (int i=0;i<mapping.size();++i)
       mapping[i] = mapping_[sp_mapping[i]];
@@ -2630,7 +2629,7 @@ namespace CasADi{
         row[el] = j_ret;
       }
     }
-    return sp_triplet(ncol,nrow,col,row);
+    return sp_tripletQQQ(nrow,ncol,row,col);
   }
 
   void CCSSparsityInternal::resize(int nrow, int ncol){
@@ -3278,7 +3277,7 @@ namespace CasADi{
     int num_colors = forbiddenColors.size();
 
     // Return sparsity in sparse triplet format
-    return sp_triplet(num_colors,ncol_,color,range(color.size()));
+    return sp_tripletQQQ(ncol_,num_colors,range(color.size()),color);
   }
 
   std::vector<int> CCSSparsityInternal::largestFirstOrdering() const{
@@ -3364,7 +3363,7 @@ namespace CasADi{
     }
   
     // Return permuted matrix
-    return sp_triplet(ncol_,nrow_,new_col,new_row);
+    return sp_tripletQQQ(nrow_,ncol_,new_row,new_col);
   }
 
   bool CCSSparsityInternal::isTranspose(const CCSSparsityInternal& y) const{

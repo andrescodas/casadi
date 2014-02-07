@@ -36,7 +36,7 @@ except:
 try:  
   DSDPSolver
   def SDPLPSolver(st):
-    return DSDPSolver(sdpStruct(a=st["a"],f=sp_sparse(0,0),g=sp_sparse(0,0)))
+    return DSDPSolver(sdpStruct(a=st["a"],f=sp_sparseQQQ(0,0),g=sp_sparseQQQ(0,0)))
   lpsolvers.append((SDPLPSolver,{},False))
 except:
   pass

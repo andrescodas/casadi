@@ -301,7 +301,7 @@ int GenericMatrix<MatType>::size(Sparsity sp) const{
 #endif // SWIG
 
 template<typename MatType>
-MatType GenericMatrix<MatType>::sym(const std::string& name, int n, int m){ return sym(name,sp_dense(n,m));}
+MatType GenericMatrix<MatType>::sym(const std::string& name, int n, int m){ return sym(name,sp_denseQQQ(m,n));}
 
 template<typename MatType>
 std::vector<MatType> GenericMatrix<MatType>::sym(const std::string& name, const CCSSparsity& sp, int p){
@@ -316,7 +316,7 @@ std::vector<MatType> GenericMatrix<MatType>::sym(const std::string& name, const 
 }
 
 template<typename MatType>
-std::vector<MatType > GenericMatrix<MatType>::sym(const std::string& name, int n, int m, int p){ return sym(name,sp_dense(n,m),p);}
+std::vector<MatType > GenericMatrix<MatType>::sym(const std::string& name, int n, int m, int p){ return sym(name,sp_denseQQQ(m,n),p);}
 
 template<typename MatType>
 MatType GenericMatrix<MatType>::sym(const std::string& name, const CCSSparsity& sp){ throw CasadiException("\"sym\" not defined for instantiation");}

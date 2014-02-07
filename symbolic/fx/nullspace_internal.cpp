@@ -56,7 +56,7 @@ namespace CasADi{
     
     CCSSparsity dense;
     if (dense_) {
-      dense = sp_dense(n_,n_-m_);
+      dense = sp_denseQQQ(n_-m_,n_);
     }
   
     FXInternal::init();

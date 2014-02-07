@@ -263,17 +263,17 @@ class FXtests(casadiTestCase):
     for i in range(5):
       test(sp_tril(i))
       test(sp_tril(i).T)
-      test(sp_dense(i,i))
+      test(sp_denseQQQ(i,i))
       test(sp_diag(i))
     
     for i in [63,64,65,127,128,129]:
       d = sp_diag(i)
       test(d)
       
-      test(d + sp_colrow([0],[5],i,i))
+      test(d + sp_colrowQQQ([5],[0],i,i))
       
       b = sp_band(i,-1) + sp_band(i,1)
-      test(b + sp_colrow([0],[5],i,i))
+      test(b + sp_colrowQQQ([5],[0],i,i))
       
     m = IMatrix(sp_diag(129),1)
     m[:50,0] = 1
@@ -313,7 +313,7 @@ class FXtests(casadiTestCase):
     for n in [63,64,65,127,128,129]:
       for m in [63,64,65,127,128,129]:
         print (n,m)
-        sp = sp_dense(n,m)
+        sp = sp_denseQQQ(m,n)
         
         test(sp)
         
@@ -390,20 +390,20 @@ class FXtests(casadiTestCase):
       d = sp_diag(i)
       test(d)
       
-      test(d + sp_colrow([0],[5],i,i) + sp_colrow([5],[0],i,i))
+      test(d + sp_colrowQQQ([5],[0],i,i) + sp_colrowQQQ([0],[5],i,i))
       
       b = sp_band(i,-1) + sp_band(i,1)
       test(b)
-      test(b + sp_colrow([0],[5],i,i) + sp_colrow([5],[0],i,i))
+      test(b + sp_colrowQQQ([5],[0],i,i) + sp_colrowQQQ([0],[5],i,i))
       
-      d = sp_dense(i,i)
+      d = sp_denseQQQ(i,i)
       test(d)
       
-      d = sp_diag(i) + sp_triplet(i,i,[0]*i,range(i))+sp_triplet(i,i,range(i),[0]*i)
+      d = sp_diag(i) + sp_tripletQQQ(i,i,range(i),[0]*i)+sp_tripletQQQ(i,i,[0]*i,range(i))
       test(d)
 
 
-      sp = sp_dense(i,i)
+      sp = sp_denseQQQ(i,i)
         
       random.seed(0)
       
@@ -522,7 +522,7 @@ class FXtests(casadiTestCase):
             
       f.setOutput(z2)
       
-    Fun = CustomFunction(fun, [sp_dense(1,1),sp_dense(1,1)], [sp_dense(1,1)] )
+    Fun = CustomFunction(fun, [sp_denseQQQ(1,1),sp_denseQQQ(1,1)], [sp_denseQQQ(1,1)] )
     Fun.init()
     with self.assertRaises(Exception):
       Fun.jacobian()
@@ -555,7 +555,7 @@ class FXtests(casadiTestCase):
                 
         f.setOutput(z2)
 
-      Fun = CustomFunction(fun, [sp_dense(1,1),sp_dense(1,1)], [sp_dense(1,1)] )
+      Fun = CustomFunction(fun, [sp_denseQQQ(1,1),sp_denseQQQ(1,1)], [sp_denseQQQ(1,1)] )
       Fun.setOption("name","Fun")
       Fun.init()
       
@@ -616,7 +616,7 @@ class FXtests(casadiTestCase):
         z3 = z2*x1
         f.setOutput(z3)
 
-      Fun = CustomFunction(fun, [sp_dense(2,1),sp_dense(1,1)], [sp_dense(1,1)] )
+      Fun = CustomFunction(fun, [sp_denseQQQ(1,2),sp_denseQQQ(1,1)], [sp_denseQQQ(1,1)] )
       Fun.setOption("name","Fun")
       Fun.init()
 
@@ -666,7 +666,7 @@ class FXtests(casadiTestCase):
         f.setOutput(f.getInput(0)**2,0)
         f.setOutput(f.getInput(0)**2,0)
                   
-      c = CustomFunction( squares, [sp_dense(2,1)], [sp_dense(2,1)] )
+      c = CustomFunction( squares, [sp_denseQQQ(1,2)], [sp_denseQQQ(1,2)] )
       c.init()
 
       if not indirect: 
@@ -715,7 +715,7 @@ class FXtests(casadiTestCase):
 
         f.setOutput([x**2+y,x*y],0)
                   
-      c = CustomFunction( squares, [sp_dense(2,1)], [sp_dense(2,1)] )
+      c = CustomFunction( squares, [sp_denseQQQ(1,2)], [sp_denseQQQ(1,2)] )
       c.init()
 
       if not indirect: 
@@ -756,7 +756,7 @@ class FXtests(casadiTestCase):
     
     f = MXFunction([x],[x])
     f.init()
-    f.setJacSparsity(sp_dense(4,4),0,0,True)
+    f.setJacSparsity(sp_denseQQQ(4,4),0,0,True)
     
     J = f.jacobian()
     J.init()
@@ -791,7 +791,7 @@ class FXtests(casadiTestCase):
     J.setOption("name","my_J")
     J.init()
     
-    Fun = CustomFunction(fun, [sp_dense(1,1),sp_dense(1,1)], [sp_dense(1,1)] )
+    Fun = CustomFunction(fun, [sp_denseQQQ(1,1),sp_denseQQQ(1,1)], [sp_denseQQQ(1,1)] )
     Fun.setOption("name","Fun")
     Fun.init()
     Fun.setFullJacobian(J)
@@ -840,7 +840,7 @@ class FXtests(casadiTestCase):
       print f
       f.setOutput(1)
 
-    foo = CustomFunction(dummy, [x.sparsity()], [sp_dense(1,1)] )
+    foo = CustomFunction(dummy, [x.sparsity()], [sp_denseQQQ(1,1)] )
     foo.setOption("name","foo")
     foo.setOption("verbose",True)
     foo.init()
@@ -849,7 +849,7 @@ class FXtests(casadiTestCase):
     def dummy_jac(f):
       f.setOutput(1,1)
 
-    foo_jac = CustomFunction(dummy_jac, [x.sparsity()], [sp_sparse(1,1),sp_dense(1,1)] )
+    foo_jac = CustomFunction(dummy_jac, [x.sparsity()], [sp_sparseQQQ(1,1),sp_denseQQQ(1,1)] )
     foo_jac.setOption("name","foo_jac")
     foo_jac.init()
     foo.setFullJacobian(foo_jac)

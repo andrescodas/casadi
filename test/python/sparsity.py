@@ -156,7 +156,7 @@ class Sparsitytests(casadiTestCase):
     for i in nza:
       a.getNZ(i[1],i[0])
       
-    b = sp_triplet(4,5,[i[0] for i in nza],[i[1] for i in nza])
+    b = sp_tripletQQQ(5,4,[i[1] for i in nza],[i[0] for i in nza])
     self.checkarray(self.tomatrix(a),self.tomatrix(b),"colrow")
 
   def test_colrow(self):
@@ -169,7 +169,7 @@ class Sparsitytests(casadiTestCase):
       for j in c:
         a.getNZ(j,i)
       
-    b = sp_colrow(r,c,4,5)
+    b = sp_colrowQQQ(c,r,5,4)
     self.checkarray(self.tomatrix(a),self.tomatrix(b),"colrow")
      
   def test_reshape(self):
@@ -562,7 +562,7 @@ class Sparsitytests(casadiTestCase):
   def test_sp_colrow(self):
     n = 3
     
-    s = sp_colrow([0,n-1],[n-1,0],n,n)
+    s = sp_colrowQQQ([n-1,0],[0,n-1],n,n)
     self.checkarray(IMatrix(s.colind()),IMatrix([0,2,2,4]))
     self.checkarray(IMatrix(s.row()),IMatrix([0,2,0,2]))
 
@@ -571,7 +571,7 @@ class Sparsitytests(casadiTestCase):
     d = self.randDMatrix(20,20,0.6,symm=True)
     sp = d.sparsity()
     
-    for sp in [sp,sp_dense(4,4),sp_sparse(4,4),sp_tril(4),sp_tril(4).T]:
+    for sp in [sp,sp_denseQQQ(4,4),sp_sparseQQQ(4,4),sp_tril(4),sp_tril(4).T]:
     
       d = IMatrix(sp,1)
       

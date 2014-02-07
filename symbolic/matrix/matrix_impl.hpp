@@ -1722,7 +1722,7 @@ namespace CasADi{
   Matrix<T> Matrix<T>::sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d, int n, int m) {
     casadi_assert_message(col.size()==row.size() && col.size()==d.size(),"Argument error in Matrix<T>::sparse(col,row,d): supplied lists must all be of equal length, but got: " << col.size() << ", " << row.size()  << " and " << d.size());
     std::vector<int> mapping;
-    Matrix<T> ret(sp_triplet(n,m,col,row,mapping),0);
+    Matrix<T> ret(sp_tripletQQQ(m,n,row,col,mapping),0);
   
     for (int k=0;k<mapping.size();++k) ret.data()[k] = d[mapping[k]];
   
@@ -1741,7 +1741,7 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> Matrix<T>::zeros(int n, int m){
-    return zeros(sp_dense(n,m));
+    return zeros(sp_denseQQQ(m,n));
   }
 
   template<class T>
@@ -1756,7 +1756,7 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> Matrix<T>::ones(int n, int m){
-    return ones(sp_dense(n,m));
+    return ones(sp_denseQQQ(m,n));
   }
 
   template<class T>
@@ -1796,7 +1796,7 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> Matrix<T>::inf(int n, int m){
-    return inf(sp_dense(n,m));
+    return inf(sp_denseQQQ(m,n));
   }
 
   template<class T>
@@ -1812,7 +1812,7 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> Matrix<T>::nan(int n, int m){
-    return nan(sp_dense(n,m));
+    return nan(sp_denseQQQ(m,n));
   }
 
   template<class T>

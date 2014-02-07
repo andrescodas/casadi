@@ -120,7 +120,7 @@ namespace CasADi{
     }
 
     // Allocate a QP solver
-    CCSSparsity H_sparsity = exact_hessian_ ? hessLag().output().sparsity() : sp_dense(nx_,nx_);
+    CCSSparsity H_sparsity = exact_hessian_ ? hessLag().output().sparsity() : sp_denseQQQ(nx_,nx_);
     H_sparsity = H_sparsity + DMatrix::eye(nx_).sparsity();
     CCSSparsity A_sparsity = jacG().isNull() ? CCSSparsity(nx_,0,false) : jacG().output().sparsity();
 

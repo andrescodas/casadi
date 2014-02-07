@@ -56,8 +56,8 @@ StabilizedQPSolverInternal::StabilizedQPSolverInternal(const std::vector<CCSSpar
   );
 
   // Sparsity
-  CCSSparsity x_sparsity = sp_dense(n_,1);
-  CCSSparsity bounds_sparsity = sp_dense(nc_,1);
+  CCSSparsity x_sparsity = sp_denseQQQ(1,n_);
+  CCSSparsity bounds_sparsity = sp_denseQQQ(1,nc_);
   
   // Input arguments
   setNumInputs(STABILIZED_QP_SOLVER_NUM_IN);
