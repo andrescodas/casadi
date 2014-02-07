@@ -233,7 +233,7 @@ namespace CasADi{
     std::vector<int> slice_i = range(i.size2());
   
     for(int k=0; k<jj.size(); ++k) {
-      Matrix<T> el_k = m(slice_i,range(k*i.size1(),(k+1)*i.size1()));
+      Matrix<T> el_k = m.qqqq(range(k*i.size1(),(k+1)*i.size1()),slice_i);
       for (int j=0;j<i.size();++j) {
         elem(i.at(j),jj[k])=el_k.at(j);
       }
@@ -262,7 +262,7 @@ namespace CasADi{
     std::vector<int> slice_j = range(j.size1());
   
     for(int k=0; k<ii.size(); ++k) {
-      Matrix<T> el_k = m(range(k*j.size2(),(k+1)*j.size2()),slice_j);
+      Matrix<T> el_k = m.qqqq(slice_j,range(k*j.size2(),(k+1)*j.size2()));
       for (int i=0;i<j.size();++i) {
         elem(ii[k],j.at(i))=el_k.at(i);
       }
@@ -1245,7 +1245,7 @@ namespace CasADi{
     std::vector<int> iic = complement(ii,size2());
     std::vector<int> jjc = complement(jj,size1());
   
-    Matrix<T> ret = operator()(iic,jjc);
+    Matrix<T> ret = (*this).qqqq(jjc,iic);
   
     operator=(ret);
   

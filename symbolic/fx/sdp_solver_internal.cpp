@@ -67,7 +67,7 @@ SDPSolverInternal::SDPSolverInternal(const std::vector<CCSSparsity> &st) : st_(s
   input(SDP_SOLVER_UBA) = DMatrix::inf(nc_);
 
   for (int i=0;i<n_;i++) {
-    CCSSparsity s = input(SDP_SOLVER_F)(range(i*m_,(i+1)*m_),ALL).sparsity();
+    CCSSparsity s = input(SDP_SOLVER_F).qqqq(ALL,range(i*m_,(i+1)*m_)).sparsity();
     casadi_assert_message(s==s.transpose(),"SDPSolverInternal: Each supplied Fi must be symmetric. But got " << s.dimString() <<  " for i = " << i << ".");
   }
   
@@ -87,7 +87,7 @@ void SDPSolverInternal::init() {
   // Find aggregate sparsity pattern
   CCSSparsity aggregate = input(SDP_SOLVER_G).sparsity();
   for (int i=0;i<n_;++i) {
-    aggregate = aggregate + input(SDP_SOLVER_F)(range(i*m_,(i+1)*m_),ALL).sparsity();
+    aggregate = aggregate + input(SDP_SOLVER_F).qqqq(ALL,range(i*m_,(i+1)*m_)).sparsity();
   }
   
   // Detect block diagonal structure in this sparsity pattern
@@ -108,7 +108,7 @@ void SDPSolverInternal::init() {
     full_blocks.push_back(ssym("block",block_sizes_[i],block_sizes_[i]));
   }
   
-  Pmapper_ = SXFunction(full_blocks,blkdiag(full_blocks)(lookupvector(p,p.size()),lookupvector(p,p.size())));
+  Pmapper_ = SXFunction(full_blocks,blkdiag(full_blocks).qqqq(lookupvector(p,p.size()),lookupvector(p,p.size())));
   Pmapper_.init();
   
   if (nb_>0) {
@@ -121,12 +121,12 @@ void SDPSolverInternal::init() {
     in.push_back(F);
     std::vector<SXMatrix> out((n_+1)*nb_);
     for (int j=0;j<nb_;++j) {
-      out[j] = G(p,p)(range(r[j],r[j+1]),range(r[j],r[j+1]));
+      out[j] = G.qqqq(p,p).qqqq(range(r[j],r[j+1]),range(r[j],r[j+1]));
     }
     for (int i=0;i<n_;++i) {
-      SXMatrix Fi = F(range(i*m_,(i+1)*m_),ALL)(p,p);
+      SXMatrix Fi = F.qqqq(ALL,range(i*m_,(i+1)*m_)).qqqq(p,p);
       for (int j=0;j<nb_;++j) {
-        out[(i+1)*nb_+j] = Fi(range(r[j],r[j+1]),range(r[j],r[j+1]));
+        out[(i+1)*nb_+j] = Fi.qqqq(range(r[j],r[j+1]),range(r[j],r[j+1]));
       }
     }
     mapping_ = SXFunction(in,out);

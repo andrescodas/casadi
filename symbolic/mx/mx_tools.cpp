@@ -319,7 +319,7 @@ namespace CasADi{
     casadi_assert_message(A.size2() == A.size1(), "trace: must be square");
     MX res(0);
     for (int i=0; i < A.size2(); i ++) {
-      res+=A(i,i);
+      res+=A.qqqq(i,i);
     }
     return res;
   }
@@ -459,7 +459,7 @@ namespace CasADi{
     row = 0;
     
     for (int i=0;i<A.size();++i) {
-      ret(range(col,col+A[i].size2()),range(row,row+A[i].size1())) = A[i];
+      ret.qqqq(range(row,row+A[i].size1()),range(col,col+A[i].size2())) = A[i];
       col+=A[i].size2();
       row+=A[i].size1();
     }

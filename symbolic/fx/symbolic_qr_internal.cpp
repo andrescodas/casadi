@@ -86,7 +86,7 @@ namespace CasADi{
     for(int i=0; i<A.size2(); ++i){
       Aperm.resize(i+1,A.size1());
       for(int el=A.colind(colperm[i]); el<A.colind(colperm[i]+1); ++el){
-        Aperm(i,inv_rowperm[A.row(el)]) = A[el];
+        Aperm.qqqq(inv_rowperm[A.row(el)],i) = A[el];
       }
     }
 
@@ -121,7 +121,7 @@ namespace CasADi{
     for(int i=0; i<b.size2(); ++i){
       bperm.resize(i+1,b.size1());
       for(int el=b.colind(colperm[i]); el<b.colind(colperm[i]+1); ++el){
-        bperm(i,b.row(el)) = b[el];
+        bperm.qqqq(b.row(el),i) = b[el];
       }
     }
 
@@ -133,7 +133,7 @@ namespace CasADi{
     for(int i=0; i<xperm.size2(); ++i){
       x.resize(i+1,xperm.size1());
       for(int el=xperm.colind(inv_rowperm[i]); el<xperm.colind(inv_rowperm[i]+1); ++el){
-        x(i,xperm.row(el)) = xperm[el];
+        x.qqqq(xperm.row(el),i) = xperm[el];
       }
     }
 
@@ -165,7 +165,7 @@ namespace CasADi{
     for(int i=0; i<b.size2(); ++i){
       bperm.resize(i+1,b.size1());
       for(int el=b.colind(rowperm[i]); el<b.colind(rowperm[i]+1); ++el){
-        bperm(i,b.row(el)) = b[el];
+        bperm.qqqq(b.row(el),i) = b[el];
       }
     }
 
@@ -177,7 +177,7 @@ namespace CasADi{
     for(int i=0; i<xperm.size2(); ++i){
       x.resize(i+1,xperm.size1());
       for(int el=xperm.colind(inv_colperm[i]); el<xperm.colind(inv_colperm[i]+1); ++el){
-        x(i,xperm.row(el)) = xperm[el];
+        x.qqqq(xperm.row(el),i) = xperm[el];
       }
     }
 

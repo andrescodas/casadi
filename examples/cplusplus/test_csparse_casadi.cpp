@@ -95,8 +95,8 @@ int main(int argc, char *argv[])
   // Preturb the linear solver
   double t = 0.01;
   DMatrix x_unpreturbed = F.output("X");
-  F.input("A")(2,3)   += 1*t;
-  F.input("B")(0,2)   += 2*t;
+  F.input("A").qqqq(3,2)   += 1*t;
+  F.input("B").qqqq(2,0)   += 2*t;
   F.evaluate();
   cout << "solution (fd) = " << (F.output("X")-x_unpreturbed)/t << endl;
 

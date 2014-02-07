@@ -108,14 +108,14 @@ void SDPSDQPInternal::init(){
   std::vector<MX> fi(n_+1);
   MX znp = DMatrix(n_+1,n_+1);
   for (int k=0;k<n_;++k) {
-    MX gk = horzcat(g_socp(ALL,k),DMatrix(1,1));
+    MX gk = horzcat(g_socp.qqqq(k,ALL),DMatrix(1,1));
     MX fk = -blockcat(znp,gk,trans(gk),DMatrix(1,1));
     // TODO: replace with ALL
-    fi.push_back(blkdiag(f_sdqp(range(f_sdqp.size1()*k,f_sdqp.size1()*(k+1)),range(f_sdqp.size1())),fk));
+    fi.push_back(blkdiag(f_sdqp.qqqq(range(f_sdqp.size1()),range(f_sdqp.size1()*k,f_sdqp.size1()*(k+1))),fk));
   }
   MX fin = en_socp*DMatrix::eye(n_+2);
-  fin(n_,n_+1) = en_socp;
-  fin(n_+1,n_) = en_socp;
+  fin.qqqq(n_+1,n_) = en_socp;
+  fin.qqqq(n_,n_+1) = en_socp;
   
   fi.push_back(blkdiag(DMatrix(f_sdqp.size1(),f_sdqp.size1()),-fin));
   
@@ -148,8 +148,8 @@ void SDPSDQPInternal::init(){
   output(SDQP_SOLVER_X) = DMatrix::zeros(n_,1);
   
   std::vector<int> r = range(input(SDQP_SOLVER_G).size2());
-  output(SDQP_SOLVER_P) = sdpsolver_.output(SDP_SOLVER_P).empty() ? DMatrix() : sdpsolver_.output(SDP_SOLVER_P)(r,r);
-  output(SDQP_SOLVER_DUAL) = sdpsolver_.output(SDP_SOLVER_DUAL).empty() ? DMatrix() : sdpsolver_.output(SDP_SOLVER_DUAL)(r,r);
+  output(SDQP_SOLVER_P) = sdpsolver_.output(SDP_SOLVER_P).empty() ? DMatrix() : sdpsolver_.output(SDP_SOLVER_P).qqqq(r,r);
+  output(SDQP_SOLVER_DUAL) = sdpsolver_.output(SDP_SOLVER_DUAL).empty() ? DMatrix() : sdpsolver_.output(SDP_SOLVER_DUAL).qqqq(r,r);
   output(SDQP_SOLVER_COST) = 0.0;
   output(SDQP_SOLVER_DUAL_COST) = 0.0;
   output(SDQP_SOLVER_LAM_X) = DMatrix::zeros(n_,1);

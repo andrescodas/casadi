@@ -649,7 +649,7 @@ namespace CasADi{
       // Expand along row j
       int j = row_count.sparsity().row(min_row);
     
-      Matrix<T> row = a(range(n),j);
+      Matrix<T> row = a.qqqq(j,range(n));
 
       std::vector< int > col_i = row.sparsity().getCol();
 
@@ -662,7 +662,7 @@ namespace CasADi{
       // Expand along col i
       int i = col_count.sparsity().row(min_col);
 
-      Matrix<T> col = a(i,range(n));
+      Matrix<T> col = a.qqqq(range(n),i);
     
       const std::vector< int > &row_i = col.sparsity().row();
 
@@ -699,7 +699,7 @@ namespace CasADi{
       int i2 = (i1<i)?i1:i1-1;
       int j2 = (j1<j)?j1:j1-1;
 
-      M(i2,j2) = x(i1,j1);
+      M.qqqq(j2,i2) = x.qqqq(j1,i1);
     }
     return det(M);
   }
@@ -729,7 +729,7 @@ namespace CasADi{
       for(int j=0; j<n; ++j) {
         temp = cofactor(a,i,j);
         if (!casadi_limits<T>::isZero(temp))
-          C(i,j) = temp;
+          C.qqqq(j,i) = temp;
       }
   
     return trans(C);
@@ -1041,7 +1041,7 @@ namespace CasADi{
     // compute Q and R row by row
     for(int i=0; i<n; ++i){
       // Initialize qi to be the i-th row of A
-      Matrix<T> ai = AT(i,ALL);
+      Matrix<T> ai = AT.qqqq(ALL,i);
       Matrix<T> qi = ai;
       // The i-th row of R
       Matrix<T> ri(1,n);
@@ -1050,19 +1050,19 @@ namespace CasADi{
       for(int j=0; j<i; ++j){
       
         // Get the j-th row of Q
-        Matrix<T> qj = QT(j,ALL);
+        Matrix<T> qj = QT.qqqq(ALL,j);
 
-        ri(0,j) = mul(qj,trans(qi)); // Modified Gram-Schmidt
+        ri.qqqq(j,0) = mul(qj,trans(qi)); // Modified Gram-Schmidt
         // ri[j] = inner_prod(qj,ai); // Classical Gram-Schmidt
      
         // Remove projection in direction j
         if (ri.hasNZ(j,0))
-          qi -= ri(0,j) * qj;
+          qi -= ri.qqqq(j,0) * qj;
       }
 
       // Normalize qi
-      ri(0,i) = norm_2(trans(qi));
-      qi /= ri(0,i);
+      ri.qqqq(i,0) = norm_2(trans(qi));
+      qi /= ri.qqqq(i,0);
 
       // Update RT and QT
       QT.append(qi);
@@ -1083,7 +1083,7 @@ namespace CasADi{
     
     casadi_assert_message(m>=n,"nullspace(A): expecting a flat matrix (more rows than cols), but got " << A.dimString() << ".");
     
-    Matrix<T> seed = DMatrix::eye(m)(range(m),range(n,m));
+    Matrix<T> seed = DMatrix::eye(m).qqqq(range(n,m),range(m));  // NOTE: Slice more efficient than range
 
     std::vector< Matrix<T> > us;
     std::vector< Matrix<T> > betas;
@@ -1091,24 +1091,24 @@ namespace CasADi{
     Matrix<T> beta;
     
     for (int i=0;i<n;++i) {
-      Matrix<T> x = X(i,range(i,m));
+      Matrix<T> x = X.qqqq(range(i,m),i);
       Matrix<T> u = Matrix<T>(x);
       Matrix<T> sigma = sqrt(sumRows(x*x));
-      const Matrix<T>& x0 = x(0,0);
-      u(0,0) = 1;
+      const Matrix<T>& x0 = x.qqqq(0,0);
+      u.qqqq(0,0) = 1;
       
       Matrix<T> b = -copysign(sigma,x0);
       
-      u(0,range(1,m-i))*= 1/(x0-b);
+      u.qqqq(range(1,m-i),0)*= 1/(x0-b);
       beta = 1-x0/b;
       
-      X(range(i,n),range(i,m))-= beta*mul(mul(X(range(i,n),range(i,m)),trans(u)),u);
+      X.qqqq(range(i,m),range(i,n))-= beta*mul(mul(X.qqqq(range(i,m),range(i,n)),trans(u)),u);
       us.push_back(u);
       betas.push_back(beta);
     }
     
     for (int i=n-1;i>=0;--i) {
-      seed(range(i,m),range(m-n)) -= betas[i]*mul(trans(us[i]),mul(us[i],seed(range(i,m),range(m-n))));
+      seed.qqqq(range(m-n),range(i,m)) -= betas[i]*mul(trans(us[i]),mul(us[i],seed.qqqq(range(m-n),range(i,m))));
     }
     
     return seed;
@@ -1118,11 +1118,11 @@ namespace CasADi{
   template<class T>
   Matrix<T> solve(const Matrix<T>& A, const Matrix<T>& b){
     // check dimensions
-    casadi_assert_message(A.size2() == b.size2(),"solve Ax=b: dimension mismatch: b has " << b.size2() << " cols while A has " << A.size2() << ".");
+    casadi_assert_message(A.size2() == b.size2(),"solve Ax=b: dimension mismatch: b has " << b.size2() << " columns while A has " << A.size2() << ".");
     casadi_assert_message(A.size2() == A.size1(),"solve: A not square but " << A.dimString());
   
     if(isTril(A)){
-      // forward substitution if lower triangular
+      // forward substitution if upper triangular
       Matrix<T> x = b;
       const std::vector<int> & Arow = A.row();
       const std::vector<int> & Acolind = A.colind();
@@ -1132,10 +1132,10 @@ namespace CasADi{
           for(int kk=Acolind[i]; kk<Acolind[i+1] && Arow[kk]<i; ++kk){ 
             int j = Arow[kk];
             if (x.hasNZ(k,j))
-              x(i,k) -= Adata[kk]*x(j,k);
+              x.qqqq(k,i) -= Adata[kk]*x.qqqq(k,j);
           }
           if (x.hasNZ(k,i))
-            x(i,k) /= A(i,i);
+            x.qqqq(k,i) /= A.qqqq(i,i);
         }
       }
       return x;
@@ -1150,10 +1150,10 @@ namespace CasADi{
           for(int kk=Acolind[i+1]-1; kk>=Acolind[i] && Arow[kk]>i; --kk){
             int j = Arow[kk]; 
             if (x.hasNZ(k,j))
-              x(i,k) -= Adata[kk]*x(j,k);
+              x.qqqq(k,i) -= Adata[kk]*x.qqqq(k,j);
           }
           if (x.hasNZ(k,i))
-            x(i,k) /= A(i,i);
+            x.qqqq(k,i) /= A.qqqq(i,i);
         }
       }
       return x;
@@ -1180,7 +1180,7 @@ namespace CasADi{
       for(int i=0; i<b.size2(); ++i){
         bperm.resize(i+1,b.size1());
         for(int el=b.colind(colperm[i]); el<b.colind(colperm[i]+1); ++el){
-          bperm(i,b.row(el)) = b[el];
+          bperm.qqqq(b.row(el),i) = b[el];
         }
       }
 
@@ -1189,7 +1189,7 @@ namespace CasADi{
       for(int i=0; i<A.size2(); ++i){
         Aperm.resize(i+1,A.size1());
         for(int el=A.colind(colperm[i]); el<A.colind(colperm[i]+1); ++el){
-          Aperm(i,inv_rowperm[A.row(el)]) = A[el];
+          Aperm.qqqq(inv_rowperm[A.row(el)],i) = A[el];
         }
       }
     
@@ -1222,7 +1222,7 @@ namespace CasADi{
       for(int i=0; i<xperm.size2(); ++i){
         x.resize(i+1,xperm.size1());
         for(int el=xperm.colind(inv_rowperm[i]); el<xperm.colind(inv_rowperm[i]+1); ++el){
-          x(i,xperm.row(el)) = xperm[el];
+          x.qqqq(xperm.row(el),i) = xperm[el];
         }
       }
       return x;
@@ -1453,7 +1453,7 @@ namespace CasADi{
           int j=A.row(el);
       
           // Save to new, sparse matrix
-          Asp(i,j) = A.at(el);
+          Asp.qqqq(j,i) = A.at(el);
         }
       }
     }

@@ -254,13 +254,13 @@ void DirectSingleShootingInternal::setOptimalSolution(const vector<double> &V_op
     
   // Pass optimized initial state
   for(int i=0; i<nx_; ++i){
-    x_opt(i,0) = V_opt[el++];
+    x_opt.qqqq(0,i) = V_opt[el++];
   }
   
   // Pass optimized control
   for(int k=0; k<nk_; ++k){
     for(int i=0; i<nu_; ++i){
-      u_opt(i,k) = V_opt[el++];
+      u_opt.qqqq(k,i) = V_opt[el++];
     }
   }
   casadi_assert(el==V_opt.size());
@@ -274,7 +274,7 @@ void DirectSingleShootingInternal::setOptimalSolution(const vector<double> &V_op
 
     // Get the state trajectory
     for(int i=0; i<nx_; ++i){
-      x_opt(i,k+1) = g_opt[el++];
+      x_opt.qqqq(k+1,i) = g_opt[el++];
     }
     
     // Skip the path constraints (for now)

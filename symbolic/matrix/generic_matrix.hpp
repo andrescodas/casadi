@@ -132,7 +132,7 @@ class GenericMatrix{
     
     /** \brief  Get Matrix element or slice */
     template<typename I, typename J>
-    const MatType operator()(const I& i, const J& j) const{ return static_cast<const MatType*>(this)->sub(i,j); }
+    const MatType qqqq(const J& j, const I& i) const{ return static_cast<const MatType*>(this)->sub(i,j); }
 
     /** \brief  Access vector element or slice */
     template<typename I>
@@ -142,8 +142,8 @@ class GenericMatrix{
     SubMatrix<MatType,CCSSparsity,int> operator()(const CCSSparsity& sp){ return SubMatrix<MatType,CCSSparsity,int>(static_cast<MatType&>(*this),sp,0); }
       
     /** \brief  Access Matrix element or slice */
-    template<typename I, typename J>
-    SubMatrix<MatType,I,J> operator()(const I& i, const J& j){ return SubMatrix<MatType,I,J>(static_cast<MatType&>(*this),i,j); }
+    template<typename J, typename I>
+    SubMatrix<MatType,I,J> qqqq(const J& j, const I& i){ return SubMatrix<MatType,I,J>(static_cast<MatType&>(*this),i,j); }
     #endif // SWIG
 
     /** \brief Create an n-by-m matrix with symbolic variables */

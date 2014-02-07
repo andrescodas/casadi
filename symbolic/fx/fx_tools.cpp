@@ -211,7 +211,7 @@ Matrix<double> numSample1D(FX &fx, const Matrix<double> &grid) {
   casadi_assert_message(grid.size2()==fx.input().size2(), "numSample1D:: supplied grid has a shape " << grid.dimString() << ", but the row size does not match the row size of the supplied fx first input, which is " << fx.input().dimString() << ".");
   std::vector< Matrix<double> > ret(grid.size1());
   for (int j=0;j<grid.size1();++j) {
-    fx.input().set(grid(ALL,j));
+    fx.input().set(grid.qqqq(j,ALL));
     fx.evaluate();
     ret[j] = Matrix<double>(fx.output());
   }

@@ -366,22 +366,22 @@ namespace CasADi{
     }
     
     /// get a matrix element
-    const Matrix<T> indexed_one_based(int i, int j) const{ return operator()(i-1,j-1);}
-    const Matrix<T> indexed_zero_based(int i, int j) const{ return operator()(i,j);}
-    const Matrix<T> indexed(const Slice &i, const Slice &j) const{ return (*this)(i,j); }
+    const Matrix<T> indexed_one_based(int i, int j) const{ return (*this).qqqq(j-1,i-1);}
+    const Matrix<T> indexed_zero_based(int i, int j) const{ return (*this).qqqq(j,i);}
+    const Matrix<T> indexed(const Slice &i, const Slice &j) const{ return (*this).qqqq(j,i); }
     const Matrix<T> indexed(const IndexList &i, const IndexList &j) const{ 
-      return (*this)(i.getAll(size2()),j.getAll(size1()));
+      return (*this).qqqq(j.getAll(size1()),i.getAll(size2()));
     }
-    const Matrix<T> indexed(const Slice &i, const Matrix<int>& k) const{ return (*this)(i,k); }
+    const Matrix<T> indexed(const Slice &i, const Matrix<int>& k) const{ return (*this).qqqq(k,i); }
     const Matrix<T> indexed(const IndexList &i, const Matrix<int>& k) const{ 
-      return (*this)(i.getAll(size2()),k);
+      return (*this).qqqq(k,i.getAll(size2()));
     }
-    const Matrix<T> indexed(const Matrix<int>& k, const Slice &j) const{ return (*this)(k,j); }
+    const Matrix<T> indexed(const Matrix<int>& k, const Slice &j) const{ return (*this).qqqq(j,k); }
     const Matrix<T> indexed(const Matrix<int>& k, const IndexList &j) const{ 
-      return (*this)(k,j.getAll(size1()));
+      return (*this).qqqq(j.getAll(size1()),k);
     }
     const Matrix<T> indexed(const Matrix<int>& i, const Matrix<int>& j) const{ 
-      return (*this)(i,j);
+      return (*this).qqqq(j,i);
     }
     const Matrix<T> indexed(const CCSSparsity &sp) const{ return (*this)(sp); }
     
@@ -398,24 +398,24 @@ namespace CasADi{
     /// set a matrix element
     void indexed_one_based_assignment(int i, int j, const T & m){ elem(i-1,j-1) = m;}
     void indexed_zero_based_assignment(int i, int j, const T & m){ elem(i,j) = m;}
-    void indexed_assignment(const Slice &i, const Slice &j, const Matrix<T>& m){ (*this)(i,j) = m; }
+    void indexed_assignment(const Slice &i, const Slice &j, const Matrix<T>& m){ (*this).qqqq(j,i) = m; }
     void indexed_assignment(const IndexList &i, const IndexList &j, const Matrix<T>& m){
-      (*this)(i.getAll(size2()),j.getAll(size1())) = m;
+      (*this).qqqq(j.getAll(size1()),i.getAll(size2())) = m;
     }
     void indexed_assignment(const Slice &i, const Matrix<int>& j, const Matrix<T>& m){
-      (*this)(i,j) = m;
+      (*this).qqqq(j,i) = m;
     }
     void indexed_assignment( const Matrix<int>& i, const Slice &j, const Matrix<T>& m){
-      (*this)(i,j) = m;
+      (*this).qqqq(j,i) = m;
     }
     void indexed_assignment(const IndexList &i, const Matrix<int>& j, const Matrix<T>& m){
-      (*this)(i.getAll(size2()),j) = m;
+      (*this).qqqq(j,i.getAll(size2())) = m;
     }
     void indexed_assignment( const Matrix<int>& i, const IndexList &j, const Matrix<T>& m){
-      (*this)(i,j.getAll(size1())) = m;
+      (*this).qqqq(j.getAll(size1()),i) = m;
     } 
     void indexed_assignment( const Matrix<int>& i, const Matrix<int>& j, const Matrix<T>& m){
-      (*this)(i,j) = m;
+      (*this).qqqq(j,i) = m;
     } 
     void indexed_assignment(const CCSSparsity &sp,const Matrix<T>& m){
       // (*this)(sp) = m;   // VC2010 compiler errors
