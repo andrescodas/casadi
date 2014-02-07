@@ -41,7 +41,7 @@ namespace CasADi{
 
     // Calculate the Dulmage-Mendelsohn decomposition
     std::vector<int> coarse_rowblock, coarse_colblock;
-    sparsity.dulmageMendelsohnQQQ(rowperm_, colperm_, rowblock_, colblock_, coarse_rowblock, coarse_colblock);
+    sparsity.dulmageMendelsohn(rowperm_, colperm_, rowblock_, colblock_, coarse_rowblock, coarse_colblock);
 
     // Allocate inputs
     setNumInputs(LINSOL_NUM_IN);

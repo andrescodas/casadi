@@ -400,7 +400,7 @@ class Sparsitytests(casadiTestCase):
       AP = A[perm,perm]
       #AP.sparsity().spy()
 
-      ret, rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock = AP.sparsity().dulmageMendelsohnQQQ()
+      ret, rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock = AP.sparsity().dulmageMendelsohn()
 
       Ar = AP[colperm,rowperm]
       
@@ -469,7 +469,7 @@ class Sparsitytests(casadiTestCase):
     A[2,2] = 1
     A[5,3] = 1
 
-    ret, rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock = A.sparsity().dulmageMendelsohnQQQ()
+    ret, rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock = A.sparsity().dulmageMendelsohn()
 
     # Checked with CSparse
     self.checkarray(DMatrix([ret]),DMatrix([4]))
@@ -491,7 +491,7 @@ class Sparsitytests(casadiTestCase):
 
     A.sparsity().spy()
 
-    ret, rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock = A.sparsity().dulmageMendelsohnQQQ()
+    ret, rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock = A.sparsity().dulmageMendelsohn()
 
     # Checked with CSparse
     self.checkarray(DMatrix([ret]),DMatrix([3]))
@@ -513,7 +513,7 @@ class Sparsitytests(casadiTestCase):
 
     A.sparsity().spy()
 
-    ret, rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock = A.sparsity().dulmageMendelsohnQQQ()
+    ret, rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock = A.sparsity().dulmageMendelsohn()
 
     # Checked with CSparse
     self.checkarray(DMatrix([ret]),DMatrix([1]))
