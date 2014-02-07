@@ -68,8 +68,8 @@ namespace CasADi{
     SXMatrix A = ssym("A",input(0).sparsity());
 
     // Make a BLT transformation of A
-    std::vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
-    A.sparsity().dulmageMendelsohn(colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock);
+    std::vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
+    A.sparsity().dulmageMendelsohnQQQ(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock);
 
     // Get the inverted col permutation
     std::vector<int> inv_colperm(colperm.size());

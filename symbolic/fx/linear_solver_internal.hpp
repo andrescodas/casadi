@@ -76,7 +76,7 @@ namespace CasADi{
     //@}
 
     // Dulmage-Mendelsohn decomposition
-    std::vector<int> colperm_, rowperm_, colblock_, rowblock_;
+    std::vector<int> rowperm_, colperm_, rowblock_, colblock_;
 
     // Is prepared
     bool prepared_;

@@ -463,13 +463,8 @@ namespace CasADi{
   }
   
   int rank(const CCSSparsity& a) {
-    std::vector< int > colperm;
-    std::vector< int > rowperm;
-    std::vector< int > colblock;
-    std::vector< int > rowblock;
-    std::vector< int > coarse_colblock;
-    std::vector< int > coarse_rowblock;
-    a.dulmageMendelsohn(colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock);
+    std::vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
+    a.dulmageMendelsohnQQQ(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock);
     return coarse_rowblock.at(3);
   }
 

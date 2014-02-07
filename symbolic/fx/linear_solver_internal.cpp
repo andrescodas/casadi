@@ -40,8 +40,8 @@ namespace CasADi{
     casadi_assert_message(!isSingular(sparsity),"LinearSolverInternal::init: singularity - the matrix is structurally rank-deficient. sprank(J)=" << rank(sparsity) << " (in stead of "<< sparsity.size2() << ")");
 
     // Calculate the Dulmage-Mendelsohn decomposition
-    std::vector<int> coarse_colblock, coarse_rowblock;
-    sparsity.dulmageMendelsohn(colperm_, rowperm_, colblock_, rowblock_, coarse_colblock, coarse_rowblock);
+    std::vector<int> coarse_rowblock, coarse_colblock;
+    sparsity.dulmageMendelsohnQQQ(rowperm_, colperm_, rowblock_, colblock_, coarse_rowblock, coarse_colblock);
 
     // Allocate inputs
     setNumInputs(LINSOL_NUM_IN);

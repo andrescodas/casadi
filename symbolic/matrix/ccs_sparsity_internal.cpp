@@ -541,7 +541,7 @@ namespace CasADi{
         Cimatch[Cjmatch[i]] = i;
   }
 
-  int CCSSparsityInternal::dulmageMendelsohn(std::vector<int>& colperm, std::vector<int>& rowperm, std::vector<int>& colblock, std::vector<int>& rowblock, std::vector<int>& coarse_colblock, std::vector<int>& coarse_rowblock, int seed) const{
+  int CCSSparsityInternal::dulmageMendelsohnQQQ(std::vector<int>& rowperm, std::vector<int>& colperm, std::vector<int>& rowblock, std::vector<int>& colblock, std::vector<int>& coarse_rowblock, std::vector<int>& coarse_colblock, int seed) const{
     // The transpose of the expression
     CCSSparsity trans;
   
@@ -2935,13 +2935,13 @@ namespace CasADi{
       vector<int> ord = largestFirstOrdering();
 
       // Create a new sparsity pattern 
-      CCSSparsity sp_permuted = pmult(ord,true,true,true);
+      CCSSparsity sp_permuted = pmultQQQ(ord,true,true,true);
     
       // Star coloring for the permuted matrix
       CCSSparsity ret_permuted = sp_permuted.starColoring2(0);
         
       // Permute result back
-      return ret_permuted.pmult(ord,false,true,false);
+      return ret_permuted.pmultQQQ(ord,true,false,false);
     }
     
     // Allocate temporary vectors
@@ -3184,13 +3184,13 @@ namespace CasADi{
       vector<int> ord = largestFirstOrdering();
 
       // Create a new sparsity pattern 
-      CCSSparsity sp_permuted = pmult(ord,true,true,true);
+      CCSSparsity sp_permuted = pmultQQQ(ord,true,true,true);
     
       // Star coloring for the permuted matrix
       CCSSparsity ret_permuted = sp_permuted.starColoring(0);
         
       // Permute result back
-      return ret_permuted.pmult(ord,false,true,false);
+      return ret_permuted.pmultQQQ(ord,true,false,false);
     }
   
     // Allocate temporary vectors
@@ -3316,7 +3316,7 @@ namespace CasADi{
     return reverse_ordering;
   }
 
-  CCSSparsity CCSSparsityInternal::pmult(const std::vector<int>& p, bool permute_cols, bool permute_rows, bool invert_permutation) const{
+  CCSSparsity CCSSparsityInternal::pmultQQQ(const std::vector<int>& p, bool permute_rows, bool permute_cols, bool invert_permutation) const{
     // Invert p, possibly
     vector<int> p_inv;
     if(invert_permutation){

@@ -889,8 +889,8 @@ void SymbolicOCP::sortODE(){
   CCSSparsity sp = f.jacSparsity();
   
   // BLT transformation
-  vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
-  sp.dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
+  vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
+  sp.dulmageMendelsohnQQQ(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock);
 
   // Permute equations
   vector<SX> ode_new(ode.size());
@@ -917,8 +917,8 @@ void SymbolicOCP::sortALG(){
   CCSSparsity sp = f.jacSparsity();
   
   // BLT transformation
-  vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
-  sp.dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
+  vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
+  sp.dulmageMendelsohnQQQ(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
 
   // Permute equations
   vector<SX> alg_new(alg.size());
@@ -946,8 +946,8 @@ void SymbolicOCP::sortDependentParameters(){
   CCSSparsity sp = f.jacSparsity();
   
   // BLT transformation
-  vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
-  sp.dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
+  vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
+  sp.dulmageMendelsohnQQQ(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
 
   // Permute variables
   vector<Variable> pd_new(pd.size());
@@ -975,8 +975,8 @@ void SymbolicOCP::makeExplicit(){
   CCSSparsity sp = f.jacSparsity();
 
   // BLT transformation
-  vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
-  int nb = sp.dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
+  vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
+  int nb = sp.dulmageMendelsohnQQQ(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
 
   // Permute equations
   vector<SX> ode_new(ode.size());
@@ -1067,8 +1067,8 @@ void SymbolicOCP::eliminateAlgebraic(){
   CCSSparsity sp = f.jacSparsity();
 
   // BLT transformation
-  vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
-  int nb = sp.dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
+  vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
+  int nb = sp.dulmageMendelsohnQQQ(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
 
   // Permute equations
   vector<SX> alg_new(alg.size());

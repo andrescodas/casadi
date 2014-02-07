@@ -79,15 +79,15 @@ namespace CasADi{
           row[j+i*nrow] = j;
     }
  
-    assignCached(ncol, nrow, row, colind);
+    assignCachedQQQ(nrow, ncol, colind, row);
   }
 
   CCSSparsity::CCSSparsity(int nrow, int ncol, const vector<int>& colind, const vector<int>& row){
-    assignCached(ncol, nrow, row, colind);
+    assignCachedQQQ(nrow, ncol, colind, row);
   }
 
   void CCSSparsity::reCache(){
-    assignCached(size2(),size1(),row(),colind());
+    assignCachedQQQ(size1(),size2(),colind(),row());
   }
  
   CCSSparsityInternal* CCSSparsity::operator->(){
@@ -436,8 +436,8 @@ namespace CasADi{
     return (*this)->stronglyConnectedComponents(p,r);
   }
 
-  int CCSSparsity::dulmageMendelsohn(std::vector<int>& colperm, std::vector<int>& rowperm, std::vector<int>& colblock, std::vector<int>& rowblock, std::vector<int>& coarse_colblock, std::vector<int>& coarse_rowblock, int seed) const{
-    return (*this)->dulmageMendelsohn(colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock, seed);
+  int CCSSparsity::dulmageMendelsohnQQQ(std::vector<int>& rowperm, std::vector<int>& colperm, std::vector<int>& rowblock, std::vector<int>& colblock, std::vector<int>& coarse_rowblock, std::vector<int>& coarse_colblock, int seed) const{
+    return (*this)->dulmageMendelsohnQQQ(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock, seed);
   }
 
   bool CCSSparsity::rowsSequential(bool strictly) const{
@@ -483,8 +483,8 @@ namespace CasADi{
     return (*this)->largestFirstOrdering();
   }
 
-  CCSSparsity CCSSparsity::pmult(const std::vector<int>& p, bool permute_cols, bool permute_rows, bool invert_permutation) const{
-    return (*this)->pmult(p,permute_cols,permute_rows,invert_permutation);
+  CCSSparsity CCSSparsity::pmultQQQ(const std::vector<int>& p, bool permute_rows, bool permute_cols, bool invert_permutation) const{
+    return (*this)->pmultQQQ(p,permute_rows,permute_cols,invert_permutation);
   }
 
   void CCSSparsity::spyMatlab(const std::string& mfile) const{
@@ -508,7 +508,7 @@ namespace CasADi{
     return (*this)->hash();
   }
 
-  void CCSSparsity::assignCached(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind){
+  void CCSSparsity::assignCachedQQQ(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row){
 
     // Scalars and empty patterns are handled separately
     if(ncol==0 && nrow==0){

@@ -429,9 +429,9 @@ namespace CasADi{
 
     */
 #ifndef SWIG
-    int dulmageMendelsohn(std::vector<int>& colperm, std::vector<int>& rowperm, std::vector<int>& colblock, std::vector<int>& rowblock, std::vector<int>& coarse_colblock, std::vector<int>& coarse_rowblock, int seed=0) const;
+    int dulmageMendelsohnQQQ(std::vector<int>& rowperm, std::vector<int>& colperm, std::vector<int>& rowblock, std::vector<int>& colblock, std::vector<int>& coarse_rowblock, std::vector<int>& coarse_colblock, int seed=0) const;
 #else // SWIG
-    int dulmageMendelsohn(std::vector<int>& OUTPUT, std::vector<int>& OUTPUT, std::vector<int>& OUTPUT, std::vector<int>& OUTPUT, std::vector<int>& OUTPUT, std::vector<int>& OUTPUT, int seed=0) const;
+    int dulmageMendelsohnQQQ(std::vector<int>& OUTPUT, std::vector<int>& OUTPUT, std::vector<int>& OUTPUT, std::vector<int>& OUTPUT, std::vector<int>& OUTPUT, std::vector<int>& OUTPUT, int seed=0) const;
 #endif // SWIG
     /// Get the location of all nonzero elements
     std::vector<int> getElements(bool col_major=true) const;
@@ -462,7 +462,7 @@ namespace CasADi{
         P * A * trans(P), A * trans(P) or A * trans(P) with P defined by an index vector 
         containing the row for each col. As an alternative, P can be transposed (inverted).
     */
-    CCSSparsity pmult(const std::vector<int>& p, bool permute_cols=true, bool permute_rows=true, bool invert_permutation=false) const;
+    CCSSparsity pmultQQQ(const std::vector<int>& p, bool permute_rows=true, bool permute_cols=true, bool invert_permutation=false) const;
       
     /// Get the dimension as a string
     std::string dimString() const;
@@ -494,7 +494,7 @@ namespace CasADi{
 
   private:
     /// Construct a sparsity pattern from vectors, reuse cached pattern if possible
-    void assignCached(int ncol, int nrow, const std::vector<int>& row, const std::vector<int>& colind);
+    void assignCachedQQQ(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row);
 
 #endif //SWIG
   };

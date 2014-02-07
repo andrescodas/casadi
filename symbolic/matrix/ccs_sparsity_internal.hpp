@@ -72,7 +72,7 @@ namespace CasADi{
     int drop(int (*fkeep) (int, int, double, void *), void *other);
 
     /// Compute the Dulmage-Mendelsohn decomposition : see cs_dmperm in CSparse
-    int dulmageMendelsohn(std::vector<int>& colperm, std::vector<int>& rowperm, std::vector<int>& colblock, std::vector<int>& rowblock, std::vector<int>& coarse_colblock, std::vector<int>& coarse_rowblock, int seed) const;
+    int dulmageMendelsohnQQQ(std::vector<int>& rowperm, std::vector<int>& colperm, std::vector<int>& rowblock, std::vector<int>& colblock, std::vector<int>& coarse_rowblock, std::vector<int>& coarse_colblock, int seed) const;
     
     /// Compute the maximum transversal (maximum matching): see cs_maxtrans in CSparse
     void maxTransversal(std::vector<int>& imatch, std::vector<int>& jmatch, CCSSparsity& trans, int seed) const;
@@ -125,7 +125,7 @@ namespace CasADi{
     /// x = x + beta * A(:,j), where x is a dense vector and A(:,j) is sparse: See cs_scatter in CSparse
     int scatter(int j, std::vector<int>& w, int mark, CCSSparsity& C, int nz) const;
     
-    /// Get the col for each nonzero
+    /// Get the column for each nonzero
     std::vector<int> getCol() const;
 
     /// Resize
@@ -133,9 +133,6 @@ namespace CasADi{
     
     /// Reshape a sparsity, order of nonzeros remains the same
     CCSSparsity reshape(int nrow, int ncol) const;
-
-    /// Pattern union
-    //CCSSparsity patternCombine(const CCSSparsity& y, std::vector<unsigned char>& mapping, bool f00_is_zero, bool f0x_is_zero, bool fx0_is_zero) const;
 
     /// Number of structural non-zeros
     int size() const;
@@ -149,10 +146,10 @@ namespace CasADi{
     /// Check if the sparsity is null, i.e. dimension is 0-by-0
     bool null() const;
 
-    /// Number of non-zeros in the upper triangular half
+    /// Number of non-zeros in the lower triangular half
     int sizeL() const;
 
-    /// Number of non-zeros in the lower triangular half
+    /// Number of non-zeros in the upper triangular half
     int sizeU() const;
 
     /// Number of non-zeros on the diagonal
@@ -203,16 +200,16 @@ namespace CasADi{
     /// Check if two sparsity patterns are the same
     bool isEqual(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row) const;
 
-    /// Enlarge the matrix along the first dimension (i.e. insert cols)
-    void enlargeColumns(int ncol, const std::vector<int>& ii);
-
-    /// Enlarge the matrix along the second dimension (i.e. insert rows)
+    /// Enlarge the matrix along the first dimension (i.e. insert rows)
     void enlargeRows(int nrow, const std::vector<int>& jj);
+
+    /// Enlarge the matrix along the second dimension (i.e. insert columns)
+    void enlargeColumns(int ncol, const std::vector<int>& ii);
     
     /// Make a patten dense
     CCSSparsity makeDense(std::vector<int>& mapping) const;
 
-    /// Erase cols and/or rows - does bounds checking
+    /// Erase rows and/or columns - does bounds checking
     std::vector<int> erase(const std::vector<int>& jj, const std::vector<int>& ii);
 
     /// Append another sparsity patten vertically
@@ -282,7 +279,7 @@ namespace CasADi{
     std::vector<int> largestFirstOrdering() const;
 
     /// Permute cols and/or rows
-    CCSSparsity pmult(const std::vector<int>& p, bool permute_cols=true, bool permute_rows=true, bool invert_permutation=false) const;
+    CCSSparsity pmultQQQ(const std::vector<int>& p, bool permute_rows=true, bool permute_cols=true, bool invert_permutation=false) const;
     
     /// Generate a script for Matlab or Octave which visualizes the sparsity using the spy command
     void spyMatlab(const std::string& mfile) const;

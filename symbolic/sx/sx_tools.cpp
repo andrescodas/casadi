@@ -802,8 +802,8 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
   fcn = SXFunction();
   
   // Make a BLT sorting of the Jacobian (a Dulmage-Mendelsohn decomposition)
-  std::vector<int> colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock;
-  Jsp.dulmageMendelsohn(colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock);
+  std::vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
+  Jsp.dulmageMendelsohnQQQ(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock);
   
   // Make sure that the Jacobian is full rank
   casadi_assert(coarse_colblock[0]==0);
@@ -929,8 +929,8 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
       } else { // There are both linear and nonlinear variables
         
         // Make a Dulmage-Mendelsohn decomposition
-        std::vector<int> colpermb, rowpermb, colblockb, rowblockb, coarse_colblockb, coarse_rowblockb;
-        Jb.sparsity().dulmageMendelsohn(colpermb, rowpermb, colblockb, rowblockb, coarse_colblockb, coarse_rowblockb);
+        std::vector<int> rowpermb, colpermb, rowblockb, colblockb, coarse_rowblockb, coarse_colblockb;
+        Jb.sparsity().dulmageMendelsohnQQQ(rowpermb, colpermb, rowblockb, colblockb, coarse_rowblockb, coarse_colblockb);
         
         Matrix<int>(Jb.sparsity(),1).printDense();
         Jb.printDense();
