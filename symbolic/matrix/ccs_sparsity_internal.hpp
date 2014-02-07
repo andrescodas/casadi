@@ -213,7 +213,7 @@ namespace CasADi{
     CCSSparsity makeDense(std::vector<int>& mapping) const;
 
     /// Erase cols and/or rows - does bounds checking
-    std::vector<int> erase(const std::vector<int>& ii, const std::vector<int>& jj);
+    std::vector<int> eraseQQQ(const std::vector<int>& jj, const std::vector<int>& ii);
 
     /// Append another sparsity patten vertically
     void append(const CCSSparsity& sp);

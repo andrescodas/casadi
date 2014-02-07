@@ -599,7 +599,7 @@ namespace CasADi{
     CCSSparsity sp = sparsity();
   
     // Erase from sparsity pattern
-    vector<int> mapping = sp.erase(ii,jj);
+    vector<int> mapping = sp.eraseQQQ(jj,ii);
   
     // Create new matrix
     if(mapping.size()!=size()){
@@ -610,7 +610,7 @@ namespace CasADi{
 
   void MX::enlarge(int ncol, int nrow, const vector<int>& ii, const vector<int>& jj){
     CCSSparsity sp = sparsity();
-    sp.enlarge(ncol,nrow,ii,jj);
+    sp.enlargeQQQ(nrow,ncol,jj,ii);
   
     MX ret = (*this)->getGetNonzeros(sp,range(size()));
     *this = ret;

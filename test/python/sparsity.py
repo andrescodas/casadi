@@ -118,7 +118,7 @@ class Sparsitytests(casadiTestCase):
     
     row = [1,2,4]
     col = [0,3,4,6]
-    sp.enlarge(7,8,row,col)
+    sp.enlargeQQQ(8,7,col,row)
     
     z = numpy.zeros((7,8))
     for i in row:
@@ -133,7 +133,7 @@ class Sparsitytests(casadiTestCase):
     for i in range(3):
       for j in range(4):
           z[row[i],col[j]]= n[i,j]
-    sp.enlarge(7,8,[1,2,4],[0,3,4,6])
+    sp.enlargeQQQ(8,7,[0,3,4,6],[1,2,4])
     
     self.checkarray(DMatrix(sp,1),z,"enlarge")
     

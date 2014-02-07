@@ -2061,7 +2061,7 @@ namespace CasADi{
     return std::pair<int,int>(nrow_,ncol_);
   }
 
-  vector<int> CCSSparsityInternal::erase(const vector<int>& ii, const vector<int>& jj){
+  vector<int> CCSSparsityInternal::eraseQQQ(const vector<int>& jj, const vector<int>& ii){
     if (!inBounds(jj,nrow_)) {
       casadi_error("Slicing [jj,ii] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }

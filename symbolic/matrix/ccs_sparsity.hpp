@@ -273,12 +273,12 @@ namespace CasADi{
      */
     CCSSparsity sub(const std::vector<int>& jj, const std::vector<int>& ii, std::vector<int>& mapping) const;
     
+    /// Transpose the matrix
+    CCSSparsity transpose() const;
+
     /// Transpose the matrix and get the reordering of the non-zero entries, i.e. the non-zeros of the original matrix for each non-zero of the new matrix
     CCSSparsity transpose(std::vector<int>& mapping, bool invert_mapping=false) const;
-    
-    /// Transpose the matrix and get the reordering of the non-zero entries, i.e. the non-zeros of the original matrix for each non-zero of the new matrix
-    CCSSparsity transpose() const;
-    
+        
     /// Check if the sparsity is the transpose of another
     bool isTranspose(const CCSSparsity& y) const;
 
@@ -317,31 +317,30 @@ namespace CasADi{
     CCSSparsity patternInverse() const;
     
     /** \brief Enlarge matrix
-        Make the matrix larger by inserting empty cols and rows, keeping the existing non-zeros 
+        Make the matrix larger by inserting empty rows and columns, keeping the existing non-zeros 
     
         For the matrices A to B
         A(m,n)
-        length(ii)=m , length(jj)=n
-        B(ncol,nrow)
+        length(jj)=m , length(ii)=n
+        B(nrow,ncol)
     
         A=enlarge(m,n,ii,jj) makes sure that
     
-        B[ii,jj] == A 
+        B[jj,ii] == A 
     */
-    void enlarge(int ncol, int nrow, const std::vector<int>& ii, const std::vector<int>& jj);
+    void enlargeQQQ(int nrow, int ncol, const std::vector<int>& jj, const std::vector<int>& ii);
 
-    /** \brief Enlarge the matrix along the first dimension (i.e. insert cols) */
-    void enlargeColumns(int ncol, const std::vector<int>& ii);
-
-    /** \brief Enlarge the matrix along the second dimension (i.e. insert rows) */
+    /** \brief Enlarge the matrix along the first dimension (i.e. insert rows) */
     void enlargeRows(int nrow, const std::vector<int>& jj);
+
+    /** \brief Enlarge the matrix along the second dimension (i.e. insert columns) */
+    void enlargeColumns(int ncol, const std::vector<int>& ii);
     
     /** \brief Make a patten dense */
     CCSSparsity makeDense(std::vector<int>& mapping) const;
 
-    /** \brief Erase cols and rows
-        Erase cols and/or rows of a matrix */
-    std::vector<int> erase(const std::vector<int>& ii, const std::vector<int>& jj);
+    /** \brief Erase rows and/or columns of a matrix */
+    std::vector<int> eraseQQQ(const std::vector<int>& jj, const std::vector<int>& ii);
 
     /// Append another sparsity patten vertically
     void append(const CCSSparsity& sp);
@@ -361,7 +360,7 @@ namespace CasADi{
     /// Is square?
     bool square() const;
 
-    /// Does the rows appear sequentially on each col (if strictly==true, then do not allow multiple entries)
+    /// Do the rows appear sequentially on each column (if strictly==true, then do not allow multiple entries)
     bool rowsSequential(bool strictly=true) const;
 
     /// Remove duplicate entries: The same indices will be removed from the mapping vector, which must have the same length as the number of nonzeros
@@ -458,7 +457,7 @@ namespace CasADi{
     /** \brief Order the cols by decreasing degree */
     std::vector<int> largestFirstOrdering() const;
     
-    /** \brief Permute cols and/or rows
+    /** \brief Permute rows and/or columns
         Multiply the sparsity with a permutation matrix from the left and/or from the right
         P * A * trans(P), A * trans(P) or A * trans(P) with P defined by an index vector 
         containing the row for each col. As an alternative, P can be transposed (inverted).
@@ -506,14 +505,14 @@ namespace CasADi{
   void CCSSparsity::set(T* data, const T* val_data, const CCSSparsity& val_sp) const{
     // Get dimensions of this
     const int sz = size();
-    const int sz1 = size2();
-    const int sz2 = size1();
+    const int sz1 = size1();
+    const int sz2 = size2();
     const int nel = sz1*sz2;
 
     // Get dimensions of assigning matrix
     const int val_sz = val_sp.size();
-    const int val_sz1 = val_sp.size2();
-    const int val_sz2 = val_sp.size1();
+    const int val_sz1 = val_sp.size1();
+    const int val_sz2 = val_sp.size2();
     const int val_nel = val_sz1*val_sz2;
 
     // Check if sparsity matches
@@ -532,7 +531,7 @@ namespace CasADi{
       if(nel==0 && val_nel==0) return;
     
       // Make sure that dimension matches
-      casadi_assert_message(sz1==val_sz1 && sz2==val_sz2,"CCSSparsity::set<T>: shape mismatch. lhs is matrix of shape " << dimString() << ", while rhs is shape " << val_sp.dimString() << ".");
+      casadi_assert_message(sz2==val_sz2 && sz1==val_sz1,"CCSSparsity::set<T>: shape mismatch. lhs is matrix of shape " << dimString() << ", while rhs is shape " << val_sp.dimString() << ".");
     
       // Sparsity
       const std::vector<int>& c = row();
@@ -541,7 +540,7 @@ namespace CasADi{
       const std::vector<int>& v_rind = val_sp.colind();
     
       // For all cols
-      for(int i=0; i<sz1; ++i){
+      for(int i=0; i<sz2; ++i){
       
         // Nonzero of the assigning matrix
         int v_el = v_rind[i];
@@ -550,7 +549,7 @@ namespace CasADi{
         int v_el_end = v_rind[i+1];
       
         // Next row of the assigning matrix
-        int v_j = v_el<v_el_end ? v_c[v_el] : sz2;
+        int v_j = v_el<v_el_end ? v_c[v_el] : sz1;
       
         // Assign all nonzeros
         for(int el=rind[i]; el!=rind[i+1]; ++el){
@@ -561,13 +560,13 @@ namespace CasADi{
           // Forward the assigning nonzero
           while(v_j<j){
             v_el++;
-            v_j = v_el<v_el_end ? v_c[v_el] : sz2;
+            v_j = v_el<v_el_end ? v_c[v_el] : sz1;
           }
 
           // Assign nonzero
           if(v_j==j){
             data[el] = val_data[v_el++];
-            v_j = v_el<v_el_end ? v_c[v_el] : sz2;
+            v_j = v_el<v_el_end ? v_c[v_el] : sz1;
           } else {
             data[el] = 0;
           }
@@ -580,14 +579,14 @@ namespace CasADi{
   void CCSSparsity::add(T* data, const T* val_data, const CCSSparsity& val_sp) const{
     // Get dimensions of this
     const int sz = size();
-    const int sz1 = size2();
-    const int sz2 = size1();
+    const int sz1 = size1();
+    const int sz2 = size2();
     const int nel = sz1*sz2;
 
     // Get dimensions of assigning matrix
     const int val_sz = val_sp.size();
-    const int val_sz1 = val_sp.size2();
-    const int val_sz2 = val_sp.size1();
+    const int val_sz1 = val_sp.size1();
+    const int val_sz2 = val_sp.size2();
     const int val_nel = val_sz1*val_sz2;
 
     // Check if sparsity matches
@@ -612,7 +611,7 @@ namespace CasADi{
       if(nel==0 && val_nel==0) return;
     
       // Make sure that dimension matches
-      casadi_assert_message(sz1==val_sz1 && sz2==val_sz2,"CCSSparsity::add<T>: shape mismatch. lhs is matrix of shape " << dimString() << ", while rhs is shape " << val_sp.dimString() << ".");
+      casadi_assert_message(sz2==val_sz2 && sz1==val_sz1,"CCSSparsity::add<T>: shape mismatch. lhs is matrix of shape " << dimString() << ", while rhs is shape " << val_sp.dimString() << ".");
     
       // Sparsity
       const std::vector<int>& c = row();
@@ -621,16 +620,16 @@ namespace CasADi{
       const std::vector<int>& v_rind = val_sp.colind();
     
       // For all cols
-      for(int i=0; i<sz1; ++i){
+      for(int i=0; i<sz2; ++i){
       
         // Nonzero of the assigning matrix
         int v_el = v_rind[i];
       
-        // First nonzero of the following col
+        // First nonzero of the following column
         int v_el_end = v_rind[i+1];
       
         // Next row of the assigning matrix
-        int v_j = v_el<v_el_end ? v_c[v_el] : sz2;
+        int v_j = v_el<v_el_end ? v_c[v_el] : sz1;
       
         // Assign all nonzeros
         for(int el=rind[i]; el!=rind[i+1]; ++el){
@@ -641,13 +640,13 @@ namespace CasADi{
           // Forward the assigning nonzero
           while(v_j<j){
             v_el++;
-            v_j = v_el<v_el_end ? v_c[v_el] : sz2;
+            v_j = v_el<v_el_end ? v_c[v_el] : sz1;
           }
 
           // Assign nonzero
           if(v_j==j){
             data[el] += val_data[v_el++];
-            v_j = v_el<v_el_end ? v_c[v_el] : sz2;
+            v_j = v_el<v_el_end ? v_c[v_el] : sz1;
           }
         }
       }
@@ -658,14 +657,14 @@ namespace CasADi{
   void CCSSparsity::bor(T* data, const T* val_data, const CCSSparsity& val_sp) const{
     // Get dimensions of this
     const int sz = size();
-    const int sz1 = size2();
-    const int sz2 = size1();
+    const int sz1 = size1();
+    const int sz2 = size2();
     const int nel = sz1*sz2;
 
     // Get dimensions of assigning matrix
     const int val_sz = val_sp.size();
-    const int val_sz1 = val_sp.size2();
-    const int val_sz2 = val_sp.size1();
+    const int val_sz1 = val_sp.size1();
+    const int val_sz2 = val_sp.size2();
     const int val_nel = val_sz1*val_sz2;
 
     // Check if sparsity matches
@@ -690,7 +689,7 @@ namespace CasADi{
       if(nel==0 && val_nel==0) return;
     
       // Make sure that dimension matches
-      casadi_assert_message(sz1==val_sz1 && sz2==val_sz2,"CCSSparsity::add<T>: shape mismatch. lhs is matrix of shape " << dimString() << ", while rhs is shape " << val_sp.dimString() << ".");
+      casadi_assert_message(sz2==val_sz2 && sz1==val_sz1,"CCSSparsity::add<T>: shape mismatch. lhs is matrix of shape " << dimString() << ", while rhs is shape " << val_sp.dimString() << ".");
     
       // Sparsity
       const std::vector<int>& c = row();
@@ -698,17 +697,17 @@ namespace CasADi{
       const std::vector<int>& v_c = val_sp.row();
       const std::vector<int>& v_rind = val_sp.colind();
     
-      // For all cols
-      for(int i=0; i<sz1; ++i){
+      // For all columns
+      for(int i=0; i<sz2; ++i){
       
         // Nonzero of the assigning matrix
         int v_el = v_rind[i];
       
-        // First nonzero of the following col
+        // First nonzero of the following column
         int v_el_end = v_rind[i+1];
       
         // Next row of the assigning matrix
-        int v_j = v_el<v_el_end ? v_c[v_el] : sz2;
+        int v_j = v_el<v_el_end ? v_c[v_el] : sz1;
       
         // Assign all nonzeros
         for(int el=rind[i]; el!=rind[i+1]; ++el){
@@ -719,13 +718,13 @@ namespace CasADi{
           // Forward the assigning nonzero
           while(v_j<j){
             v_el++;
-            v_j = v_el<v_el_end ? v_c[v_el] : sz2;
+            v_j = v_el<v_el_end ? v_c[v_el] : sz1;
           }
 
           // Assign nonzero
           if(v_j==j){
             data[el] |= val_data[v_el++];
-            v_j = v_el<v_el_end ? v_c[v_el] : sz2;
+            v_j = v_el<v_el_end ? v_c[v_el] : sz1;
           }
         }
       }
