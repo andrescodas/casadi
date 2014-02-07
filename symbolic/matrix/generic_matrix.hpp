@@ -147,16 +147,16 @@ class GenericMatrix{
     #endif // SWIG
 
     /** \brief Create an n-by-m matrix with symbolic variables */
-    static MatType symQQQ(const std::string& name, int nrow=1, int ncol=1);
+    static MatType sym(const std::string& name, int nrow=1, int ncol=1);
 
     /** \brief Create a vector of length p with with matrices with symbolic variables of given sparsity */
-    static std::vector<MatType > symQQQ(const std::string& name, const CCSSparsity& sp, int p);
+    static std::vector<MatType > sym(const std::string& name, const CCSSparsity& sp, int p);
 
     /** \brief Create a vector of length p with n-by-m matrices with symbolic variables */
-    static std::vector<MatType > symQQQ(const std::string& name, int nrow, int ncol, int p);
+    static std::vector<MatType > sym(const std::string& name, int nrow, int ncol, int p);
 
     /** \brief Create an matrix with symbolic variables, given a sparsity pattern */
-    static MatType symQQQ(const std::string& name, const CCSSparsity& sp);
+    static MatType sym(const std::string& name, const CCSSparsity& sp);
     
     /** \brief Matrix-matrix multiplication.
     * Attempts to identify quick returns on matrix-level and 
@@ -301,25 +301,25 @@ int GenericMatrix<MatType>::size(Sparsity sp) const{
 #endif // SWIG
 
 template<typename MatType>
-MatType GenericMatrix<MatType>::symQQQ(const std::string& name, int nrow, int ncol){ return symQQQ(name,sp_dense(nrow,ncol));}
+MatType GenericMatrix<MatType>::sym(const std::string& name, int nrow, int ncol){ return sym(name,sp_dense(nrow,ncol));}
 
 template<typename MatType>
-std::vector<MatType> GenericMatrix<MatType>::symQQQ(const std::string& name, const CCSSparsity& sp, int p){
+std::vector<MatType> GenericMatrix<MatType>::sym(const std::string& name, const CCSSparsity& sp, int p){
   std::vector<MatType> ret(p);
   std::stringstream ss;
   for(int k=0; k<p; ++k){
     ss.str("");
     ss << name << k;
-    ret[k] = symQQQ(ss.str(),sp);
+    ret[k] = sym(ss.str(),sp);
   }
   return ret;
 }
 
 template<typename MatType>
-std::vector<MatType > GenericMatrix<MatType>::symQQQ(const std::string& name, int nrow, int ncol, int p){ return symQQQ(name,sp_dense(nrow,ncol),p);}
+std::vector<MatType > GenericMatrix<MatType>::sym(const std::string& name, int nrow, int ncol, int p){ return sym(name,sp_dense(nrow,ncol),p);}
 
 template<typename MatType>
-MatType GenericMatrix<MatType>::symQQQ(const std::string& name, const CCSSparsity& sp){ throw CasadiException("\"sym\" not defined for instantiation");}
+MatType GenericMatrix<MatType>::sym(const std::string& name, const CCSSparsity& sp){ throw CasadiException("\"sym\" not defined for instantiation");}
 
 } // namespace CasADi
 

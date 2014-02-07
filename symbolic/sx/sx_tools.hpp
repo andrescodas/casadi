@@ -255,7 +255,7 @@ SXMatrix blockmatrix(SXMatrix array[n]){
 }
 
 template<> inline
-SXMatrix GenericMatrix<SXMatrix>::symQQQ(const std::string& name, const CCSSparsity& sp){ return ssym(name,sp);}
+SXMatrix GenericMatrix<SXMatrix>::sym(const std::string& name, const CCSSparsity& sp){ return ssym(name,sp);}
 
 #endif
 

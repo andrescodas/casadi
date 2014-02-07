@@ -399,7 +399,7 @@ namespace CasADi{
 #endif // SWIG
 
   template<> inline
-  MX GenericMatrix<MX>::symQQQ(const std::string& name, const CCSSparsity& sp){ return msym(name,sp);}
+  MX GenericMatrix<MX>::sym(const std::string& name, const CCSSparsity& sp){ return msym(name,sp);}
 
   /** \brief Extract shared subexpressions from an set of expressions */
   void extractShared(std::vector<MX>& ex, 
