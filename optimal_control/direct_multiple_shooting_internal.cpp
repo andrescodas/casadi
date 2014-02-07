@@ -301,18 +301,18 @@ void DirectMultipleShootingInternal::setOptimalSolution(const vector<double> &V_
     
     // Pass optimized state
     for(int i=0; i<nx_; ++i){
-      x_opt.qqqq(k,i) = V_opt[el++];
+      x_opt(k,i) = V_opt[el++];
     }
     
     // Pass optimized control
     for(int i=0; i<nu_; ++i){
-      u_opt.qqqq(k,i) = V_opt[el++];
+      u_opt(k,i) = V_opt[el++];
     }
   }
 
   // Pass optimized terminal state
   for(int i=0; i<nx_; ++i){
-    x_opt.qqqq(nk_,i) = V_opt[el++];
+    x_opt(nk_,i) = V_opt[el++];
   }
   casadi_assert(el==V_opt.size());
 }

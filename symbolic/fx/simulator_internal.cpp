@@ -157,7 +157,7 @@ void SimulatorInternal::evaluate(){
       const Matrix<double> &res = output_fcn_.output(i);
       Matrix<double> &ores = output(i);
       for(int j=0; j<res.numel(); ++j){
-        ores.qqqq(j,k) = res(j); // NOTE: inefficient implementation
+        ores(j,k) = res(j); // NOTE: inefficient implementation
       }
     }
   }

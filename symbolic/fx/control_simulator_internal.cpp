@@ -337,13 +337,13 @@ namespace CasADi{
       P_eval[0] = MX(gridc_[k]);
       P_eval[1] = MX(gridc_[k+1]);
       if (nu_>0) {
-        P_eval[3] = trans(U.qqqq(range(nu_),k));
+        P_eval[3] = trans(U(range(nu_),k));
       }
       if (control_dae_.input(CONTROL_DAE_U_INTERP).size()>0) {
         if (k+1==U.size2()) {
           P_eval[4] = P_eval[3];
         } else {
-          P_eval[4] = trans(U.qqqq(range(nu_),k+1));
+          P_eval[4] = trans(U(range(nu_),k+1));
         }
       }
       P_eval[5] = Xk;
@@ -353,15 +353,15 @@ namespace CasADi{
       simulator_out = simulator_.call(simulator_in);
     
       // Remember the end state and dstate for next iteration in this loop
-      Xk = trans(simulator_out[0].qqqq(ALL,simulator_out[0].size2()-1));
+      Xk = trans(simulator_out[0](ALL,simulator_out[0].size2()-1));
     
       // Copy all the outputs (but not those 2 extra we introduced)
       for (int i=0;i<simulator_out.size()-2;++i) {
         if(simulator_out[i+2].isNull()) continue; // NOTE: Joel: quick-fix
       
-        simulator_outputs[i].push_back(simulator_out[i+2].qqqq(ALL,range(nf_)));
+        simulator_outputs[i].push_back(simulator_out[i+2](ALL,range(nf_)));
         if (k+1==ns_-1) {  // Output of the last minor step of the last major step
-          simulator_outputs[i].push_back(simulator_out[i+2].qqqq(ALL,std::vector<int>(1,nf_)));
+          simulator_outputs[i].push_back(simulator_out[i+2](ALL,std::vector<int>(1,nf_)));
         }
       }
     

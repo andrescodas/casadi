@@ -1030,8 +1030,8 @@ namespace CasADi{
     if(eig_smallest<reg_threshold_){
       // Regularization
       reg_ = reg_threshold_-eig_smallest;
-      qpH_.qqqq(0,0) += reg_;
-      qpH_.qqqq(1,1) += reg_;
+      qpH_(0,0) += reg_;
+      qpH_(1,1) += reg_;
     }
   }
 

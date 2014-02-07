@@ -99,12 +99,12 @@ void DirectCollocationInternal::init(){
       tfcn.setInput(tau_root[j2]);
       tfcn.evaluate();
       C[j][j2] = tfcn.output();
-      C_num.qqqq(j2,j) = tfcn.output();
+      C_num(j2,j) = tfcn.output();
     }
   }
 
-  C_num.qqqq(ALL,std::vector<int>(1,0)) = 0;
-  C_num.qqqq(0,0)   = 1;
+  C_num(ALL,std::vector<int>(1,0)) = 0;
+  C_num(0,0)   = 1;
 
   // All collocation time points
   vector<vector<double> > T(nk_);
@@ -342,7 +342,7 @@ void DirectCollocationInternal::setOptimalSolution( const vector<double> &V_opt 
     
     // Pass optimized state
     for(int i=0; i<nx_; ++i){
-      x_opt.qqqq(k,i) = V_opt[el++];
+      x_opt(k,i) = V_opt[el++];
     }
     
     // Skip collocation points
@@ -350,13 +350,13 @@ void DirectCollocationInternal::setOptimalSolution( const vector<double> &V_opt 
 
     // Pass optimized control
     for(int i=0; i<nu_; ++i){
-      u_opt.qqqq(k,i) = V_opt[el++];
+      u_opt(k,i) = V_opt[el++];
     }
   }
 
   // Pass optimized terminal state
   for(int i=0; i<nx_; ++i){
-    x_opt.qqqq(nk_,i) = V_opt[el++];
+    x_opt(nk_,i) = V_opt[el++];
   }
   casadi_assert(el==V_opt.size());
 }

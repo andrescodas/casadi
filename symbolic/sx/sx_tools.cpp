@@ -107,7 +107,7 @@ SXMatrix pw_lin(const SX &t, const SXMatrix &tval, const SXMatrix &val){
     lseg(i) = val(i) + g(i)*(t-tval(i)); 
 
   // interior time points
-  SXMatrix tint = tval.qqqq(0,range(N-2));
+  SXMatrix tint = tval(0,range(N-2));
 
   // Return piecewise linear function
   return pw_const(t, tint, lseg);
@@ -374,8 +374,8 @@ SXMatrix spy(const SXMatrix& A){
   SXMatrix s(A.size2(),A.size1());
   for(int i=0; i<A.size2(); ++i)
     for(int j=0; j<A.size1(); ++j)
-      if(!A.qqqq(j,i).toScalar()->isZero())
-        s.qqqq(j,i) = 1;
+      if(!A(j,i).toScalar()->isZero())
+        s(j,i) = 1;
   return s;
 }
 
@@ -447,12 +447,12 @@ SXMatrix hessian(const SXMatrix& ex, const SXMatrix &arg) {
 
 double getValue(const SXMatrix& ex, int i, int j) {
   casadi_assert(i<ex.size2() && j<ex.size1());
-  return ex.qqqq(j,i).toScalar().getValue();
+  return ex(j,i).toScalar().getValue();
 }
 
 int getIntValue(const SXMatrix& ex, int i, int j) {
   casadi_assert(i<ex.size2() && j<ex.size1());
-  return ex.qqqq(j,i).toScalar().getIntValue();
+  return ex(j,i).toScalar().getIntValue();
 }
 
 void getValue(const SXMatrix& ex, double *res) {
@@ -1000,9 +1000,9 @@ SXMatrix jacobianTimesVector(const SXMatrix &ex, const SXMatrix &arg, const SXMa
   vector<vector<SXMatrix> > fseed(nfsens,argv), fsens(nfsens,resv), aseed(nasens,resv), asens(nasens,argv);
   for(int dir=0; dir<v2; ++dir){
     if(transpose_jacobian){
-      aseed[dir][0].set(v.qqqq(dir,Slice(0,v1)));
+      aseed[dir][0].set(v(dir,Slice(0,v1)));
     } else {
-      fseed[dir][0].set(v.qqqq(dir,Slice(0,v1)));
+      fseed[dir][0].set(v(dir,Slice(0,v1)));
     }
   }
   
@@ -1356,14 +1356,14 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
     std::vector<int> index;
     int nb = m.sparsity().stronglyConnectedComponents(offset,index);
     
-    SXMatrix m_perm = m.qqqq(offset,offset);
+    SXMatrix m_perm = m(offset,offset);
     
     SXMatrix l = ssym("l");
     
     for (int k=0;k<nb;++k) {
       std::vector<int> r = range(index.at(k),index.at(k+1));
       // det(lambda*I-m) = 0
-      ret.append(poly_roots(poly_coeff(det(SXMatrix::eye(r.size())*l-m_perm.qqqq(r,r)),l)));
+      ret.append(poly_roots(poly_coeff(det(SXMatrix::eye(r.size())*l-m_perm(r,r)),l)));
     }
 		
     return ret;

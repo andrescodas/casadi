@@ -82,13 +82,13 @@ T cross(const GenericMatrix<T> &a, const GenericMatrix<T> &b, int dim) {
   if (dim==1) t = true;
   if (dim==2) t = false;
   
-  T a1 = t ? a.qqqq(ALL,0) : a.qqqq(0,ALL);
-  T a2 = t ? a.qqqq(ALL,1) : a.qqqq(1,ALL);
-  T a3 = t ? a.qqqq(ALL,2) : a.qqqq(2,ALL);
+  T a1 = t ? a(ALL,0) : a(0,ALL);
+  T a2 = t ? a(ALL,1) : a(1,ALL);
+  T a3 = t ? a(ALL,2) : a(2,ALL);
 
-  T b1 = t ? b.qqqq(ALL,0) : b.qqqq(0,ALL);
-  T b2 = t ? b.qqqq(ALL,1) : b.qqqq(1,ALL);
-  T b3 = t ? b.qqqq(ALL,2) : b.qqqq(2,ALL);
+  T b1 = t ? b(ALL,0) : b(0,ALL);
+  T b2 = t ? b(ALL,1) : b(1,ALL);
+  T b3 = t ? b(ALL,2) : b(2,ALL);
     
   ret[0] = a2*b3-a3*b2;
   ret[1] = a3*b1-a1*b3;

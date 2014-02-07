@@ -119,8 +119,8 @@ namespace CasADi{
       // Evaluate the time derivative of the polynomial at all collocation points to get the coefficients of the continuity equation
       Polynomial dp = p.derivative();
       for(int r=0; r<deg+1; ++r){
-        C_num.qqqq(r,j) = dp(tau_root[r]);
-        C[j][r] = C_num.qqqq(r,j);
+        C_num(r,j) = dp(tau_root[r]);
+        C[j][r] = C_num(r,j);
       }
         
       // Integrate polynomial to get the coefficients of the quadratures
@@ -128,8 +128,8 @@ namespace CasADi{
       Q(j) = ip(1.0);
     }
 
-    C_num.qqqq(ALL,std::vector<int>(1,0)) = 0;
-    C_num.qqqq(0,0)   = 1;
+    C_num(ALL,std::vector<int>(1,0)) = 0;
+    C_num(0,0)   = 1;
     
     casadi_assert_message(fabs(sumAll(Q)-1).at(0)<1e-9,"Check on quadrature coefficients");
     casadi_assert_message(fabs(sumAll(D_num)-1).at(0)<1e-9,"Check on collocation coefficients");

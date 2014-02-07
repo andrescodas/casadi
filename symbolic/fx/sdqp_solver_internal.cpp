@@ -72,7 +72,7 @@ SDQPSolverInternal::SDQPSolverInternal(const std::vector<CCSSparsity> &st) : st_
   input(SDQP_SOLVER_UBA) = DMatrix::inf(nc_);
 
   for (int i=0;i<n_;i++) {
-    CCSSparsity s = input(SDQP_SOLVER_F).qqqq(ALL,range(i*m_,(i+1)*m_)).sparsity();
+    CCSSparsity s = input(SDQP_SOLVER_F)(ALL,range(i*m_,(i+1)*m_)).sparsity();
     casadi_assert_message(s==s.transpose(),"SDQPSolverInternal: Each supplied Fi must be symmetric. But got " << s.dimString() <<  " for i = " << i << ".");
   }
   

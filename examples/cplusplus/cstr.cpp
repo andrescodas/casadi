@@ -116,24 +116,24 @@ int main(){
 
   // Initial condition
   for(int i=0; i<x.size(); ++i){
-    ocp_solver.input("x_init").qqqq(0,i) = ocp_solver.input("lbx").qqqq(0,i) = ocp_solver.input("ubx").qqqq(0,i) = x0[i];
+    ocp_solver.input("x_init")(0,i) = ocp_solver.input("lbx")(0,i) = ocp_solver.input("ubx")(0,i) = x0[i];
   }
 
   // State bounds
   for(int k=1; k<=num_nodes; ++k){
     for(int i=0; i<x.size(); ++i){
-      ocp_solver.input("x_init").qqqq(k,i) = x0[i];
-      ocp_solver.input("lbx").qqqq(k,i) = xmin[i];
-      ocp_solver.input("ubx").qqqq(k,i) = xmax[i];
+      ocp_solver.input("x_init")(k,i) = x0[i];
+      ocp_solver.input("lbx")(k,i) = xmin[i];
+      ocp_solver.input("ubx")(k,i) = xmax[i];
     }
   }
 
   // Control bounds
   for(int k=0; k<num_nodes; ++k){
     for(int i=0; i<u.size(); ++i){
-      ocp_solver.input("u_init").qqqq(k,i) = u0[i];
-      ocp_solver.input("lbu").qqqq(k,i) = umin[i];
-      ocp_solver.input("ubu").qqqq(k,i) = umax[i];
+      ocp_solver.input("u_init")(k,i) = u0[i];
+      ocp_solver.input("lbu")(k,i) = umin[i];
+      ocp_solver.input("ubu")(k,i) = umax[i];
     }
   }
 

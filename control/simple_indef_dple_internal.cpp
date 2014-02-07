@@ -78,7 +78,7 @@ namespace CasADi{
     
     MX AA = blkdiag(AA_list);
     
-    MX A_total = DMatrix::eye(n_*n_*K_)-horzcat(AA.qqqq(range(K_*n_*n_),range(K_*n_*n_-n_*n_,K_*n_*n_)),AA.qqqq(range(K_*n_*n_),range(K_*n_*n_-n_*n_)));
+    MX A_total = DMatrix::eye(n_*n_*K_)-horzcat(AA(range(K_*n_*n_),range(K_*n_*n_-n_*n_,K_*n_*n_)),AA(range(K_*n_*n_),range(K_*n_*n_-n_*n_)));
 
     std::vector<MX> Vss_shift;
     Vss_shift.push_back(Vss.back());

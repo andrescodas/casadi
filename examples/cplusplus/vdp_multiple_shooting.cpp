@@ -137,13 +137,13 @@ int main(){
   ms.input("x_init").setAll(0);
 
   // Initial condition
-  ms.input("lbx").qqqq(0,0) = ms.input("ubx").qqqq(0,0) = 0;
-  ms.input("lbx").qqqq(0,1) = ms.input("ubx").qqqq(0,1) = 1;
-  ms.input("lbx").qqqq(0,2) = ms.input("ubx").qqqq(0,2) = 0;
+  ms.input("lbx")(0,0) = ms.input("ubx")(0,0) = 0;
+  ms.input("lbx")(0,1) = ms.input("ubx")(0,1) = 1;
+  ms.input("lbx")(0,2) = ms.input("ubx")(0,2) = 0;
 
   // Final condition
-  ms.input("lbx").qqqq(ns,0) = ms.input("ubx").qqqq(ns,0) = 0; 
-  ms.input("lbx").qqqq(ns,1) = ms.input("ubx").qqqq(ns,1) = 0; 
+  ms.input("lbx")(ns,0) = ms.input("ubx")(ns,0) = 0; 
+  ms.input("lbx")(ns,1) = ms.input("ubx")(ns,1) = 0; 
   
   // Solve the problem
   ms.solve();

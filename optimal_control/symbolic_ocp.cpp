@@ -1026,7 +1026,7 @@ void SymbolicOCP::makeExplicit(){
       fb.push_back(ode.at(i));
 
     // Get local Jacobian
-    SXMatrix Jb = J.qqqq(range(rowblock[b],rowblock[b+1]),range(colblock[b],colblock[b+1]));
+    SXMatrix Jb = J(range(rowblock[b],rowblock[b+1]),range(colblock[b],colblock[b+1]));
 
     // If Jb depends on xb, then the state derivative does not enter linearly in the ODE and we cannot solve for the state derivative
     casadi_assert_message(!dependsOn(Jb,der(xb)),"Cannot find an explicit expression for variable(s) " << xb);
@@ -1121,7 +1121,7 @@ void SymbolicOCP::eliminateAlgebraic(){
       fb.push_back(alg.at(i));
 
     // Get local Jacobian
-    SXMatrix Jb = J.qqqq(range(rowblock[b],rowblock[b+1]),range(colblock[b],colblock[b+1]));
+    SXMatrix Jb = J(range(rowblock[b],rowblock[b+1]),range(colblock[b],colblock[b+1]));
 
     // If Jb depends on zb, then we cannot (currently) solve for it explicitly
     if(dependsOn(Jb,var(zb))){

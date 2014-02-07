@@ -122,13 +122,13 @@ namespace CasADi{
     }
     
     /// get a matrix element
-    const MX indexed_one_based(int i, int j) const{ return (*this).qqqq(j-1,i-1);}
-    const MX indexed_zero_based(int i, int j) const{ return (*this).qqqq(j,i);}
+    const MX indexed_one_based(int i, int j) const{ return (*this)(j-1,i-1);}
+    const MX indexed_zero_based(int i, int j) const{ return (*this)(j,i);}
     const MX indexed(const IndexList &i, const IndexList &j) const{ 
-      return (*this).qqqq(j.getAll(size1()),i.getAll(size2()));
+      return (*this)(j.getAll(size1()),i.getAll(size2()));
     }
     const MX indexed(const Slice &i, const Slice &j) const{ 
-      return (*this).qqqq(j.getAll(size1()),i.getAll(size2()));
+      return (*this)(j.getAll(size1()),i.getAll(size2()));
     }
     const MX indexed(const Matrix<int> &k) const{ 
       return (*this)(k);
@@ -136,21 +136,21 @@ namespace CasADi{
     const MX indexed(const CCSSparsity &sp) const{ 
       return (*this)(sp);
     }
-    const MX indexed(const Slice &i, const Matrix<int>& k) const{ return (*this).qqqq(k,i); }
+    const MX indexed(const Slice &i, const Matrix<int>& k) const{ return (*this)(k,i); }
     const MX indexed(const IndexList &i, const Matrix<int>& k) const{ 
-      return (*this).qqqq(k,i.getAll(size2()));
+      return (*this)(k,i.getAll(size2()));
     }
-    const MX indexed(const Matrix<int>& k, const Slice &j) const{ return (*this).qqqq(j,k); }
+    const MX indexed(const Matrix<int>& k, const Slice &j) const{ return (*this)(j,k); }
     const MX indexed(const Matrix<int>& k, const IndexList &j) const{ 
-      return (*this).qqqq(j.getAll(size1()),k);
+      return (*this)(j.getAll(size1()),k);
     }
     const MX indexed(const Matrix<int>& i, const Matrix<int>& j) const{ 
-      return (*this).qqqq(j,i);
+      return (*this)(j,i);
     }
     
     /// set a non-zero
-    void indexed_one_based_assignment(int k, const MX &m){ at(k-1) = m.qqqq(0,0);}
-    void indexed_zero_based_assignment(int k, const MX &m){ at(k) = m.qqqq(0,0);}
+    void indexed_one_based_assignment(int k, const MX &m){ at(k-1) = m(0,0);}
+    void indexed_zero_based_assignment(int k, const MX &m){ at(k) = m(0,0);}
     void indexed_assignment(const IndexList &k, const MX &m){
       (*this)[k.getAll(size())] = m;
     }
@@ -159,14 +159,14 @@ namespace CasADi{
     }
     
     /// set a matrix element
-    void indexed_one_based_assignment(int i, int j, const MX &m){ (*this).qqqq(j-1,i-1) = m;}
-    void indexed_zero_based_assignment(int i, int j, const MX &m){ (*this).qqqq(j,i) = m;}
+    void indexed_one_based_assignment(int i, int j, const MX &m){ (*this)(j-1,i-1) = m;}
+    void indexed_zero_based_assignment(int i, int j, const MX &m){ (*this)(j,i) = m;}
     void indexed_assignment(const IndexList &i, const IndexList &j, const MX &m){
       setSub(m,i.getAll(size2()),j.getAll(size1()));
     }
     
     void indexed_assignment(const Slice &i, const Slice &j, const MX &m){
-      (*this).qqqq(j.getAll(size1()),i.getAll(size2())) = m;
+      (*this)(j.getAll(size1()),i.getAll(size2())) = m;
     }
     
     void indexed_zero_based_assignment(const Matrix<int>& k, const MX &m){
@@ -176,19 +176,19 @@ namespace CasADi{
       (*this)(sp) = m;
     }
     void indexed_assignment(const Slice &i, const Matrix<int>& j, const MX& m){
-      (*this).qqqq(j,i.getAll(size2())) = m;
+      (*this)(j,i.getAll(size2())) = m;
     }
     void indexed_assignment( const Matrix<int>& i, const Slice &j, const MX& m){
-      (*this).qqqq(j.getAll(size1()),i) = m;
+      (*this)(j.getAll(size1()),i) = m;
     }
     void indexed_assignment(const IndexList &i, const Matrix<int>& j, const MX& m){
-      (*this).qqqq(j,i.getAll(size2())) = m;
+      (*this)(j,i.getAll(size2())) = m;
     }
     void indexed_assignment( const Matrix<int>& i, const IndexList &j, const MX& m){
-      (*this).qqqq(j.getAll(size1()),i) = m;
+      (*this)(j.getAll(size1()),i) = m;
     } 
     void indexed_assignment( const Matrix<int>& i, const Matrix<int>& j, const MX& m){
-      (*this).qqqq(j,i) = m;
+      (*this)(j,i) = m;
     } 
     //@}
     
