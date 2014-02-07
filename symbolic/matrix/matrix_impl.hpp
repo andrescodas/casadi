@@ -78,7 +78,7 @@ namespace CasADi{
     std::vector<int> mapping;
   
     // Get the sparsity pattern - does bounds checking
-    CCSSparsity sp = sparsity().subQQQ(jj,ii,mapping);
+    CCSSparsity sp = sparsity().sub(jj,ii,mapping);
 
     // Create return object
     Matrix<T> ret(sp);

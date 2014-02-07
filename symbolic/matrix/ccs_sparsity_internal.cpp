@@ -2181,7 +2181,7 @@ namespace CasADi{
     return ret;
   }
 
-  CCSSparsity CCSSparsityInternal::subQQQ(const vector<int>& jj, const vector<int>& ii, vector<int>& mapping) const{
+  CCSSparsity CCSSparsityInternal::sub(const vector<int>& jj, const vector<int>& ii, vector<int>& mapping) const{
     if (!inBounds(jj,nrow_)) {
       casadi_error("Slicing [jj,ii] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
