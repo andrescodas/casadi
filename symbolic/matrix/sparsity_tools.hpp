@@ -48,7 +48,7 @@ namespace CasADi{
   /**
      \brief Create a dense rectangular sparsity pattern
   **/
-  CCSSparsity sp_dense(int nrow, int ncol); // ncol=1
+  CCSSparsity sp_dense(int nrow, int ncol=1);
   
   /**
      \brief Create a dense sparsity pattern
@@ -58,7 +58,7 @@ namespace CasADi{
   /**
      \brief Create a sparse sparsity pattern
   **/
-  CCSSparsity sp_sparse(int nrow, int ncol); // ncol=1
+  CCSSparsity sp_sparse(int nrow, int ncol=1);
   
   /**
      \brief Create a dense sparsity pattern
@@ -71,11 +71,11 @@ namespace CasADi{
   CCSSparsity sp_unit(int n, int el);
 
   /**
-     \brief Create a lower triangular square sparsity pattern
+     \brief Create a upper triangular square sparsity pattern
      
-     \see lowerSparsity
+     \see upperSparsity
   **/
-  CCSSparsity sp_tril(int n);
+  CCSSparsity sp_triu(int n);
 
   /**
      \brief Create diagonal square sparsity pattern
@@ -124,18 +124,18 @@ namespace CasADi{
   CCSSparsity trans(const CCSSparsity& a);
   
   /**
-   * \brief Return the lower part of the sparsity pattern
+   * \brief Return the upper part of the sparsity pattern
    * 
    * \param includeDiagonal specify wether the diagonal must be part of the result
    *
-   * \see sp_tril
+   * \see sp_triu
    */
-  CCSSparsity lowerSparsity(const CCSSparsity& a, bool includeDiagonal = true);
+  CCSSparsity upperSparsity(const CCSSparsity& a, bool includeDiagonal = true);
   
   /**
-   * \brief Return the non-zero entries that make up the lower part of the provided matrix
+   * \brief Return the non-zero entries that make up the upper part of the provided matrix
    */
-  std::vector<int> lowerNZ(const CCSSparsity& a);
+  std::vector<int> upperNZ(const CCSSparsity& a);
   
   /**
      \brief Create a sparsity pattern given the nonzeros in sparse triplet form

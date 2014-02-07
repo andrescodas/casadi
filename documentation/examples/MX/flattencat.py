@@ -27,7 +27,7 @@ from numpy import *
 A = MX("A",2)           # Here a matrix
 B = MX("B",2,1)         # There a matrix
 C = MX("C")             # And an other little matrix
-D = MX("D",sp_tril(4))  # Triangular matrix
+D = MX("D",sp_triu(4))  # Triangular matrix
 
 
 L = flattencat([A,B,C,D])

@@ -27,7 +27,7 @@ from numpy import *
 A = MX("A",2,1)         # Here a matrix
 B = MX("B",1,2)         # There a matrix
 C = MX("C")             # And an other little matrix
-D = MX("D",sp_tril(4))  # Triangular matrix
+D = MX("D",sp_triu(4))  # Triangular matrix
 
 
 L = [A,B,C,D]

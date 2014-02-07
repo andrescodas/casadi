@@ -261,8 +261,8 @@ class FXtests(casadiTestCase):
       self.checkarray(sp.colind(),sp2.colind());   
 
     for i in range(5):
-      test(sp_tril(i))
-      test(sp_tril(i).T)
+      test(sp_triu(i))
+      test(sp_triu(i).T)
       test(sp_dense(i,i))
       test(sp_diag(i))
     
@@ -307,8 +307,8 @@ class FXtests(casadiTestCase):
     test(sp.T)
     
     for i in [63,64,65,127,128,129]:
-      test(sp_tril(i))
-      test(sp_tril(i).T)
+      test(sp_triu(i))
+      test(sp_triu(i).T)
     
     for n in [63,64,65,127,128,129]:
       for m in [63,64,65,127,128,129]:

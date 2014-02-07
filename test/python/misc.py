@@ -334,7 +334,7 @@ class Misctests(casadiTestCase):
     
   def test_pickling(self):
 
-    a = sp_tril(4)
+    a = sp_triu(4)
     s = pickle.dumps(a)
     b = pickle.loads(s)
     self.assertTrue(a==b)
@@ -344,13 +344,13 @@ class Misctests(casadiTestCase):
     b = pickle.loads(s)
     self.assertTrue(a.isNull())
     
-    a = IMatrix(sp_tril(4),range(10))
+    a = IMatrix(sp_triu(4),range(10))
     s = pickle.dumps(a)
     b = pickle.loads(s)
     self.checkarray(a,b)
 
 
-    a = DMatrix(sp_tril(4),range(10))
+    a = DMatrix(sp_triu(4),range(10))
     s = pickle.dumps(a)
     b = pickle.loads(s)
     self.checkarray(a,b)

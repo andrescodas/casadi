@@ -80,7 +80,7 @@ simplestates = struct_ssym([
 states = struct_ssym([
     entry("x",shape=3),
     entry("y",shape=(2,2)),
-    entry("z",shape=sp_tril(2))
+    entry("z",shape=sp_triu(2))
   ])
   
 print states["x"]

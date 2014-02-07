@@ -32,7 +32,7 @@ z = (x+y)**4+sin(x)
 
 dotsave(z,filename='MX1.pdf')
 
-x = MX("x",sp_tril(2))
+x = MX("x",sp_triu(2))
 
 y = msym("y",2,2)
 
@@ -45,7 +45,7 @@ print z
 dotsave(z,filename='MX2.pdf')
 
 
-x = MX("x",sp_tril(2))
+x = MX("x",sp_triu(2))
 
 y = msym("y",2,2)
 
@@ -63,7 +63,7 @@ z = z+x + cos(x) - sin(x) / tan(z2)
 dotsave(z,filename='MX3.pdf')
 
 
-x = MX("x",sp_tril(2))
+x = MX("x",sp_triu(2))
 
 y = msym("y")
 
@@ -101,7 +101,7 @@ dotsave(z,filename='MX5.pdf')
 
 x = MX("x",3,3)
 y = MX("y")
-w = x[sp_tril(3)]
+w = x[sp_triu(3)]
 w[0,2] = y
 
 g = x[0,0] + x[:,2]

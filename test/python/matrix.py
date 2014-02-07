@@ -513,7 +513,7 @@ class Matrixtests(casadiTestCase):
 
     n = 8
 
-    sp = sp_tril(n)
+    sp = sp_triu(n)
 
     x  = SXMatrix(sp,[SX("a%d" % i) for i in range(sp.size())])
 
@@ -525,7 +525,7 @@ class Matrixtests(casadiTestCase):
     # For a reducible matrix, struct(A^(-1)) = struct(A) 
     self.checkarray(x_,I_,"inv")
     
-    sp = sp_tril(n)
+    sp = sp_triu(n)
 
     x  = SXMatrix(sp,[SX("a%d" % i) for i in range(sp.size())])
     x[0,n-1] = 1 
@@ -711,7 +711,7 @@ class Matrixtests(casadiTestCase):
     check(IMatrix(sp_dense(3,3),range(3*3)),[0,0,2],[0,0,2])
     check(IMatrix(sp_dense(3,3),range(3*3)),[1,1,2],[1,1,2])
 
-    sp = sp_tril(4)
+    sp = sp_triu(4)
     d = IMatrix(sp,range(sp.size()))
     check(d,[0,1,3],[0,2,3])
     check(d.T,[0,1,3],[0,2,3])
@@ -726,7 +726,7 @@ class Matrixtests(casadiTestCase):
     check(IMatrix(sp_dense(2,2),range(2*2)),[1,1,0],[1,1,0])
     check(IMatrix(sp_dense(2,2),range(2*2)),[1,1,1],[1,1,1])
 
-    sp = sp_tril(3)
+    sp = sp_triu(3)
     d = IMatrix(sp,range(sp.size()))
     check(d,[0,1,2],[0,1,2])
     check(d.T,[0,1,2],[0,1,2])
@@ -837,7 +837,7 @@ class Matrixtests(casadiTestCase):
     self.assertEqual(sparse(DMatrix([[1,1,0],[1,0,1],[0,0,0]])).sizeL(),3)
     
   def test_tril2symm(self):
-    a = DMatrix(sp_tril(3),range(sp_tril(3).size()))
+    a = DMatrix(sp_triu(3),range(sp_triu(3).size()))
     s = tril2symm(a)
     self.checkarray(s,DMatrix([[0,1,3],[1,2,4],[3,4,5]]))
     
@@ -877,7 +877,7 @@ class Matrixtests(casadiTestCase):
     self.assertEqual(v.size1(),0)
   
   def test_horzsplit(self):
-    a = DMatrix(sp_tril(5),range(5*6/2))
+    a = DMatrix(sp_triu(5),range(5*6/2))
     v = horzsplit(a,[0,2,4])
     
     self.assertEqual(len(v),3)
@@ -907,7 +907,7 @@ class Matrixtests(casadiTestCase):
     self.checkarray(v[2],DMatrix([[6,7,8,9,0],[10,11,12,13,14]]))
     
   def test_vertsplit(self):
-    a = DMatrix(sp_tril(5),range(5*6/2))
+    a = DMatrix(sp_triu(5),range(5*6/2))
     v = vertsplit(a,[0,2,4])
     
     self.assertEqual(len(v),3)
@@ -937,7 +937,7 @@ class Matrixtests(casadiTestCase):
     self.checkarray(v[2],DMatrix([[0,0],[0,0],[0,0],[9,0],[13,14]]))
     
   def test_blocksplit(self):
-    a = DMatrix(sp_tril(5),range(5*6/2))
+    a = DMatrix(sp_triu(5),range(5*6/2))
     v = blocksplit(a,[0,2,4],[0,1,3])
     
     self.checkarray(v[0][0],DMatrix([0,1]))
@@ -956,13 +956,13 @@ class Matrixtests(casadiTestCase):
       spA+= [
         sp_diag(n),
         sp_dense(n,n),
-        sp_tril(n),
-        sp_tril(n).T,
+        sp_triu(n),
+        sp_triu(n).T,
         sp_banded(n,1),
         blkdiag([sp_diag(n),sp_dense(n,n)]),
-        blkdiag([sp_diag(n),sp_tril(n)]),
-        blkdiag([sp_diag(n),sp_tril(n).T]),
-        blkdiag([sp_tril(n),sp_tril(n).T]),
+        blkdiag([sp_diag(n),sp_triu(n)]),
+        blkdiag([sp_diag(n),sp_triu(n).T]),
+        blkdiag([sp_triu(n),sp_triu(n).T]),
         sp_diag(n)+sp_colrow([n-1],[0],n,n),
         sp_diag(n)+sp_colrow([n-1,0],[0,n-1],n,n),
         sp_diag(n)+sp_triplet(n,n,[n-1],[0]),
@@ -974,7 +974,7 @@ class Matrixtests(casadiTestCase):
       random.seed(1)
       a = DMatrix(sA,[random.random() for i in range(sA.size())])
       A = ssym("a",a.sparsity())
-      for sB in [ sp_dense(1,a.size2()), horzcat([sp_dense(1,1),sp_sparse(1,a.size2()-1)]),sp_tril(a.size2()),sp_tril(a.size2()).T]:
+      for sB in [ sp_dense(1,a.size2()), horzcat([sp_dense(1,1),sp_sparse(1,a.size2()-1)]),sp_triu(a.size2()),sp_triu(a.size2()).T]:
 
         b = DMatrix(sB,[random.random() for i in range(sB.size())])
         B = ssym("B",b.sparsity())

@@ -46,9 +46,9 @@ namespace CasADi{
     return CCSSparsity(nm.first,nm.second,false);
   }
 
-  CCSSparsity sp_tril(int n) {
+  CCSSparsity sp_triu(int n) {
     if (n<0)
-      throw CasadiException("sp_tril expects a positive integer as argument");
+      throw CasadiException("sp_triu expects a positive integer as argument");
 
     int c=0;
     int t=0;
@@ -204,7 +204,7 @@ namespace CasADi{
   }
 
 
-  CCSSparsity lowerSparsity(const CCSSparsity& a, bool includeDiagonal) {
+  CCSSparsity upperSparsity(const CCSSparsity& a, bool includeDiagonal) {
     const std::vector<int> & row= a.row();
     std::vector<int> col = a.getCol();
   
@@ -233,7 +233,7 @@ namespace CasADi{
   
   }
 
-  std::vector<int> lowerNZ(const CCSSparsity& a) {
+  std::vector<int> upperNZ(const CCSSparsity& a) {
     const std::vector<int> & row= a.row();
     std::vector<int> col = a.getCol();
   
@@ -422,8 +422,8 @@ namespace CasADi{
   
   std::vector<int> sp_compress(const CCSSparsity& a){
     // Get the sparsity pattern
-    int ncol = a.size2();
     int nrow = a.size1();
+    int ncol = a.size2();
     const vector<int>& colind = a.colind();
     const vector<int>& row = a.row();
     

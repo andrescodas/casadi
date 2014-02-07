@@ -35,13 +35,13 @@ dotdraw(c)
 
 #! An SX Matrix
 
-dotdraw(ssym("x",sp_tril(3)))
+dotdraw(ssym("x",sp_triu(3)))
 
-dotdraw(ssym("x",sp_tril(3))**2)
+dotdraw(ssym("x",sp_triu(3))**2)
 
 #! An MX graph
-x = MX("x",sp_tril(2))
-y = MX("y",sp_tril(2))
+x = MX("x",sp_triu(2))
+y = MX("y",sp_triu(2))
 
 z = msym("z",4,2)
 

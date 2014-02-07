@@ -111,7 +111,7 @@ class NLPtests(casadiTestCase):
       
       message = Solver.__name__
       N = 5
-      s = sp_tril(N)
+      s = sp_triu(N)
       x=ssym("x",s)
 
       y=ssym("y",s)

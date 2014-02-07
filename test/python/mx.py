@@ -1572,7 +1572,7 @@ class MXtests(casadiTestCase):
     self.message("reshape")
     X = msym("X",10)
 
-    i = IMatrix(sp_tril(3),range(6))
+    i = IMatrix(sp_triu(3),range(6))
 
     i.printDense()
     print flattenNZ(i)
@@ -1700,7 +1700,7 @@ class MXtests(casadiTestCase):
     self.checkarray(f.getOutput(),r)
     
   def test_tril2symm(self):
-    x = msym("x",sp_tril(3))
+    x = msym("x",sp_triu(3))
     f = MXFunction([x],[tril2symm(x)])
     f.init()
     f.setInput(range(6))
@@ -1811,7 +1811,7 @@ class MXtests(casadiTestCase):
       mul(msym("X",4,5),MX.zeros(3,2))
       
   def test_horzsplit(self):
-    a = msym("X",sp_tril(5))
+    a = msym("X",sp_triu(5))
     v = horzsplit(a,[0,2,4])
     
     f = MXFunction([a],v)
@@ -1872,7 +1872,7 @@ class MXtests(casadiTestCase):
     self.checkarray(V[2],DMatrix([[6,7,8,9,0],[10,11,12,13,14]]))
  
   def test_vertsplit(self):
-    a = msym("X",sp_tril(5))
+    a = msym("X",sp_triu(5))
     v = vertsplit(a,[0,2,4])
     
     f = MXFunction([a],v)
@@ -1930,7 +1930,7 @@ class MXtests(casadiTestCase):
     self.checkarray(V[2],DMatrix([[0,0],[0,0],[0,0],[9,0],[13,14]]))
     
   def test_blocksplit(self):
-    a = msym("X",sp_tril(5))
+    a = msym("X",sp_triu(5))
     v = blocksplit(a,[0,2,4],[0,1,3])
     
     fs = [MXFunction([a],vr) for vr in v]
@@ -2006,7 +2006,7 @@ class MXtests(casadiTestCase):
   def test_MX_shapes(self):
       self.message("MX unary operations")
       
-      #self.checkarray(DMatrix(sp_tril(4),1),DMatrix(sp_dense(4,4),1))
+      #self.checkarray(DMatrix(sp_triu(4),1),DMatrix(sp_dense(4,4),1))
       
       for sp in [sp_dense(0,0),sp_dense(2,0),sp_dense(0,2),sp_dense(1,1),sp_dense(2,2), CCSSparsity(4,3,[0,2,2,3],[1,2,1])]:
         for v in [0,1,0.2]:
@@ -2080,7 +2080,7 @@ class MXtests(casadiTestCase):
   def test_MXConstant(self):
       self.message("MX unary operations, constant")
       
-      #self.checkarray(DMatrix(sp_tril(4),1),DMatrix(sp_dense(4,4),1))
+      #self.checkarray(DMatrix(sp_triu(4),1),DMatrix(sp_dense(4,4),1))
       
       for sp in [sp_dense(0,0),sp_dense(2,0),sp_dense(0,2),sp_dense(1,1),sp_dense(2,2), CCSSparsity(4,3,[0,2,2,3],[1,2,1])]:
         for v in [0,1,0.2]:

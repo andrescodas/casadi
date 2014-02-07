@@ -213,15 +213,15 @@ class Sparsitytests(casadiTestCase):
     
     
   def test_refcount(self):
-      x = DMatrix(sp_tril(4),5)
+      x = DMatrix(sp_triu(4),5)
       s = mul(x,x).sparsity()
       self.assertEqual(s.numel(),16)
       
-  def test_splower(self):
+  def test_spupper(self):
     sp = CCSSparsity(4,3,[0,2,2,3],[1,2,1])
     print array(sp)
-    print array(lowerSparsity(sp))
-    print lowerNZ(sp)
+    print array(upperSparsity(sp))
+    print upperNZ(sp)
     
     
   def test_diag(self):
@@ -571,7 +571,7 @@ class Sparsitytests(casadiTestCase):
     d = self.randDMatrix(20,20,0.6,symm=True)
     sp = d.sparsity()
     
-    for sp in [sp,sp_dense(4,4),sp_sparse(4,4),sp_tril(4),sp_tril(4).T]:
+    for sp in [sp,sp_dense(4,4),sp_sparse(4,4),sp_triu(4),sp_triu(4).T]:
     
       d = IMatrix(sp,1)
       
