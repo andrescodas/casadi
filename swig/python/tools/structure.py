@@ -695,7 +695,7 @@ class CasadiStructure(Structure,CasadiStructureDerivable):
     k = 0 # Global index counter
     for i in self.traverseCanonicalIndex():
       e = self.getStructEntryByCanonicalIndex(i)
-      sp = sp_denseQQQ(1,1) if e.sparsity is None else e.sparsity
+      sp = sp_dense(1,1) if e.sparsity is None else e.sparsity
       m = IMatrix(sp,range(k,k+sp.size()))
       k += sp.size()
       it = tuple(i)
@@ -819,7 +819,7 @@ class CasadiStructured(Structured,CasadiStructureDerivable):
     return (self.size,1)
 
   def sparsity(self):
-    return sp_denseQQQ(1,self.size)
+    return sp_dense(1,self.size)
     
   def getCanonicalIndex(self,*args,**kwargs):
     return self.struct.lookup(*args,**kwargs)
@@ -870,9 +870,9 @@ class msymStruct(CasadiStructured,MasterGettable):
       e = self.struct.getStructEntryByCanonicalIndex(i)
       sp = None
       if e.isPrimitive():
-        sp = sp_denseQQQ(1,1) if e.sparsity is None else e.sparsity
+        sp = sp_dense(1,1) if e.sparsity is None else e.sparsity
       else:
-        sp = sp_denseQQQ(1,e.struct.size)
+        sp = sp_dense(1,e.struct.size)
       ks.append(k)
       it = tuple(i)
       its.append(it)
@@ -1077,18 +1077,18 @@ class CasadiStructEntry(StructEntry):
     if 'shape' in kwargs:
       shape = kwargs["shape"]
       if isInteger(shape) :
-        self.sparsity = sp_denseQQQ(1,shape)
+        self.sparsity = sp_dense(1,shape)
       elif isinstance(shape,list) or isinstance(shape,tuple):
         if len(shape)==0 or len(shape)>2:
           raise Exception("The 'shape' argument, if present, must be an integer, a tuple of 1 or 2 integers, a sparsity pattern.")
         else:
-          self.sparsity = sp_denseQQQ(1,shape[0]) if len(shape)==1 else sp_denseQQQ(shape[1],shape[0])
+          self.sparsity = sp_dense(1,shape[0]) if len(shape)==1 else sp_dense(shape[1],shape[0])
       elif isinstance(shape,CCSSparsity):
         self.sparsity = shape
       else:
         raise Exception("The 'shape' argument, if present, must be an integer, a tuple of 1 or 2 integers, or a sparsity pattern. Got %s " % str(shape))
     else:
-      self.sparsity = sp_denseQQQ(1,1)
+      self.sparsity = sp_dense(1,1)
     
     self.shapestruct = None
     #     shapestruct  argument
@@ -1106,7 +1106,7 @@ class CasadiStructEntry(StructEntry):
       if 'shape' not in kwargs:
         sp_dense_arg = [e if isInteger(e) else e.size for e in self.shapestruct]
         if len(sp_dense_arg) not in (1,2): raise Exception("quick hack failed")
-        self.sparsity = sp_denseQQQ(1,sp_dense_arg[0]) if len(sp_dense_arg)==1 else sp_denseQQQ(sp_dense_arg[1],sp_dense_arg[0])
+        self.sparsity = sp_dense(1,sp_dense_arg[0]) if len(sp_dense_arg)==1 else sp_dense(sp_dense_arg[1],sp_dense_arg[0])
         
     #     sym    argument
     self.sym = None

@@ -98,7 +98,7 @@ namespace CasADi{
     // Allocate outputs
     std::vector<CCSSparsity> P; 
     for (int k=0;k<K_;++k) {
-      P.push_back(sp_denseQQQ(V_[k].size2(),V_[k].size2()));
+      P.push_back(sp_dense(V_[k].size2(),V_[k].size2()));
     }
     setNumOutputs(DPLE_NUM_OUT*(1+nfwd_) + DPLE_NUM_IN*nadj_);
     for (int i=0;i<nfwd_+1;++i) {

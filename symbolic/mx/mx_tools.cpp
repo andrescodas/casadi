@@ -251,7 +251,7 @@ namespace CasADi{
     if(x.dense()){
       return flatten(x);
     } else {
-      return trans(x)->getGetNonzeros(sp_denseQQQ(1,x.size()),range(x.size()));
+      return trans(x)->getGetNonzeros(sp_dense(1,x.size()),range(x.size()));
     }
   }
   
@@ -259,7 +259,7 @@ namespace CasADi{
     if(x.dense()){
       return vec(x);
     } else {
-      return x->getGetNonzeros(sp_denseQQQ(1,x.size()),range(x.size()));
+      return x->getGetNonzeros(sp_dense(1,x.size()),range(x.size()));
     }
   }
 
@@ -381,7 +381,7 @@ namespace CasADi{
     if(x.dense()) return;
   
     // Densify
-    x = x.setSparse(sp_denseQQQ(x.size1(),x.size2()));
+    x = x.setSparse(sp_dense(x.size1(),x.size2()));
   }
 
   MX createParent(std::vector<MX> &deps) {
@@ -641,11 +641,11 @@ namespace CasADi{
   }
 
   std::vector<MX> msym(const std::string& name, int n, int m, int p){
-    return msym(name,sp_denseQQQ(m,n),p);
+    return msym(name,sp_dense(m,n),p);
   }
 
   std::vector<std::vector<MX> > msym(const std::string& name, int n, int m, int p, int r){
-    return msym(name,sp_denseQQQ(m,n),p,r);
+    return msym(name,sp_dense(m,n),p,r);
   }
 
   MX substitute(const MX &ex, const MX& v, const MX& vdef){

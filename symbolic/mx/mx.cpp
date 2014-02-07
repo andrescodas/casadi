@@ -43,7 +43,7 @@ namespace CasADi{
   }
 
   MX::MX(double x){
-    assignNode(ConstantMX::create(sp_denseQQQ(1,1),x));
+    assignNode(ConstantMX::create(sp_dense(1,1),x));
   }
 
   MX::MX(const Matrix<double>& x){
@@ -450,7 +450,7 @@ namespace CasADi{
 
     // Project scalars
     if(k.size()!=el.size() && el.scalar() && el.dense()){      
-      MX new_el = el->getGetNonzeros(sp_denseQQQ(1,k.size()),vector<int>(k.size(),0));
+      MX new_el = el->getGetNonzeros(sp_dense(1,k.size()),vector<int>(k.size(),0));
       x = new_el->getSetNonzeros(*this,k);
     } else {
       // Create a nonzero assignment node
@@ -516,7 +516,7 @@ namespace CasADi{
   }
 
   MX MX::zeros(int ncol, int nrow){
-    return zeros(sp_denseQQQ(nrow,ncol));
+    return zeros(sp_dense(nrow,ncol));
   }
 
   MX MX::zeros(const std::pair<int, int> &nm){
@@ -532,7 +532,7 @@ namespace CasADi{
   }
 
   MX MX::ones(int ncol, int nrow){
-    return ones(sp_denseQQQ(nrow,ncol));
+    return ones(sp_dense(nrow,ncol));
   }
 
   MX MX::ones(const std::pair<int, int> &nm){
@@ -540,7 +540,7 @@ namespace CasADi{
   }
 
   MX MX::inf(int ncol, int nrow){
-    return inf(sp_denseQQQ(nrow,ncol));
+    return inf(sp_dense(nrow,ncol));
   }
 
   MX MX::inf(const std::pair<int, int> &nm){
@@ -552,7 +552,7 @@ namespace CasADi{
   }
 
   MX MX::nan(int ncol, int nrow){
-    return nan(sp_denseQQQ(nrow,ncol));
+    return nan(sp_dense(nrow,ncol));
   }
 
   MX MX::nan(const std::pair<int, int> &nm){

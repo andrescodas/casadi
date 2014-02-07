@@ -392,7 +392,7 @@ class Variables(object):
         elif hasattr(obj,'sparsity'):
             return obj.sparsity()
         else:
-            return sp_denseQQQ(1,1)
+            return sp_dense(1,1)
         
     def flattencat(self):
         """

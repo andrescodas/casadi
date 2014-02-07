@@ -1114,7 +1114,7 @@ class SXtests(casadiTestCase):
     x_ = self.randDMatrix(N,N)
     y_ = self.randDMatrix(N,N)
 
-    filt = sp_diag(N)+sp_tripletQQQ(N,N,[3],[1])
+    filt = sp_diag(N)+sp_triplet(N,N,[3],[1])
 
     f = SXFunction([x,y],[mul(x,y)])
     f.init()

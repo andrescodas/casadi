@@ -56,8 +56,8 @@ QPSolverInternal::QPSolverInternal(const std::vector<CCSSparsity> &st) : st_(st)
   );
 
   // Sparsity
-  CCSSparsity x_sparsity = sp_denseQQQ(1,n_);
-  CCSSparsity bounds_sparsity = sp_denseQQQ(1,nc_);
+  CCSSparsity x_sparsity = sp_dense(1,n_);
+  CCSSparsity bounds_sparsity = sp_dense(1,nc_);
   
   // Input arguments
   setNumInputs(QP_SOLVER_NUM_IN);
