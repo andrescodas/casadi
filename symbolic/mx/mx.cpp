@@ -122,7 +122,7 @@ namespace CasADi{
     vector<int> mapping;
   
     // Get the sparsity pattern
-    CCSSparsity sp = sparsity().sub(ii,jj,mapping);
+    CCSSparsity sp = sparsity().subQQQ(jj,ii,mapping);
  
     // Create return MX
     return (*this)->getGetNonzeros(sp,mapping);

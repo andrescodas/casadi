@@ -241,8 +241,8 @@ namespace CasADi{
     return (*this)->square();
   }
 
-  CCSSparsity CCSSparsity::sub(const vector<int>& ii, const vector<int>& jj, vector<int>& mapping) const{
-    return (*this)->sub(ii,jj,mapping);
+  CCSSparsity CCSSparsity::subQQQ(const vector<int>& jj, const vector<int>& ii, vector<int>& mapping) const{
+    return (*this)->subQQQ(jj,ii,mapping);
   }
 
   vector<int> CCSSparsity::erase(const vector<int>& ii, const vector<int>& jj){

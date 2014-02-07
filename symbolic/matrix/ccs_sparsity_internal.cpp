@@ -48,7 +48,7 @@ namespace CasADi{
 
   void CCSSparsityInternal::sanityCheck(bool complete) const{
     casadi_assert_message(nrow_ >=0,"CCSSparsityInternal: number of rows must be positive, but got " << nrow_ << ".");
-    casadi_assert_message(ncol_>=0 ,"CCSSparsityInternal: number of cols must be positive, but got " << ncol_ << ".");
+    casadi_assert_message(ncol_>=0 ,"CCSSparsityInternal: number of columns must be positive, but got " << ncol_ << ".");
     if (colind_.size() != ncol_+1) {
       std::stringstream s;
       s << "CCSSparsityInternal:Compressed Column Storage is not sane. The following must hold:" << std::endl;
@@ -2062,11 +2062,11 @@ namespace CasADi{
   }
 
   vector<int> CCSSparsityInternal::erase(const vector<int>& ii, const vector<int>& jj){
-    if (!inBounds(ii,ncol_)) {
-      casadi_error("Slicing [ii,jj] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
-    }
     if (!inBounds(jj,nrow_)) {
-      casadi_error("Slicing [ii,jj] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
+      casadi_error("Slicing [jj,ii] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
+    }
+    if (!inBounds(ii,ncol_)) {
+      casadi_error("Slicing [jj,ii] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
     // Mapping
@@ -2147,11 +2147,11 @@ namespace CasADi{
   }
 
   vector<int> CCSSparsityInternal::getNZ(const vector<int>& jj, const vector<int>& ii) const{
-    if (!inBounds(ii,ncol_)) {
-      casadi_error("Slicing [ii,jj] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
-    }
     if (!inBounds(jj,nrow_)) {
-      casadi_error("Slicing [ii,jj] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
+      casadi_error("Slicing [jj,ii] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
+    }
+    if (!inBounds(ii,ncol_)) {
+      casadi_error("Slicing [jj,ii] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
     std::vector<int> jj_sorted;
@@ -2181,12 +2181,12 @@ namespace CasADi{
     return ret;
   }
 
-  CCSSparsity CCSSparsityInternal::sub(const vector<int>& ii, const vector<int>& jj, vector<int>& mapping) const{
-    if (!inBounds(ii,ncol_)) {
-      casadi_error("Slicing [ii,jj] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
-    }
+  CCSSparsity CCSSparsityInternal::subQQQ(const vector<int>& jj, const vector<int>& ii, vector<int>& mapping) const{
     if (!inBounds(jj,nrow_)) {
-      casadi_error("Slicing [ii,jj] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
+      casadi_error("Slicing [jj,ii] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
+    }
+    if (!inBounds(ii,ncol_)) {
+      casadi_error("Slicing [jj,ii] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
     if (double(ii.size())*double(jj.size()) > size()) {

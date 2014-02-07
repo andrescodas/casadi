@@ -225,7 +225,7 @@ namespace CasADi{
     * Does bounds checking
     * ii and jj are not required to be monotonous
     */
-    CCSSparsity sub(const std::vector<int>& ii, const std::vector<int>& jj, std::vector<int>& mapping) const;
+    CCSSparsity subQQQ(const std::vector<int>& jj, const std::vector<int>& ii, std::vector<int>& mapping) const;
 
     /// Get the index of an existing non-zero element
     int getNZ(int j, int i) const;

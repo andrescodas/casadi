@@ -271,7 +271,7 @@ namespace CasADi{
      * Returns the sparsity of the submatrix, with a mapping such that
      *   submatrix[k] = originalmatrix[mapping[k]]
      */
-    CCSSparsity sub(const std::vector<int>& ii, const std::vector<int>& jj, std::vector<int>& mapping) const;
+    CCSSparsity subQQQ(const std::vector<int>& jj, const std::vector<int>& ii, std::vector<int>& mapping) const;
     
     /// Transpose the matrix and get the reordering of the non-zero entries, i.e. the non-zeros of the original matrix for each non-zero of the new matrix
     CCSSparsity transpose(std::vector<int>& mapping, bool invert_mapping=false) const;
