@@ -44,7 +44,7 @@ namespace CasADi{
 
   template<typename T, typename MatV, typename MatVV>
   void SubRef::evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp){
-    input[0]->getSubQQQ(*output[0],j_,i_);
+    input[0]->getSub(*output[0],j_,i_);
   }
 
   void SubRef::propagateSparsity(DMatrixPtrV& input, DMatrixPtrV& output, bool fwd){

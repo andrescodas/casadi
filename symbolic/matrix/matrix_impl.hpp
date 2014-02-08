@@ -68,12 +68,12 @@ namespace CasADi{
   }
 
   template<class T>
-  const Matrix<T> Matrix<T>::subQQQ(int j, int i) const{
+  const Matrix<T> Matrix<T>::sub(int j, int i) const{
     return elem(i,j);
   }
 
   template<class T>
-  const Matrix<T> Matrix<T>::subQQQ(const std::vector<int>& jj, const std::vector<int>& ii) const{
+  const Matrix<T> Matrix<T>::sub(const std::vector<int>& jj, const std::vector<int>& ii) const{
     // Nonzero mapping from submatrix to full
     std::vector<int> mapping;
   
@@ -92,7 +92,7 @@ namespace CasADi{
   }
 
   template<class T>
-  const Matrix<T> Matrix<T>::subQQQ(const Matrix<int>& k, const std::vector<int>& ii) const{
+  const Matrix<T> Matrix<T>::sub(const Matrix<int>& k, const std::vector<int>& ii) const{
     std::vector< int > rows = range(size1());
     std::vector< Matrix<T> > temp;
   
@@ -112,7 +112,7 @@ namespace CasADi{
   }
 
   template<class T>
-  const Matrix<T> Matrix<T>::subQQQ(const std::vector<int>& jj, const Matrix<int>& k) const{
+  const Matrix<T> Matrix<T>::sub(const std::vector<int>& jj, const Matrix<int>& k) const{
     std::vector< int > cols = range(size2());
     std::vector< Matrix<T> > temp;
 
@@ -132,7 +132,7 @@ namespace CasADi{
   }
 
   template<class T>
-  const Matrix<T> Matrix<T>::subQQQ(const Matrix<int>& j, const Matrix<int>& i) const {
+  const Matrix<T> Matrix<T>::sub(const Matrix<int>& j, const Matrix<int>& i) const {
     casadi_assert_message(i.sparsity()==j.sparsity(),"sub(Imatrix i, Imatrix j): sparsities must match. Got " << i.dimString() << " and " << j.dimString() << ".");
 
     Matrix<T> ret(i.sparsity());
@@ -144,7 +144,7 @@ namespace CasADi{
   }
 
   template<class T>
-  const Matrix<T> Matrix<T>::subQQQ(const CCSSparsity& sp, int dummy) const {
+  const Matrix<T> Matrix<T>::sub(const CCSSparsity& sp, int dummy) const {
     casadi_assert_message(size1()==sp.size1() && size2()==sp.size2(),"sub(CCSSparsity sp): shape mismatch. This matrix has shape " << size1() << " x " << size2() << ", but supplied sparsity index has shape " << sp.size1() << " x " << sp.size2() << "." );
     Matrix<T> ret(sp);
 
@@ -165,16 +165,16 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::setSubQQQ(const Matrix<T>& m, int j, int i){
+  void Matrix<T>::setSub(const Matrix<T>& m, int j, int i){
     if(m.dense()){
       elem(i,j) = m.toScalar();
     } else {
-      setSubQQQ(m,std::vector<int>(1,j),std::vector<int>(1,i));
+      setSub(m,std::vector<int>(1,j),std::vector<int>(1,i));
     }
   }
 
   template<class T>
-  void Matrix<T>::setSubQQQ(const Matrix<T>& m, const std::vector<int>& jj, const std::vector<int>& ii){
+  void Matrix<T>::setSub(const Matrix<T>& m, const std::vector<int>& jj, const std::vector<int>& ii){
     casadi_assert_message(m.numel()==1 || (ii.size() == m.size2() && jj.size() == m.size1()),"Dimension mismatch." << std::endl << "lhs is " << ii.size() << " x " << jj.size() << ", while rhs is " << m.dimString());
 
     if (!inBounds(jj,size1())) {
@@ -186,7 +186,7 @@ namespace CasADi{
   
     // If m is scalar
     if(m.numel() != ii.size() * jj.size()){
-      setSubQQQ(Matrix<T>(ii.size(),jj.size(),m.toScalar()),jj,ii);
+      setSub(Matrix<T>(ii.size(),jj.size(),m.toScalar()),jj,ii);
       return;
     }
 
@@ -213,10 +213,10 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::setSubQQQ(const Matrix<T>& m, const std::vector<int>& jj, const Matrix<int>& i) {
+  void Matrix<T>::setSub(const Matrix<T>& m, const std::vector<int>& jj, const Matrix<int>& i) {
     // If el is scalar
     if(m.scalar() && (jj.size() > 1 || i.size() > 1)){
-      setSubQQQ(repmat(Matrix<T>(i.sparsity(),m.toScalar()),1,jj.size()),jj,i);
+      setSub(repmat(Matrix<T>(i.sparsity(),m.toScalar()),1,jj.size()),jj,i);
       return;
     }
 
@@ -242,11 +242,11 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::setSubQQQ(const Matrix<T>& m, const Matrix<int>& j, const std::vector<int>& ii) {
+  void Matrix<T>::setSub(const Matrix<T>& m, const Matrix<int>& j, const std::vector<int>& ii) {
   
     // If el is scalar
     if(m.scalar() && (ii.size() > 1 || j.size() > 1)){
-      setSubQQQ(repmat(Matrix<T>(j.sparsity(),m.toScalar()),ii.size(),1),j,ii);
+      setSub(repmat(Matrix<T>(j.sparsity(),m.toScalar()),ii.size(),1),j,ii);
       return;
     }
 
@@ -272,12 +272,12 @@ namespace CasADi{
 
 
   template<class T>
-  void Matrix<T>::setSubQQQ(const Matrix<T>& m, const Matrix<int>& j, const Matrix<int>& i) {
+  void Matrix<T>::setSub(const Matrix<T>& m, const Matrix<int>& j, const Matrix<int>& i) {
     casadi_assert_message(i.sparsity()==j.sparsity(),"setSub(., Imatrix i, Imatrix j): sparsities must match. Got " << i.dimString() << " for i and " << j.dimString() << " for j.");
 
     // If m is scalar
     if(m.scalar() && i.numel() > 1){
-      setSubQQQ(Matrix<T>(i.sparsity(),m.toScalar()),j,i);
+      setSub(Matrix<T>(i.sparsity(),m.toScalar()),j,i);
       return;
     }
   
@@ -289,14 +289,14 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::setSubQQQ(const Matrix<T>& m, const CCSSparsity& sp, int dummy) {
+  void Matrix<T>::setSub(const Matrix<T>& m, const CCSSparsity& sp, int dummy) {
     casadi_assert_message(size2()==sp.size2() && size1()==sp.size1(),"sub(CCSSparsity sp): shape mismatch. This matrix has shape " << size2() << " x " << size1() << ", but supplied sparsity index has shape " << sp.size2() << " x " << sp.size1() << "." );
     // TODO: optimize this for speed
     Matrix<T> elm;
     if (m.scalar()) {
       elm = Matrix<T>(sp,m.at(0));
     } else {
-      elm = m.subQQQ(sp);
+      elm = m.sub(sp);
     }
 
     for(int i=0; i<sp.colind().size()-1; ++i){

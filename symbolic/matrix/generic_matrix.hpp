@@ -125,25 +125,25 @@ namespace CasADi{
 
     /** \brief  Get vector element or slice */
     template<typename I>
-    const MatType operator()(const I& i) const{ return static_cast<const MatType*>(this)->subQQQ(i,0);}
+    const MatType operator()(const I& i) const{ return static_cast<const MatType*>(this)->sub(i,0);}
 
     /** \brief  Get Sparsity slice */
-    const MatType operator()(const CCSSparsity& sp) const{ return static_cast<const MatType*>(this)->subQQQ(sp); }
+    const MatType operator()(const CCSSparsity& sp) const{ return static_cast<const MatType*>(this)->sub(sp); }
     
     /** \brief  Get Matrix element or slice */
     template<typename J, typename I>
-    const MatType operator()(const J& j, const I& i) const{ return static_cast<const MatType*>(this)->subQQQ(j,i); }
+    const MatType operator()(const J& j, const I& i) const{ return static_cast<const MatType*>(this)->sub(j,i); }
 
     /** \brief  Access vector element or slice */
     template<typename I>
-    SubMatrixQQQ<MatType,I,int> operator()(const I& i){ return SubMatrixQQQ<MatType,I,int>(static_cast<MatType&>(*this),i,0); }
+    SubMatrix<MatType,I,int> operator()(const I& i){ return SubMatrix<MatType,I,int>(static_cast<MatType&>(*this),i,0); }
 
     /** \brief  Access Sparsity slice */
-    SubMatrixQQQ<MatType,CCSSparsity,int> operator()(const CCSSparsity& sp){ return SubMatrixQQQ<MatType,CCSSparsity,int>(static_cast<MatType&>(*this),sp,0); }
+    SubMatrix<MatType,CCSSparsity,int> operator()(const CCSSparsity& sp){ return SubMatrix<MatType,CCSSparsity,int>(static_cast<MatType&>(*this),sp,0); }
       
     /** \brief  Access Matrix element or slice */
     template<typename I, typename J>
-    SubMatrixQQQ<MatType,I,J> operator()(const I& i, const J& j){ return SubMatrixQQQ<MatType,I,J>(static_cast<MatType&>(*this),i,j); }
+    SubMatrix<MatType,I,J> operator()(const I& i, const J& j){ return SubMatrix<MatType,I,J>(static_cast<MatType&>(*this),i,j); }
 #endif // SWIG
 
     /** \brief Create an n-by-m matrix with symbolic variables */

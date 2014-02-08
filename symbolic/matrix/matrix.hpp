@@ -288,50 +288,50 @@ namespace CasADi{
 
     //@{
     /// Get a submatrix
-    const Matrix<T> subQQQ(int j, int i) const;
-    const Matrix<T> subQQQ(const std::vector<int>& j, int i) const{ return subQQQ(j,std::vector<int>(1,i));}
-    const Matrix<T> subQQQ(int j, const std::vector<int>& i) const{ return subQQQ(std::vector<int>(1,j),i);}
-    const Matrix<T> subQQQ(const std::vector<int>& j, const std::vector<int>& i) const;
-    const Matrix<T> subQQQ(const Slice& j, const std::vector<int>& i) const { return subQQQ(j.getAll(size1()),i);}
-    const Matrix<T> subQQQ(const std::vector<int>& j, const Slice& i) const { return subQQQ(j,i.getAll(size2()));}
-    const Matrix<T> subQQQ(const Slice& j, const Slice& i) const{ return subQQQ(j.getAll(size1()),i.getAll(size2()));}
-    const Matrix<T> subQQQ(const Slice& j, int i) const{ return subQQQ(j.getAll(size1()),std::vector<int>(1,i));}
-    const Matrix<T> subQQQ(int j, const Slice& i) const{ return subQQQ(std::vector<int>(1,j),i.getAll(size2()));}
-    const Matrix<T> subQQQ(const Matrix<int>& k, const std::vector<int>& i) const;
-    const Matrix<T> subQQQ(const std::vector<int>& j, const Matrix<int>& k) const;
-    const Matrix<T> subQQQ(const Matrix<int>& k, const Slice& i) const {return subQQQ(k,i.getAll(size2()));}
-    const Matrix<T> subQQQ(const Slice& j, const Matrix<int>& k) const {return subQQQ(j.getAll(size1()),k);}
-    const Matrix<T> subQQQ(const Matrix<int>& j, const Matrix<int>& i) const;
-    const Matrix<T> subQQQ(const CCSSparsity& sp, int dummy = 0) const;
+    const Matrix<T> sub(int j, int i) const;
+    const Matrix<T> sub(const std::vector<int>& j, int i) const{ return sub(j,std::vector<int>(1,i));}
+    const Matrix<T> sub(int j, const std::vector<int>& i) const{ return sub(std::vector<int>(1,j),i);}
+    const Matrix<T> sub(const std::vector<int>& j, const std::vector<int>& i) const;
+    const Matrix<T> sub(const Slice& j, const std::vector<int>& i) const { return sub(j.getAll(size1()),i);}
+    const Matrix<T> sub(const std::vector<int>& j, const Slice& i) const { return sub(j,i.getAll(size2()));}
+    const Matrix<T> sub(const Slice& j, const Slice& i) const{ return sub(j.getAll(size1()),i.getAll(size2()));}
+    const Matrix<T> sub(const Slice& j, int i) const{ return sub(j.getAll(size1()),std::vector<int>(1,i));}
+    const Matrix<T> sub(int j, const Slice& i) const{ return sub(std::vector<int>(1,j),i.getAll(size2()));}
+    const Matrix<T> sub(const Matrix<int>& k, const std::vector<int>& i) const;
+    const Matrix<T> sub(const std::vector<int>& j, const Matrix<int>& k) const;
+    const Matrix<T> sub(const Matrix<int>& k, const Slice& i) const {return sub(k,i.getAll(size2()));}
+    const Matrix<T> sub(const Slice& j, const Matrix<int>& k) const {return sub(j.getAll(size1()),k);}
+    const Matrix<T> sub(const Matrix<int>& j, const Matrix<int>& i) const;
+    const Matrix<T> sub(const CCSSparsity& sp, int dummy = 0) const;
     //@}
 
     //@{
     /// Set a submatrix
-    void setSubQQQ(const Matrix<T>& m, int j, int i);
-    void setSubQQQ(const Matrix<T>& m, const std::vector<int>& j, int i){ setSubQQQ(m,j,std::vector<int>(1,i));}
-    void setSubQQQ(const Matrix<T>& m, int j, const std::vector<int>& i){ setSubQQQ(m,std::vector<int>(1,j),i);}
-    void setSubQQQ(const Matrix<T>& m, const std::vector<int>& j, const std::vector<int>& i);
-    void setSubQQQ(const Matrix<T>& m, const Slice& j, const std::vector<int>& i){ setSubQQQ(m,j.getAll(size1()),i);}
-    void setSubQQQ(const Matrix<T>& m, const std::vector<int>& j, const Slice& i){ setSubQQQ(m,j,i.getAll(size2()));}
-    void setSubQQQ(const Matrix<T>& m, const Slice& j, const Slice& i){ setSubQQQ(m,j.getAll(size1()),i.getAll(size2()));}
-    void setSubQQQ(const Matrix<T>& m, const Matrix<int>& j, const std::vector<int>& i);
-    void setSubQQQ(const Matrix<T>& m, const std::vector<int>& j, const Matrix<int>& i);
-    void setSubQQQ(const Matrix<T>& m, const Matrix<int>& j, const Slice& i) {return setSubQQQ(m,j,i.getAll(size2()));}
-    void setSubQQQ(const Matrix<T>& m, const Slice& j, const Matrix<int>& i) {return setSubQQQ(m,j.getAll(size1()),i);}
-    void setSubQQQ(const Matrix<T>& m, const Matrix<int>& j, const Matrix<int>& i);
-    void setSubQQQ(const Matrix<T>& m, const CCSSparsity& sp, int dummy);
+    void setSub(const Matrix<T>& m, int j, int i);
+    void setSub(const Matrix<T>& m, const std::vector<int>& j, int i){ setSub(m,j,std::vector<int>(1,i));}
+    void setSub(const Matrix<T>& m, int j, const std::vector<int>& i){ setSub(m,std::vector<int>(1,j),i);}
+    void setSub(const Matrix<T>& m, const std::vector<int>& j, const std::vector<int>& i);
+    void setSub(const Matrix<T>& m, const Slice& j, const std::vector<int>& i){ setSub(m,j.getAll(size1()),i);}
+    void setSub(const Matrix<T>& m, const std::vector<int>& j, const Slice& i){ setSub(m,j,i.getAll(size2()));}
+    void setSub(const Matrix<T>& m, const Slice& j, const Slice& i){ setSub(m,j.getAll(size1()),i.getAll(size2()));}
+    void setSub(const Matrix<T>& m, const Matrix<int>& j, const std::vector<int>& i);
+    void setSub(const Matrix<T>& m, const std::vector<int>& j, const Matrix<int>& i);
+    void setSub(const Matrix<T>& m, const Matrix<int>& j, const Slice& i) {return setSub(m,j,i.getAll(size2()));}
+    void setSub(const Matrix<T>& m, const Slice& j, const Matrix<int>& i) {return setSub(m,j.getAll(size1()),i);}
+    void setSub(const Matrix<T>& m, const Matrix<int>& j, const Matrix<int>& i);
+    void setSub(const Matrix<T>& m, const CCSSparsity& sp, int dummy);
     //@}
 
     //@{
     /// Add a submatrix to an existing matrix (TODO: remove memory allocation)
     template<typename I, typename J>
-    void addSubQQQ(const Matrix<T>& m, I i, J j){ setSubQQQ(m+subQQQ(i,j),i,j);}
+    void addSub(const Matrix<T>& m, I i, J j){ setSub(m+sub(i,j),i,j);}
     //@}
 
     //@{
     /// Retrieve a submatrix (TODO: remove memory allocation)
     template<typename I, typename J>
-    void getSubQQQ(Matrix<T>& m, I i, J j){ m = subQQQ(i,j);}
+    void getSub(Matrix<T>& m, I i, J j){ m = sub(i,j);}
     //@}
 
     //@{
@@ -419,7 +419,7 @@ namespace CasADi{
     } 
     void indexed_assignment(const CCSSparsity &sp,const Matrix<T>& m){
       // (*this)(sp) = m;   // VC2010 compiler errors
-          SubMatrixQQQ<Matrix<T>,CCSSparsity,int> temp(*this,sp,0);
+          SubMatrix<Matrix<T>,CCSSparsity,int> temp(*this,sp,0);
           temp = m;
     }
     //@}

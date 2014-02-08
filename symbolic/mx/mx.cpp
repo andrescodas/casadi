@@ -109,15 +109,15 @@ namespace CasADi{
     return (operator->())->__nonzero__();
   }
 
-  const MX MX::subQQQ(const std::vector<int>& j, int i) const{
-    return subQQQ(j,vector<int>(1,i));
+  const MX MX::sub(const std::vector<int>& j, int i) const{
+    return sub(j,vector<int>(1,i));
   }
 
-  const MX MX::subQQQ(int j, const std::vector<int>& i) const{
-    return subQQQ(vector<int>(1,j),i);
+  const MX MX::sub(int j, const std::vector<int>& i) const{
+    return sub(vector<int>(1,j),i);
   }
 
-  const MX MX::subQQQ(const vector<int>& jj, const vector<int>& ii) const{
+  const MX MX::sub(const vector<int>& jj, const vector<int>& ii) const{
     // Nonzero mapping from submatrix to full
     vector<int> mapping;
   
@@ -128,7 +128,7 @@ namespace CasADi{
     return (*this)->getGetNonzeros(sp,mapping);
   }
 
-  const MX MX::subQQQ(const Matrix<int>& k, int dummy) const {
+  const MX MX::sub(const Matrix<int>& k, int dummy) const {
     int s = size();
     const std::vector<int> & d = k.data();
     for (int i=0;i< k.size();i++) {
@@ -137,7 +137,7 @@ namespace CasADi{
     return (*this)->getGetNonzeros(k.sparsity(),k.data());
   }
 
-  const MX MX::subQQQ(int j, int i) const{
+  const MX MX::sub(int j, int i) const{
     int ind = sparsity().getNZ(j,i);
     if (ind>=0) {
       return (*this)->getGetNonzeros(CCSSparsity::getScalar(),vector<int>(1,ind));
@@ -146,14 +146,14 @@ namespace CasADi{
     }
   }
 
-  const MX MX::subQQQ(const Matrix<int>& k, const std::vector<int>& ii) const{
+  const MX MX::sub(const Matrix<int>& k, const std::vector<int>& ii) const{
     std::vector< int > rows = range(size1());
     std::vector< MX > temp;
 
     for (int i=0;i<ii.size();++i) {
       MX m(k.sparsity(),MX(0));
       for (int j=0;j<m.size();++j) {
-        m[j] = subQQQ(k.at(j),ii.at(i));
+        m[j] = sub(k.at(j),ii.at(i));
       }
       temp.push_back(m);
     }
@@ -162,14 +162,14 @@ namespace CasADi{
     return ret;
   }
 
-  const MX MX::subQQQ(const std::vector<int>& jj, const Matrix<int>& k) const{
+  const MX MX::sub(const std::vector<int>& jj, const Matrix<int>& k) const{
     std::vector< int > cols = range(size2());
     std::vector< MX > temp;
 
     for (int j=0;j<jj.size();++j) {
       MX m(k.sparsity(),MX(0));
       for (int i=0;i<m.size();++i) {
-        m[i] = subQQQ(jj.at(j),k.at(i));
+        m[i] = sub(jj.at(j),k.at(i));
       }
       temp.push_back(m);
     }
@@ -178,18 +178,18 @@ namespace CasADi{
     return ret;
   }
 
-  const MX MX::subQQQ(const Matrix<int>& j, const Matrix<int>& i) const {
+  const MX MX::sub(const Matrix<int>& j, const Matrix<int>& i) const {
     casadi_assert_message(i.sparsity()==j.sparsity(),"sub(Imatrix i, Imatrix j): sparsities must match. Got " << i.dimString() << " and " << j.dimString() << ".");
 
     MX ret(i.sparsity(),MX(0));
     for (int k=0;k<i.size();++k) {
-      ret[k] = subQQQ(j.at(k),i.at(k));
+      ret[k] = sub(j.at(k),i.at(k));
     }
     simplify(ret);
     return ret;
   }
 
-  const MX MX::subQQQ(const CCSSparsity& sp, int dummy) const {
+  const MX MX::sub(const CCSSparsity& sp, int dummy) const {
     casadi_assert_message(size2()==sp.size2() && size1()==sp.size1(),"sub(CCSSparsity sp): shape mismatch. This matrix has shape " << size2() << " x " << size1() << ", but supplied sparsity index has shape " << sp.size2() << " x " << sp.size1() << "." );
     vector<unsigned char> mappingc; // Mapping that will be filled by patternunion
     
@@ -218,23 +218,23 @@ namespace CasADi{
     return ret;
   }
 
-  void MX::setSubQQQ(const MX& m, int j, int i){
-    setSubQQQ(m,vector<int>(1,j),vector<int>(1,i));
+  void MX::setSub(const MX& m, int j, int i){
+    setSub(m,vector<int>(1,j),vector<int>(1,i));
   }
 
-  void MX::setSubQQQ(const MX& m, const std::vector<int>& j, int i){
-    setSubQQQ(m,j,vector<int>(1,i));
+  void MX::setSub(const MX& m, const std::vector<int>& j, int i){
+    setSub(m,j,vector<int>(1,i));
   }
 
-  void MX::setSubQQQ(const MX& m, int j, const std::vector<int>& i){
-    setSubQQQ(m,vector<int>(1,j),i);
+  void MX::setSub(const MX& m, int j, const std::vector<int>& i){
+    setSub(m,vector<int>(1,j),i);
   }
 
-  void MX::setSubQQQ(const MX& m, const Matrix<int>& k){
+  void MX::setSub(const MX& m, const Matrix<int>& k){
     // Allow m to be a 1x1
     if (m.dense() && m.scalar()) {
       if (k.numel()>1) {
-        setSubQQQ(MX(k.sparsity(),m),k);
+        setSub(MX(k.sparsity(),m),k);
         return;
       }
     }
@@ -244,16 +244,16 @@ namespace CasADi{
     casadi_error("MX::setSub not implemented yet");
   }
 
-  void MX::setSubQQQ(const MX& m, const Slice& j, const Slice& i){
-    setSubQQQ(m,j.getAll(size1()),i.getAll(size2()));
+  void MX::setSub(const MX& m, const Slice& j, const Slice& i){
+    setSub(m,j.getAll(size1()),i.getAll(size2()));
   }
 
 
-  void MX::setSubQQQ(const MX& m, const vector<int>& jj, const vector<int>& ii){
+  void MX::setSub(const MX& m, const vector<int>& jj, const vector<int>& ii){
     // Allow m to be a 1x1
     if (m.dense() && m.scalar()) {
       if (ii.size()>1 || jj.size()>1) {
-        setSubQQQ(MX(ii.size(),jj.size(),m),jj,ii);
+        setSub(MX(ii.size(),jj.size(),m),jj,ii);
         return;
       }
     }
@@ -287,10 +287,10 @@ namespace CasADi{
     }
   }
 
-  void MX::setSubQQQ(const MX& m, const std::vector<int>& jj, const Matrix<int>& i) {
+  void MX::setSub(const MX& m, const std::vector<int>& jj, const Matrix<int>& i) {
     // If m is scalar
     if(m.scalar() && (jj.size() > 1 || i.size() > 1)){
-      setSubQQQ(repmat(MX(i.sparsity(),m),1,jj.size()),jj,i);
+      setSub(repmat(MX(i.sparsity(),m),1,jj.size()),jj,i);
       return;
     }
 
@@ -316,10 +316,10 @@ namespace CasADi{
 
 
 
-  void MX::setSubQQQ(const MX& m, const Matrix<int>& j, const std::vector<int>& ii) {
+  void MX::setSub(const MX& m, const Matrix<int>& j, const std::vector<int>& ii) {
     // If m is scalar
     if(m.scalar() && (ii.size() > 1 || j.size() > 1)){
-      setSubQQQ(repmat(MX(j.sparsity(),m),ii.size(),1),j,ii);
+      setSub(repmat(MX(j.sparsity(),m),ii.size(),1),j,ii);
       return;
     }
 
@@ -344,12 +344,12 @@ namespace CasADi{
   }
 
 
-  void MX::setSubQQQ(const MX& m, const Matrix<int>& j, const Matrix<int>& i) {
+  void MX::setSub(const MX& m, const Matrix<int>& j, const Matrix<int>& i) {
     casadi_assert_message(i.sparsity()==j.sparsity(),"setSub(Imatrix m, Imatrix i, Imatrix j): sparsities must match. Got " << i.dimString() << " for i and " << j.dimString() << " for j.");
 
     // If m is scalar
     if(m.scalar() && i.numel() > 1){
-      setSubQQQ(MX(i.sparsity(),m),j,i);
+      setSub(MX(i.sparsity(),m),j,i);
       return;
     }
   
@@ -360,16 +360,16 @@ namespace CasADi{
     }
   }
 
-  void MX::setSubQQQ(const MX& m, const CCSSparsity& sp, int dummy) {
+  void MX::setSub(const MX& m, const CCSSparsity& sp, int dummy) {
     casadi_assert_message(size2()==sp.size2() && size1()==sp.size1(),"setSub(.,CCSSparsity sp): shape mismatch. This matrix has shape " << size2() << " x " << size1() << ", but supplied sparsity index has shape " << sp.size2() << " x " << sp.size1() << "." );
     
     // If m is scalar
     if(m.scalar()){
-      setSubQQQ(MX(sp,m),sp,dummy);
+      setSub(MX(sp,m),sp,dummy);
       return;
     }
     
-    MX mm = m.subQQQ(sp);
+    MX mm = m.sub(sp);
     
     vector<unsigned char> mappingc; // Mapping that will be filled by patternunion
   
