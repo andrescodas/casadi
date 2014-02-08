@@ -45,12 +45,13 @@ namespace CasADi{
       The syntax tries to stay as close as possible to the ublas syntax  when it comes to vector/matrix operations.\n
 
       Index starts with 0.\n
-      Index vec happens as follows: (i,j) -> k = j+i*size1()\n
-      Vectors are considered to be row vectors.\n
+      Index vec happens as follows: (rr,cc) -> k = rr+cc*size1()\n
+      Vectors are column vectors.\n
   
-      The storage format is a compressed column storage (CCS) format. This way, a vector element can always be accessed in constant time.\n
+      The storage format is Compressed Column Storage (CCS), similar to that used for sparse matrices in Matlab, \n
+      but unlike this format, we do allow for elements to be structurally non-zero but numerically zero.\n
   
-      The sparsity can be accessed with CCSSparsity& sparsity()\n
+      The sparsity pattern, which is reference counted and cached, can be accessed with CCSSparsity& sparsity()\n
   
       \author Joel Andersson 
       \date 2012    
@@ -124,26 +125,26 @@ namespace CasADi{
     NonZeros<MatType,K> operator[](const K& k){ return NonZeros<MatType,K>(static_cast<MatType&>(*this),k); }
 
     /** \brief  Get vector element or slice */
-    template<typename I>
-    const MatType operator()(const I& i) const{ return static_cast<const MatType*>(this)->sub(i,0);}
+    template<typename RR>
+    const MatType operator()(const RR& rr) const{ return static_cast<const MatType*>(this)->sub(rr,0);}
 
     /** \brief  Get Sparsity slice */
     const MatType operator()(const CCSSparsity& sp) const{ return static_cast<const MatType*>(this)->sub(sp); }
     
     /** \brief  Get Matrix element or slice */
-    template<typename J, typename I>
-    const MatType operator()(const J& j, const I& i) const{ return static_cast<const MatType*>(this)->sub(j,i); }
+    template<typename RR, typename CC>
+    const MatType operator()(const RR& rr, const CC& cc) const{ return static_cast<const MatType*>(this)->sub(rr,cc); }
 
     /** \brief  Access vector element or slice */
-    template<typename I>
-    SubMatrix<MatType,I,int> operator()(const I& i){ return SubMatrix<MatType,I,int>(static_cast<MatType&>(*this),i,0); }
+    template<typename RR>
+    SubMatrix<MatType,RR,int> operator()(const RR& rr){ return SubMatrix<MatType,RR,int>(static_cast<MatType&>(*this),rr,0); }
 
     /** \brief  Access Sparsity slice */
     SubMatrix<MatType,CCSSparsity,int> operator()(const CCSSparsity& sp){ return SubMatrix<MatType,CCSSparsity,int>(static_cast<MatType&>(*this),sp,0); }
       
     /** \brief  Access Matrix element or slice */
-    template<typename I, typename J>
-    SubMatrix<MatType,I,J> operator()(const I& i, const J& j){ return SubMatrix<MatType,I,J>(static_cast<MatType&>(*this),i,j); }
+    template<typename RR, typename CC>
+    SubMatrix<MatType,RR,CC> operator()(const RR& rr, const CC& cc){ return SubMatrix<MatType,RR,CC>(static_cast<MatType&>(*this),rr,cc); }
 #endif // SWIG
 
     /** \brief Create an n-by-m matrix with symbolic variables */
@@ -152,7 +153,7 @@ namespace CasADi{
     /** \brief Create a vector of length p with with matrices with symbolic variables of given sparsity */
     static std::vector<MatType > sym(const std::string& name, const CCSSparsity& sp, int p);
 
-    /** \brief Create a vector of length p with n-by-m matrices with symbolic variables */
+    /** \brief Create a vector of length p with nrow-by-ncol matrices with symbolic variables */
     static std::vector<MatType > sym(const std::string& name, int nrow, int ncol, int p);
 
     /** \brief Create an matrix with symbolic variables, given a sparsity pattern */
