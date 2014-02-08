@@ -55,15 +55,15 @@ int main(){
   
   // All states
   SXMatrix states = SXMatrix::zeros(3);
-  states(0) = x;
-  states(1) = y;
-  states(2) = L;
+  states(0,0) = x;
+  states(0,1) = y;
+  states(0,2) = L;
 
   //ODE right hand side
   SXMatrix f = SXMatrix::zeros(3);
-  f(0) = (1 - y*y)*x - y + u;
-  f(1) = x;
-  f(2) = x*x + y*y + u*u;
+  f(0,0) = (1 - y*y)*x - y + u;
+  f(0,1) = x;
+  f(0,2) = x*x + y*y + u*u;
   
   // DAE residual
   SXFunction res(daeIn("x",states, "p",u),daeOut("ode",f));

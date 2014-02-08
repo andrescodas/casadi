@@ -401,7 +401,7 @@ namespace CasADi{
   
     // Make the arguments dependent on the parent
     for (int k=0;k<deps.size();k++) {
-      deps[k] = reshape(P(range(index[k],index[k+1])),deps[k].sparsity());
+      deps[k] = reshape(P(0,range(index[k],index[k+1])),deps[k].sparsity());
     }
   
     return P;
@@ -421,7 +421,7 @@ namespace CasADi{
   
     // Make the arguments dependent on the parent
     for (int k=0;k<deps.size();k++) {
-      ret[k] =  reshape(P(range(index[k],index[k+1])),deps[k]);
+      ret[k] =  reshape(P(0,range(index[k],index[k+1])),deps[k]);
     }
   
     return std::pair< MX, std::vector<MX> > (P,ret);

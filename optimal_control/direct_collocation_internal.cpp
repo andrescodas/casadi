@@ -90,7 +90,7 @@ void DirectCollocationInternal::init(){
     lfcn.setInput(1.0);
     lfcn.evaluate();
     D[j] = lfcn.output();
-    D_num(j) = lfcn.output();
+    D_num(0,j) = lfcn.output();
 
     // Evaluate the time derivative of the polynomial at all collocation points to get the coefficients of the continuity equation
     FX tfcn = lfcn.tangent();
@@ -335,7 +335,7 @@ void DirectCollocationInternal::setOptimalSolution( const vector<double> &V_opt 
 
   // Pass optimized state
   for(int i=0; i<np_; ++i){
-    p_opt(i) = V_opt[el++];
+    p_opt(0,i) = V_opt[el++];
   }
     
   for(int k=0; k<nk_; ++k){

@@ -131,7 +131,7 @@ namespace CasADi{
       return (*this)(j.getAll(size1()),i.getAll(size2()));
     }
     const MX indexed(const Matrix<int> &k) const{ 
-      return (*this)(k);
+      return (*this)(0,k);
     }
     const MX indexed(const CCSSparsity &sp) const{ 
       return (*this)(sp);

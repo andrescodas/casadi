@@ -113,8 +113,8 @@ namespace CasADi{
       }
     
       // Evaluate the polynomial at the final time to get the coefficients of the continuity equation
-      D_num(j) = p(1.0);
-      D[j] = D_num(j);
+      D_num(0,j) = p(1.0);
+      D[j] = D_num(0,j);
     
       // Evaluate the time derivative of the polynomial at all collocation points to get the coefficients of the continuity equation
       Polynomial dp = p.derivative();
@@ -125,7 +125,7 @@ namespace CasADi{
         
       // Integrate polynomial to get the coefficients of the quadratures
       Polynomial ip = p.anti_derivative();
-      Q(j) = ip(1.0);
+      Q(0,j) = ip(1.0);
     }
 
     C_num(ALL,std::vector<int>(1,0)) = 0;

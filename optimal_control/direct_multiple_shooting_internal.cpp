@@ -82,7 +82,7 @@ void DirectMultipleShootingInternal::init(){
   MX V("V",NV);
 
   // Global parameters
-  MX P = V(Slice(0,np_));
+  MX P = V(0,Slice(0,np_));
 
   // offset in the variable vector
   int v_offset=np_; 
@@ -294,7 +294,7 @@ void DirectMultipleShootingInternal::setOptimalSolution(const vector<double> &V_
 
   // Pass optimized state
   for(int i=0; i<np_; ++i){
-    p_opt(i) = V_opt[el++];
+    p_opt(0,i) = V_opt[el++];
   }
     
   for(int k=0; k<nk_; ++k){

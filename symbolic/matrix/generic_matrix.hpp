@@ -124,8 +124,8 @@ class GenericMatrix{
     NonZeros<MatType,K> operator[](const K& k){ return NonZeros<MatType,K>(static_cast<MatType&>(*this),k); }
 
     /** \brief  Get vector element or slice */
-    template<typename I>
-    const MatType operator()(const I& i) const{ return static_cast<const MatType*>(this)->sub(i,0);}
+  //    template<typename I>
+  //  const MatType operator()(const I& i) const{ return static_cast<const MatType*>(this)->sub(i,0);}
 
     /** \brief  Get Sparsity slice */
     const MatType operator()(const CCSSparsity& sp) const{ return static_cast<const MatType*>(this)->sub(sp); }
@@ -135,8 +135,8 @@ class GenericMatrix{
     const MatType operator()(const J& j, const I& i) const{ return static_cast<const MatType*>(this)->sub(i,j); }
 
     /** \brief  Access vector element or slice */
-    template<typename I>
-    SubMatrix<MatType,I,int> operator()(const I& i){ return SubMatrix<MatType,I,int>(static_cast<MatType&>(*this),i,0); }
+  //    template<typename I>
+  //   SubMatrix<MatType,I,int> operator()(const I& i){ return SubMatrix<MatType,I,int>(static_cast<MatType&>(*this),i,0); }
 
     /** \brief  Access Sparsity slice */
     SubMatrix<MatType,CCSSparsity,int> operator()(const CCSSparsity& sp){ return SubMatrix<MatType,CCSSparsity,int>(static_cast<MatType&>(*this),sp,0); }

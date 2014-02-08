@@ -249,7 +249,7 @@ void DirectSingleShootingInternal::setOptimalSolution(const vector<double> &V_op
 
   // Pass optimized parameters
   for(int i=0; i<np_; ++i){
-    p_opt(i) = V_opt[el++];
+    p_opt(0,i) = V_opt[el++];
   }
     
   // Pass optimized initial state

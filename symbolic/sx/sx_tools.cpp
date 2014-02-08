@@ -84,7 +84,7 @@ SXMatrix pw_const(const SXMatrix &t, const SXMatrix &tval, const SXMatrix &val){
 
   SXMatrix ret = val.at(0);  
   for(int i=0; i<n-1; ++i){
-    ret += (val(i+1)-val(i)) * (t>=tval(i));
+    ret += (val(0,i+1)-val(0,i)) * (t>=tval(0,i));
   }
 
   return ret;
@@ -98,13 +98,13 @@ SXMatrix pw_lin(const SX &t, const SXMatrix &tval, const SXMatrix &val){
   // Gradient for each line segment
   SXMatrix g(N-1,1);
   for(int i=0; i<N-1; ++i){
-    g(i) = (val(i+1)- val(i))/(tval(i+1)-tval(i));
+    g(0,i) = (val(0,i+1)- val(0,i))/(tval(0,i+1)-tval(0,i));
   }
 
   // Line segments
   SXMatrix lseg(N-1,1);
   for(int i=0; i<N-1; ++i)
-    lseg(i) = val(i) + g(i)*(t-tval(i)); 
+    lseg(0,i) = val(0,i) + g(0,i)*(t-tval(0,i)); 
 
   // interior time points
   SXMatrix tint = tval(0,range(N-2));
@@ -457,12 +457,12 @@ int getIntValue(const SXMatrix& ex, int i, int j) {
 
 void getValue(const SXMatrix& ex, double *res) {
   for(int i=0; i<ex.numel(); ++i)
-    res[i] = ex(i).toScalar()->getValue();
+    res[i] = ex(0,i).toScalar()->getValue();
 }
 
 void getIntValue(const SXMatrix& ex, int *res) {
   for(int i=0; i<ex.numel(); ++i)
-    res[i] = ex(i).toScalar().getIntValue();
+    res[i] = ex(0,i).toScalar().getIntValue();
 }
 
 const string& getName(const SXMatrix& ex) {
@@ -1262,13 +1262,13 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
     casadi_assert_message(p.size1()==1,"poly_root(): supplied paramter must be row vector but got " << p.dimString() << ".");
     casadi_assert(p.dense());
     if (p.size2()==2) { // a*x + b
-      SXMatrix a = p(0);
-      SXMatrix b = p(1);
+      SXMatrix a = p(0,0);
+      SXMatrix b = p(0,1);
       return -b/a;
     } else if (p.size2()==3) { // a*x^2 + b*x + c
-      SXMatrix a = p(0);
-      SXMatrix b = p(1);
-      SXMatrix c = p(2);
+      SXMatrix a = p(0,0);
+      SXMatrix b = p(0,1);
+      SXMatrix c = p(0,2);
       SXMatrix ds = sqrt(b*b-4*a*c);
       SXMatrix bm = -b;
       SXMatrix a2 = 2*a;
@@ -1278,11 +1278,11 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
       return ret;
     } else if (p.size2()==4) {
       // www.cs.iastate.edu/~cs577/handouts/polyroots.pdf
-      SXMatrix ai = 1/p(0);
+      SXMatrix ai = 1/p(0,0);
        
-      SXMatrix p_ = p(1)*ai;
-      SXMatrix q  = p(2)*ai;
-      SXMatrix r  = p(3)*ai;
+      SXMatrix p_ = p(0,1)*ai;
+      SXMatrix q  = p(0,2)*ai;
+      SXMatrix r  = p(0,3)*ai;
       
       SXMatrix pp = p_*p_;
       
@@ -1302,11 +1302,11 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
       ret-= p_/3;
       return ret;
     } else if (p.size2()==5) {
-      SXMatrix ai = 1/p(0);
-      SXMatrix b = p(1)*ai;
-      SXMatrix c = p(2)*ai;
-      SXMatrix d = p(3)*ai;
-      SXMatrix e = p(4)*ai;
+      SXMatrix ai = 1/p(0,0);
+      SXMatrix b = p(0,1)*ai;
+      SXMatrix c = p(0,2)*ai;
+      SXMatrix d = p(0,3)*ai;
+      SXMatrix e = p(0,4)*ai;
       
       SXMatrix bb= b*b;
       SXMatrix f = c - (3*bb/8);
@@ -1319,8 +1319,8 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
       poly.append(-g*g/64);
       SXMatrix y = poly_roots(poly);
       
-      SXMatrix r0 = y(0);
-      SXMatrix r1 = y(2);
+      SXMatrix r0 = y(0,0);
+      SXMatrix r1 = y(0,2);
 
       SXMatrix p = sqrt(r0); // two non-zero-roots
       SXMatrix q = sqrt(r1);
@@ -1336,8 +1336,8 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
       ret.append(-p - q + r -s);
 
       return ret;
-    } else if (p(p.size()-1).at(0).isEqual(0)) {
-      SXMatrix ret = poly_roots(p(range(p.size()-1)));
+    } else if (p(0,p.size()-1).at(0).isEqual(0)) {
+      SXMatrix ret = poly_roots(p(0,range(p.size()-1)));
       ret.append(0);
       return ret;
     } else {
