@@ -645,7 +645,7 @@ namespace CasADi{
             std::reverse(lookup_value.begin(),lookup_value.end());
             IMatrix duplicates = IMatrix::sparse(lookup_col,lookup_row,lookup_value,coarse.size(),bvec_size) - lookup;
             makeSparse(duplicates);
-            SubMatrix<Matrix<int>,CCSSparsity,int> temp(lookup,duplicates.sparsity(),0);
+            SubMatrixQQQ<Matrix<int>,CCSSparsity,int> temp(lookup,duplicates.sparsity(),0); // NOTE: Not intended use of SubMatrix
             temp = -bvec_size;
               
             // Propagate the dependencies

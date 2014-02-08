@@ -26,22 +26,22 @@
 namespace CasADi{
 
 
-  /** SubMatrix class for Matrix 
-      SubMatrix is the return type for operator() of the Matrix class, it allows access to the value as well as changing the parent object
+  /** SubMatrixQQQ class for Matrix 
+      SubMatrixQQQ is the return type for operator() of the Matrix class, it allows access to the value as well as changing the parent object
       \author Joel Andersson 
       \date 2011
   */
 
   /// submatrix
   template<typename M, typename I, typename J>
-  class SubMatrix : public M{
+  class SubMatrixQQQ : public M{
   public:
     /// Constructor
-    SubMatrix(M& mat, const I& i, const J& j) : M(mat.sub(i,j)), mat_(mat), i_(i), j_(j){}
+    SubMatrixQQQ(M& mat, const I& i, const J& j) : M(mat.subQQQ(i,j)), mat_(mat), i_(i), j_(j){}
 
     //@{
     /// Methods that modify a part of the parent obejct (A(i,j) = ?, A(i,j) += ?, etc.)
-    const M& operator=(const SubMatrix<M,I,J> &y);
+    const M& operator=(const SubMatrixQQQ<M,I,J> &y);
     const M& operator=(const M &y);
     M operator+=(const M &y);
     M operator-=(const M &y);
@@ -60,43 +60,43 @@ namespace CasADi{
 
   // Implementation
   template<typename M, typename I, typename J>
-  const M& SubMatrix<M,I,J>::operator=(const SubMatrix<M,I,J> &y) { 
-    mat_.setSub(y,i_,j_); 
+  const M& SubMatrixQQQ<M,I,J>::operator=(const SubMatrixQQQ<M,I,J> &y) { 
+    mat_.setSubQQQ(y,i_,j_); 
     return y;
   }
 
   // Implementation
   template<typename M, typename I, typename J>
-  const M& SubMatrix<M,I,J>::operator=(const M &y) { 
-    mat_.setSub(y,i_,j_); 
+  const M& SubMatrixQQQ<M,I,J>::operator=(const M &y) { 
+    mat_.setSubQQQ(y,i_,j_); 
     return y;
   }
 
   template<typename M, typename I, typename J>
-  M SubMatrix<M,I,J>::operator+=(const M &y){ 
+  M SubMatrixQQQ<M,I,J>::operator+=(const M &y){ 
     M s = *this+y;
-    mat_.setSub(s,i_,j_); 
+    mat_.setSubQQQ(s,i_,j_); 
     return s;
   }
 
   template<typename M, typename I, typename J>
-  M SubMatrix<M,I,J>::operator-=(const M &y){ 
+  M SubMatrixQQQ<M,I,J>::operator-=(const M &y){ 
     M s = *this-y;
-    mat_.setSub(s,i_,j_); 
+    mat_.setSubQQQ(s,i_,j_); 
     return s;
   }
 
   template<typename M, typename I, typename J>
-  M SubMatrix<M,I,J>::operator*=(const M &y){ 
+  M SubMatrixQQQ<M,I,J>::operator*=(const M &y){ 
     M s = *this*y;
-    mat_.setSub(s,i_,j_); 
+    mat_.setSubQQQ(s,i_,j_); 
     return s;
   }
 
   template<typename M, typename I, typename J>
-  M SubMatrix<M,I,J>::operator/=(const M &y){ 
+  M SubMatrixQQQ<M,I,J>::operator/=(const M &y){ 
     M s = *this/y;
-    mat_.setSub(s,i_,j_); 
+    mat_.setSubQQQ(s,i_,j_); 
     return s;
   }
 

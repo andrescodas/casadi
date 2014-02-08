@@ -131,7 +131,7 @@ namespace CasADi{
       return (*this)(j.getAll(size1()),i.getAll(size2()));
     }
     const MX indexed(const Matrix<int> &k) const{ 
-      return (*this)(0,k);
+      return (*this)(k);
     }
     const MX indexed(const CCSSparsity &sp) const{ 
       return (*this)(sp);
@@ -162,7 +162,7 @@ namespace CasADi{
     void indexed_one_based_assignment(int i, int j, const MX &m){ (*this)(j-1,i-1) = m;}
     void indexed_zero_based_assignment(int i, int j, const MX &m){ (*this)(j,i) = m;}
     void indexed_assignment(const IndexList &i, const IndexList &j, const MX &m){
-      setSub(m,i.getAll(size2()),j.getAll(size1()));
+      setSubQQQ(m,j.getAll(size1()),i.getAll(size2()));
     }
     
     void indexed_assignment(const Slice &i, const Slice &j, const MX &m){
@@ -358,33 +358,31 @@ namespace CasADi{
     /** \brief  Identity matrix */  
     static MX eye(int ncol);
   
-    const MX sub(int i, int j) const;
-    const MX sub(int i, const std::vector<int>& j) const;
-    const MX sub(const std::vector<int>& i, int j) const;
-    const MX sub(const std::vector<int>& i, const std::vector<int>& j) const;
-    const MX sub(const Matrix<int>& k, int dummy=0) const;
-    const MX sub(const CCSSparsity& sp, int dummy=0) const;
-    const MX sub(const std::vector<int>& i, const Matrix<int>& j) const;
-    const MX sub(const Matrix<int>& k, const std::vector<int>& j) const;
-    const MX sub(const Slice& i, int j) const {return sub(i.getAll(size2()),j);}
-    const MX sub(int i, const Slice& j) const {return sub(i,j.getAll(size1()));}
-    const MX sub(const Slice& i, const Slice& j) const {return sub(i.getAll(size2()),j.getAll(size1()));}
-    const MX sub(const Slice& i, const Matrix<int>& j) const {return sub(i.getAll(size2()),j);}
-    const MX sub(const Matrix<int>& i, const Slice& j) const {return sub(i,j.getAll(size1()));}
-    const MX sub(const Matrix<int>& i, const Matrix<int>& j) const;
+    const MX subQQQ(int j, int i) const;
+    const MX subQQQ(const std::vector<int>& j, int i) const;
+    const MX subQQQ(int j, const std::vector<int>& i) const;
+    const MX subQQQ(const std::vector<int>& j, const std::vector<int>& i) const;
+    const MX subQQQ(const Matrix<int>& k, int dummy=0) const;
+    const MX subQQQ(const CCSSparsity& sp, int dummy=0) const;
+    const MX subQQQ(const Matrix<int>& j, const std::vector<int>& i) const;
+    const MX subQQQ(const std::vector<int>& j, const Matrix<int>& k) const;
+    const MX subQQQ(int j, const Slice& i) const {return subQQQ(j,i.getAll(size2()));}
+    const MX subQQQ(const Slice& j, int i) const {return subQQQ(j.getAll(size1()),i);}
+    const MX subQQQ(const Slice& j, const Slice& i) const {return subQQQ(j.getAll(size1()),i.getAll(size2()));}
+    const MX subQQQ(const Matrix<int>& j, const Slice& i) const {return subQQQ(j,i.getAll(size2()));}
+    const MX subQQQ(const Slice& j, const Matrix<int>& i) const {return subQQQ(j.getAll(size1()),i);}
+    const MX subQQQ(const Matrix<int>& j, const Matrix<int>& i) const;
 
-    void setSub(const MX& m, int i, int j);
-    void setSub(const MX& m, int i, const std::vector<int>& j);
-    void setSub(const MX& m, const std::vector<int>& i, int j);
-    void setSub(const MX& m, const std::vector<int>& i, const std::vector<int>& j);
-    void setSub(const MX& m, const Matrix<int>& k);
-    void setSub(const MX& m, const std::vector<int>& i, const Matrix<int>& k);
-    void setSub(const MX& m, const Matrix<int>& k, const std::vector<int>& j);
-    void setSub(const MX& m, const Slice& i, const Slice& j);
-    //void setSub(const MX& m, const Slice& i, const Matrix<int>& k) {return setSub(m,i.getAll(size2()),k);}
-    //void setSub(const MX& m, const Matrix<int>& k, const Slice& j) {return setSub(m,k,j.getAll(size1()));}
-    void setSub(const MX& m, const Matrix<int>& i, const Matrix<int>& j);
-    void setSub(const MX& m, const CCSSparsity& sp, int dummy);
+    void setSubQQQ(const MX& m, int j, int i);
+    void setSubQQQ(const MX& m, const std::vector<int>& j, int i);
+    void setSubQQQ(const MX& m, int j, const std::vector<int>& i);
+    void setSubQQQ(const MX& m, const std::vector<int>& j, const std::vector<int>& i);
+    void setSubQQQ(const MX& m, const Matrix<int>& k);
+    void setSubQQQ(const MX& m, const Matrix<int>& k, const std::vector<int>& i);
+    void setSubQQQ(const MX& m, const std::vector<int>& j, const Matrix<int>& k);
+    void setSubQQQ(const MX& m, const Slice& j, const Slice& i);
+    void setSubQQQ(const MX& m, const Matrix<int>& j, const Matrix<int>& i);
+    void setSubQQQ(const MX& m, const CCSSparsity& sp, int dummy);
     
     MX getNZ(int k) const;
     MX getNZ(const std::vector<int>& k) const;

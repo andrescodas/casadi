@@ -125,25 +125,25 @@ namespace CasADi{
 
     /** \brief  Get vector element or slice */
     template<typename I>
-    const MatType operator()(const I& i) const{ return static_cast<const MatType*>(this)->sub(0,i);}
+    const MatType operator()(const I& i) const{ return static_cast<const MatType*>(this)->subQQQ(i,0);}
 
     /** \brief  Get Sparsity slice */
-    const MatType operator()(const CCSSparsity& sp) const{ return static_cast<const MatType*>(this)->sub(sp); }
+    const MatType operator()(const CCSSparsity& sp) const{ return static_cast<const MatType*>(this)->subQQQ(sp); }
     
     /** \brief  Get Matrix element or slice */
-    template<typename I, typename J>
-    const MatType operator()(const J& j, const I& i) const{ return static_cast<const MatType*>(this)->sub(i,j); }
+    template<typename J, typename I>
+    const MatType operator()(const J& j, const I& i) const{ return static_cast<const MatType*>(this)->subQQQ(j,i); }
 
     /** \brief  Access vector element or slice */
     template<typename I>
-    SubMatrix<MatType,I,int> operator()(const I& i){ return SubMatrix<MatType,I,int>(static_cast<MatType&>(*this),0,i); }
+    SubMatrixQQQ<MatType,I,int> operator()(const I& i){ return SubMatrixQQQ<MatType,I,int>(static_cast<MatType&>(*this),i,0); }
 
     /** \brief  Access Sparsity slice */
-    SubMatrix<MatType,CCSSparsity,int> operator()(const CCSSparsity& sp){ return SubMatrix<MatType,CCSSparsity,int>(static_cast<MatType&>(*this),sp,0); }
+    SubMatrixQQQ<MatType,CCSSparsity,int> operator()(const CCSSparsity& sp){ return SubMatrixQQQ<MatType,CCSSparsity,int>(static_cast<MatType&>(*this),sp,0); }
       
     /** \brief  Access Matrix element or slice */
-    template<typename J, typename I>
-    SubMatrix<MatType,I,J> operator()(const J& j, const I& i){ return SubMatrix<MatType,I,J>(static_cast<MatType&>(*this),i,j); }
+    template<typename I, typename J>
+    SubMatrixQQQ<MatType,I,J> operator()(const I& i, const J& j){ return SubMatrixQQQ<MatType,I,J>(static_cast<MatType&>(*this),i,j); }
 #endif // SWIG
 
     /** \brief Create an n-by-m matrix with symbolic variables */

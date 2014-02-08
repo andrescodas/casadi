@@ -125,15 +125,15 @@ namespace CasADi{
     control_dae_in_[CONTROL_DAE_X]        = dae_in_[DAE_X];
     if (!control_dae_.input(CONTROL_DAE_Z).empty())
       control_dae_in_[CONTROL_DAE_Z]        = dae_in_[DAE_Z];
-    control_dae_in_[CONTROL_DAE_P]        = dae_in_[DAE_P](0,iP);
+    control_dae_in_[CONTROL_DAE_P]        = dae_in_[DAE_P](iP);
     if (!control_dae_.input(CONTROL_DAE_U).empty())
-      control_dae_in_[CONTROL_DAE_U]        = dae_in_[DAE_P](0,iUstart);
+      control_dae_in_[CONTROL_DAE_U]        = dae_in_[DAE_P](iUstart);
     if (!control_dae_.input(CONTROL_DAE_U_INTERP).empty()) {
       MX tau = (dae_in_[DAE_P](0,iTF)-dae_in_[DAE_T])/(dae_in_[DAE_P](0,iTF)-dae_in_[DAE_P](0,iT0));
-      control_dae_in_[CONTROL_DAE_U_INTERP] = dae_in_[DAE_P](0,iUstart) * (1-tau) + tau* dae_in_[DAE_P](0,iUend);
+      control_dae_in_[CONTROL_DAE_U_INTERP] = dae_in_[DAE_P](iUstart) * (1-tau) + tau* dae_in_[DAE_P](iUend);
     }
     if (!control_dae_.input(CONTROL_DAE_X_MAJOR).empty())
-      control_dae_in_[CONTROL_DAE_X_MAJOR] = dae_in_[DAE_P](0,iYM);
+      control_dae_in_[CONTROL_DAE_X_MAJOR] = dae_in_[DAE_P](iYM);
 
     std::vector<MX> control_dae_call = control_dae_.call(control_dae_in_);
   
@@ -272,14 +272,14 @@ namespace CasADi{
     if (!output_fcn_.input(CONTROL_DAE_TF).empty())
       output_fcn_in_[CONTROL_DAE_TF]       = dae_in_[DAE_P](0,iTF);
     output_fcn_in_[CONTROL_DAE_X]        = dae_in_[DAE_X];
-    output_fcn_in_[CONTROL_DAE_P]        = dae_in_[DAE_P](0,iP);
+    output_fcn_in_[CONTROL_DAE_P]        = dae_in_[DAE_P](iP);
     if (!output_fcn_.input(CONTROL_DAE_U).empty())
-      output_fcn_in_[CONTROL_DAE_U]        = dae_in_[DAE_P](0,iUstart);
+      output_fcn_in_[CONTROL_DAE_U]        = dae_in_[DAE_P](iUstart);
     if (!output_fcn_.input(CONTROL_DAE_U_INTERP).empty()) {
-      output_fcn_in_[CONTROL_DAE_U_INTERP] = dae_in_[DAE_P](0,iUstart) * (1-dae_in_[DAE_T]) + dae_in_[DAE_T]* dae_in_[DAE_P](0,iUend);
+      output_fcn_in_[CONTROL_DAE_U_INTERP] = dae_in_[DAE_P](iUstart) * (1-dae_in_[DAE_T]) + dae_in_[DAE_T]* dae_in_[DAE_P](iUend);
     }
     if (!output_fcn_.input(CONTROL_DAE_X_MAJOR).empty())
-      output_fcn_in_[CONTROL_DAE_X_MAJOR] = dae_in_[DAE_P](0,iYM);
+      output_fcn_in_[CONTROL_DAE_X_MAJOR] = dae_in_[DAE_P](iYM);
 
     // Transform the output_fcn_ with CONTROL_DAE input scheme to a DAE input scheme
     output_fcn_ = MXFunction(dae_in_,output_fcn_.call(output_fcn_in_));
