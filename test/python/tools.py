@@ -1023,14 +1023,14 @@ class Toolstests(casadiTestCase):
     
     X_sx = struct_SX(x_sx)
     X_sx["x"] = DMatrix(range(n))
-    X_sx["S"] = DMatrix(range(n,n+n*n),n,n)
+    X_sx["S"] = DMatrix(00,00,00,range(n,n+n*n),n,n)
    
     X_mx = struct_MX(x_sx)
     X_mx["x"] = DMatrix(range(n))
-    X_mx["S"] = DMatrix(range(n,n+n*n),n,n)
+    X_mx["S"] = DMatrix(00,00,00,range(n,n+n*n),n,n)
     
-    self.checkarray(x_sx.struct.map[("S",)],DMatrix(range(n,n+n*n),n,n))
-    self.checkarray(x_mx.struct.map[("S",)],DMatrix(range(n,n+n*n),n,n))
+    self.checkarray(x_sx.struct.map[("S",)],DMatrix(00,00,00,range(n,n+n*n),n,n))
+    self.checkarray(x_mx.struct.map[("S",)],DMatrix(00,00,00,range(n,n+n*n),n,n))
     self.checkarray(X_sx.cat,DMatrix(range(n+n*n)))
     self.checkarray(X_mx.cat,DMatrix(range(n+n*n)))
     
@@ -1038,9 +1038,9 @@ class Toolstests(casadiTestCase):
       h = S([entry("w",struct=s)])
       hX = struct_SX(h)
       hX["w","x"] = DMatrix(range(n))
-      hX["w","S"] = DMatrix(range(n,n+n*n),n,n) 
+      hX["w","S"] = DMatrix(00,00,00,range(n,n+n*n),n,n) 
       
-      self.checkarray(h.struct.map[("w","S",)],DMatrix(range(n,n+n*n),n,n))
+      self.checkarray(h.struct.map[("w","S",)],DMatrix(00,00,00,range(n,n+n*n),n,n))
       self.checkarray(hX.cat,DMatrix(range(n+n*n)))
       
       self.checkarray(h.struct.map[("w",)],DMatrix(range(n+n*n)))
@@ -1063,14 +1063,14 @@ class Toolstests(casadiTestCase):
     
     X_sx = struct_SX(x_sx)
     X_sx["x"] = DMatrix(range(n))
-    X_sx["S"] = DMatrix(range(n,n+n*m),n,m)
+    X_sx["S"] = DMatrix(00,00,00,range(n,n+n*m),m,n)
    
     X_mx = struct_MX(x_sx)
     X_mx["x"] = DMatrix(range(n))
-    X_mx["S"] = DMatrix(range(n,n+n*m),n,m)
+    X_mx["S"] = DMatrix(00,00,00,range(n,n+n*m),m,n)
     
-    self.checkarray(x_sx.struct.map[("S",)],DMatrix(range(n,n+n*m),n,m))
-    self.checkarray(x_mx.struct.map[("S",)],DMatrix(range(n,n+n*m),n,m))
+    self.checkarray(x_sx.struct.map[("S",)],DMatrix(00,00,00,range(n,n+n*m),m,n))
+    self.checkarray(x_mx.struct.map[("S",)],DMatrix(00,00,00,range(n,n+n*m),m,n))
     self.checkarray(X_sx.cat,DMatrix(range(n+n*m)))
     self.checkarray(X_mx.cat,DMatrix(range(n+n*m)))
     

@@ -145,7 +145,7 @@ namespace CasADi{
     Matrix(const std::vector<T>& x);
     
     /// Construct dense matrix from a vector with the elements in column major ordering
-    Matrix(const std::vector<T>& x, int n, int m);
+    Matrix(int dum1, int dum2, int dum3, const std::vector<T>& x, int nrow, int ncol);
 
     /// Convert to scalar type
     const T toScalar() const;
