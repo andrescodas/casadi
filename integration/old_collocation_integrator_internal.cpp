@@ -90,16 +90,16 @@ namespace CasADi{
     vector<vector<MX> > C(deg+1,vector<MX>(deg+1));
   
     // Coefficients of the collocation equation as DMatrix
-    DMatrix C_num = DMatrix(deg+1,deg+1,0);
+    DMatrix C_num = DMatrix(00,00,00,deg+1,deg+1,0);
 
     // Coefficients of the continuity equation
     vector<MX> D(deg+1);
   
     // Coefficients of the collocation equation as DMatrix
-    DMatrix D_num = DMatrix(deg+1,1,0);
+    DMatrix D_num = DMatrix(00,00,00,1,deg+1,0);
 
     // Coefficients of the quadratures
-    DMatrix Q = DMatrix(deg+1,1,0);
+    DMatrix Q = DMatrix(00,00,00,1,deg+1,0);
 
     // For all collocation points
     for(int j=0; j<deg+1; ++j){
@@ -135,23 +135,23 @@ namespace CasADi{
     casadi_assert_message(fabs(sumAll(D_num)-1).at(0)<1e-9,"Check on collocation coefficients");
   
     // Initial state
-    MX X0("X0",nx_);
+    MX X0(00,00,00,"X0",nx_);
   
     // Parameters
-    MX P("P",np_);
+    MX P(00,00,00,"P",np_);
   
     // Backward state
-    MX RX0("RX0",nrx_);
+    MX RX0(00,00,00,"RX0",nrx_);
   
     // Backward parameters
-    MX RP("RP",nrp_);
+    MX RP(00,00,00,"RP",nrp_);
   
     // Collocated differential states and algebraic variables
     int nX = (nk*(deg+1)+1)*(nx_+nrx_);
     int nZ = nk*deg*(nz_+nrz_);
   
     // Unknowns
-    MX V("V",nX+nZ);
+    MX V(00,00,00,"V",nX+nZ);
     int offset = 0;
   
     // Get collocated states, algebraic variables and times

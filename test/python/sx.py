@@ -494,8 +494,8 @@ class SXtests(casadiTestCase):
       
   def test_sparseconstr(self):
     self.message("Check sparsity constructors")
-    self.checkarray(DMatrix(sp_triu(3),1).toArray(),matrix([[1,0,0],[1,1,0],[1,1,1]]),"tril")
-    self.checkarray(DMatrix(sp_diag(3),1).toArray(),matrix([[1,0,0],[0,1,0],[0,0,1]]),"diag")
+    self.checkarray(DMatrix(00,00,00,sp_triu(3),1).toArray(),matrix([[1,0,0],[1,1,0],[1,1,1]]),"tril")
+    self.checkarray(DMatrix(00,00,00,sp_diag(3),1).toArray(),matrix([[1,0,0],[0,1,0],[0,0,1]]),"diag")
     
   def test_subsassignment(self):
     self.message("Check subscripted assignment")
@@ -506,7 +506,7 @@ class SXtests(casadiTestCase):
 
     x=DMatrix(xn)
     
-    y=DMatrix(7,8)
+    y=DMatrix(00,00,00,8,7)
     z = numpy.zeros((7,8))
     y[0,0]=12; z[0,0] = 12
     self.checkarray(y,z,"scalar assignment")
@@ -628,10 +628,10 @@ class SXtests(casadiTestCase):
     r = f.eval([x,[]])
     self.assertTrue(r[1].empty())
     
-    r = f.eval([x,SXMatrix(0,1)])
+    r = f.eval([x,SXMatrix(00,00,00,1,0)])
     self.assertTrue(r[1].empty())
 
-    r = f.eval([x,SXMatrix(1,0)])
+    r = f.eval([x,SXMatrix(00,00,00,0,1)])
     self.assertTrue(r[1].empty())
     
     #self.assertRaises(Exception,lambda : f.eval([x,x]))
@@ -1090,7 +1090,7 @@ class SXtests(casadiTestCase):
   def test_jacobian_empty(self):
     x = ssym("x",3)
 
-    s = jacobian(DMatrix(0,0),x).shape
+    s = jacobian(DMatrix(00,00,00,0,0),x).shape
     self.assertEqual(s[0],0)
     self.assertEqual(s[1],3)
 
@@ -1128,7 +1128,7 @@ class SXtests(casadiTestCase):
     f.evaluate()
     g.evaluate()
     
-    self.checkarray(IMatrix(filt,1),IMatrix(g.output().sparsity(),1))
+    self.checkarray(IMatrix(00,00,00,filt,1),IMatrix(00,00,00,g.output().sparsity(),1))
     
     self.checkarray(f.output()[filt],g.output())
     
@@ -1160,7 +1160,7 @@ class SXtests(casadiTestCase):
     self.checkarray(h.output().data(),H.data())
 
   def test_mxnulloutput(self):
-     a = SXMatrix(5,0)
+     a = SXMatrix(00,00,00,0,5)
      b = ssym("x",2)
      bm = msym("x",2)
      
@@ -1176,7 +1176,7 @@ class SXtests(casadiTestCase):
      self.assertEqual(c.size2(),5)
      self.assertEqual(c.size1(),0)
      
-     a = SXMatrix(0,0)
+     a = SXMatrix(00,00,00,0,0)
      
      f = SXFunction([b],[a])
      f.init()
@@ -1192,22 +1192,22 @@ class SXtests(casadiTestCase):
      self.assertEqual(c.size1(),0)
      
   def test_mxnull(self):
-     a = SXMatrix(5,0)
-     b = SXMatrix(0,3)
+     a = SXMatrix(00,00,00,0,5)
+     b = SXMatrix(00,00,00,3,0)
      
      c = mul(a,b)
      
      self.assertEqual(c.size(),0)
      
-     a = SXMatrix(5,3)
-     b = SXMatrix(3,4)
+     a = SXMatrix(00,00,00,3,5)
+     b = SXMatrix(00,00,00,4,3)
      
      c = mul(a,b)
      
      self.assertEqual(c.size(),0)
      
   def  test_mxnullop(self):
-    c = SXMatrix(0,0)
+    c = SXMatrix(00,00,00,0,0)
     x = ssym("x",2,3)
     
     with self.assertRaises(RuntimeError):

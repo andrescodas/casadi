@@ -115,7 +115,7 @@ class NLPtests(casadiTestCase):
       x=ssym("x",s)
 
       y=ssym("y",s)
-      y0 = DMatrix(sp_diag(N),0.1)
+      y0 = DMatrix(00,00,00,sp_diag(N),0.1)
 
       f=SXFunction([flattenNZ(y),flattenNZ(x)],[flattenNZ((mul((x+y0),(x+y0).T)-mul((y+y0),(y+y0).T))[s])])
       f.init()

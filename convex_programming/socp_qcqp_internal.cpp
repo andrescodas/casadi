@@ -144,7 +144,7 @@ void SOCPQCQPInternal::init(){
   // Allocate Cholesky solvers
   cholesky_.push_back(CSparseCholesky(st_[QCQP_STRUCT_H]));
   for (int i=0;i<nq_;++i) {
-    cholesky_.push_back(CSparseCholesky(DMatrix(st_[QCQP_STRUCT_P])(ALL,range(i*n_,(i+1)*n_)).sparsity()));
+    cholesky_.push_back(CSparseCholesky(DMatrix(00,00,00,st_[QCQP_STRUCT_P])(ALL,range(i*n_,(i+1)*n_)).sparsity()));
   }
   
   for (int i=0;i<nq_+1;++i) {

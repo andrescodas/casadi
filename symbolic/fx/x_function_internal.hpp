@@ -150,19 +150,19 @@ namespace CasADi{
     // Allocate space for inputs
     setNumInputs(inputv_.size());
     for(int i=0; i<inputv_.size(); ++i)
-      input(i) = DMatrix(inputv_[i].sparsity());
+      input(i) = DMatrix(00,00,00,inputv_[i].sparsity());
   
     // Null output arguments become empty
     for(int i=0; i<outputv_.size(); ++i) {
       if (outputv_[i].isNull()) {
-        outputv_[i] = MatType(0,0);
+        outputv_[i] = MatType(00,00,00,0,0);
       }
     }
 
     // Allocate space for outputs
     setNumOutputs(outputv_.size());
     for(int i=0; i<outputv_.size(); ++i)
-      output(i) = DMatrix(outputv_[i].sparsity());
+      output(i) = DMatrix(00,00,00,outputv_[i].sparsity());
   }
 
 
@@ -518,13 +518,13 @@ namespace CasADi{
     // Adjoint seeds
     typename std::vector<std::vector<MatType> > aseed(1,std::vector<MatType>(outputv_.size()));
     for(int i=0; i<outputv_.size(); ++i){
-      aseed[0][i] = MatType(outputv_[i].sparsity(),i==oind ? 1 : 0);
+      aseed[0][i] = MatType(00,00,00,outputv_[i].sparsity(),i==oind ? 1 : 0);
     }
   
     // Adjoint sensitivities
     std::vector<std::vector<MatType> > asens(1,std::vector<MatType>(inputv_.size()));
     for(int i=0; i<inputv_.size(); ++i){
-      asens[0][i] = MatType(inputv_[i].sparsity());
+      asens[0][i] = MatType(00,00,00,inputv_[i].sparsity());
     }
   
     // Calculate with adjoint mode AD
@@ -542,7 +542,7 @@ namespace CasADi{
     // Forward seeds
     typename std::vector<std::vector<MatType> > fseed(1,std::vector<MatType>(inputv_.size()));
     for(int i=0; i<inputv_.size(); ++i){
-      fseed[0][i] = MatType(inputv_[i].sparsity(),i==iind ? 1 : 0);
+      fseed[0][i] = MatType(00,00,00,inputv_[i].sparsity(),i==iind ? 1 : 0);
     }
 
     // Dummy adjoint seeds and sensitivities
@@ -551,7 +551,7 @@ namespace CasADi{
     // Forward sensitivities
     std::vector<std::vector<MatType> > fsens(1,std::vector<MatType>(outputv_.size()));
     for(int i=0; i<outputv_.size(); ++i){
-      fsens[0][i] = MatType(outputv_[i].sparsity());
+      fsens[0][i] = MatType(00,00,00,outputv_[i].sparsity());
     }
   
     // Calculate with adjoint mode AD
@@ -576,7 +576,7 @@ namespace CasADi{
     }
     
     // Create return object
-    MatType ret = MatType(jacSparsity(iind,oind,compact,symmetric));
+    MatType ret = MatType(00,00,00,jacSparsity(iind,oind,compact,symmetric));
     if(verbose()) std::cout << "XFunctionInternal::jac allocated return value" << std::endl;
   
     // Get a bidirectional partition
@@ -727,7 +727,7 @@ namespace CasADi{
         // initialize to zero
         fsens[d].resize(getNumOutputs());
         for(int oind=0; oind<fsens[d].size(); ++oind){
-          fsens[d][oind] = MatType(output(oind).sparsity(),0);
+          fsens[d][oind] = MatType(00,00,00,output(oind).sparsity(),0);
         }
       }
 
@@ -737,7 +737,7 @@ namespace CasADi{
         // initialize to zero
         asens[d].resize(getNumInputs());
         for(int ind=0; ind<asens[d].size(); ++ind){
-          asens[d][ind] = MatType(input(ind).sparsity(),0);
+          asens[d][ind] = MatType(00,00,00,input(ind).sparsity(),0);
         }
       }
     
@@ -1099,7 +1099,7 @@ namespace CasADi{
         if (forward) {
           for (int i=0;i<sens[d].size();++i) {
             if (sens[d][i]!=0 && !sens[d][i]->isNull()) {
-              *sens[d][i]=MatType(sens[d][i]->sparsity(),0);
+              *sens[d][i]=MatType(00,00,00,sens[d][i]->sparsity(),0);
             }
           }
         }

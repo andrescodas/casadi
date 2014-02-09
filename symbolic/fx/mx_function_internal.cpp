@@ -297,7 +297,7 @@ namespace CasADi{
             nitmp = std::max(nitmp,ni);
             nrtmp = std::max(nrtmp,nr);
             if(work_[it->res[c]].first.empty()){
-              work_[it->res[c]].first = Matrix<double>(it->data->sparsity(c),0);
+              work_[it->res[c]].first = Matrix<double>(00,00,00,it->data->sparsity(c),0);
             }
           }
         }
@@ -960,7 +960,7 @@ namespace CasADi{
       if(it->op!=OP_OUTPUT){
         for(int i=0; i<it->res.size(); ++i){
           if (it->res[i]>=0)
-            swork[it->res[i]] = SXMatrix(it->data->sparsity(i));
+            swork[it->res[i]] = SXMatrix(00,00,00,it->data->sparsity(i));
         }
       }
     }
@@ -1021,7 +1021,7 @@ namespace CasADi{
     // Create output vector with correct sparsity
     vector<SXMatrix> res(outputv_.size());
     for(int i=0; i<res.size(); ++i){
-      res[i] = SXMatrix(outputv_[i].sparsity());
+      res[i] = SXMatrix(00,00,00,outputv_[i].sparsity());
     }
   
     // No sensitivities

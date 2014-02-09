@@ -42,7 +42,7 @@ LPSolverInternal::LPSolverInternal(const std::vector<CCSSparsity> &st) : st_(st)
 
   // Input arguments
   setNumInputs(LP_SOLVER_NUM_IN);
-  input(LP_SOLVER_A) = DMatrix(A);
+  input(LP_SOLVER_A) = DMatrix(00,00,00,A);
   input(LP_SOLVER_C) = DMatrix::zeros(n_);
   input(LP_SOLVER_LBA) = -DMatrix::inf(nc_);
   input(LP_SOLVER_UBA) = DMatrix::inf(nc_);

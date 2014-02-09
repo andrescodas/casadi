@@ -61,10 +61,10 @@ SDQPSolverInternal::SDQPSolverInternal(const std::vector<CCSSparsity> &st) : st_
   
   // Input arguments
   setNumInputs(SDQP_SOLVER_NUM_IN);
-  input(SDQP_SOLVER_H) = DMatrix(H,0);
-  input(SDQP_SOLVER_G) = DMatrix(G,0);
-  input(SDQP_SOLVER_F) = DMatrix(F,0);
-  input(SDQP_SOLVER_A) = DMatrix(A,0);
+  input(SDQP_SOLVER_H) = DMatrix(00,00,00,H,0);
+  input(SDQP_SOLVER_G) = DMatrix(00,00,00,G,0);
+  input(SDQP_SOLVER_F) = DMatrix(00,00,00,F,0);
+  input(SDQP_SOLVER_A) = DMatrix(00,00,00,A,0);
   input(SDQP_SOLVER_C) = DMatrix::zeros(n_);
   input(SDQP_SOLVER_LBX) = -DMatrix::inf(n_);
   input(SDQP_SOLVER_UBX) = DMatrix::inf(n_);

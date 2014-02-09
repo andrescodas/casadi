@@ -78,9 +78,9 @@ namespace CasADi{
     // Cast control_dae in a form that integrator can manage
     vector<MX> dae_in_(DAE_NUM_IN);
   
-    dae_in_[DAE_T]    = MX("tau",control_dae_.input(CONTROL_DAE_T).sparsity());
-    dae_in_[DAE_X]    = MX("x",control_dae_.input(CONTROL_DAE_X).sparsity());
-    dae_in_[DAE_Z]    = MX("z",control_dae_.input(CONTROL_DAE_Z).sparsity());
+    dae_in_[DAE_T]    = MX(00,00,00,"tau",control_dae_.input(CONTROL_DAE_T).sparsity());
+    dae_in_[DAE_X]    = MX(00,00,00,"x",control_dae_.input(CONTROL_DAE_X).sparsity());
+    dae_in_[DAE_Z]    = MX(00,00,00,"z",control_dae_.input(CONTROL_DAE_Z).sparsity());
   
     np_ = control_dae_.input(CONTROL_DAE_P).size();
   
@@ -102,7 +102,7 @@ namespace CasADi{
   
     // Structure of DAE_P : T0 TF P Ustart Uend Y_MAJOR 
   
-    dae_in_[DAE_P]    = MX("P",2+np_+nu_+nu_end+ny_,1);
+    dae_in_[DAE_P]    = MX(00,00,00,"P",2+np_+nu_+nu_end+ny_,1);
 
     int iT0 = 0;
     int iTF = 1;
@@ -298,20 +298,20 @@ namespace CasADi{
     setNumInputs(CONTROLSIMULATOR_NUM_IN);
     input(CONTROLSIMULATOR_X0)  = DMatrix(dae_.input(DAE_X));
     input(CONTROLSIMULATOR_P)   = control_dae_.input(CONTROL_DAE_P);
-    input(CONTROLSIMULATOR_U)   = DMatrix(ns_ - 1 + (control_endpoint ? 1 : 0) ,nu_,0);
+    input(CONTROLSIMULATOR_U)   = DMatrix(00,00,00,nu_,ns_ - 1 + (control_endpoint ? 1 : 0) ,0);
 
     // Allocate outputs
     setNumOutputs(output_fcn_.getNumOutputs()-2);
     for(int i=0; i<getNumOutputs(); ++i)
-      output(i) = Matrix<double>((ns_-1)*nf_+1,output_fcn_.output(i+2).numel(),0);
+      output(i) = Matrix<double>(00,00,00,output_fcn_.output(i+2).numel(),(ns_-1)*nf_+1,0);
 
     // Call base class method
     FXInternal::init();
   
     // Variables on which the chain of simulator calls (all_output_) depend
-    MX Xk("Xk", input(CONTROLSIMULATOR_X0).size());
-    MX P("P",input(CONTROLSIMULATOR_P).size());
-    MX U("U",input(CONTROLSIMULATOR_U).sparsity());
+    MX Xk(00,00,00,"Xk", input(CONTROLSIMULATOR_X0).size());
+    MX P(00,00,00,"P",input(CONTROLSIMULATOR_P).size());
+    MX U(00,00,00,"U",input(CONTROLSIMULATOR_U).sparsity());
  
     // Group these variables as an input list for all_output_
     vector<MX> all_output_in(CONTROLSIMULATOR_NUM_IN);
@@ -397,7 +397,7 @@ namespace CasADi{
   }
 
   Matrix<double> ControlSimulatorInternal::getVFine() const {
-    Matrix<double> ret(grid_.size()-1,nu_,0);
+    Matrix<double> ret(00,00,00,nu_,grid_.size()-1,0);
     for (int i=0;i<ns_-1;++i) {
       for (int k=0;k<nf_;++k) {
         copy(input(CONTROLSIMULATOR_U).data().begin()+i*nu_,input(CONTROLSIMULATOR_U).data().begin()+(i+1)*nu_,ret.begin()+i*nu_*nf_+k*nu_);

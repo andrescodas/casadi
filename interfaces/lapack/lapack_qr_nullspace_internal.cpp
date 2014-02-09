@@ -47,18 +47,18 @@ namespace CasADi{
     CCSSparsity dense = output(0).sparsity();
     
     for (int i=0;i<nfwd_+1;++i) {
-      input(i)=DMatrix(A_sp_);
+      input(i)=DMatrix(00,00,00,A_sp_);
     }
     for (int i=0;i<nadj_;++i) {
-      input((nfwd_+1)+i)=DMatrix(dense);
+      input((nfwd_+1)+i)=DMatrix(00,00,00,dense);
     }
     
     setNumOutputs((1+nfwd_) + nadj_);
     for (int i=0;i<nfwd_+1;++i) {
-      output(i)=DMatrix(dense);
+      output(i)=DMatrix(00,00,00,dense);
     }
     for (int i=0;i<nadj_;++i) {
-      output((nfwd_+1)+i)=DMatrix(A_sp_);
+      output((nfwd_+1)+i)=DMatrix(00,00,00,A_sp_);
     }
     
     tempA_.resize(n_*m_);

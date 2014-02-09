@@ -65,8 +65,8 @@ class FXtests(casadiTestCase):
   
   def test_Parallelizer(self):
     self.message("Parallelizer")
-    x = MX("x",2)
-    y = MX("y")
+    x = MX(00,00,00,"x",2)
+    y = MX(00,00,00,"y")
 
     f = MXFunction([x,y],[sin(x) + y])
     f.init()
@@ -95,10 +95,10 @@ class FXtests(casadiTestCase):
       
   def test_MXFunctionSeed(self):
     self.message("MXFunctionSeed")
-    x1 = MX("x",2)
-    y1 = MX("y")
-    x2 = MX("x",2)
-    y2 = MX("y")
+    x1 = MX(00,00,00,"x",2)
+    y1 = MX(00,00,00,"y")
+    x2 = MX(00,00,00,"x",2)
+    y2 = MX(00,00,00,"y")
     p= MXFunction([x1,y1,x2,y2],[sin(x1) + y1,sin(x2) + y2])
     p.init()
     
@@ -119,8 +119,8 @@ class FXtests(casadiTestCase):
         
   def test_Parallelizer2(self):
     self.message("Parallelizer")
-    x = MX("x",2)
-    y = MX("y")
+    x = MX(00,00,00,"x",2)
+    y = MX(00,00,00,"y")
 
     f = MXFunction([x,y],[sin(x) + y])
     f.init()
@@ -131,10 +131,10 @@ class FXtests(casadiTestCase):
       pp.setOption("parallelization",mode)
       pp.init()
       
-      x1 = MX("x",2)
-      y1 = MX("y")
-      x2 = MX("x",2)
-      y2 = MX("y")
+      x1 = MX(00,00,00,"x",2)
+      y1 = MX(00,00,00,"y")
+      x2 = MX(00,00,00,"x",2)
+      y2 = MX(00,00,00,"y")
       p = MXFunction([x1,y1,x2,y2], pp.call([x1,y1,x2,y2]) )
       p.init()
       
@@ -155,17 +155,17 @@ class FXtests(casadiTestCase):
           
   def test_ParallelizerMXCall(self):
     self.message("MX parallel call")
-    x = MX("x",2)
-    y = MX("y")
+    x = MX(00,00,00,"x",2)
+    y = MX(00,00,00,"y")
 
     f = MXFunction([x,y],[sin(x) + y])
     f.init()
 
     #! Evaluate this function ten times in parallel
-    x1 = MX("x",2)
-    y1 = MX("y")
-    x2 = MX("x",2)
-    y2 = MX("y")
+    x1 = MX(00,00,00,"x",2)
+    y1 = MX(00,00,00,"y")
+    x2 = MX(00,00,00,"x",2)
+    y2 = MX(00,00,00,"y")
     [[F1],[F2]] = f.call([[x1,y1],[x2,y2]])
     p = MXFunction([x1,y1,x2,y2],[F1,F2])
     p.init()
@@ -191,9 +191,9 @@ class FXtests(casadiTestCase):
 
     f = SXFunction([x],[x])
     f.init()
-    A = DMatrix(1,1)
+    A = DMatrix(00,00,00,1,1)
     #self.assertRaises(RuntimeError,lambda : f.getFwdSeed(A,0)) # This is now o.k. syntax
-    B = DMatrix(1,2,2)
+    B = DMatrix(00,00,00,2,1,2)
     #self.assertRaises(RuntimeError,lambda : f.getFwdSeed(A,0)) # This is now o.k. syntax
     
   def test_issue304(self):
@@ -203,7 +203,7 @@ class FXtests(casadiTestCase):
     f = SXFunction([x],[x**2,x**3])
     f.init()
 
-    X = [MX("X")]
+    X = [MX(00,00,00,"X")]
 
     z=f.call(X)
 
@@ -256,7 +256,7 @@ class FXtests(casadiTestCase):
     
     def test(sp):
       x = ssym("x",sp.size1())
-      sp2 = jacobian(mul(DMatrix(sp,1),x),x).sparsity()
+      sp2 = jacobian(mul(DMatrix(00,00,00,sp,1),x),x).sparsity()
       self.checkarray(sp.row(),sp2.row());
       self.checkarray(sp.colind(),sp2.colind());   
 
@@ -275,7 +275,7 @@ class FXtests(casadiTestCase):
       b = sp_band(i,-1) + sp_band(i,1)
       test(b + sp_colrow([5],[0],i,i))
       
-    m = IMatrix(sp_diag(129),1)
+    m = IMatrix(00,00,00,sp_diag(129),1)
     m[:50,0] = 1
     m[60:,0] = 1
     m[6:9,6] = 1
@@ -286,7 +286,7 @@ class FXtests(casadiTestCase):
     test(sp)
     #test(sp.T)
     
-    m = IMatrix(sp_diag(64),1)
+    m = IMatrix(00,00,00,sp_diag(64),1)
     m[:50,0] = 1
     m[60:,0] = 1
 
@@ -319,7 +319,7 @@ class FXtests(casadiTestCase):
         
         random.seed(0)
         
-        I = IMatrix(sp,1)
+        I = IMatrix(00,00,00,sp,1)
         for i in range(n):
           for j in range(m):
             if random.random()<0.5:
@@ -330,7 +330,7 @@ class FXtests(casadiTestCase):
         
         test(sp_holes)
         
-        z = IMatrix(sp_holes.shape[0],sp_holes.shape[1])
+        z = IMatrix(00,00,00,sp_holes.shape[1],sp_holes.shape[0])
         
         R = 5
         v = []
@@ -347,7 +347,7 @@ class FXtests(casadiTestCase):
     def test(sp):
       x = ssym("x",sp.size1())
       self.assertTrue(sp==sp.transpose())
-      f = SXFunction([x],[mul([x.T,DMatrix(sp,1),x])])
+      f = SXFunction([x],[mul([x.T,DMatrix(00,00,00,sp,1),x])])
       f.init()
       J = f.hessian()
       J.init()
@@ -407,7 +407,7 @@ class FXtests(casadiTestCase):
         
       random.seed(0)
       
-      I = IMatrix(sp,1)
+      I = IMatrix(00,00,00,sp,1)
       for ii in range(i):
         for jj in range(i):
           if random.random()<0.5:
@@ -419,7 +419,7 @@ class FXtests(casadiTestCase):
       
       test(sp_holes)
       
-      z = IMatrix(sp_holes.shape[0],sp_holes.shape[1])
+      z = IMatrix(00,00,00,sp_holes.shape[1],sp_holes.shape[0])
       
       R = 5
       v = []

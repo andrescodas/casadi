@@ -191,7 +191,7 @@ namespace CasADi{
 
     /// Get the value (only for constant nodes)
     virtual Matrix<double> getMatrixValue() const{
-      return Matrix<double>(sparsity(),v_.value);
+      return Matrix<double>(00,00,00,sparsity(),v_.value);
     }
 
     /// Get densification
@@ -235,18 +235,18 @@ namespace CasADi{
     double ret;
     casadi_math<double>::fun(op,v_.value,0.0,ret);
     if (operation_checker<F0XChecker>(op) || sparsity().dense()) {
-      return MX(sparsity(),ret);
+      return MX(00,00,00,sparsity(),ret);
     } else {
       if (v_.value==0) {
         if (isZero() && operation_checker<F0XChecker>(op)) {
-          return MX(sparsity(),ret);
+          return MX(00,00,00,sparsity(),ret);
         } else {
-          return MX(size2(),size1(),ret);
+          return MX(00,00,00,size1(),size2(),ret);
         }
       }
       double ret2;
       casadi_math<double>::fun(op,0,0.0,ret2);
-      return DMatrix(sparsity(),ret)+DMatrix(sparsity().patternInverse(),ret2);
+      return DMatrix(00,00,00,sparsity(),ret)+DMatrix(00,00,00,sparsity().patternInverse(),ret2);
     }
   }
 
@@ -261,7 +261,7 @@ namespace CasADi{
       if (ret!=0) {
         CCSSparsity f = sp_dense(y.size1(),y.size2());
         MX yy = y.setSparse(f);
-        return MX(f,shared_from_this<MX>())->getBinary(op,yy,false,false);
+        return MX(00,00,00,f,shared_from_this<MX>())->getBinary(op,yy,false,false);
       }
     } else if (ScY && !operation_checker<F0XChecker>(op)) {
       bool grow = true;
@@ -273,16 +273,16 @@ namespace CasADi{
       if (grow) {
         CCSSparsity f = sp_dense(size1(),size2());
         MX xx = shared_from_this<MX>().setSparse(f);
-        return xx->getBinary(op,MX(f,y),false,false);
+        return xx->getBinary(op,MX(00,00,00,f,y),false,false);
       }
     }
     
     switch(op){
     case OP_ADD:
-      if(v_.value==0) return ScY && !y->isZero() ? MX(size2(),size1(),y) : y;
+      if(v_.value==0) return ScY && !y->isZero() ? MX(00,00,00,size1(),size2(),y) : y;
       break;
     case OP_SUB:
-      if(v_.value==0) return ScY && !y->isZero() ? MX(size2(),size1(),-y) : -y;
+      if(v_.value==0) return ScY && !y->isZero() ? MX(00,00,00,size1(),size2(),-y) : -y;
       break;
     case OP_MUL:
       if(v_.value==1) return y;
@@ -307,7 +307,7 @@ namespace CasADi{
       double ret;
       casadi_math<double>::fun(op,size()> 0 ? v_.value: 0,y_value,ret);
       
-      return MX(y.sparsity(),ret);
+      return MX(00,00,00,y.sparsity(),ret);
     }
 
     // Fallback

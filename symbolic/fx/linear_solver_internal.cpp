@@ -45,8 +45,8 @@ namespace CasADi{
 
     // Allocate inputs
     setNumInputs(LINSOL_NUM_IN);
-    input(LINSOL_A) = DMatrix(sparsity);
-    input(LINSOL_B) = DMatrix(nrhs,sparsity.size2(),0);
+    input(LINSOL_A) = DMatrix(00,00,00,sparsity);
+    input(LINSOL_B) = DMatrix(00,00,00,sparsity.size2(),nrhs,0);
   
     // Allocate outputs
     setNumOutputs(LINSOL_NUM_OUT);

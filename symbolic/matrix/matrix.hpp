@@ -76,14 +76,18 @@ namespace CasADi{
       General sparse matrix class that is designed with the idea that "everything is a matrix", that is, also scalars and vectors.\n
       This philosophy makes it easy to use and to interface in particularily with Python and Matlab/Octave.\n
   
-      The syntax tries to stay as close as possible to the ublas syntax  when it comes to vector/matrix operations.\n
+      The syntax tries to stay as close as possible to Matlab when it comes to vector/matrix operations.\n
 
       Index starts with 0.\n
-      Index vec happens as follows: (i,j) -> k = j+i*size1()\n
-      Vectors are considered to be row vectors.\n
+      Index vec happens as follows: (rr,cc) -> k = rr+cc*size1()\n
+      Vectors are column vectors.\n
   
-      The storage format is a (modified) compressed column storage (CCS) format. This way, a vector element can always be accessed in constant time.\n
-  
+      The storage format is Compressed Column Storage (CCS) format, similar to that used for sparse matrices in Matlab, \n
+      but unlike this format, we do allow for elements to be structurally non-zero but numerically zero.\n
+
+      The class has been design to allow elements that are symbolic expression, where you e.g. cannot easily check if the 
+      value of an element is zero or make comparisons.\n
+
       Matrix<T> is polymorphic with a std::vector<T> that contain all non-identical-zero elements.\n
       The sparsity can be accessed with CCSSparsity& sparsity()\n
   
@@ -106,20 +110,20 @@ namespace CasADi{
     Matrix<T>& operator=(const Matrix<T>& m);
 #endif // SWIG
     
-    /// empty n-by-m matrix constructor
-    Matrix(int n, int m);
+    /// Empty n-by-m matrix constructor
+    Matrix(int dum1, int dum2, int dum3, int nrow, int ncol);
     
-    /// dense n-by-m matrix filled with val constructor
-    Matrix(int n, int m, const T& val);
+    /// Dense n-by-m matrix filled with val constructor
+    Matrix(int dum1, int dum2, int dum3, int nrow, int ncol, const T& val);
 
-    /// sparse n-by-m matrix filled with given sparsity
+    /// Sparse n-by-m matrix filled with given sparsity
     Matrix(int n, int m, const std::vector<int>& row, const std::vector<int>& colind, const std::vector<T>& d=std::vector<T>());
 
     /// dense matrix constructor with data given as vector of vectors
     explicit Matrix(const std::vector< std::vector<T> >& m);
     
     /// sparse matrix with a given sparsity
-    explicit Matrix(const CCSSparsity& sparsity, const T& val=0);
+    explicit Matrix(int dum1, int dum2, int dum3, const CCSSparsity& sparsity, const T& val=0);
     
     /// sparse matrix with a given sparsity and non-zero elements.
     Matrix(const CCSSparsity& sparsity, const std::vector<T>& d);

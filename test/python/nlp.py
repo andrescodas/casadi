@@ -732,7 +732,7 @@ class NLPtests(casadiTestCase):
     
   def testIPOPTmx(self):
     self.message("trivial IPOPT, using MX")
-    x=MX("x")
+    x=MX(00,00,00,"x")
     nlp=MXFunction(nlpIn(x=x),nlpOut(f=(x-1)**2,g=2*x))
     
     for Solver, solver_options in solvers:
@@ -795,7 +795,7 @@ class NLPtests(casadiTestCase):
     
   def testIPOPTcmx(self):
     self.message("trivial , overconstrained, using MX")
-    x=MX("x")
+    x=MX(00,00,00,"x")
     nlp=MXFunction(nlpIn(x=x),nlpOut(f=(x-1)**2,g=horzcat([2*x,3*x,4*x])))
     
     for Solver, solver_options in solvers:

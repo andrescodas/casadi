@@ -85,8 +85,8 @@ namespace CasADi{
     casadi_assert_warning(getNumOutputs()<10000, "Function " << getOption("name") << " has a large number of outputs. Changing the problem formulation is strongly encouraged.");  
 
     // Resize the matrix that holds the sparsity of the Jacobian blocks
-    jac_sparsity_ = jac_sparsity_compact_ = Matrix<CCSSparsity>(getNumInputs(),getNumOutputs());
-    jac_ = jac_compact_ = Matrix<WeakRef>(getNumInputs(),getNumOutputs());
+    jac_sparsity_ = jac_sparsity_compact_ = Matrix<CCSSparsity>(00,00,00,getNumOutputs(),getNumInputs());
+    jac_ = jac_compact_ = Matrix<WeakRef>(00,00,00,getNumOutputs(),getNumInputs());
   
     if(hasSetOption("user_data")){
       user_data_ = getOption("user_data").toVoidPointer();
@@ -318,7 +318,7 @@ namespace CasADi{
     for(int i=0; i<ret.size(); ++i){
       stringstream name;
       name << "x_" << i;
-      ret[i] = MX(name.str(),input(i).sparsity());
+      ret[i] = MX(00,00,00,name.str(),input(i).sparsity());
     }
     return ret;
   }
@@ -1209,7 +1209,7 @@ namespace CasADi{
       vector<SXMatrix> arg_new(arg.size());
       for(int i=0; i<arg.size(); ++i){
         try{
-          arg_new[i] = SXMatrix(input(i).sparsity());
+          arg_new[i] = SXMatrix(00,00,00,input(i).sparsity());
           arg_new[i].set(arg[i]);
         } catch(exception& ex){
           stringstream ss;
@@ -1233,7 +1233,7 @@ namespace CasADi{
         fseed_new[dir].resize(getNumInputs());
         for(int i=0; i<getNumInputs(); ++i){
           try{
-            fseed_new[dir][i] = SXMatrix(input(i).sparsity());
+            fseed_new[dir][i] = SXMatrix(00,00,00,input(i).sparsity());
             fseed_new[dir][i].set(fseed[dir][i]);
           } catch(exception& ex){
             stringstream ss;
@@ -1258,7 +1258,7 @@ namespace CasADi{
         aseed_new[dir].resize(getNumOutputs());
         for(int i=0; i<getNumOutputs(); ++i){
           try{
-            aseed_new[dir][i] = SXMatrix(output(i).sparsity());
+            aseed_new[dir][i] = SXMatrix(00,00,00,output(i).sparsity());
             aseed_new[dir][i].set(aseed[dir][i]);
           } catch(exception& ex){
             stringstream ss;
@@ -1275,7 +1275,7 @@ namespace CasADi{
     res.resize(getNumOutputs());
     for(int i=0; i<getNumOutputs(); ++i){
       if(res[i].sparsity()!=output(i).sparsity()){
-        res[i] = SXMatrix(output(i).sparsity());
+        res[i] = SXMatrix(00,00,00,output(i).sparsity());
       }
     }
   
@@ -1285,7 +1285,7 @@ namespace CasADi{
       fsens[dir].resize(getNumOutputs());
       for(int i=0; i<getNumOutputs(); ++i){
         if(fsens[dir][i].sparsity()!=output(i).sparsity()){
-          fsens[dir][i] = SXMatrix(output(i).sparsity());
+          fsens[dir][i] = SXMatrix(00,00,00,output(i).sparsity());
         }
       }
     }
@@ -1296,7 +1296,7 @@ namespace CasADi{
       asens[dir].resize(getNumInputs());
       for(int i=0; i<getNumInputs(); ++i){
         if(asens[dir][i].sparsity()!=input(i).sparsity()){
-          asens[dir][i] = SXMatrix(input(i).sparsity());
+          asens[dir][i] = SXMatrix(00,00,00,input(i).sparsity());
         }
       }
     }
@@ -2530,7 +2530,7 @@ namespace CasADi{
     // Create input arguments
     vector<SXMatrix> argv(arg.size());
     for(int i=0; i<arg.size(); ++i){
-      argv[i] = SXMatrix(input(i).sparsity(),0.);
+      argv[i] = SXMatrix(00,00,00,input(i).sparsity(),0.);
       if(arg[i] != 0)
         argv[i].set(*arg[i]);
     }

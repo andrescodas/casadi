@@ -100,7 +100,7 @@ class LPSolverTests(casadiTestCase):
     #
     #  s.t.     bounds on x
 
-    A = DMatrix(0,2)
+    A = DMatrix(00,00,00,2,0)
     LBX = DMatrix([ -inf, 0 ])
     UBX = DMatrix([ inf, inf ])
     c = DMatrix([ 2.0, 1.0 ])

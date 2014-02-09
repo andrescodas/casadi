@@ -69,17 +69,17 @@ QCQPSolverInternal::QCQPSolverInternal(const std::vector<CCSSparsity> &st) : st_
   
   // Input arguments
   setNumInputs(QCQP_SOLVER_NUM_IN);
-  input(QCQP_SOLVER_X0) = DMatrix(x_sparsity,0);
-  input(QCQP_SOLVER_H) = DMatrix(H);
-  input(QCQP_SOLVER_G) = DMatrix(x_sparsity);
-  input(QCQP_SOLVER_A) = DMatrix(A);
-  input(QCQP_SOLVER_P) = DMatrix(P);
+  input(QCQP_SOLVER_X0) = DMatrix(00,00,00,x_sparsity,0);
+  input(QCQP_SOLVER_H) = DMatrix(00,00,00,H);
+  input(QCQP_SOLVER_G) = DMatrix(00,00,00,x_sparsity);
+  input(QCQP_SOLVER_A) = DMatrix(00,00,00,A);
+  input(QCQP_SOLVER_P) = DMatrix(00,00,00,P);
   input(QCQP_SOLVER_Q) = DMatrix::zeros(nq_*n_,1);
   input(QCQP_SOLVER_R) = DMatrix::zeros(nq_,1);  
-  input(QCQP_SOLVER_LBA) = DMatrix(bounds_sparsity, -std::numeric_limits<double>::infinity());
-  input(QCQP_SOLVER_UBA) = DMatrix(bounds_sparsity,  std::numeric_limits<double>::infinity());
-  input(QCQP_SOLVER_LBX) = DMatrix(x_sparsity,      -std::numeric_limits<double>::infinity());
-  input(QCQP_SOLVER_UBX) = DMatrix(x_sparsity,       std::numeric_limits<double>::infinity());
+  input(QCQP_SOLVER_LBA) = DMatrix(00,00,00,bounds_sparsity, -std::numeric_limits<double>::infinity());
+  input(QCQP_SOLVER_UBA) = DMatrix(00,00,00,bounds_sparsity,  std::numeric_limits<double>::infinity());
+  input(QCQP_SOLVER_LBX) = DMatrix(00,00,00,x_sparsity,      -std::numeric_limits<double>::infinity());
+  input(QCQP_SOLVER_UBX) = DMatrix(00,00,00,x_sparsity,       std::numeric_limits<double>::infinity());
 
   for (int i=0;i<nq_;++i) {
     DMatrix Pi = input(QCQP_SOLVER_P)(ALL,range(i*n_,(i+1)*n_));
@@ -88,10 +88,10 @@ QCQPSolverInternal::QCQPSolverInternal(const std::vector<CCSSparsity> &st) : st_
   
   // Output arguments
   setNumOutputs(QCQP_SOLVER_NUM_OUT);
-  output(QCQP_SOLVER_X) = DMatrix(x_sparsity);
+  output(QCQP_SOLVER_X) = DMatrix(00,00,00,x_sparsity);
   output(QCQP_SOLVER_COST) = 0.0;
-  output(QCQP_SOLVER_LAM_X) = DMatrix(x_sparsity);
-  output(QCQP_SOLVER_LAM_A) = DMatrix(bounds_sparsity);
+  output(QCQP_SOLVER_LAM_X) = DMatrix(00,00,00,x_sparsity);
+  output(QCQP_SOLVER_LAM_A) = DMatrix(00,00,00,bounds_sparsity);
   
   input_.scheme = SCHEME_QCQPSolverInput;
   output_.scheme = SCHEME_QCQPSolverOutput;

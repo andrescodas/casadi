@@ -161,10 +161,10 @@ namespace CasADi{
     s_cand_.resize(ng_);
   
     // Hessian approximation
-    Bk_ = DMatrix(H_sparsity);
+    Bk_ = DMatrix(00,00,00,H_sparsity);
   
     // Jacobian
-    Jk_ = DMatrix(A_sparsity);
+    Jk_ = DMatrix(00,00,00,A_sparsity);
     
 
     // Bounds of the QP

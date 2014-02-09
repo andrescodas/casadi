@@ -397,7 +397,7 @@ namespace CasADi{
     }
   
     // Create the parent
-    MX P("P",index[deps.size()],1);
+    MX P(00,00,00,"P",index[deps.size()],1);
   
     // Make the arguments dependent on the parent
     for (int k=0;k<deps.size();k++) {
@@ -415,7 +415,7 @@ namespace CasADi{
     }
   
     // Create the parent
-    MX P("P",index[deps.size()],1);
+    MX P(00,00,00,"P",index[deps.size()],1);
   
     std::vector<MX> ret(deps.size());
   
@@ -446,22 +446,20 @@ namespace CasADi{
   
   MX blkdiag(const std::vector<MX> &A) {
     // This implementation does not pretend to be efficient
-    int col=0;
-    int row=0;
+    int nrow=0, ncol=0;
     for (int i=0;i<A.size();++i) {
-      col+=A[i].size2();
-      row+=A[i].size1();
+      nrow+=A[i].size1();
+      ncol+=A[i].size2();
     }
     
-    MX ret = MX(col,row);
+    MX ret = MX(00,00,00,nrow,ncol);
     
-    col = 0;
-    row = 0;
-    
+    nrow = 0;
+    ncol = 0;
     for (int i=0;i<A.size();++i) {
-      ret(range(row,row+A[i].size1()),range(col,col+A[i].size2())) = A[i];
-      col+=A[i].size2();
-      row+=A[i].size1();
+      ret(range(nrow,nrow+A[i].size1()),range(ncol,ncol+A[i].size2())) = A[i];
+      nrow+=A[i].size1();
+      ncol+=A[i].size2();
     }
     
     return ret;
@@ -512,11 +510,11 @@ namespace CasADi{
   }
 
   MX msym(const std::string& name, int n, int m){
-    return MX(name,n,m);
+    return MX(00,00,00,name,n,m);
   }
 
   MX msym(const std::string& name, const std::pair<int,int> & nm) {
-    return MX(name,nm.first,nm.second);
+    return MX(00,00,00,name,nm.first,nm.second);
   }
 
   MX msym(const Matrix<double>& x){
@@ -524,7 +522,7 @@ namespace CasADi{
   }
 
   MX msym(const std::string& name, const CCSSparsity& sp) {
-    return MX(name,sp);
+    return MX(00,00,00,name,sp);
   }
 
   bool isEqual(const MX& ex1,const MX &ex2){
@@ -889,7 +887,7 @@ namespace CasADi{
               // Create a new variable
               v_name.str(string());
               v_name << v_prefix << v.size() << v_suffix;
-              v.push_back(MX(v_name.str()));
+              v.push_back(MX(00,00,00,v_name.str()));
             
               // Use in calculations
               work[ind] = v.back();
@@ -1011,7 +1009,7 @@ namespace CasADi{
   
   MX kron(const MX& a, const MX& b) {
     const CCSSparsity &a_sp = a.sparsity();
-    MX filler(b.size2(),b.size1());
+    MX filler(00,00,00,b.size1(),b.size2());
     std::vector< std::vector< MX > > blocks(a.size2(),std::vector< MX >(a.size1(),filler));
     for (int i=0;i<a.size2();++i) {
       for (int j=0;j<a.size1();++j) {

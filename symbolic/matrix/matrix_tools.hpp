@@ -628,7 +628,7 @@ namespace CasADi{
     // Find out which is the best direction to expand along
 
     // Build up an IMatrix with ones on the non-zeros
-    Matrix<int> sp = IMatrix(a.sparsity(),1);
+    Matrix<int> sp = IMatrix(00,00,00,a.sparsity(),1);
   
     // Have a count of the nonzeros for each row
     Matrix<int> row_count = sumCols(sp);
@@ -684,7 +684,7 @@ namespace CasADi{
     if(n==1) return 1;
 
     // Remove col i and row j
-    Matrix<T> M(n-1,n-1);
+    Matrix<T> M(00,00,00,n-1,n-1);
   
     std::vector<int> col = x.sparsity().getCol();
     const std::vector<int> &row = x.sparsity().row();
@@ -724,7 +724,7 @@ namespace CasADi{
     T temp;
   
     // Cofactor matrix
-    Matrix<T> C(n,n);
+    Matrix<T> C(00,00,00,n,n);
     for(int i=0; i<n; ++i)
       for(int j=0; j<n; ++j) {
         temp = cofactor(a,i,j);
@@ -847,7 +847,7 @@ namespace CasADi{
       std::copy(row.begin()+colind[start],row.begin()+colind[stop],row_s.begin());
     
       CCSSparsity s = CCSSparsity(v.size1(),stop-start,colind_s,row_s);
-      Matrix<T> r(s);
+      Matrix<T> r(00,00,00,s);
     
       // data for the submatrix: a portion of the original data
       std::copy(v.begin()+colind[start],v.begin()+colind[stop],r.begin());
@@ -955,7 +955,7 @@ namespace CasADi{
   template<class T>
   Matrix<T> sumAll(const Matrix<T> &x) {
     // Quick return if empty
-    if (x.empty()) return Matrix<T>(1,1);
+    if (x.empty()) return Matrix<T>(00,00,00,1,1);
     // Sum non-zero elements
     T res=0;
     for(int k=0; k<x.size(); k++){
@@ -1044,7 +1044,7 @@ namespace CasADi{
       Matrix<T> ai = AT(ALL,i);
       Matrix<T> qi = ai;
       // The i-th row of R
-      Matrix<T> ri(1,n);
+      Matrix<T> ri(00,00,00,n,1);
   
       // subtract the projection of qi in the previous directions from ai
       for(int j=0; j<i; ++j){
@@ -1176,7 +1176,7 @@ namespace CasADi{
         inv_rowperm[rowperm[k]] = k;
     
       // Permute the right hand side
-      Matrix<T> bperm(0,b.size1());
+      Matrix<T> bperm(00,00,00,b.size1(),0);
       for(int i=0; i<b.size2(); ++i){
         bperm.resize(i+1,b.size1());
         for(int el=b.colind(colperm[i]); el<b.colind(colperm[i]+1); ++el){
@@ -1185,7 +1185,7 @@ namespace CasADi{
       }
 
       // Permute the linear system
-      Matrix<T> Aperm(0,A.size1());
+      Matrix<T> Aperm(00,00,00,A.size1(),0);
       for(int i=0; i<A.size2(); ++i){
         Aperm.resize(i+1,A.size1());
         for(int el=A.colind(colperm[i]); el<A.colind(colperm[i]+1); ++el){
@@ -1218,7 +1218,7 @@ namespace CasADi{
       }
     
       // Permute back the solution
-      Matrix<T> x(0,xperm.size1());
+      Matrix<T> x(00,00,00,xperm.size1(),0);
       for(int i=0; i<xperm.size2(); ++i){
         x.resize(i+1,xperm.size1());
         for(int el=xperm.colind(inv_rowperm[i]); el<xperm.colind(inv_rowperm[i]+1); ++el){
@@ -1241,7 +1241,7 @@ namespace CasADi{
   template<class T>
   Matrix<T> kron(const Matrix<T>& a, const Matrix<T>& b) {
     const CCSSparsity &a_sp = a.sparsity();
-    Matrix<T> filler(b.size2(),b.size1());
+    Matrix<T> filler(00,00,00,b.size1(),b.size2());
     std::vector< std::vector< Matrix<T> > > blocks(a.size2(),std::vector< Matrix<T> >(a.size1(),filler));
     for (int i=0;i<a.size2();++i) {
       for (int j=0;j<a.size1();++j) {
@@ -1351,7 +1351,7 @@ namespace CasADi{
     // Get the sparsity
     CCSSparsity sp = A.sparsity().diag(mapping);
   
-    Matrix<T> ret = Matrix<T>(sp);
+    Matrix<T> ret = Matrix<T>(00,00,00,sp);
   
     for (int k=0;k<mapping.size();k++) ret[k] = A[mapping[k]];
     return ret;
@@ -1392,7 +1392,7 @@ namespace CasADi{
     CCSSparsity sp = A.sparsity().patternUnion(B.sparsity(),mapping);
   
     // Create return matrix
-    Matrix<T> ret(sp);
+    Matrix<T> ret(00,00,00,sp);
   
     // Copy sparsity
     int elA=0, elB=0;
@@ -1436,7 +1436,7 @@ namespace CasADi{
       return;
   
     // Start with a matrix with no cols
-    Matrix<T> Asp(0,A.size1());
+    Matrix<T> Asp(00,00,00,A.size1(),0);
 
     // Loop over the cols
     for(int i=0; i<A.size2(); ++i){
@@ -1551,7 +1551,7 @@ namespace CasADi{
     }
     
     // Return value
-    Matrix<T> ret(sparsity,0);
+    Matrix<T> ret(00,00,00,sparsity,0);
     
     // Get the elements of the known matrix
     std::vector<int> known_ind = A.sparsity().getElements(false);

@@ -494,7 +494,7 @@ class Numbers(object):
         else:
           self._numbers[k] = Numbers(obj)
       else:
-        self._d_[k] = map_nested_list(lambda c,x: DMatrix(self._variables.getSparsity(x),0),obj)
+        self._d_[k] = map_nested_list(lambda c,x: DMatrix(00,00,00,self._variables.getSparsity(x),0),obj)
       
   def __getattr__(self,name):
         """

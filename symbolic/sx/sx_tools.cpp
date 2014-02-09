@@ -96,13 +96,13 @@ SXMatrix pw_lin(const SX &t, const SXMatrix &tval, const SXMatrix &val){
   casadi_assert_message(N>=2,"pw_lin: N>=2");
 
   // Gradient for each line segment
-  SXMatrix g(N-1,1);
+  SXMatrix g(00,00,00,1,N-1);
   for(int i=0; i<N-1; ++i){
     g(0,i) = (val(0,i+1)- val(0,i))/(tval(0,i+1)-tval(0,i));
   }
 
   // Line segments
-  SXMatrix lseg(N-1,1);
+  SXMatrix lseg(00,00,00,1,N-1);
   for(int i=0; i<N-1; ++i)
     lseg(0,i) = val(0,i) + g(0,i)*(t-tval(0,i)); 
 
@@ -166,7 +166,7 @@ std::vector<SXMatrix> substitute(const std::vector<SXMatrix> &ex, const std::vec
     if(v[k].sparsity()!=vdef[k].sparsity()) {
       if (vdef[k].scalar() && vdef[k].size()==1) { // Expand vdef to sparsity of v if vdef is scalar
         std::vector<SXMatrix> vdef_mod = vdef;
-        vdef_mod[k] = SXMatrix(v[k].sparsity(),vdef[k].at(0));
+        vdef_mod[k] = SXMatrix(00,00,00,v[k].sparsity(),vdef[k].at(0));
         return substitute(ex,v,vdef_mod);
       } else {
         casadi_error("subsitute(ex,v,vdef): sparsities of v and vdef must match. Got v: " << v[k].dimString() << " and " << "vdef: " << vdef[k].dimString() << ".");
@@ -371,7 +371,7 @@ void makeSmooth(SXMatrix &ex, SXMatrix &bvar, SXMatrix &bexpr){
 #endif
 
 SXMatrix spy(const SXMatrix& A){
-  SXMatrix s(A.size2(),A.size1());
+  SXMatrix s(00,00,00,A.size1(),A.size2());
   for(int i=0; i<A.size2(); ++i)
     for(int j=0; j<A.size1(); ++j)
       if(!A(j,i).toScalar()->isZero())
@@ -905,7 +905,7 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
             
       // Write the equation in matrix form
       SXMatrix Jb = fcnb.jac();
-      SXMatrix rb = -fcnb.eval(SXMatrix(xb_lin.size(),1,0));
+      SXMatrix rb = -fcnb.eval(SXMatrix(00,00,00,1,xb_lin.size(),0));
       
       // Simple solve if there are no nonlinear variables
       if(xb_nonlin.empty()){
@@ -932,7 +932,7 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
         std::vector<int> rowpermb, colpermb, rowblockb, colblockb, coarse_rowblockb, coarse_colblockb;
         Jb.sparsity().dulmageMendelsohn(rowpermb, colpermb, rowblockb, colblockb, coarse_rowblockb, coarse_colblockb);
         
-        Matrix<int>(Jb.sparsity(),1).printDense();
+        Matrix<int>(00,00,00,Jb.sparsity(),1).printDense();
         Jb.printDense();
         
         
@@ -1174,8 +1174,8 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
     }
 
     // Gather all variables
-    SXMatrix v_all(n,1,0);
-    SXMatrix vdef_all(n,1,0);
+    SXMatrix v_all(00,00,00,1,n,0);
+    SXMatrix vdef_all(00,00,00,1,n,0);
     vector<SX>::iterator it_v = v_all.begin();
     vector<SX>::iterator it_vdef = vdef_all.begin();
     for(int i=0; i<v.size(); ++i){

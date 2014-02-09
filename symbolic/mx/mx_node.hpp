@@ -245,7 +245,7 @@ namespace CasADi{
       if(x.shape()==sp.shape()){
         return x;
       } else {
-        return MX(sp,x);
+        return MX(00,00,00,sp,x);
       }
     }
 
