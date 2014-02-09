@@ -670,7 +670,7 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T>::Matrix(int n, int m, const std::vector<int>& row, const std::vector<int>& colind, const std::vector<T>& d) : sparsity_(CCSSparsity(m,n,colind,row)), data_(d){
+  Matrix<T>::Matrix(int dum1, int dum2, int dum3, int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row, const std::vector<T>& d) : sparsity_(CCSSparsity(nrow,ncol,colind,row)), data_(d){
     if(data_.size() != sparsity_.size())
       data_.resize(sparsity_.size()); // Why not throw an error?
     sanityCheck(true);
