@@ -304,7 +304,7 @@ class typemaptests(casadiTestCase):
         
     ## numeric & SXMatrix
     for s in nums:
-      for z in [SX("x"), ssymQQQ("x"), ssymQQQ("x",2,2)]:
+      for z in [SX("x"), ssym("x"), ssym("x",2,2)]:
         print "z = %s, s = %s" % (str(z),str(s))
         print "  z = %s, s = %s" % (type(z),type(s))
         tests(z,s)
@@ -317,8 +317,8 @@ class typemaptests(casadiTestCase):
         tests(z,s)
         
     # SX & SX
-    for s in [SX("x"), ssymQQQ("x"), ssymQQQ("x",2,2)]:
-      for z in [SX("x"),ssymQQQ("x"), ssymQQQ("x",2,2)]:
+    for s in [SX("x"), ssym("x"), ssym("x",2,2)]:
+      for z in [SX("x"),ssym("x"), ssym("x",2,2)]:
         print "z = %s, s = %s" % (str(z),str(s))
         print "  z = %s, s = %s" % (type(z),type(s))
         tests(z,s)
@@ -331,7 +331,7 @@ class typemaptests(casadiTestCase):
         tests(z,s)
         
     for (s,x,y) in [
-                  (matrix([[1,2],[3,4]]),ssymQQQ("x",2,2),MX("x",2,2))    
+                  (matrix([[1,2],[3,4]]),ssym("x",2,2),MX("x",2,2))    
                   ]:
       for z,ztype in zip([x,y],[[type(SXMatrix()),type(SX())],[type(MX())]]):
         print "z = %s, s = %s" % (str(z),str(s))
@@ -382,7 +382,7 @@ class typemaptests(casadiTestCase):
         
     ## numeric & SXMatrix
     for s in nums:
-      for z in [SX("x"), ssymQQQ("x"), ssymQQQ("x",2,2)]:
+      for z in [SX("x"), ssym("x"), ssym("x",2,2)]:
         print "z = %s, s = %s" % (str(z),str(s))
         print "  z = %s, s = %s" % (type(z),type(s))
         tests(z,s)
@@ -395,8 +395,8 @@ class typemaptests(casadiTestCase):
         tests(z,s)
         
     # SX & SX
-    for s in [SX("x"), ssymQQQ("x"), ssymQQQ("x",2,2)]:
-      for z in [SX("x"),ssymQQQ("x"), ssymQQQ("x",2,2)]:
+    for s in [SX("x"), ssym("x"), ssym("x",2,2)]:
+      for z in [SX("x"),ssym("x"), ssym("x",2,2)]:
         print "z = %s, s = %s" % (str(z),str(s))
         print "  z = %s, s = %s" % (type(z),type(s))
         tests(z,s)
@@ -696,11 +696,11 @@ class typemaptests(casadiTestCase):
     x * numpy.array(1)
     x * numpy.array(1.2)
 
-    ssymQQQ("x") * numpy.array(1.0) 
+    ssym("x") * numpy.array(1.0) 
     MX("x") * numpy.array(1.0)
     
   def test_array_cat(self):
-    vertcat((ssymQQQ("x",3,4),ones((4,3))))
+    vertcat((ssym("x",3,4),ones((4,3))))
     
     
   def test_issue(self):
@@ -738,13 +738,13 @@ class typemaptests(casadiTestCase):
     print type(longint)
     print casadi.SX('x') + longint
     print longint + casadi.SX('x')
-    print casadi.ssymQQQ('x') + longint
-    print longint + casadi.ssymQQQ('x')
+    print casadi.ssym('x') + longint
+    print longint + casadi.ssym('x')
     
   def test_casting_DMatrix(self):
     self.message("casting DMatrix")
     
-    x = ssymQQQ("x")
+    x = ssym("x")
     f = SXFunction([x],[x])
     f.init()
     class Foo:
@@ -801,7 +801,7 @@ class typemaptests(casadiTestCase):
     self.message("casting SXMatrix")
     
     
-    x = ssymQQQ("x")
+    x = ssym("x")
     
     class Foo:
       def __SXMatrix__(self):
@@ -831,7 +831,7 @@ class typemaptests(casadiTestCase):
     self.message("casting MX")
     
     
-    x = msymQQQ("x")
+    x = msym("x")
     
     class Foo:
       def __MX__(self):
@@ -841,7 +841,7 @@ class typemaptests(casadiTestCase):
     
     class Foo:
       def __MX__(self):
-        return ssymQQQ("x")
+        return ssym("x")
         
     self.assertRaises(TypeError,lambda : MXFunction([x],[Foo()]))
     
@@ -858,7 +858,7 @@ class typemaptests(casadiTestCase):
     
   def test_OUTPUT(self):
     self.message("OUTPUT typemap")
-    a = ssymQQQ("A",3,3)
+    a = ssym("A",3,3)
     self.assertTrue(isinstance(qr(a),list))
 
   def test_cvar(self):

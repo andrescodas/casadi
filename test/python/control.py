@@ -64,8 +64,8 @@ class ControlTests(casadiTestCase):
           solver.setInput(horzcat(A_),DPLE_A)
           solver.setInput(horzcat(V_),DPLE_V)
           
-          As = msymQQQ("A",n,K*n)
-          Vs = msymQQQ("V",n,K*n)
+          As = msym("A",n,K*n)
+          Vs = msym("V",n,K*n)
           
           Vss = horzcat([(i+i.T)/2 for i in horzsplit(Vs,n) ])
           

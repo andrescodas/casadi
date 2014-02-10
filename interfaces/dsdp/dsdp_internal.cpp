@@ -120,9 +120,9 @@ void DSDPInternal::init(){
   
   if (nc_>0) {
     // Fill in the linear program structure
-    MX A = msymQQQ("A",input(SDP_SOLVER_A).sparsity());
-    MX LBA = msymQQQ("LBA",input(SDP_SOLVER_LBA).sparsity());
-    MX UBA = msymQQQ("UBA",input(SDP_SOLVER_UBA).sparsity());
+    MX A = msym("A",input(SDP_SOLVER_A).sparsity());
+    MX LBA = msym("LBA",input(SDP_SOLVER_LBA).sparsity());
+    MX UBA = msym("UBA",input(SDP_SOLVER_UBA).sparsity());
     
     std::vector< MX >  syms;
     syms.push_back(A);

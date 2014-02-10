@@ -96,14 +96,14 @@ void SDPSDQPInternal::init(){
   cholesky_ = CSparseCholesky(st_[SDQP_STRUCT_H]);
   cholesky_.init();
   
-  MX g_socp = msymQQQ("x",cholesky_.getFactorizationSparsity(true));
-  MX h_socp = msymQQQ("h",1,n_);
+  MX g_socp = msym("x",cholesky_.getFactorizationSparsity(true));
+  MX h_socp = msym("h",1,n_);
   
   MX f_socp = sqrt(inner_prod(h_socp,h_socp));
   MX en_socp = 0.5/f_socp;
 
-  MX f_sdqp = msymQQQ("f",input(SDQP_SOLVER_F).sparsity());
-  MX g_sdqp = msymQQQ("g",input(SDQP_SOLVER_G).sparsity());
+  MX f_sdqp = msym("f",input(SDQP_SOLVER_F).sparsity());
+  MX g_sdqp = msym("g",input(SDQP_SOLVER_G).sparsity());
   
   std::vector<MX> fi(n_+1);
   MX znp = DMatrix(n_+1,n_+1);

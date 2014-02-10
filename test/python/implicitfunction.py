@@ -45,7 +45,7 @@ class NLPtests(casadiTestCase):
     self.message("Scalar implicit problem, n=0")
     for Solver, options in solvers:
       self.message(Solver.__name__)
-      x=ssymQQQ("x")
+      x=ssym("x")
       f=SXFunction([x],[sin(x)])
       f.init()
       solver=Solver(f)
@@ -64,8 +64,8 @@ class NLPtests(casadiTestCase):
     for Solver, options in solvers:
       self.message(Solver.__name__)
       message = Solver.__name__
-      x=ssymQQQ("x")
-      y=ssymQQQ("y")
+      x=ssym("x")
+      y=ssym("y")
       n=0.2
       f=SXFunction([y,x],[x-arcsin(y)])
       f.init()
@@ -92,7 +92,7 @@ class NLPtests(casadiTestCase):
       solver.setOption(options)
       solver.init()
       
-      X = msymQQQ("X")
+      X = msym("X")
       [R] = solver.call([MX(),X])
       
       trial = MXFunction([X],[R])
@@ -112,9 +112,9 @@ class NLPtests(casadiTestCase):
       message = Solver.__name__
       N = 5
       s = sp_triu(N)
-      x=ssymQQQ("x",s)
+      x=ssym("x",s)
 
-      y=ssymQQQ("y",s)
+      y=ssym("y",s)
       y0 = DMatrix(sp_diag(N),0.1)
 
       f=SXFunction([flattenNZ(y),flattenNZ(x)],[flattenNZ((mul((x+y0),(x+y0).T)-mul((y+y0),(y+y0).T))[s])])
@@ -125,7 +125,7 @@ class NLPtests(casadiTestCase):
       solver.setOption("constraints",[1]*s.size())
       solver.init()
       
-      X = msymQQQ("X",x.sparsity())
+      X = msym("X",x.sparsity())
       [R] = solver.call([MX(),flattenNZ(X)])
       
       trial = MXFunction([X],[R])
@@ -154,7 +154,7 @@ class NLPtests(casadiTestCase):
       self.message(Solver.__name__)
       message = Solver.__name__
       x=SX("x")
-      y=ssymQQQ("y",1,2)
+      y=ssym("y",1,2)
       y0 = DMatrix([0.1,0.4])
       yy = y + y0
       n=0.2
@@ -188,7 +188,7 @@ class NLPtests(casadiTestCase):
     for Solver, options in solvers:
       if 'Kinsol' in str(Solver): continue
       if 'Newton' in str(Solver): continue
-      x=ssymQQQ("x",1,2)
+      x=ssym("x",1,2)
       f=SXFunction([x],[horzcat([mul((x+3).T,(x-2)),mul((x-4).T,(x+horzcat([1,2])))])])
       f.init()
       
@@ -213,8 +213,8 @@ class NLPtests(casadiTestCase):
 
   def test_implicitbug(self):
     # Total number of variables for one finite element
-    X0 = msymQQQ("X0")
-    V = msymQQQ("V")
+    X0 = msym("X0")
+    V = msym("V")
 
     V_eq = horzcat([V[0]-X0])
 

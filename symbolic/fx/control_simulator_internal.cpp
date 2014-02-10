@@ -197,15 +197,15 @@ namespace CasADi{
     // Generate an output function if there is none (returns the whole state)
     if(orig_output_fcn_.isNull()){
     
-      SXMatrix t        = ssymQQQ("t",control_dae_.input(CONTROL_DAE_T).sparsity());
-      SXMatrix t0       = ssymQQQ("t0",control_dae_.input(CONTROL_DAE_T0).sparsity());
-      SXMatrix tf       = ssymQQQ("tf",control_dae_.input(CONTROL_DAE_TF).sparsity());
-      SXMatrix x        = ssymQQQ("x",control_dae_.input(CONTROL_DAE_X).sparsity());
-      SXMatrix z        = ssymQQQ("z",control_dae_.input(CONTROL_DAE_Z).sparsity());
-      SXMatrix p        = ssymQQQ("p",control_dae_.input(CONTROL_DAE_P).sparsity());
-      SXMatrix u        = ssymQQQ("u",control_dae_.input(CONTROL_DAE_U).sparsity());
-      SXMatrix u_interp = ssymQQQ("u_interp",control_dae_.input(CONTROL_DAE_U_INTERP).sparsity());
-      SXMatrix x0       = ssymQQQ("x0",control_dae_.input(CONTROL_DAE_X_MAJOR).sparsity());
+      SXMatrix t        = ssym("t",control_dae_.input(CONTROL_DAE_T).sparsity());
+      SXMatrix t0       = ssym("t0",control_dae_.input(CONTROL_DAE_T0).sparsity());
+      SXMatrix tf       = ssym("tf",control_dae_.input(CONTROL_DAE_TF).sparsity());
+      SXMatrix x        = ssym("x",control_dae_.input(CONTROL_DAE_X).sparsity());
+      SXMatrix z        = ssym("z",control_dae_.input(CONTROL_DAE_Z).sparsity());
+      SXMatrix p        = ssym("p",control_dae_.input(CONTROL_DAE_P).sparsity());
+      SXMatrix u        = ssym("u",control_dae_.input(CONTROL_DAE_U).sparsity());
+      SXMatrix u_interp = ssym("u_interp",control_dae_.input(CONTROL_DAE_U_INTERP).sparsity());
+      SXMatrix x0       = ssym("x0",control_dae_.input(CONTROL_DAE_X_MAJOR).sparsity());
   
       vector<SXMatrix> arg(CONTROL_DAE_NUM_IN);
       arg[CONTROL_DAE_T]  = t;
@@ -263,7 +263,7 @@ namespace CasADi{
    
     output_fcn_in_ = vector<MX>(CONTROL_DAE_NUM_IN);
 
-    dae_in_[DAE_T] = msymQQQ("tau");
+    dae_in_[DAE_T] = msym("tau");
     if (!output_fcn_.input(CONTROL_DAE_T).empty()) {
       output_fcn_in_[CONTROL_DAE_T]        = dae_in_[DAE_P](0,iT0) + (dae_in_[DAE_P](0,iTF)-dae_in_[DAE_P](0,iT0))*dae_in_[DAE_T];
     }

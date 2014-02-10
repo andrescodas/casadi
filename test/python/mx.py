@@ -394,7 +394,7 @@ class MXtests(casadiTestCase):
 
     u = DMatrix([[10*j+i for i in range(3)] for j in range(4) ])
 
-    U = msymQQQ("u",u.shapeQQQ)
+    U = msym("u",u.shapeQQQ)
 
     f = MXFunction([U],[flatten(U)])
     f.init()
@@ -412,7 +412,7 @@ class MXtests(casadiTestCase):
     u[1,0] = 9
     u[0,1] = 11
     
-    U = msymQQQ("u",u.sparsity())
+    U = msym("u",u.sparsity())
 
     f = MXFunction([U],[flattenNZ(U)])
     f.init()
@@ -586,7 +586,7 @@ class MXtests(casadiTestCase):
     
   def test_MXJacobians(self):
       self.message("MX(3,1) unary operation, jacobian")
-      x=msymQQQ("x",1,3)
+      x=msym("x",1,3)
       
       x0=array([0.738,0.9,0.3])
 
@@ -1320,7 +1320,7 @@ class MXtests(casadiTestCase):
     
   def test_null(self):
     self.message("MXFunction null")
-    x = msymQQQ("x")
+    x = msym("x")
 
     f = MXFunction([x],[x**2,MX()])
     f.init()
@@ -1446,8 +1446,8 @@ class MXtests(casadiTestCase):
  
   def test_truth(self):
     self.message("Truth values")
-    self.assertRaises(Exception, lambda : bool(msymQQQ("x")))
-    #self.assertRaises(Exception, lambda : bool(msymQQQ("x")>0))
+    self.assertRaises(Exception, lambda : bool(msym("x")))
+    #self.assertRaises(Exception, lambda : bool(msym("x")>0))
     self.assertTrue(bool(MX(1)))
     self.assertFalse(bool(MX(0)))
     self.assertTrue(bool(MX(0.2)))
@@ -1522,8 +1522,8 @@ class MXtests(casadiTestCase):
         
   def test_regression491(self):
     self.message("regression #491")
-    u = ssymQQQ("u")
-    x = ssymQQQ("x")
+    u = ssym("u")
+    x = ssym("x")
 
     F = SXFunction([u,x],[u+1/x])
     F.init()
@@ -1550,13 +1550,13 @@ class MXtests(casadiTestCase):
       self.assertAlmostEqual(J.getOutput(),1,9)
 
   def test_ticket(self):
-    J = [] + msymQQQ("x")
-    J = msymQQQ("x") + []
+    J = [] + msym("x")
+    J = msym("x") + []
         
   def test_jacobian_tools(self):
     self.message("jacobian")
     
-    X = msymQQQ("X")
+    X = msym("X")
 
     Y = jacobian(X**2,X)
     
@@ -1570,7 +1570,7 @@ class MXtests(casadiTestCase):
     
   def test_reshape(self):
     self.message("reshape")
-    X = msymQQQ("X",1,10)
+    X = msym("X",1,10)
 
     i = IMatrix(sp_triu(3),range(6))
 
@@ -1586,7 +1586,7 @@ class MXtests(casadiTestCase):
     
     self.checkarray(IMatrix([0,1,9,4,16,25]),f.getOutput())
 
-    Y = msymQQQ("Y",1,10)
+    Y = msym("Y",1,10)
 
     ff = MXFunction([Y],f.evalMX([Y]))
     ff.init()
@@ -1621,7 +1621,7 @@ class MXtests(casadiTestCase):
     
   def test_horzcat(self):
     self.message("horzcat")
-    X = msymQQQ("X",1,10)
+    X = msym("X",1,10)
 
     T = horzcat([X[4],X[2]])
 
@@ -1632,7 +1632,7 @@ class MXtests(casadiTestCase):
     
     self.checkarray(IMatrix([16,4]),f.getOutput())
 
-    Y = msymQQQ("Y",1,10)
+    Y = msym("Y",1,10)
 
     ff = MXFunction([Y],f.evalMX([Y]))
     ff.init()
@@ -1664,7 +1664,7 @@ class MXtests(casadiTestCase):
     self.checkarray(i,J.getOutput())
   
   def test_blockcat(self):
-    x = msymQQQ("x")
+    x = msym("x")
     
     y = blockcat([[x,2*x],[3*x,4*x]])
     f = MXFunction([x],[y])
@@ -1675,7 +1675,7 @@ class MXtests(casadiTestCase):
     
     
   def test_veccats(self):
-    x= msymQQQ("x",1,2)
+    x= msym("x",1,2)
     self.assertTrue(hash(flatten(x))==hash(x))
     self.assertTrue(hash(flattenNZ(x))==hash(x))
     
@@ -1686,7 +1686,7 @@ class MXtests(casadiTestCase):
     self.assertTrue(isRegular(MX(DMatrix([0,1]))))
     self.assertFalse(isRegular(MX(DMatrix([0,Inf]))))
     with self.assertRaises(Exception):
-      self.assertFalse(isRegular(msymQQQ("x",1,2)))
+      self.assertFalse(isRegular(msym("x",1,2)))
 
   def test_blkdiag(self):
     C = blkdiag([MX(DMatrix(([[-1.4,-3.2],[-3.2,-28]]))),DMatrix([[15,-12,2.1],[-12,16,-3.8],[2.1,-3.8,15]]),1.8,-4.0])
@@ -1700,7 +1700,7 @@ class MXtests(casadiTestCase):
     self.checkarray(f.getOutput(),r)
     
   def test_tril2symm(self):
-    x = msymQQQ("x",sp_triu(3))
+    x = msym("x",sp_triu(3))
     f = MXFunction([x],[tril2symm(x)])
     f.init()
     f.setInput(range(6))
@@ -1711,7 +1711,7 @@ class MXtests(casadiTestCase):
     self.message("sparsity")
 
     B_ = DMatrix([[1,2,3,4,5],[6,7,8,9,10]])
-    B = msymQQQ("B",5,2)
+    B = msym("B",5,2)
     
     A = IMatrix([[1,1,0,0,0],[0,0,1,0,0]])
     makeSparse(A)
@@ -1740,9 +1740,9 @@ class MXtests(casadiTestCase):
     self.assertRaises(Exception, lambda : B[sp_dense(4,4)])
 
   def test_getSymbols(self):
-    a = msymQQQ("a")
-    b = msymQQQ("b")
-    c = msymQQQ("c")
+    a = msym("a")
+    b = msym("b")
+    c = msym("c")
     e = cos(a*b) + c
     w = getSymbols(e)
     self.assertEqual(len(w),3)
@@ -1752,7 +1752,7 @@ class MXtests(casadiTestCase):
       self.assertTrue(isEqual(w[2],c))
     
   def test_iter(self):
-    self.assertEqual(len(list(msymQQQ("x",1,2))),2)
+    self.assertEqual(len(list(msym("x",1,2))),2)
 
   @known_bug()
   def test_horzcat_empty(self):
@@ -1769,21 +1769,21 @@ class MXtests(casadiTestCase):
     self.assertEqual(v.size1(),0)
     
   def test_jacobian_empty(self):
-    x = msymQQQ("x",1,3)
+    x = msym("x",1,3)
 
     s = jacobian(DMatrix(0,0),x).shape
     self.assertEqual(s[0],0)
     self.assertEqual(s[1],3)
 
-    s = jacobian(x,msymQQQ("x",4,0)).shape
+    s = jacobian(x,msym("x",4,0)).shape
     self.assertEqual(s[0],3)
     self.assertEqual(s[1],0)
     
   def test_mul_sparsity(self):
 
     N = 10
-    x = msymQQQ("x",N,N)
-    y = msymQQQ("y",N,N)
+    x = msym("x",N,N)
+    y = msym("y",N,N)
 
     x_ = self.randDMatrix(N,N)
     y_ = self.randDMatrix(N,N)
@@ -1808,10 +1808,10 @@ class MXtests(casadiTestCase):
     
   def test_mul_zero_wrong(self):
     with self.assertRaises(RuntimeError):
-      mul(msymQQQ("X",5,4),MX.zeros(2,3))
+      mul(msym("X",5,4),MX.zeros(2,3))
       
   def test_horzsplit(self):
-    a = msymQQQ("X",sp_triu(5))
+    a = msym("X",sp_triu(5))
     v = horzsplit(a,[0,2,4])
     
     f = MXFunction([a],v)
@@ -1872,7 +1872,7 @@ class MXtests(casadiTestCase):
     self.checkarray(V[2],DMatrix([[6,7,8,9,0],[10,11,12,13,14]]))
  
   def test_vertsplit(self):
-    a = msymQQQ("X",sp_triu(5))
+    a = msym("X",sp_triu(5))
     v = vertsplit(a,[0,2,4])
     
     f = MXFunction([a],v)
@@ -1930,7 +1930,7 @@ class MXtests(casadiTestCase):
     self.checkarray(V[2],DMatrix([[0,0],[0,0],[0,0],[9,0],[13,14]]))
     
   def test_blocksplit(self):
-    a = msymQQQ("X",sp_triu(5))
+    a = msym("X",sp_triu(5))
     v = blocksplit(a,[0,2,4],[0,1,3])
     
     fs = [MXFunction([a],vr) for vr in v]
@@ -1948,7 +1948,7 @@ class MXtests(casadiTestCase):
 
   def test_mxnulloutput(self):
      a = MX(5,0)
-     b = msymQQQ("x",1,2)
+     b = msym("x",1,2)
      
      f = MXFunction([b],[a])
      f.init()
@@ -1963,7 +1963,7 @@ class MXtests(casadiTestCase):
      self.assertEqual(c.size1(),0)
      
      a = MX(0,0)
-     b = msymQQQ("x",1,2)
+     b = msym("x",1,2)
      
      f = MXFunction([b],[a])
      f.init()
@@ -1994,7 +1994,7 @@ class MXtests(casadiTestCase):
      
   def  test_mxnullop(self):
     c = MX(0,0)
-    x = msymQQQ("x",3,2)
+    x = msym("x",3,2)
     
     with self.assertRaises(RuntimeError):
       d = x + c
@@ -2012,7 +2012,7 @@ class MXtests(casadiTestCase):
         for v in [0,1,0.2]:
           x_ = DMatrix(sp,v)
           
-          xx = msymQQQ("x",sp.size1(),sp.size2())
+          xx = msym("x",sp.size1(),sp.size2())
           x=xx[sp]
           
           for (casadiop, numpyop,name, flags) in self.pool.zip():
@@ -2036,16 +2036,16 @@ class MXtests(casadiTestCase):
       for sp in [sp_sparse(1,1),sp_dense(1,1),sp_sparse(4,3),sp_dense(4,3), CCSSparsity(4,3,[0,2,2,3],[1,2,1])]:
         for v1 in [0,1,0.2,-0.2]:
           x1_ = DMatrix(sp,v1)
-          xx1 = msymQQQ("x",sp.size1(),sp.size2())
+          xx1 = msym("x",sp.size1(),sp.size2())
           x1=xx1[sp]
-          xx1s = ssymQQQ("x",sp.size1(),sp.size2())
+          xx1s = ssym("x",sp.size1(),sp.size2())
           x1s=xx1s[sp]
           for sp2 in [sp_sparse(1,1),sp_dense(1,1),sp_sparse(4,3),sp_dense(4,3), CCSSparsity(4,3,[0,2,2,3],[1,2,1])]:
             for v2 in [0,1,0.2,-0.2]:
               x2_ = DMatrix(sp2,v2)
-              xx2 = msymQQQ("x",sp2.size1(),sp2.size2())
+              xx2 = msym("x",sp2.size1(),sp2.size2())
               x2=xx2[sp2]
-              xx2s = ssymQQQ("x",sp2.size1(),sp2.size2())
+              xx2s = ssym("x",sp2.size1(),sp2.size2())
               x2s=xx2s[sp2]
               for (casadiop, numpyop,name, flags) in self.matrixbinarypool.zip():
                 if "mul" in name and (sp.numel()==1 or sp2.numel()==1): continue
@@ -2131,16 +2131,16 @@ class MXtests(casadiTestCase):
                     self.assertTrue(min(c)>=0,str([sp,sp2,v1,v2,name]))
 
   def test_graph_substitute(self):
-    x=msymQQQ("X",4,4)
-    y=msymQQQ("Y",4,4)
-    b=msymQQQ("B",4,4)
+    x=msym("X",4,4)
+    y=msym("Y",4,4)
+    b=msym("B",4,4)
 
     c = x*y
     d = b*y
     f = c+d
     
     
-    C = msymQQQ("C",4,4)
+    C = msym("C",4,4)
     f = graph_substitute(f,[c],[C])
     
     F = MXFunction([y,b,C],[f])
@@ -2154,7 +2154,7 @@ class MXtests(casadiTestCase):
     
     self.checkarray(F.output(),5*DMatrix.ones(4,4))
     
-    D = msymQQQ("D",4,4)
+    D = msym("D",4,4)
     f = graph_substitute(f,[d],[D])
     
     F = MXFunction([D,C],[f])
@@ -2170,9 +2170,9 @@ class MXtests(casadiTestCase):
 
   def test_matrix_expand(self):
     n = 2
-    a = msymQQQ("a",n,n)
-    b = msymQQQ("b",n,n)
-    c = msymQQQ("c",n,n)
+    a = msym("a",n,n)
+    b = msym("b",n,n)
+    c = msym("c",n,n)
 
     d = a+b
     e = d*c
@@ -2210,8 +2210,8 @@ class MXtests(casadiTestCase):
     a = sparse(DMatrix([[1,0,6],[2,7,0]]))
     b = sparse(DMatrix([[1,0,0],[2,3,7],[0,0,9],[1,12,13]]))
     
-    A = msymQQQ("A",a.sparsity())
-    B = msymQQQ("B",b.sparsity())
+    A = msym("A",a.sparsity())
+    B = msym("B",b.sparsity())
     C = c.kron(A,B)
     
     f = MXFunction([A,B],[C])

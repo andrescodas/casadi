@@ -44,7 +44,7 @@ using namespace std;
 namespace CasADi{
 
 SymbolicOCP::SymbolicOCP(){
-  t = ssymQQQ("t");
+  t = ssym("t");
   t0 = t0_guess = numeric_limits<double>::quiet_NaN();
   tf = tf_guess = numeric_limits<double>::quiet_NaN();
   t0_free = false;

@@ -333,28 +333,28 @@ namespace CasADi{
   */
   //@{
   /** \brief Create a matrix symbolic variable of given sparsity */
-  MX msymQQQ(const std::string& name, int nrow=1, int ncol=1);
+  MX msym(const std::string& name, int nrow=1, int ncol=1);
 
   /** \brief Create a matrix symbolic variable of given sparsity */
-  MX msymQQQ(const std::string& name, const std::pair<int,int> & rc);
+  MX msym(const std::string& name, const std::pair<int,int> & rc);
 
   /** \brief Create a matrix variable from a constant matrix */
-  MX msymQQQ(const Matrix<double>& x);
+  MX msym(const Matrix<double>& x);
 
   /** \brief Create a matrix symbolic variable of given sparsity */
-  MX msymQQQ(const std::string& name, const CCSSparsity& sp);
+  MX msym(const std::string& name, const CCSSparsity& sp);
 
   /** \brief Create a vector of length p with with matrix symbolic variables of given sparsity */
-  std::vector<MX> msymQQQ(const std::string& name, const CCSSparsity& sp, int p);
+  std::vector<MX> msym(const std::string& name, const CCSSparsity& sp, int p);
 
   /** \brief Create a vector of length p with nrow-by-ncol matrix symbolic variables */
-  std::vector<MX> msymQQQ(const std::string& name, int nrow, int ncol, int p);
+  std::vector<MX> msym(const std::string& name, int nrow, int ncol, int p);
 
   /** \brief Create a vector of length r of vectors of length p with matrix symbolic variables with given sparsity*/
-  std::vector<std::vector<MX> > msymQQQ(const std::string& name, const CCSSparsity& sp, int p, int r);
+  std::vector<std::vector<MX> > msym(const std::string& name, const CCSSparsity& sp, int p, int r);
 
   /** \brief Create a vector of length r of vectors of length p with nrow-by-ncol matrices with symbolic variables */
-  std::vector<std::vector<MX> > msymQQQ(const std::string& name, int nrow, int ncol, int p, int r);
+  std::vector<std::vector<MX> > msym(const std::string& name, int nrow, int ncol, int p, int r);
 
   //@}
 
@@ -399,7 +399,7 @@ namespace CasADi{
 #endif // SWIG
 
   template<> inline
-  MX GenericMatrix<MX>::sym(const std::string& name, const CCSSparsity& sp){ return msymQQQ(name,sp);}
+  MX GenericMatrix<MX>::sym(const std::string& name, const CCSSparsity& sp){ return msym(name,sp);}
 
   /** \brief Extract shared subexpressions from an set of expressions */
   void extractShared(std::vector<MX>& ex, 

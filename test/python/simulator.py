@@ -39,9 +39,9 @@ class Simulatortests(casadiTestCase):
 
   def setUp(self):
     # Reference solution is q0 e^((t^3-t0^3)/(3 p))
-    t=ssymQQQ("t")
-    q=ssymQQQ("q")
-    p=ssymQQQ("p")
+    t=ssym("t")
+    q=ssym("q")
+    p=ssym("p")
     f=SXFunction(daeIn(t=t,x=q,p=p),daeOut(ode=q/p*t**2))
     f.init()
     integrator = CVodesIntegrator(f)
@@ -72,9 +72,9 @@ class Simulatortests(casadiTestCase):
     N = 4
     tc = DMatrix(n.linspace(0,num['tend'],N))
     
-    t=ssymQQQ("t")
-    q=ssymQQQ("q")
-    p=ssymQQQ("p")
+    t=ssym("t")
+    q=ssym("q")
+    p=ssym("p")
     
     out = SXFunction(daeIn(t=t, x=q, p=p),[q])
     out.init()
@@ -107,10 +107,10 @@ class Simulatortests(casadiTestCase):
     N = 4
     tc = DMatrix(n.linspace(0,num['tend'],N))
     
-    t=ssymQQQ("t")
-    q=ssymQQQ("q")
-    p=ssymQQQ("p")
-    u=ssymQQQ("u")
+    t=ssym("t")
+    q=ssym("q")
+    p=ssym("p")
+    u=ssym("u")
     out = SXFunction(controldaeIn(t=t, x=q, p=p),[q])
     out.init()
         
@@ -133,7 +133,7 @@ class Simulatortests(casadiTestCase):
     sim.setOption("integrator_options",{"reltol": 1e-15, "abstol": 1e-15, "fsens_err_con": True})
     sim.init()
     
-    U = ssymQQQ("U",1,N-1)
+    U = ssym("U",1,N-1)
     
     result = SXMatrix(q)
     for i in range(N-1):
@@ -158,9 +158,9 @@ class Simulatortests(casadiTestCase):
     num = self.num
     tc = DMatrix(n.linspace(0,num['tend'],100))
     
-    t=ssymQQQ("t")
-    q=ssymQQQ("q")
-    p=ssymQQQ("p")
+    t=ssym("t")
+    q=ssym("q")
+    p=ssym("p")
     
     out = SXFunction(daeIn(t=t, x=q, p=p),[q,t,p])
     out.init()
@@ -302,14 +302,14 @@ class Simulatortests(casadiTestCase):
     self.message("ControlSimulator: inputs")
     num=self.num
     tc = 0.01*DMatrix([0,8,16,24,32])
-    t  = ssymQQQ("t")
-    q  = ssymQQQ("q")
-    p  = ssymQQQ("p")
+    t  = ssym("t")
+    q  = ssym("q")
+    p  = ssym("p")
     
-    t0 = ssymQQQ("t0")
-    tf_= ssymQQQ("tf")
+    t0 = ssym("t0")
+    tf_= ssym("tf")
     
-    qm = ssymQQQ("qm")
+    qm = ssym("qm")
     
     out = SXFunction(controldaeIn(t=t, x=q, p=p, t0=t0, tf=tf_, x_major=qm),[q,t,p,t0,tf_,qm])
     out.init()
@@ -395,9 +395,9 @@ class Simulatortests(casadiTestCase):
     self.checkarray(sim.getOutput(4),num['q0']*exp(-sim.getOutput(2)),"Evaluation output mismatch",digits=9)
 
   def test_controlsim_interpolation(self):
-    q  = ssymQQQ("q")
-    u  = ssymQQQ("u")
-    ui = ssymQQQ("ui")
+    q  = ssym("q")
+    u  = ssym("u")
+    ui = ssym("ui")
 
 
     
@@ -475,9 +475,9 @@ class Simulatortests(casadiTestCase):
     self.message("CVodes integration: outputs")
     num=self.num
     tc = 0.01*DMatrix([0,8,16,24,32])
-    t=ssymQQQ("t")
-    q=ssymQQQ("q")
-    p=ssymQQQ("p")
+    t=ssym("t")
+    q=ssym("q")
+    p=ssym("p")
     f=SXFunction(controldaeIn(t=t, x=q, p=p),[q/p*t**2])
     f.init()
     sim = ControlSimulator(f,tc)

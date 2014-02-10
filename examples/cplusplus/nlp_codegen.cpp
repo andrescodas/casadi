@@ -68,7 +68,7 @@ int main(){
    */
 
   // Optimization variables
-  MX x = msymQQQ("x",1,2);
+  MX x = msym("x",1,2);
 
   // Objective
   MX f = x[0]*x[0] + x[1]*x[1];

@@ -395,7 +395,7 @@ class casadiTestCase(unittest.TestCase):
       spmods = [lambda x: x , remove00]
       spmods = [lambda x: x]
       
-      sym = msymQQQ
+      sym = msym
       Function = MXFunction
       
       storage2 = {}

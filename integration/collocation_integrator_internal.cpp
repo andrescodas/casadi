@@ -95,12 +95,12 @@ namespace CasADi{
     }
 
     // Symbolic inputs
-    MX x0 = msymQQQ("x0",f_.input(DAE_X).sparsity());
-    MX p = msymQQQ("p",f_.input(DAE_P).sparsity());
-    MX t = msymQQQ("t",f_.input(DAE_T).sparsity());
+    MX x0 = msym("x0",f_.input(DAE_X).sparsity());
+    MX p = msym("p",f_.input(DAE_P).sparsity());
+    MX t = msym("t",f_.input(DAE_T).sparsity());
 
     // Implicitly defined variables (z and x)
-    MX v = msymQQQ("v",1,deg_*(nx_+nz_));
+    MX v = msym("v",1,deg_*(nx_+nz_));
     vector<int> v_offset(1,0);
     for(int d=0; d<deg_; ++d){
       v_offset.push_back(v_offset.back()+nx_);
@@ -180,11 +180,11 @@ namespace CasADi{
     // NOTE: The following is derived so that it will give the exact adjoint sensitivities whenever g is the reverse mode derivative of f.
     if(!g_.isNull()){
       // Symbolic inputs
-      MX rx0 = msymQQQ("x0",g_.input(RDAE_RX).sparsity());
-      MX rp = msymQQQ("p",g_.input(RDAE_RP).sparsity());
+      MX rx0 = msym("x0",g_.input(RDAE_RX).sparsity());
+      MX rp = msym("p",g_.input(RDAE_RP).sparsity());
 
       // Implicitly defined variables (rz and rx)
-      MX rv = msymQQQ("v",1,deg_*(nrx_+nrz_));
+      MX rv = msym("v",1,deg_*(nrx_+nrz_));
       vector<int> rv_offset(1,0);
       for(int d=0; d<deg_; ++d){
         rv_offset.push_back(rv_offset.back()+nrx_);

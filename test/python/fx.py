@@ -29,9 +29,9 @@ from helpers import *
 class FXtests(casadiTestCase):
 
   def test_call_empty(self):
-    x = ssymQQQ("x",1,2)
+    x = ssym("x",1,2)
     fsx = SXFunction([x,[]],[x])
-    x = msymQQQ("x",1,2)
+    x = msym("x",1,2)
     fmx1 = MXFunction([x,MX()],[x])
     fmx2 = MXFunction([x,[]],[x])
     
@@ -39,16 +39,16 @@ class FXtests(casadiTestCase):
       f.init()
       f.evaluate()
 
-      X = msymQQQ("X",1,2)
+      X = msym("X",1,2)
       F = f.call([X,X])[0]
       g = MXFunction([X],[F])
       g.init()
 
       g.evaluate()
     
-    x = ssymQQQ("x",1,2)
+    x = ssym("x",1,2)
     fsx = SXFunction([x],[x,[]])
-    x = msymQQQ("x",1,2)
+    x = msym("x",1,2)
     fmx1 = MXFunction([x],[x,MX()])
     fmx2 = MXFunction([x],[x,[]])
     
@@ -56,7 +56,7 @@ class FXtests(casadiTestCase):
       f.init()
       f.evaluate()
 
-      X = msymQQQ("X",1,2)
+      X = msym("X",1,2)
       F = f.call([X])[0]
       g = MXFunction([X],[F])
       g.init()
@@ -213,8 +213,8 @@ class FXtests(casadiTestCase):
     g.expand([x])
   
   def test_jacobian(self):
-    x = ssymQQQ("x",1,3)
-    y = ssymQQQ("y",1,2)
+    x = ssym("x",1,3)
+    y = ssym("y",1,2)
 
     f = SXFunction([x,y],[x**2,y,x*y[0]])
     f.init()
@@ -225,8 +225,8 @@ class FXtests(casadiTestCase):
     self.assertEqual(g.getNumOutputs(),f.getNumOutputs()+1)
 
   def test_xfunction(self):
-    x = ssymQQQ("x",1,3)
-    y = ssymQQQ("y",1,2)
+    x = ssym("x",1,3)
+    y = ssym("y",1,2)
     
     f = SXFunction([x,y],[x**2,y,x*y[0]])
     f.init()
@@ -234,8 +234,8 @@ class FXtests(casadiTestCase):
     f.setInput([0.1,0.7,1.3],0)
     f.setInput([7.1,2.9],1)
     
-    X = msymQQQ("x",1,3)
-    Y = msymQQQ("y",1,2)
+    X = msym("x",1,3)
+    Y = msym("y",1,2)
     
     F = MXFunction([X,Y],[X**2,Y,X*Y[0]])
     F.init()
@@ -249,13 +249,13 @@ class FXtests(casadiTestCase):
   @memory_heavy()
   def test_jacobians(self):
   
-    x = ssymQQQ("x")
+    x = ssym("x")
     
     self.assertEqual(jacobian(5,x).size(),0)
     
     
     def test(sp):
-      x = ssymQQQ("x",1,sp.size1())
+      x = ssym("x",1,sp.size1())
       sp2 = jacobian(mul(DMatrix(sp,1),x),x).sparsity()
       self.checkarray(sp.row(),sp2.row());
       self.checkarray(sp.colind(),sp2.colind());   
@@ -345,7 +345,7 @@ class FXtests(casadiTestCase):
   @memory_heavy()
   def test_hessians(self):
     def test(sp):
-      x = ssymQQQ("x",1,sp.size1())
+      x = ssym("x",1,sp.size1())
       self.assertTrue(sp==sp.transpose())
       f = SXFunction([x],[mul([x.T,DMatrix(sp,1),x])])
       f.init()
@@ -432,7 +432,7 @@ class FXtests(casadiTestCase):
       test(d.sparsity())
       
   def test_getOutput(self):
-    x = ssymQQQ("x",1,2)
+    x = ssym("x",1,2)
     
     f = SXFunction(daeIn(x=x),daeOut(ode=x))
     f.init()
@@ -463,7 +463,7 @@ class FXtests(casadiTestCase):
     
     myOut = IOScheme(["foo","bar"])
 
-    x = ssymQQQ("x")
+    x = ssym("x")
     
     with self.assertRaises(Exception):
       myOut(baz=x)
@@ -488,7 +488,7 @@ class FXtests(casadiTestCase):
      
       
   def test_unknown_options(self):
-    x = ssymQQQ("x")
+    x = ssym("x")
     f = SXFunction([x],[x])
     f.init()
     
@@ -506,8 +506,8 @@ class FXtests(casadiTestCase):
     # Commented out, #884
     return
     
-    x = msymQQQ("x")
-    y = msymQQQ("y")
+    x = msym("x")
+    y = msym("y")
 
     @pyevaluate
     def fun(f):
@@ -531,8 +531,8 @@ class FXtests(casadiTestCase):
     # commented out #884
     return
   
-    x = msymQQQ("x")
-    y = msymQQQ("y")
+    x = msym("x")
+    y = msym("y")
         
     g = MXFunction([x,y],[sin(x+3*y)])
     g.init()
@@ -590,8 +590,8 @@ class FXtests(casadiTestCase):
       
     # vector input
     
-    x = msymQQQ("x",1,2)
-    y = msymQQQ("y")
+    x = msym("x",1,2)
+    y = msym("y")
         
     g = MXFunction([x,y],[sin(x[0]+3*y)*x[1]])
     g.init()
@@ -648,7 +648,7 @@ class FXtests(casadiTestCase):
       
     # vector input, vector output
     
-    x = msymQQQ("x",1,2)
+    x = msym("x",1,2)
         
     g = MXFunction([x],[horzcat([x[0]**2,x[1]**2])])
     g.init()
@@ -698,7 +698,7 @@ class FXtests(casadiTestCase):
       
     # vector input, vector output
     
-    x = msymQQQ("x",1,2)
+    x = msym("x",1,2)
         
     g = MXFunction([x],[horzcat([x[0]**2+x[1],x[0]*x[1]])])
     g.init()
@@ -743,7 +743,7 @@ class FXtests(casadiTestCase):
       self.checkfx(f,g,sens_der=False,hessian=False,fwd=False,evals=1)
       
   def test_setjacsparsity(self):
-    x = msymQQQ("x",1,4)
+    x = msym("x",1,4)
           
     f = MXFunction([x],[x])
     f.init()
@@ -765,8 +765,8 @@ class FXtests(casadiTestCase):
     self.assertEqual(J.output().size(),16)
       
   def test_setjacobian(self):
-    x = msymQQQ("x")
-    y = msymQQQ("y")
+    x = msym("x")
+    y = msym("y")
         
     g = MXFunction([x,y],[sin(x+3*y)])
     g.init()
@@ -785,8 +785,8 @@ class FXtests(casadiTestCase):
       f.setOutput(sin(x+3*y))
       
     # Form Jacobians: sin(x0+3*y)*x1
-    x = ssymQQQ("x")
-    y = ssymQQQ("y")
+    x = ssym("x")
+    y = ssym("y")
     J = SXFunction([x,y],[vertcat((cos(x+3*y),3*cos(x+3*y))),sin(x+3*y)])
     J.setOption("name","my_J")
     J.init()
@@ -809,7 +809,7 @@ class FXtests(casadiTestCase):
   def test_derivative_simplifications(self):
   
     n = 1
-    x = ssymQQQ("x",1,n)
+    x = ssym("x",1,n)
 
     M = SXFunction([x],[mul((x-DMatrix(range(n))),x.T)])
     M.setOption("name","M")
@@ -817,8 +817,8 @@ class FXtests(casadiTestCase):
     M.evaluate()
 
 
-    P = msymQQQ("P",n,n)
-    X = msymQQQ("X",1,n)
+    P = msym("P",n,n)
+    X = msym("X",1,n)
 
     MX= M.call([X])[0]
 
@@ -833,7 +833,7 @@ class FXtests(casadiTestCase):
     self.assertFalse("derivative" in str(P_P))
     
   def test_assert_derivatives(self):
-    x = msymQQQ("x")
+    x = msym("x")
     
     @pyevaluate
     def dummy(f):

@@ -40,8 +40,8 @@ class OCPtests(casadiTestCase):
     
     N=100
     
-    X=ssymQQQ("X",1,N+1)
-    U=ssymQQQ("U",1,N)
+    X=ssym("X",1,N+1)
+    U=ssym("U",1,N)
     
     V = horzcat([X,U])
     
@@ -79,9 +79,9 @@ class OCPtests(casadiTestCase):
     yc0=dy0=0
     te=0.4
 
-    t=ssymQQQ("t")
-    q=ssymQQQ("y",1,2)
-    p=ssymQQQ("p",1,1)
+    t=ssym("t")
+    q=ssym("y",1,2)
+    p=ssym("p",1,1)
     # y
     # y'
     f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=horzcat([q[1],p[0]+q[1]**2 ])))
@@ -138,9 +138,9 @@ class OCPtests(casadiTestCase):
     yc0=dy0=0.1
     te=0.4
 
-    t=ssymQQQ("t")
-    q=ssymQQQ("y",1,2)
-    p=ssymQQQ("p",1,1)
+    t=ssym("t")
+    q=ssym("y",1,2)
+    p=ssym("p",1,1)
     # y
     # y'
     f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=horzcat([q[1],p[0]+q[1]**2 ])))
@@ -264,9 +264,9 @@ class OCPtests(casadiTestCase):
     nh = 0
     tf = 0.2
     
-    t = ssymQQQ("t")
-    x0 = ssymQQQ("x0",1,nx)
-    p = ssymQQQ("p",1,nu)
+    t = ssym("t")
+    x0 = ssym("x0",1,nx)
+    p = ssym("p",1,nu)
     xf = x0 + p[0]
     daeres = SXFunction(daeIn(t=t, x=x0, p=p),daeOut(ode=xf))
     mayer = SXFunction([x0],[7*x0[0]])
@@ -296,9 +296,9 @@ class OCPtests(casadiTestCase):
     nh = 2
     tf = 0.2
     
-    t = ssymQQQ("t")
-    x0 = ssymQQQ("x0",1,nx)
-    p = ssymQQQ("p",1,nu+np)
+    t = ssym("t")
+    x0 = ssym("x0",1,nx)
+    p = ssym("p",1,nu+np)
     xf = x0 + p[0]
     daeres = SXFunction(daeIn(t=t, x=x0, p=p),daeOut(ode=xf))
     mayer = SXFunction([x0],[7*x0[0]])
@@ -348,7 +348,7 @@ class OCPtests(casadiTestCase):
     te = 2*pi
     N = 20
     t=SX("t")
-    y=ssymQQQ("y",1,3)
+    y=ssym("y",1,3)
     p=SX("p")
     f=SXFunction(daeIn(t=t, x=y, p=p),daeOut(ode=horzcat([y[1,0],-y[0,0],p*y[0,0]])))
     f.init()
@@ -421,10 +421,10 @@ class OCPtests(casadiTestCase):
     """
     te = 1
     N = 20
-    t=ssymQQQ("t")
-    x=ssymQQQ("x")
-    a=ssymQQQ("a")
-    u=ssymQQQ("u")
+    t=ssym("t")
+    x=ssym("x")
+    a=ssym("a")
+    u=ssym("u")
     f=SXFunction(daeIn(t=t, x=x, p=horzcat([a,u])),daeOut(a*x+u))
     f.init()
     

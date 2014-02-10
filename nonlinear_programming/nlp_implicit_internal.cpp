@@ -92,7 +92,7 @@ namespace CasADi {
     ImplicitFunctionInternal::init();
 
     // Free variable in the NLP
-    MX u = msymQQQ("u",input(iin_).sparsity());
+    MX u = msym("u",input(iin_).sparsity());
     
     // So that we can pass it on to createParent
     std::vector<CCSSparsity> sps;

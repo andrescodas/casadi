@@ -686,7 +686,7 @@ class NLPtests(casadiTestCase):
     def norm_2(mx):
       return inner_prod(mx,mx)
     N=10
-    x=msymQQQ("x",1,N)
+    x=msym("x",1,N)
     x0=linspace(0,1,N)
     X0=MX(x0)
     nlp=MXFunction(nlpIn(x=x),nlpOut(f=norm_2(x-X0),g=2*x))
@@ -713,7 +713,7 @@ class NLPtests(casadiTestCase):
   def testIPOPTnoc(self):
     self.message("trivial IPOPT, no constraints")
     """ There is an assertion error thrown, but still it works"""
-    x=ssymQQQ("x")
+    x=ssym("x")
     nlp=SXFunction(nlpIn(x=x),nlpOut(f=(x-1)**2))
     for Solver, solver_options in solvers:
       self.message(str(Solver))
@@ -1007,7 +1007,7 @@ class NLPtests(casadiTestCase):
 
     N = 50 
 
-    x = ssymQQQ("x",1,N)
+    x = ssym("x",1,N)
     x0 = DMatrix(range(N))
     H = diag(range(1,N+1))
     obj = 0.5*mul([(x-x0).T,H,(x-x0)])
@@ -1042,7 +1042,7 @@ class NLPtests(casadiTestCase):
     LBX = DMatrix([0.5,0])
     UBX = DMatrix([0.5,inf])
 
-    x=ssymQQQ("x",1,2)
+    x=ssym("x",1,2)
     nlp=SXFunction(nlpIn(x=x),nlpOut(f=0.5*mul([x.T,H,x])+mul(G.T,x),g=mul(A,x)))
 
     for Solver, solver_options in solvers:
@@ -1082,7 +1082,7 @@ class NLPtests(casadiTestCase):
     LBX = DMatrix([0.5,0])
     UBX = DMatrix([0.5,inf])
 
-    x=ssymQQQ("x",1,2)
+    x=ssym("x",1,2)
     nlp=SXFunction(nlpIn(x=x),nlpOut(f=0.5*mul([x.T,H,x])+mul(G.T,x),g=mul(A,x)))
 
     for Solver, solver_options in solvers:
@@ -1150,7 +1150,7 @@ class NLPtests(casadiTestCase):
     LBX = DMatrix([0]*2)
     UBX = DMatrix([inf]*2)
 
-    x=ssymQQQ("x",1,2)
+    x=ssym("x",1,2)
     nlp=SXFunction(nlpIn(x=x),nlpOut(f=0.5*mul([x.T,H,x])+mul(G.T,x),g=mul(A,x)))
 
     for Solver, solver_options in solvers:

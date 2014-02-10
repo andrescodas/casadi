@@ -838,7 +838,7 @@ class ssymStruct(CasadiStructured,MasterGettable):
     s = []
     for i in self.struct.traverseCanonicalIndex():
       e = self.struct.getStructEntryByCanonicalIndex(i)
-      s.append(ssymQQQ("_".join(map(str,i)),1,e.sparsity.size()))
+      s.append(ssym("_".join(map(str,i)),1,e.sparsity.size()))
         
     self.master = vecNZcat(s)
 
@@ -859,7 +859,7 @@ class msymStruct(CasadiStructured,MasterGettable):
     if any(e.sym is not None for e in self.entries):
       raise Exception("struct_msym does not accept entries with an 'sym' argument.")
 
-    self.master = msymQQQ("V",1,self.size)
+    self.master = msym("V",1,self.size)
     
  
     ks = []

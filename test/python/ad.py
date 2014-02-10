@@ -153,7 +153,7 @@ class ADtests(casadiTestCase):
             
             seeds = [[1,0,0,0],[0,2,0,0],[1.2,4.8,7.9,4.6]]
             
-            y = ssymQQQ("y",f.input().sparsity())
+            y = ssym("y",f.input().sparsity())
             
             fseeds = map(lambda x: DMatrix(f.input().sparsity(),x), seeds)
             aseeds = map(lambda x: DMatrix(f.output().sparsity(),x), seeds)
@@ -199,7 +199,7 @@ class ADtests(casadiTestCase):
             
             seeds = [[1,0,0,0],[0,2,0,0],[1.2,4.8,7.9,4.6]]
             
-            y = msymQQQ("y",f.input().sparsity())
+            y = msym("y",f.input().sparsity())
             
             fseeds = map(lambda x: DMatrix(f.input().sparsity(),x), seeds)
             aseeds = map(lambda x: DMatrix(f.output().sparsity(),x), seeds)
@@ -246,7 +246,7 @@ class ADtests(casadiTestCase):
             
             seeds = [[1,0,0,0],[0,2,0,0],[1.2,4.8,7.9,4.6]]
             
-            y = ssymQQQ("y",f.input().sparsity())
+            y = ssym("y",f.input().sparsity())
             
             fseeds = map(lambda x: DMatrix(f.input().sparsity(),x), seeds)
             aseeds = map(lambda x: DMatrix(f.output().sparsity(),x), seeds)
@@ -289,7 +289,7 @@ class ADtests(casadiTestCase):
             f.evaluate()
             r = f.getOutput()
   
-            y = ssymQQQ("y",f.input().sparsity())
+            y = ssym("y",f.input().sparsity())
             
       
             res,fwdsens,adjsens = f.evalSX([y],[],[])
@@ -395,9 +395,9 @@ class ADtests(casadiTestCase):
               
   def test_hessian(self):
     self.message("Jacobian chaining")
-    x=ssymQQQ("x")
-    y=ssymQQQ("y")
-    z=ssymQQQ("z")
+    x=ssym("x")
+    y=ssym("y")
+    z=ssym("z")
     n=array([1.2,2.3,7])
     f=SXFunction([horzcat([x,y,z])],[horzcat([x+2*y**3+3*z**4])])
     f.init()
@@ -419,8 +419,8 @@ class ADtests(casadiTestCase):
     
   def test_bugshape(self):
     self.message("shape bug")
-    x=ssymQQQ("x")
-    y=ssymQQQ("y")
+    x=ssym("x")
+    y=ssym("y")
 
     inp=SXMatrix(5,1)
     inp[0,0]=x
@@ -465,8 +465,8 @@ class ADtests(casadiTestCase):
     # commented out, uses directional derivatives #884
     return
 
-    x = msymQQQ("x",1,2)
-    y = msymQQQ("y",2,2)
+    x = msym("x",1,2)
+    y = msym("y",2,2)
     
     f1 = MXFunction([x,y],[x+y[0],mul(y,x)])
     f1.init()
@@ -649,7 +649,7 @@ class ADtests(casadiTestCase):
           
         
         # evalThings
-        for symQQQ, Function in [(msymQQQ,MXFunction),(ssymQQQ,SXFunction)]:
+        for sym, Function in [(msym,MXFunction),(ssym,SXFunction)]:
           if isinstance(f, MXFunction) and Function is SXFunction: continue
           if isinstance(f, SXFunction) and Function is MXFunction: continue
           
@@ -657,9 +657,9 @@ class ADtests(casadiTestCase):
 
           # dense
           for spmod,spmod2 in itertools.product(spmods,repeat=2):
-            fseeds = [[symQQQ("f",spmod(f.getInput(i)).sparsity()) for i in range(f.getNumInputs())]  for d in range(ndir)]
-            aseeds = [[symQQQ("a",spmod2(f.getOutput(i)).sparsity())  for i in range(f.getNumOutputs())] for d in range(ndir)]
-            inputss = [symQQQ("i",f.input(i).sparsity()) for i in range(f.getNumInputs())]
+            fseeds = [[sym("f",spmod(f.getInput(i)).sparsity()) for i in range(f.getNumInputs())]  for d in range(ndir)]
+            aseeds = [[sym("a",spmod2(f.getOutput(i)).sparsity())  for i in range(f.getNumOutputs())] for d in range(ndir)]
+            inputss = [sym("i",f.input(i).sparsity()) for i in range(f.getNumInputs())]
         
             res,fwdsens,adjsens = f.eval(inputss,fseeds,aseeds)
             

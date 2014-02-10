@@ -213,8 +213,8 @@ void usage_cplusplus(){
 int main(){
     
   // Variables
-  SXMatrix x = ssymQQQ("x",2,2);
-  SXMatrix y = ssymQQQ("y",1); 
+  SXMatrix x = ssym("x",2,2);
+  SXMatrix y = ssym("y",1); 
 
   // Simple function
   vector<SXMatrix> f_in;

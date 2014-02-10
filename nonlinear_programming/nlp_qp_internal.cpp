@@ -83,12 +83,12 @@ void NLPQPInternal::init(){
   QPSolverInternal::init();
 
   // Create a symbolic matrix for the decision variables
-  SXMatrix X = ssymQQQ("X",1,n_);
+  SXMatrix X = ssym("X",1,n_);
 
   // Parameters to the problem
-  SXMatrix H = ssymQQQ("H",input(QP_SOLVER_H).sparsity());
-  SXMatrix G = ssymQQQ("G",input(QP_SOLVER_G).sparsity());
-  SXMatrix A = ssymQQQ("A",input(QP_SOLVER_A).sparsity());
+  SXMatrix H = ssym("H",input(QP_SOLVER_H).sparsity());
+  SXMatrix G = ssym("G",input(QP_SOLVER_G).sparsity());
+  SXMatrix A = ssym("A",input(QP_SOLVER_A).sparsity());
 
   // Put parameters in a vector
   std::vector< SXMatrix > par;

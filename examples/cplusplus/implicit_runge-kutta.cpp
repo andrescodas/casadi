@@ -45,8 +45,8 @@ int main(){
   int np = 1;
 
   // Declare variables
-  SXMatrix x  = ssymQQQ("x",1,nx);  // state
-  SXMatrix p  = ssymQQQ("u",1,np);  // control
+  SXMatrix x  = ssym("x",1,nx);  // state
+  SXMatrix p  = ssym("u",1,np);  // control
 
   // ODE right hand side function
   SXMatrix ode;
@@ -96,9 +96,9 @@ int main(){
   }
 
   // Total number of variables for one finite element
-  MX X0 = msymQQQ("X0",1,nx);
-  MX P  = msymQQQ("P",1,np);
-  MX V = msymQQQ("V",1,d*nx);
+  MX X0 = msym("X0",1,nx);
+  MX P  = msym("P",1,np);
+  MX V = msym("V",1,d*nx);
   
   // Get the state at each collocation point
   vector<MX> X(1,X0);
