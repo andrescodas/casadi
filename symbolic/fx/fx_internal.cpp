@@ -666,7 +666,7 @@ namespace CasADi{
                 for (int bvec_i=0;bvec_i<bvec_size;++bvec_i) {
                   if (spsens & (bvec_t(1) << bvec_i)) {
                     // if dependency is found, add it to the new sparsity pattern
-                    int lk = lookup.elemQQQ(bvec_i,cri);
+                    int lk = lookup.elem(bvec_i,cri);
                     if (lk>-bvec_size) {
                       jrow.push_back(bvec_i+lk);
                       jcol.push_back(fri);
@@ -960,7 +960,7 @@ namespace CasADi{
                 for (int bvec_i=0;bvec_i<bvec_size;++bvec_i) {
                   if (spsens & bvec_lookup[bvec_i]) {
                     // if dependency is found, add it to the new sparsity pattern
-                    jrow.push_back(bvec_i+lookup.elemQQQ(bvec_i,cri));
+                    jrow.push_back(bvec_i+lookup.elem(bvec_i,cri));
                     jcol.push_back(fri);
                   }
                 }
@@ -1040,9 +1040,9 @@ namespace CasADi{
 
   void FXInternal::setJacSparsity(const CCSSparsity& sp, int iind, int oind, bool compact){
     if(compact){
-      jac_sparsity_compact_.elemQQQ(oind,iind) = sp;
+      jac_sparsity_compact_.elem(oind,iind) = sp;
     } else {
-      jac_sparsity_.elemQQQ(oind,iind) = sp;
+      jac_sparsity_.elem(oind,iind) = sp;
     }
   }
 
@@ -1050,7 +1050,7 @@ namespace CasADi{
     casadi_assert_message(isInit(),"Function not initialized.");
 
     // Get an owning reference to the block
-    CCSSparsity jsp = compact ? jac_sparsity_compact_.elemQQQ(oind,iind) : jac_sparsity_.elemQQQ(oind,iind);
+    CCSSparsity jsp = compact ? jac_sparsity_compact_.elem(oind,iind) : jac_sparsity_.elem(oind,iind);
 
     // Generate, if null
     if(jsp.isNull()){
@@ -1097,7 +1097,7 @@ namespace CasADi{
     }
 
     // Return a reference to the block
-    CCSSparsity& jsp_ref = compact ? jac_sparsity_compact_.elemQQQ(oind,iind) : jac_sparsity_.elemQQQ(oind,iind);
+    CCSSparsity& jsp_ref = compact ? jac_sparsity_compact_.elem(oind,iind) : jac_sparsity_.elem(oind,iind);
     jsp_ref = jsp;
     return jsp_ref;
   }
@@ -1430,7 +1430,7 @@ namespace CasADi{
   FX FXInternal::jacobian(int iind, int oind, bool compact, bool symmetric){
 
     // Return value
-    WeakRef cached = compact ? jac_compact_.elemQQQ(oind,iind) : jac_.elemQQQ(oind,iind);
+    WeakRef cached = compact ? jac_compact_.elem(oind,iind) : jac_.elem(oind,iind);
     
     // Check if cached
     if(cached.alive()){
@@ -1460,16 +1460,16 @@ namespace CasADi{
       ret.setOutputScheme(ionames);
       
       // Save in cache
-      compact ? jac_compact_.elemQQQ(oind,iind) : jac_.elemQQQ(oind,iind) = ret;
+      compact ? jac_compact_.elem(oind,iind) : jac_.elem(oind,iind) = ret;
       return ret;
     }
   }
 
   void FXInternal::setJacobian(const FX& jac, int iind, int oind, bool compact){
     if(compact){
-      jac_compact_.elemQQQ(oind,iind) = jac;
+      jac_compact_.elem(oind,iind) = jac;
     } else {
-      jac_.elemQQQ(oind,iind) = jac;
+      jac_.elem(oind,iind) = jac;
     }
   }
 

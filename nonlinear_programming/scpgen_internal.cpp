@@ -1012,10 +1012,10 @@ namespace CasADi{
     reg_ = 0;
   
     // Check the smallest eigenvalue of the Hessian
-    double a = qpH_.elemQQQ(0,0);
-    double b = qpH_.elemQQQ(1,0);
-    double c = qpH_.elemQQQ(0,1);
-    double d = qpH_.elemQQQ(1,1);
+    double a = qpH_.elem(0,0);
+    double b = qpH_.elem(1,0);
+    double c = qpH_.elem(0,1);
+    double d = qpH_.elem(1,1);
   
     // Make sure no not a numbers
     casadi_assert(a==a && b==b && c==c &&  d==d);
@@ -1023,7 +1023,7 @@ namespace CasADi{
     // Make sure symmetric
     if(b!=c){
       casadi_assert_warning(fabs(b-c)<1e-10,"Hessian is not symmetric: " << b << " != " << c);
-      qpH_.elemQQQ(0,1) = c = b;
+      qpH_.elem(0,1) = c = b;
     }
   
     double eig_smallest = (a+d)/2 - std::sqrt(4*b*c + (a-d)*(a-d))/2;

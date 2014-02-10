@@ -196,24 +196,24 @@ void DirectMultipleShootingInternal::getGuess(vector<double>& V_init) const{
   
   // Pass guess for parameters
   for(int i=0; i<np_; ++i){
-    V_init[el++] = p_init.elemQQQ(0,i);
+    V_init[el++] = p_init.elem(0,i);
   }
   
   for(int k=0; k<nk_; ++k){
     // Pass guess for state
     for(int i=0; i<nx_; ++i){
-      V_init[el++] = x_init.elemQQQ(k,i);
+      V_init[el++] = x_init.elem(k,i);
     }
     
     // Pass guess for control
     for(int i=0; i<nu_; ++i){
-      V_init[el++] = u_init.elemQQQ(k,i);
+      V_init[el++] = u_init.elem(k,i);
     }
   }
   
   // Pass guess for final state
   for(int i=0; i<nx_; ++i){
-    V_init[el++] = x_init.elemQQQ(nk_,i);
+    V_init[el++] = x_init.elem(nk_,i);
   }
   
   casadi_assert(el==V_init.size());
@@ -234,28 +234,28 @@ void DirectMultipleShootingInternal::getVariableBounds(vector<double>& V_min, ve
   
   // Pass bounds on parameters
   for(int i=0; i<np_; ++i){
-    V_min[min_el++] = p_min.elemQQQ(0,i);
-    V_max[max_el++] = p_max.elemQQQ(0,i);
+    V_min[min_el++] = p_min.elem(0,i);
+    V_max[max_el++] = p_max.elem(0,i);
   }
 
   for(int k=0; k<nk_; ++k){
     // Pass bounds on state
     for(int i=0; i<nx_; ++i){
-      V_min[min_el++] = x_min.elemQQQ(k,i);
-      V_max[max_el++] = x_max.elemQQQ(k,i);
+      V_min[min_el++] = x_min.elem(k,i);
+      V_max[max_el++] = x_max.elem(k,i);
     }
     
     // Pass bounds on control
     for(int i=0; i<nu_; ++i){
-      V_min[min_el++] = u_min.elemQQQ(k,i);
-      V_max[max_el++] = u_max.elemQQQ(k,i);
+      V_min[min_el++] = u_min.elem(k,i);
+      V_max[max_el++] = u_max.elem(k,i);
     }
   }
 
   // Pass bounds on final state
   for(int i=0; i<nx_; ++i){
-    V_min[min_el++] = x_min.elemQQQ(nk_,i);
-    V_max[max_el++] = x_max.elemQQQ(nk_,i);
+    V_min[min_el++] = x_min.elem(nk_,i);
+    V_max[max_el++] = x_max.elem(nk_,i);
   }
   
   casadi_assert(min_el==V_min.size() && max_el==V_max.size());
@@ -276,8 +276,8 @@ void DirectMultipleShootingInternal::getConstraintBounds(vector<double>& G_min, 
     }
     
     for(int i=0; i<nh_; ++i){
-      G_min[min_el++] = h_min.elemQQQ(k,i);
-      G_max[max_el++] = h_max.elemQQQ(k,i);
+      G_min[min_el++] = h_min.elem(k,i);
+      G_max[max_el++] = h_max.elem(k,i);
     }
   }
   casadi_assert(min_el==G_min.size() && max_el==G_max.size());

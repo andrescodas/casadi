@@ -620,7 +620,7 @@ namespace CasADi{
     if(isScalar(a)) return a.toScalar();
 
     // Trivial case 2 x 2
-    if(n==2) return a.elemQQQ(0,0) * a.elemQQQ(1,1) - a.elemQQQ(0,1) * a.elemQQQ(1,0);
+    if(n==2) return a.elem(0,0) * a.elem(1,1) - a.elem(0,1) * a.elem(1,0);
   
     // Return expression
     Matrix<T> ret = 0;
@@ -770,7 +770,7 @@ namespace CasADi{
     casadi_assert_message(a.size2() == a.size1(), "trace: must be square");
     T res=0;
     for (int i=0; i< a.size2(); i ++) {
-      res+=a.elemQQQ(i,i);
+      res+=a.elem(i,i);
     }
     return res;
   }
@@ -1414,7 +1414,7 @@ namespace CasADi{
 
   template<class T>
   void makeDense(Matrix<T>& A){
-    A.makeDenseQQQ(A.size1(),A.size2(),0);
+    A.makeDense(A.size1(),A.size2(),0);
   }
 
   template<class T>

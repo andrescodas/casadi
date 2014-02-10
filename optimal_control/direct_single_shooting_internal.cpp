@@ -160,18 +160,18 @@ void DirectSingleShootingInternal::getGuess(vector<double>& V_init) const{
   
   // Pass guess for parameters
   for(int i=0; i<np_; ++i){
-    V_init[el++] = p_init.elemQQQ(0,i);
+    V_init[el++] = p_init.elem(0,i);
   }
   
   // Pass guess for the initial state
   for(int i=0; i<nx_; ++i){
-    V_init[el++] = x_init.elemQQQ(0,i);
+    V_init[el++] = x_init.elem(0,i);
   }
   
   // Pass guess for control
   for(int k=0; k<nk_; ++k){
     for(int i=0; i<nu_; ++i){
-      V_init[el++] = u_init.elemQQQ(k,i);
+      V_init[el++] = u_init.elem(k,i);
     }
   }
   
@@ -193,21 +193,21 @@ void DirectSingleShootingInternal::getVariableBounds(vector<double>& V_min, vect
   
   // Pass bounds on parameters
   for(int i=0; i<np_; ++i){
-    V_min[min_el++] = p_min.elemQQQ(0,i);
-    V_max[max_el++] = p_max.elemQQQ(0,i);
+    V_min[min_el++] = p_min.elem(0,i);
+    V_max[max_el++] = p_max.elem(0,i);
   }
 
   // Pass bounds on initial state
   for(int i=0; i<nx_; ++i){
-    V_min[min_el++] = x_min.elemQQQ(0,i);
-    V_max[max_el++] = x_max.elemQQQ(0,i);
+    V_min[min_el++] = x_min.elem(0,i);
+    V_max[max_el++] = x_max.elem(0,i);
   }
   
   // Pass bounds on control
   for(int k=0; k<nk_; ++k){
     for(int i=0; i<nu_; ++i){
-      V_min[min_el++] = u_min.elemQQQ(k,i);
-      V_max[max_el++] = u_max.elemQQQ(k,i);
+      V_min[min_el++] = u_min.elem(k,i);
+      V_max[max_el++] = u_max.elem(k,i);
     }
   }
 
@@ -226,13 +226,13 @@ void DirectSingleShootingInternal::getConstraintBounds(vector<double>& G_min, ve
   
   for(int k=0; k<nk_; ++k){
     for(int i=0; i<nx_; ++i){
-      G_min[min_el++] = x_min.elemQQQ(k+1,i);
-      G_max[max_el++] = x_max.elemQQQ(k+1,i);
+      G_min[min_el++] = x_min.elem(k+1,i);
+      G_max[max_el++] = x_max.elem(k+1,i);
     }
     
     for(int i=0; i<nh_; ++i){
-      G_min[min_el++] = h_min.elemQQQ(k,i);
-      G_max[max_el++] = h_max.elemQQQ(k,i);
+      G_min[min_el++] = h_min.elem(k,i);
+      G_max[max_el++] = h_max.elem(k,i);
     }
   }
   casadi_assert(min_el==G_min.size() && max_el==G_max.size());

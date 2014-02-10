@@ -269,17 +269,17 @@ namespace CasADi{
     
 #ifndef SWIG
     /// get an element
-    const T& elemQQQ(int j, int c=0) const;
+    const T& elem(int j, int c=0) const;
     
     /// get a reference to an element
-    T& elemQQQ(int j, int i=0);
+    T& elem(int j, int i=0);
 #else // SWIG
     /// Access a non-zero element
-    T elemQQQ(int j, int i=0) { return elemQQQ(j,i);}
+    T elem(int j, int i=0) { return elem(j,i);}
 #endif // SWIG
 
     /// get an element, do not allocate
-    const T getElementQQQ(int j, int i=0) const{ return elemQQQ(j,i);}
+    const T getElement(int j, int i=0) const{ return elem(j,i);}
     
     /// Returns true if the matrix has a non-zero at location i,j
     bool hasNZ(int j, int i) const { return sparsity().hasNZ(j,i); }
@@ -397,8 +397,8 @@ namespace CasADi{
     }
     
     /// set a matrix element
-    void indexed_one_based_assignment(int i, int j, const T & m){ elemQQQ(j-1,i-1) = m;}
-    void indexed_zero_based_assignment(int i, int j, const T & m){ elemQQQ(j,i) = m;}
+    void indexed_one_based_assignment(int i, int j, const T & m){ elem(j-1,i-1) = m;}
+    void indexed_zero_based_assignment(int i, int j, const T & m){ elem(j,i) = m;}
     void indexed_assignment(const Slice &i, const Slice &j, const Matrix<T>& m){ (*this)(j,i) = m; }
     void indexed_assignment(const IndexList &i, const IndexList &j, const Matrix<T>& m){
       (*this)(j.getAll(size1()),i.getAll(size2())) = m;
@@ -432,10 +432,10 @@ namespace CasADi{
     void setAll(const T& val);
     
     /** \brief  Make the matrix an dense nrow-by-ncol matrix */
-    void makeDenseQQQ(int nrow, int ncol, const T& val);
+    void makeDense(int nrow, int ncol, const T& val);
 
     /** \brief  Make the matrix an empty nrow-by-ncol matrix */
-    void makeEmptyQQQ(int nrow, int ncol);
+    void makeEmpty(int nrow, int ncol);
 
     Matrix<T> operator+() const;
     Matrix<T> operator-() const;

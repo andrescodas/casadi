@@ -36,7 +36,7 @@ namespace CasADi{
   // Implementations
 
   template<class T>
-  const T& Matrix<T>::elemQQQ(int j, int i) const{
+  const T& Matrix<T>::elem(int j, int i) const{
     int ind = sparsity().getNZ(j,i);
     if(ind==-1)
       return casadi_limits<T>::zero;
@@ -52,7 +52,7 @@ namespace CasADi{
   bool Matrix<T>::stream_scientific_ = false;
 
   template<class T>
-  T& Matrix<T>::elemQQQ(int j, int i){
+  T& Matrix<T>::elem(int j, int i){
     int oldsize = sparsity().size();
     int ind = sparsityRef().getNZ(j,i);
     if(oldsize != sparsity().size())
@@ -69,7 +69,7 @@ namespace CasADi{
 
   template<class T>
   const Matrix<T> Matrix<T>::sub(int j, int i) const{
-    return elemQQQ(j,i);
+    return elem(j,i);
   }
 
   template<class T>
@@ -103,7 +103,7 @@ namespace CasADi{
     for (int i=0;i<ii.size();++i) {
       Matrix<T> m = k;
       for (int j=0;j<m.size();++j) {
-        m.data()[j] = elemQQQ(k.at(j),ii.at(i));
+        m.data()[j] = elem(k.at(j),ii.at(i));
       }
       temp.push_back(m);
     }
@@ -123,7 +123,7 @@ namespace CasADi{
     for (int j=0;j<jj.size();++j) {
       Matrix<T> m = k;
       for (int i=0;i<m.size();++i) {
-        m.data()[i] = elemQQQ(jj.at(j),k.at(i));
+        m.data()[i] = elem(jj.at(j),k.at(i));
       }
       temp.push_back(m);
     }
@@ -137,7 +137,7 @@ namespace CasADi{
 
     Matrix<T> ret(i.sparsity());
     for (int k=0;k<i.size();++k) {
-      ret.data()[k] = elemQQQ(j.at(k),i.at(k));
+      ret.data()[k] = elem(j.at(k),i.at(k));
     }
 
     return ret;
@@ -167,7 +167,7 @@ namespace CasADi{
   template<class T>
   void Matrix<T>::setSub(const Matrix<T>& m, int j, int i){
     if(m.dense()){
-      elemQQQ(j,i) = m.toScalar();
+      elem(j,i) = m.toScalar();
     } else {
       setSub(m,std::vector<int>(1,j),std::vector<int>(1,i));
     }
@@ -235,7 +235,7 @@ namespace CasADi{
     for(int k=0; k<jj.size(); ++k) {
       Matrix<T> el_k = m(range(k*i.size1(),(k+1)*i.size1()),slice_i);
       for (int j=0;j<i.size();++j) {
-        elemQQQ(jj[k],i.at(j))=el_k.at(j);
+        elem(jj[k],i.at(j))=el_k.at(j);
       }
     }
   
@@ -264,7 +264,7 @@ namespace CasADi{
     for(int k=0; k<ii.size(); ++k) {
       Matrix<T> el_k = m(slice_j,range(k*j.size2(),(k+1)*j.size2()));
       for (int i=0;i<j.size();++i) {
-        elemQQQ(j.at(i),ii[k])=el_k.at(i);
+        elem(j.at(i),ii[k])=el_k.at(i);
       }
     }
   
@@ -284,7 +284,7 @@ namespace CasADi{
     casadi_assert_message(m.sparsity()==i.sparsity(),"setSub(Matrix m, Imatrix i, Imatrix j): sparsities must match. Got " << m.dimString() << " for m and " << j.dimString() << " for i and j.");
   
     for(int k=0; k<i.size(); ++k) {
-      elemQQQ(j.at(k),i.at(k)) = m.at(k); 
+      elem(j.at(k),i.at(k)) = m.at(k); 
     }
   }
 
@@ -302,7 +302,7 @@ namespace CasADi{
     for(int i=0; i<sp.colind().size()-1; ++i){
       for(int k=sp.colind()[i]; k<sp.colind()[i+1]; ++k){
         int j=sp.row()[k];
-        elemQQQ(j,i)=elm.data()[k];
+        elem(j,i)=elm.data()[k];
       }
     }
   }
@@ -372,7 +372,7 @@ namespace CasADi{
       for(int i=0; i<colind.size()-1; ++i){
         for(int k=colind[i]; k<colind[i+1]; ++k){
           int j=row[k];
-          setNZ(kk.elemQQQ(j,i),m[k]);
+          setNZ(kk.elem(j,i),m[k]);
         }
       }
     } else {
@@ -384,7 +384,7 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::makeDenseQQQ(int nrow, int ncol, const T& val){
+  void Matrix<T>::makeDense(int nrow, int ncol, const T& val){
     // Quick return if already dense
     if(ncol*nrow == size())
       return;
@@ -456,7 +456,7 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::makeEmptyQQQ(int nrow, int ncol){
+  void Matrix<T>::makeEmpty(int nrow, int ncol){
     sparsity_ = CCSSparsity(nrow,ncol,false);
     data().clear();
   }
@@ -743,7 +743,7 @@ namespace CasADi{
       T fcn_0;
       casadi_math<T>::fun(op,0,0,fcn_0);
       if(!casadi_limits<T>::isZero(fcn_0)){ // Remove this if?
-        ret.makeDenseQQQ(ret.size1(),ret.size2(),fcn_0);
+        ret.makeDense(ret.size1(),ret.size2(),fcn_0);
       }
     }
     
@@ -1615,7 +1615,7 @@ namespace CasADi{
       T fcn_0;
       casadi_math<T>::fun(op,x_val,casadi_limits<T>::zero,fcn_0);
       if(!casadi_limits<T>::isZero(fcn_0)){ // Remove this if?
-        ret.makeDenseQQQ(ret.size1(),ret.size2(),fcn_0);
+        ret.makeDense(ret.size1(),ret.size2(),fcn_0);
       }
     }
     
@@ -1644,7 +1644,7 @@ namespace CasADi{
       T fcn_0;
       casadi_math<T>::fun(op,casadi_limits<T>::zero,y_val,fcn_0);
       if(!casadi_limits<T>::isZero(fcn_0)){ // Remove this if?
-        ret.makeDenseQQQ(ret.size1(),ret.size2(),fcn_0);
+        ret.makeDense(ret.size1(),ret.size2(),fcn_0);
       }
     }
     
@@ -1693,7 +1693,7 @@ namespace CasADi{
       // Get the value for the structural zeros
       T fcn_0;
       casadi_math<T>::fun(op,casadi_limits<T>::zero,casadi_limits<T>::zero,fcn_0);
-      r.makeDenseQQQ(r.size1(),r.size2(),fcn_0);
+      r.makeDense(r.size1(),r.size2(),fcn_0);
     }
   
     return r;

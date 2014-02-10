@@ -340,7 +340,7 @@ binopsFull(const CasADi::MX & b,,CasADi::MX,CasADi::MX)
       r = n.zeros((self.size2(),self.size1()))
       for i in range(r.shape[0]):
         for j in range(r.shape[1]):
-          r[i,j] = self.elemQQQ(j,i)
+          r[i,j] = self.elem(j,i)
       return r
   %}
   
