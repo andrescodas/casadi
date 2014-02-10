@@ -494,11 +494,11 @@ namespace CasADi{
     return static_cast<const MXNode*>(SharedObject::operator->());
   }
 
-  MX MX::repmat(const MX& x, const std::pair<int, int> &nm){
-    return repmat(x,nm.first,nm.second);
+  MX MX::repmatQQQ(const MX& x, const std::pair<int, int> &rc){
+    return repmatQQQ(x,rc.first,rc.second);
   }
 
-  MX MX::repmat(const MX& x, int ncol, int nrow){
+  MX MX::repmatQQQ(const MX& x, int nrow, int ncol){
     if(x.scalar()){
       return MX(ncol,nrow,x);
     } else {

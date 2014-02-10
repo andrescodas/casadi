@@ -79,10 +79,11 @@ namespace CasADi{
       The syntax tries to stay as close as possible to the ublas syntax  when it comes to vector/matrix operations.\n
 
       Index starts with 0.\n
-      Index vec happens as follows: (i,j) -> k = j+i*size1()\n
-      Vectors are considered to be row vectors.\n
+      Index vec happens as follows: (rr,cc) -> k = rr+cc*size1()\n
+      Vectors are column vectors.\n
   
-      The storage format is a (modified) compressed column storage (CCS) format. This way, a vector element can always be accessed in constant time.\n
+      The storage format is Compressed Column Storage (CCS), similar to that used for sparse matrices in Matlab, \n
+      but unlike this format, we do allow for elements to be structurally non-zero but numerically zero.\n
   
       Matrix<T> is polymorphic with a std::vector<T> that contain all non-identical-zero elements.\n
       The sparsity can be accessed with CCSSparsity& sparsity()\n
@@ -553,7 +554,7 @@ namespace CasADi{
     int row(int el) const;
     int colind(int col) const;
     void clear();
-    void resize(int n, int m);
+    void resizeQQQ(int nrow, int ncol);
     void reserve(int nnz);
     void reserve(int nnz, int ncol);
     
@@ -709,8 +710,8 @@ namespace CasADi{
 
     //@{
     /** \brief  create a matrix by repeating an existing matrix */
-    static Matrix<T> repmat(const Matrix<T>& x, int ncol, int nrow=1);
-    static Matrix<T> repmat(const Matrix<T>& x, const std::pair<int,int>& nm);
+    static Matrix<T> repmatQQQ(const Matrix<T>& x, int nrow, int ncol=1);
+    static Matrix<T> repmatQQQ(const Matrix<T>& x, const std::pair<int,int>& rc);
     //@}
 
     /** \brief  create an n-by-n identity matrix */
