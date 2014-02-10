@@ -186,13 +186,13 @@ namespace CasADi{
     offset = getAugOffset(nfwd,nadj);
 
     // Create augmented problem
-    MX aug_t = msym("aug_t",f_.input(DAE_T).sparsity());
-    MX aug_x = msym("aug_x",offset.x.back(),x0().size1());
-    MX aug_z = msym("aug_z",offset.z.back(),std::max(z0().size1(),rz0().size1()));
-    MX aug_p = msym("aug_p",offset.p.back(),std::max(p().size1(),rp().size1()));
-    MX aug_rx = msym("aug_rx",offset.rx.back(),x0().size1());
-    MX aug_rz = msym("aug_rz",offset.rz.back(),std::max(z0().size1(),rz0().size1()));
-    MX aug_rp = msym("aug_rp",offset.rp.back(),std::max(qf().size1(),rp().size1()));
+    MX aug_t = msymQQQ("aug_t",f_.input(DAE_T).sparsity());
+    MX aug_x = msymQQQ("aug_x",x0().size1(),offset.x.back());
+    MX aug_z = msymQQQ("aug_z",std::max(z0().size1(),rz0().size1()),offset.z.back());
+    MX aug_p = msymQQQ("aug_p",std::max(p().size1(),rp().size1()),offset.p.back());
+    MX aug_rx = msymQQQ("aug_rx",x0().size1(),offset.rx.back());
+    MX aug_rz = msymQQQ("aug_rz",std::max(z0().size1(),rz0().size1()),offset.rz.back());
+    MX aug_rp = msymQQQ("aug_rp",std::max(qf().size1(),rp().size1()),offset.rp.back());
 
     // Split up the augmented vectors
     vector<MX> aug_x_split = horzsplit(aug_x,offset.x);     vector<MX>::const_iterator aug_x_split_it = aug_x_split.begin();
@@ -699,42 +699,42 @@ namespace CasADi{
       ss.clear();
       ss << "x0";
       if(dir>=0) ss << "_" << dir;
-      dd[INTEGRATOR_X0] = msym(ss.str(),x0().sparsity());
+      dd[INTEGRATOR_X0] = msymQQQ(ss.str(),x0().sparsity());
       x0_aug.append(dd[INTEGRATOR_X0]);
 
       // Parameter
       ss.clear();
       ss << "p";
       if(dir>=0) ss << "_" << dir;
-      dd[INTEGRATOR_P] = msym(ss.str(),p().sparsity());
+      dd[INTEGRATOR_P] = msymQQQ(ss.str(),p().sparsity());
       p_aug.append(dd[INTEGRATOR_P]);
 
       // Initial guess for algebraic variable
       ss.clear();
       ss << "r0";
       if(dir>=0) ss << "_" << dir;
-      dd[INTEGRATOR_Z0] = msym(ss.str(),z0().sparsity());
+      dd[INTEGRATOR_Z0] = msymQQQ(ss.str(),z0().sparsity());
       z0_aug.append(dd[INTEGRATOR_Z0]);
     
       // Backward state
       ss.clear();
       ss << "rx0";
       if(dir>=0) ss << "_" << dir;
-      dd[INTEGRATOR_RX0] = msym(ss.str(),rx0().sparsity());
+      dd[INTEGRATOR_RX0] = msymQQQ(ss.str(),rx0().sparsity());
       rx0_aug.append(dd[INTEGRATOR_RX0]);
 
       // Backward parameter
       ss.clear();
       ss << "rp";
       if(dir>=0) ss << "_" << dir;
-      dd[INTEGRATOR_RP] = msym(ss.str(),rp().sparsity());
+      dd[INTEGRATOR_RP] = msymQQQ(ss.str(),rp().sparsity());
       rp_aug.append(dd[INTEGRATOR_RP]);
 
       // Initial guess for backward algebraic variable
       ss.clear();
       ss << "rz0";
       if(dir>=0) ss << "_" << dir;
-      dd[INTEGRATOR_RZ0] = msym(ss.str(),rz0().sparsity());
+      dd[INTEGRATOR_RZ0] = msymQQQ(ss.str(),rz0().sparsity());
       rz0_aug.append(dd[INTEGRATOR_RZ0]);
     
       // Add to input vector
@@ -748,37 +748,37 @@ namespace CasADi{
       // Differential states become backward differential state
       ss.clear();
       ss << "xf" << "_" << dir;
-      dd[INTEGRATOR_XF] = msym(ss.str(),xf().sparsity());
+      dd[INTEGRATOR_XF] = msymQQQ(ss.str(),xf().sparsity());
       rx0_aug.append(dd[INTEGRATOR_XF]);
 
       // Quadratures become backward parameters
       ss.clear();
       ss << "qf" << "_" << dir;
-      dd[INTEGRATOR_QF] = msym(ss.str(),qf().sparsity());
+      dd[INTEGRATOR_QF] = msymQQQ(ss.str(),qf().sparsity());
       rp_aug.append(dd[INTEGRATOR_QF]);
 
       // Algebraic variables become backward algebraic variables
       ss.clear();
       ss << "zf" << "_" << dir;
-      dd[INTEGRATOR_ZF] = msym(ss.str(),zf().sparsity());
+      dd[INTEGRATOR_ZF] = msymQQQ(ss.str(),zf().sparsity());
       rz0_aug.append(dd[INTEGRATOR_ZF]);
 
       // Backward differential states becomes forward differential states
       ss.clear();
       ss << "rxf" << "_" << dir;
-      dd[INTEGRATOR_RXF] = msym(ss.str(),rxf().sparsity());
+      dd[INTEGRATOR_RXF] = msymQQQ(ss.str(),rxf().sparsity());
       x0_aug.append(dd[INTEGRATOR_RXF]);
     
       // Backward quadratures becomes (forward) parameters
       ss.clear();
       ss << "rqf" << "_" << dir;
-      dd[INTEGRATOR_RQF] = msym(ss.str(),rqf().sparsity());
+      dd[INTEGRATOR_RQF] = msymQQQ(ss.str(),rqf().sparsity());
       p_aug.append(dd[INTEGRATOR_RQF]);
 
       // Backward differential states becomes forward differential states
       ss.clear();
       ss << "rzf" << "_" << dir;
-      dd[INTEGRATOR_RZF] = msym(ss.str(),rzf().sparsity());
+      dd[INTEGRATOR_RZF] = msymQQQ(ss.str(),rzf().sparsity());
       z0_aug.append(dd[INTEGRATOR_RZF]);
     
       // Add to input vector

@@ -51,10 +51,10 @@ int main(){
    */
   
   // Optimization variables
-  SXMatrix x = ssym("x",3);
+  SXMatrix x = ssymQQQ("x",1,3);
   
   // Parameters
-  SXMatrix p = ssym("p",2);
+  SXMatrix p = ssymQQQ("p",1,2);
   
   // Objective
   SXMatrix f = x[0]*x[0] + x[1]*x[1] + x[2]*x[2];

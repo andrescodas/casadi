@@ -75,7 +75,7 @@ void DirectSingleShootingInternal::init(){
   // .....
   // nx x 1  (controls in interval i=nk-1)
   
-  MX V = msym("V",NV);
+  MX V = msymQQQ("V",1,NV);
   int offset = 0;
 
   // Global parameters

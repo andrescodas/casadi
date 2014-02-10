@@ -65,7 +65,7 @@ namespace CasADi{
     }
 
     // Symbolic expression for A
-    SXMatrix A = ssym("A",input(0).sparsity());
+    SXMatrix A = ssymQQQ("A",input(0).sparsity());
 
     // Make a BLT transformation of A
     std::vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
@@ -109,9 +109,9 @@ namespace CasADi{
     fact_fcn_.init();
 
     // Symbolic expressions for solve function
-    SXMatrix Q = ssym("Q",QR[0].sparsity());
-    SXMatrix R = ssym("R",QR[1].sparsity());
-    SXMatrix b = ssym("b",input(1).sparsity());
+    SXMatrix Q = ssymQQQ("Q",QR[0].sparsity());
+    SXMatrix R = ssymQQQ("R",QR[1].sparsity());
+    SXMatrix b = ssymQQQ("b",input(1).sparsity());
     
     // Solve non-transposed
     // We have inv(A) = inv(Px) * inv(R) * Q' * Pb

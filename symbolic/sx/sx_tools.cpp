@@ -633,15 +633,15 @@ void fill(SXMatrix& mat, const SX& val){
 //   return r;
 // }
 
-SXMatrix ssym(const std::string& name, int n, int m){
-  return ssym(name,sp_dense(m,n));
+SXMatrix ssymQQQ(const std::string& name, int nrow, int ncol){
+  return ssymQQQ(name,sp_dense(nrow,ncol));
 }
 
-SXMatrix ssym(const std::string& name, const std::pair<int,int> & nm) {
-  return ssym(name,nm.first,nm.second);
+SXMatrix ssymQQQ(const std::string& name, const std::pair<int,int> & rc) {
+  return ssymQQQ(name,rc.first,rc.second);
 }
 
-SXMatrix ssym(const std::string& name, const CCSSparsity& sp){
+SXMatrix ssymQQQ(const std::string& name, const CCSSparsity& sp){
   // Create a dense n-by-m matrix
   vector<SX> retv;
   
@@ -688,33 +688,33 @@ SXMatrix ssym(const std::string& name, const CCSSparsity& sp){
   }
 }
 
-std::vector<SXMatrix> ssym(const std::string& name, const CCSSparsity& sp, int p){
+std::vector<SXMatrix> ssymQQQ(const std::string& name, const CCSSparsity& sp, int p){
   std::vector<SXMatrix> ret(p);
   stringstream ss;
   for(int k=0; k<p; ++k){
     ss.str("");
     ss << name << "_" << k;
-    ret[k] = ssym(ss.str(),sp);
+    ret[k] = ssymQQQ(ss.str(),sp);
   }
   return ret;
 }
 
-std::vector<std::vector<SXMatrix> > ssym(const std::string& name, const CCSSparsity& sp, int p, int r){
+std::vector<std::vector<SXMatrix> > ssymQQQ(const std::string& name, const CCSSparsity& sp, int p, int r){
   std::vector<std::vector<SXMatrix> > ret(r);
   for(int k=0; k<r; ++k){
     stringstream ss;
     ss << name << "_" << k;
-    ret[k] = ssym(ss.str(),sp,p);
+    ret[k] = ssymQQQ(ss.str(),sp,p);
   }
   return ret;
 }
 
-std::vector<SXMatrix> ssym(const std::string& name, int n, int m, int p){
-  return  ssym(name,sp_dense(m,n),p);
+std::vector<SXMatrix> ssymQQQ(const std::string& name, int nrow, int ncol, int p){
+  return  ssymQQQ(name,sp_dense(nrow,ncol),p);
 }
 
-std::vector<std::vector<SXMatrix> > ssym(const std::string& name, int n, int m, int p, int r){
-  return ssym(name,sp_dense(m,n),p,r);
+std::vector<std::vector<SXMatrix> > ssymQQQ(const std::string& name, int nrow, int ncol, int p, int r){
+  return ssymQQQ(name,sp_dense(nrow,ncol),p,r);
 }
 
 SXMatrix taylor(const SXMatrix& ex,const SXMatrix& x, const SXMatrix& a, int order) {
@@ -783,7 +783,7 @@ std::string getOperatorRepresentation(const SX& x, const std::vector<std::string
   return s.str();
 }
 
-SXMatrix ssym(const Matrix<double>& x){
+SXMatrix ssymQQQ(const Matrix<double>& x){
   return SXMatrix(x);
 }
 
@@ -859,7 +859,7 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
     }
 
     // We shall find out which variables enter nonlinearily in the equations, for this we need a function that will depend on all the variables
-    SXFunction fcnb_all(xb,inner_prod(SXMatrix(fb),ssym("dum1",fb.size())));
+    SXFunction fcnb_all(xb,inner_prod(SXMatrix(fb),ssymQQQ("dum1",fb.size())));
     fcnb_all.init();
     
     // Take the gradient of this function to find out which variables enter in the function (should be all)
@@ -869,7 +869,7 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
     casadi_assert(fcnb_dep.dense());
     
     // Multiply this expression with a new dummy vector and take the jacobian to find out which variables enter nonlinearily
-    SXFunction fcnb_nonlin(xb,inner_prod(fcnb_dep,ssym("dum2",fcnb_dep.size())));
+    SXFunction fcnb_nonlin(xb,inner_prod(fcnb_dep,ssymQQQ("dum2",fcnb_dep.size())));
     fcnb_nonlin.init();
     CCSSparsity sp_nonlin = fcnb_nonlin.jacSparsity();
     
@@ -1358,7 +1358,7 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
     
     SXMatrix m_perm = m(offset,offset);
     
-    SXMatrix l = ssym("l");
+    SXMatrix l = ssymQQQ("l");
     
     for (int k=0;k<nb;++k) {
       std::vector<int> r = range(index.at(k),index.at(k+1));

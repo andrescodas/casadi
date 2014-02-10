@@ -39,7 +39,7 @@ int main(){
   int nj = 100; // Number of integration steps per control segment
 
   // optimization variable
-  SXMatrix u = ssym("u",nu); // control
+  SXMatrix u = ssymQQQ("u",1,nu); // control
 
   SXMatrix s_0 = 0; // initial position
   SXMatrix v_0 = 0; // initial speed

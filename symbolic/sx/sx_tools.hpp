@@ -50,28 +50,28 @@ The SX expression graph has much less overhead, but is also more restricted than
 //@{
 
   /** \brief Create an n-by-m matrix with symbolic variables */
-  SXMatrix ssym(const std::string& name, int n=1, int m=1);
+  SXMatrix ssymQQQ(const std::string& name, int nrow=1, int ncol=1);
 
   /** \brief Create an n-by-m matrix with symbolic variables */
-  SXMatrix ssym(const std::string& name, const std::pair<int,int> & nm); 
+  SXMatrix ssymQQQ(const std::string& name, const std::pair<int,int> & rc); 
 
   /** \brief Create a vector of length p with with matrices with symbolic variables of given sparsity */
-  std::vector<SXMatrix> ssym(const std::string& name, const CCSSparsity& sp, int p);
+  std::vector<SXMatrix> ssymQQQ(const std::string& name, const CCSSparsity& sp, int p);
 
-  /** \brief Create a vector of length p with n-by-m matrices with symbolic variables */
-  std::vector<SXMatrix> ssym(const std::string& name, int n, int m, int p);
+  /** \brief Create a vector of length p with nrow-by-ncol matrices with symbolic variables */
+  std::vector<SXMatrix> ssymQQQ(const std::string& name, int nrow, int ncol, int p);
 
   /** \brief Create a vector of length r of vectors of length p with matrices with symbolic variables with given sparsity */
-  std::vector<std::vector<SXMatrix> > ssym(const std::string& name, const CCSSparsity& sp, int p, int r);
+  std::vector<std::vector<SXMatrix> > ssymQQQ(const std::string& name, const CCSSparsity& sp, int p, int r);
   
-  /** \brief Create a vector of length r of vectors of length p with n-by-m matrices with symbolic variables */
-  std::vector<std::vector<SXMatrix> > ssym(const std::string& name, int n, int m, int p, int r);
+  /** \brief Create a vector of length r of vectors of length p with nrow-by-ncol matrices with symbolic variables */
+  std::vector<std::vector<SXMatrix> > ssymQQQ(const std::string& name, int nrow, int ncol, int p, int r);
 
   /** \brief Create an matrix with symbolic variables, given a sparsity pattern */
-  SXMatrix ssym(const std::string& name, const CCSSparsity& sp);
+  SXMatrix ssymQQQ(const std::string& name, const CCSSparsity& sp);
 
   /** \brief Create a symbolic matrix out of a numeric one */
-  SXMatrix ssym(const Matrix<double>& x);
+  SXMatrix ssymQQQ(const Matrix<double>& x);
 
 //@}
 
@@ -255,7 +255,7 @@ SXMatrix blockmatrix(SXMatrix array[n]){
 }
 
 template<> inline
-SXMatrix GenericMatrix<SXMatrix>::sym(const std::string& name, const CCSSparsity& sp){ return ssym(name,sp);}
+SXMatrix GenericMatrix<SXMatrix>::sym(const std::string& name, const CCSSparsity& sp){ return ssymQQQ(name,sp);}
 
 #endif
 

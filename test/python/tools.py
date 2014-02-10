@@ -33,9 +33,9 @@ class Toolstests(casadiTestCase):
       self.message("Collection")
 
       p = Collection()
-      p.x = ssym("x",2)
-      p.z = ssym("z",2,4)
-      p.y = ssym("y",3,2)
+      p.x = ssymQQQ("x",1,2)
+      p.z = ssymQQQ("z",4,2)
+      p.y = ssymQQQ("y",2,3)
 
       p.freeze()
       
@@ -56,9 +56,9 @@ class Toolstests(casadiTestCase):
       self.checkarray(p.iv_x,list(IMatrix([0,1])),"")
       
       p = Collection()
-      p.x = [ssym("x")]
-      p.z = [ssym("z%d" % i) for i in range(2)]
-      p.y = [[ssym("y%d%d"% (i,j)) for i in range(2)] for j in range(3)]
+      p.x = [ssymQQQ("x")]
+      p.z = [ssymQQQ("z%d" % i) for i in range(2)]
+      p.y = [[ssymQQQ("y%d%d"% (i,j)) for i in range(2)] for j in range(3)]
       p.setOrder(["x","y","z"])
       p.freeze()
       
@@ -92,9 +92,9 @@ class Toolstests(casadiTestCase):
       #self.checkarray(p._i["y",:,0],[1,3,5],"")
       
       p = Collection()
-      p.x = [ssym("x")]
-      p.z = [ssym("z%d" % i) for i in range(2)]
-      p.y = [[ssym("y%d%d"% (i,j)) for i in range(2)] for j in range(3)]
+      p.x = [ssymQQQ("x")]
+      p.z = [ssymQQQ("z%d" % i) for i in range(2)]
+      p.y = [[ssymQQQ("y%d%d"% (i,j)) for i in range(2)] for j in range(3)]
       p.setOrder(["x",("y","z")])
       p.freeze()
       
@@ -120,14 +120,14 @@ class Toolstests(casadiTestCase):
       self.checkarray(p.i_y[...],IMatrix([1,2,4,5,7,8]),"")
     
       p = Collection()
-      p.a = ssym("a")
-      p.b = ssym("b")
+      p.a = ssymQQQ("a")
+      p.b = ssymQQQ("b")
       p.freeze()
 
       g = Collection()
-      g.c = ssym("c")
+      g.c = ssymQQQ("c")
       g.d = p
-      g.e = ssym("e")
+      g.e = ssymQQQ("e")
       g.freeze()
        
       self.assertEqual(g.size,4)
@@ -155,13 +155,13 @@ class Toolstests(casadiTestCase):
              
       p = Variables()
 
-      p.x = ssym("x",2)
-      p.z = ssym("z",2,4)
-      p.y = ssym("y",3,2)
+      p.x = ssymQQQ("x",1,2)
+      p.z = ssymQQQ("z",4,2)
+      p.y = ssymQQQ("y",2,3)
 
       xother = Variables()
       xother.a = SX("x")
-      xother.b = diag(ssym("[a,b]"))
+      xother.b = diag(ssymQQQ("[a,b]"))
       xother.freeze()
       
       p.xother = xother
@@ -235,12 +235,12 @@ class Toolstests(casadiTestCase):
       self.checkarray(A[p.o_xother + p.xother.i_b],p.xother.b_,"indexing round trip 2")
 
       p = Variables()
-      p.a = ssym("a",2)
+      p.a = ssymQQQ("a",1,2)
       b = []
-      b.append(ssym("b1",3))
-      b.append(ssym("b2",3))
+      b.append(ssymQQQ("b1",1,3))
+      b.append(ssymQQQ("b2",1,3))
       p.b = b
-      p.c = ssym("c")
+      p.c = ssymQQQ("c")
       p.freeze()
       
 
@@ -294,12 +294,12 @@ class Toolstests(casadiTestCase):
       
       
       p = Variables()
-      p.a = ssym("a",2)
+      p.a = ssymQQQ("a",1,2)
       b = []
-      b.append(ssym("b1",3,2))
-      b.append(ssym("b2",3))
+      b.append(ssymQQQ("b1",2,3))
+      b.append(ssymQQQ("b2",1,3))
       p.b = b
-      p.c = ssym("c")
+      p.c = ssymQQQ("c")
       p.freeze()
       
 
@@ -332,12 +332,12 @@ class Toolstests(casadiTestCase):
       self.checkarray(A,DMatrix([0,0,3,3,9,3,3,3,4,4,4,0]),"flattenNZcat")
 
       p = Variables()
-      p.a = msym("a",2)
+      p.a = msymQQQ("a",1,2)
       b = []
-      b.append(msym("b1",3))
-      b.append(msym("b2",3))
+      b.append(msymQQQ("b1",1,3))
+      b.append(msymQQQ("b2",1,3))
       p.b = b
-      p.c = msym("c")
+      p.c = msymQQQ("c")
       p.freeze()
       
       f = MXFunction([p.flattencat()],[p.a,p.b[0],p.b[1],p.c])
@@ -348,13 +348,13 @@ class Toolstests(casadiTestCase):
       f.evaluate()
       
       p = Variables()
-      p.a = ssym("a",2)
+      p.a = ssymQQQ("a",1,2)
       b = []
-      b.append(ssym("b1",3))
-      b.append(ssym("b2",3))
-      b.append([ssym("b3",3),ssym("b4",3)])
+      b.append(ssymQQQ("b1",1,3))
+      b.append(ssymQQQ("b2",1,3))
+      b.append([ssymQQQ("b3",1,3),ssymQQQ("b4",1,3)])
       p.b = b
-      p.c = ssym("c")
+      p.c = ssymQQQ("c")
       p.freeze()
       
       self.checkarray(array(p.i_a),DMatrix([[0],[1]]),"index")
@@ -385,7 +385,7 @@ class Toolstests(casadiTestCase):
         self.assertTrue(roundtrip.isEqual(p.flattenNZcat()[k].toScalar()))
         
         
-      x = msym("a",2,3)
+      x = msymQQQ("a",3,2)
       
       p = Variables()
       p.a = x**2.2 # Was x**2 which simplifies to the _unary_ operation sq(x)
@@ -398,13 +398,13 @@ class Toolstests(casadiTestCase):
   def test_Numbers(self):
       p = Variables()
 
-      p.x = ssym("x",2)
-      p.z = ssym("z",2,4)
-      p.y = ssym("y",3,2)
+      p.x = ssymQQQ("x",1,2)
+      p.z = ssymQQQ("z",4,2)
+      p.y = ssymQQQ("y",2,3)
 
       xother = Variables()
       xother.a = SX("x")
-      xother.b = diag(ssym("[a,b]"))
+      xother.b = diag(ssymQQQ("[a,b]"))
       xother.freeze()
       
       p.xother = xother
@@ -502,8 +502,8 @@ class Toolstests(casadiTestCase):
     self.assertTrue(s["z"].sparsity()==sp_dense(1,3))
     self.assertTrue(s["w"].sparsity()==sp_triu(5))
     
-    x  = ssym("x",2)
-    x2 = ssym("x2",2)
+    x  = ssymQQQ("x",1,2)
+    x2 = ssymQQQ("x2",1,2)
     s = struct_ssym([entry('a',sym=x),'y','z'])
     self.assertTrue(s.cat.at(0).getName().startswith("x"))
     self.assertEqual(s.size,4)
@@ -633,8 +633,8 @@ class Toolstests(casadiTestCase):
     self.assertTrue(s["z"].sparsity()==sp_dense(1,3))
     self.assertTrue(s["w"].sparsity()==sp_triu(5))
     
-    x  = msym("x",2)
-    x2 = msym("x2",2)
+    x  = msymQQQ("x",1,2)
+    x2 = msymQQQ("x2",1,2)
     with self.assertRaises(Exception):
       s = struct_msym([entry('x',sym=x),'y','z'])
     with self.assertRaises(Exception):
@@ -644,13 +644,13 @@ class Toolstests(casadiTestCase):
     with self.assertRaises(Exception):
       struct_msym([entry('x',sym=horzcat([x,x2])),'y','z'])
     with self.assertRaises(Exception):
-      s = struct_,msym([(2,'x',[x,x2]),'y','z'])
+      s = struct_msym([(2,'x',[x,x2]),'y','z'])
     
     s = struct_msym(['x','y','z'])
     S = struct_msym([entry("X",struct=s)])
     S = struct_msym([entry("X",repeat=[5],struct=s)])
     
-    x = ssym("x",2)
+    x = ssymQQQ("x",1,2)
     y0 = sin(x) 
     y1 = cos(x)
     
@@ -661,7 +661,7 @@ class Toolstests(casadiTestCase):
     ])
     
     
-    x = msym("x",2)
+    x = msymQQQ("x",1,2)
     m = struct_msym(['a','b'])
     y0 = sin(x) 
     y1 = cos(x)
@@ -682,8 +682,8 @@ class Toolstests(casadiTestCase):
     self.assertEqual(V["y",0,'a'].shape,(1,1))
     
     with self.assertRaises(Exception):
-      V["y",0] = msym("x",4) # shape mismatch
-    abc = msym("abc",2)
+      V["y",0] = msymQQQ("x",1,4) # shape mismatch
+    abc = msymQQQ("abc",1,2)
     V["y",0] = abc
     if CasadiOptions.getSimplificationOnTheFly():
       self.assertTrue(isEqual(V["y",0],abc))

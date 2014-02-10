@@ -273,7 +273,7 @@ class Variables(object):
         
             
     def createParent(self):
-        self._V = msym("V[" + ",".join(self._order) + "]",self.getSize())
+        self._V = msymQQQ("V[" + ",".join(self._order) + "]",1,self.getSize())
         for k in self._order:
             obj = self._d[k]
             if isinstance(obj,Variables):

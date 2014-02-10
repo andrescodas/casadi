@@ -61,8 +61,8 @@ namespace CasADi{
     n_ = A_[0].size2();
     
     
-    MX As = msym("A",K_*n_,n_);
-    MX Vs = msym("V",K_*n_,n_);
+    MX As = msymQQQ("A",n_,K_*n_);
+    MX Vs = msymQQQ("V",n_,K_*n_);
     
     std::vector< MX > Vss = horzsplit(Vs,n_);
     std::vector< MX > Ass = horzsplit(As,n_);

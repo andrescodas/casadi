@@ -77,7 +77,7 @@ class Matrixtests(casadiTestCase):
     import numpy as NP
     A = NP.zeros((3,4),dtype=SX)
     
-    x = ssym("x")
+    x = ssymQQQ("x")
     A[:,1] = x
     A[1,:] = 5
     #print A  -  printing does not seem to work for numpy 1.8.0dev
@@ -191,7 +191,7 @@ class Matrixtests(casadiTestCase):
 
   def huge_slice(self):
     self.message("huge slice")
-    a = ssym("a",sp_diag(50000))
+    a = ssymQQQ("a",sp_diag(50000))
 
     a[:,:]
     
@@ -973,11 +973,11 @@ class Matrixtests(casadiTestCase):
 
       random.seed(1)
       a = DMatrix(sA,[random.random() for i in range(sA.size())])
-      A = ssym("a",a.sparsity())
+      A = ssymQQQ("a",a.sparsity())
       for sB in [ sp_dense(1,a.size2()), horzcat([sp_dense(1,1),sp_sparse(1,a.size2()-1)]),sp_triu(a.size2()),sp_triu(a.size2()).T]:
 
         b = DMatrix(sB,[random.random() for i in range(sB.size())])
-        B = ssym("B",b.sparsity())
+        B = ssymQQQ("B",b.sparsity())
         C = solve(A,B)
         
         f = SXFunction([A,B],[C])

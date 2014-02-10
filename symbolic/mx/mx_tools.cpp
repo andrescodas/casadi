@@ -511,19 +511,19 @@ namespace CasADi{
     return ex.size() == ex.numel();
   }
 
-  MX msym(const std::string& name, int n, int m){
-    return MX(name,n,m);
+  MX msymQQQ(const std::string& name, int nrow, int ncol){
+    return MX(name,ncol,nrow);
   }
 
-  MX msym(const std::string& name, const std::pair<int,int> & nm) {
-    return MX(name,nm.first,nm.second);
+  MX msymQQQ(const std::string& name, const std::pair<int,int> & rc) {
+    return MX(name,rc.second,rc.first);
   }
 
-  MX msym(const Matrix<double>& x){
+  MX msymQQQ(const Matrix<double>& x){
     return MX(x);
   }
 
-  MX msym(const std::string& name, const CCSSparsity& sp) {
+  MX msymQQQ(const std::string& name, const CCSSparsity& sp) {
     return MX(name,sp);
   }
 
@@ -620,32 +620,32 @@ namespace CasADi{
     }  
   }
 
-  std::vector<MX> msym(const std::string& name, const CCSSparsity& sp, int p){
+  std::vector<MX> msymQQQ(const std::string& name, const CCSSparsity& sp, int p){
     std::vector<MX> ret(p);
     for(int k=0; k<p; ++k){
       stringstream ss;
       ss << name << "_" << k;
-      ret[k] = msym(ss.str(),sp);
+      ret[k] = msymQQQ(ss.str(),sp);
     }
     return ret;
   }
 
-  std::vector<std::vector<MX> > msym(const std::string& name, const CCSSparsity& sp, int p, int r){
+  std::vector<std::vector<MX> > msymQQQ(const std::string& name, const CCSSparsity& sp, int p, int r){
     std::vector<std::vector<MX> > ret(r);
     for(int k=0; k<r; ++k){
       stringstream ss;
       ss << name << "_" << k;
-      ret[k] = msym(ss.str(),sp,p);
+      ret[k] = msymQQQ(ss.str(),sp,p);
     }
     return ret;
   }
 
-  std::vector<MX> msym(const std::string& name, int n, int m, int p){
-    return msym(name,sp_dense(m,n),p);
+  std::vector<MX> msymQQQ(const std::string& name, int nrow, int ncol, int p){
+    return msymQQQ(name,sp_dense(nrow,ncol),p);
   }
 
-  std::vector<std::vector<MX> > msym(const std::string& name, int n, int m, int p, int r){
-    return msym(name,sp_dense(m,n),p,r);
+  std::vector<std::vector<MX> > msymQQQ(const std::string& name, int nrow, int ncol, int p, int r){
+    return msymQQQ(name,sp_dense(nrow,ncol),p,r);
   }
 
   MX substitute(const MX &ex, const MX& v, const MX& vdef){
@@ -989,7 +989,7 @@ namespace CasADi{
     std::vector<MX> syms(boundary.size());
     
     for (int i=0;i<syms.size();++i) {
-      syms[i] = msym("x",boundary[i].sparsity());
+      syms[i] = msymQQQ("x",boundary[i].sparsity());
     }
     
     // Substitute symbols for boundary nodes
@@ -1040,7 +1040,7 @@ namespace CasADi{
   }
   
   MX nullspace(const MX& A) {
-    SXMatrix n = ssym("A",A.sparsity());
+    SXMatrix n = ssymQQQ("A",A.sparsity());
     SXFunction f(n,nullspace(n));
     f.init();
     return f.call(A)[0];

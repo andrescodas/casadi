@@ -85,7 +85,7 @@ int main(){
   integrator_options["tf"]=ocp.tf/num_nodes;
 
   // Mayer objective function
-  SXMatrix xf = ssym("xf",x.size(),1);
+  SXMatrix xf = ssymQQQ("xf",1,x.size());
   SXFunction mterm(xf, xf[0]);
   
   // DAE residual function

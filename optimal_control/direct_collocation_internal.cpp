@@ -71,7 +71,7 @@ void DirectCollocationInternal::init(){
   DMatrix D_num = DMatrix(deg_+1,1,0);
 
   // Collocation point
-  SXMatrix tau = ssym("tau");
+  SXMatrix tau = ssymQQQ("tau");
 
   // For all collocation points
   for(int j=0; j<deg_+1; ++j){
@@ -122,7 +122,7 @@ void DirectCollocationInternal::init(){
   nlp_nx += nx_;                       // Final state
 
   // NLP variable vector
-  MX nlp_x = msym("x",nlp_nx);
+  MX nlp_x = msymQQQ("x",1,nlp_nx);
   int offset = 0;
 
   // Get collocated states and parametrized control

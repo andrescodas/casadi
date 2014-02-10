@@ -62,9 +62,9 @@ class Integrationtests(casadiTestCase):
     num = self.num
     tc = DMatrix(n.linspace(0,num['tend'],100))
     
-    t=ssym("t")
-    q=ssym("q")
-    p=ssym("p")
+    t=ssymQQQ("t")
+    q=ssymQQQ("q")
+    p=ssymQQQ("p")
     
     out = SXFunction(daeIn(t=t, x=q, p=p),[q,t,p])
     out.init()
@@ -93,9 +93,9 @@ class Integrationtests(casadiTestCase):
   def test_tools_trivial(self):
     num = self.num
 
-    t=ssym("t")
-    q=ssym("q")
-    p=ssym("p")
+    t=ssymQQQ("t")
+    q=ssymQQQ("q")
+    p=ssymQQQ("p")
     
     f=SXFunction(daeIn(x=q),daeOut(ode=q))
     f.init()
@@ -122,9 +122,9 @@ class Integrationtests(casadiTestCase):
   def test_tools(self):
     num = self.num
 
-    t=ssym("t")
-    q=ssym("q")
-    p=ssym("p")
+    t=ssymQQQ("t")
+    q=ssymQQQ("q")
+    p=ssymQQQ("p")
     
     out = SXFunction(daeIn(t=t, x=q, p=p),[q,t,p])
     out.init()
@@ -155,8 +155,8 @@ class Integrationtests(casadiTestCase):
     #return
     DMatrix.setPrecision(18)
 
-    tstart = ssym("tstart")
-    tend = ssym("tend")
+    tstart = ssymQQQ("tstart")
+    tend = ssymQQQ("tend")
     
     integrators = [
               (IdasIntegrator,["dae","ode"],{"abstol": 1e-9,"reltol":1e-9,"fsens_err_con": True,"calc_ic":True,"calc_icB":True}),
@@ -171,12 +171,12 @@ class Integrationtests(casadiTestCase):
         dout_ = copy.copy(dout)
         rdin_ = copy.copy(rdin)
         rdout_ = copy.copy(rdout)
-        z = ssym("x", din_["x"].shape)
+        z = ssymQQQ("x", din_["x"].shape)
         din_["z"] = z
         dout_["ode"] = z
         dout_["alg"] = ( dout["ode"] - z) * (-0.8)
         if len(rdin_)>0:
-          rz = ssym("rx", rdin_["rx"].shape)
+          rz = ssymQQQ("rx", rdin_["rx"].shapeQQQ)
           rdin_["rz"] = rz
           rdin_["z"] = z
           rdout_["ode"] = rz
@@ -190,9 +190,9 @@ class Integrationtests(casadiTestCase):
     def checks(): 
       Ns = 1
       
-      x  = ssym("x")
-      rx = ssym("rx")
-      t = ssym("t")
+      x  = ssymQQQ("x")
+      rx = ssymQQQ("rx")
+      t = ssymQQQ("t")
 
       ti = (0,0.9995)
       pointA = {'x0': 1, 'rx0': 1}
@@ -279,8 +279,8 @@ class Integrationtests(casadiTestCase):
   def test_lsolvers(self):
     self.message("Test different linear solvers")
 
-    tstart = ssym("tstart")
-    tend = ssym("tend")
+    tstart = ssymQQQ("tstart")
+    tend = ssymQQQ("tend")
     
     integrators = [
               (IdasIntegrator,["dae","ode"],{"abstol": 1e-9,"reltol":1e-9,"fsens_err_con": True,"calc_ic":True,"calc_icB":True}),
@@ -308,10 +308,10 @@ class Integrationtests(casadiTestCase):
       A=array([1,0.1])
       p0 = 1.13
 
-      q=ssym("y",2,1)
+      q=ssymQQQ("y",1,2)
       y0=q[0]
       yc0=dy0=q[1]
-      p=ssym("p",1,1)
+      p=ssymQQQ("p",1,1)
 
       s1=(2*y0-log(yc0**2/p+1))/2-log(cos(arctan(yc0/sqrt(p))+sqrt(p)*(tend-tstart)))
       s2=sqrt(p)*tan(arctan(yc0/sqrt(p))+sqrt(p)*(tend-tstart))
@@ -381,8 +381,8 @@ class Integrationtests(casadiTestCase):
     self.message("Extensive integrator tests")
     
     num=self.num
-    tstart = ssym("tstart")
-    tend = ssym("tstart")
+    tstart = ssymQQQ("tstart")
+    tend = ssymQQQ("tstart")
 
     
     for Integrator, features, options in integrators:
@@ -397,12 +397,12 @@ class Integrationtests(casadiTestCase):
           dout_ = copy.copy(dout)
           rdin_ = copy.copy(rdin)
           rdout_ = copy.copy(rdout)
-          z = ssym("x", din_["x"].shape)
+          z = ssymQQQ("x", din_["x"].shapeQQQ)
           din_["z"] = z
           dout_["ode"] = z
           dout_["alg"] = ( dout["ode"] - z) * (-0.8)
           if len(rdin_)>0:
-            rz = ssym("rx", rdin_["rx"].shape)
+            rz = ssymQQQ("rx", rdin_["rx"].shapeQQQ)
             rdin_["rz"] = rz
             rdin_["z"] = z
             rdout_["ode"] = rz
@@ -417,15 +417,15 @@ class Integrationtests(casadiTestCase):
         x0=num['q0']
         p_=num['p']
         rx0_= 0.13
-        t=ssym("t")
-        x=ssym("x")
-        rx=ssym("rx")
-        p=ssym("p")
-        dp=ssym("dp")
+        t=ssymQQQ("t")
+        x=ssymQQQ("x")
+        rx=ssymQQQ("rx")
+        p=ssymQQQ("p")
+        dp=ssymQQQ("dp")
 
-        z=ssym("z")
-        rz=ssym("rz")
-        rp=ssym("rp")
+        z=ssymQQQ("z")
+        rz=ssymQQQ("rz")
+        rp=ssymQQQ("rp")
         
         si = {'x0':x, 'p': p, 'rx0': rx,'rp' : rp}            
         pointA = {'x0':x0,'p': p_, 'rx0': rx0_, 'rp': 0.127}
@@ -471,10 +471,10 @@ class Integrationtests(casadiTestCase):
         A=array([1,0.1])
         p0 = 1.13
 
-        q=ssym("y",2,1)
+        q=ssymQQQ("y",1,2)
         y0=q[0]
         yc0=dy0=q[1]
-        p=ssym("p",1,1)
+        p=ssymQQQ("p",1,1)
         
         s1=(2*y0-log(yc0**2/p+1))/2-log(cos(arctan(yc0/sqrt(p))+sqrt(p)*(tend-tstart)))
         s2=sqrt(p)*tan(arctan(yc0/sqrt(p))+sqrt(p)*(tend-tstart))
@@ -561,9 +561,9 @@ class Integrationtests(casadiTestCase):
         
   def setUp(self):
     # Reference solution is x0 e^((t^3-t0^3)/(3 p))
-    t=ssym("t")
-    x=ssym("x")
-    p=ssym("p")
+    t=ssymQQQ("t")
+    x=ssymQQQ("x")
+    p=ssymQQQ("p")
     f=SXFunction(daeIn(t=t, x=x, p=p),daeOut(ode=x/p*t**2))
     f.init()
     integrator = CVodesIntegrator(f)
@@ -782,7 +782,7 @@ class Integrationtests(casadiTestCase):
     te=0.4
 
     t=SX("t")
-    q=ssym("y",3,1)
+    q=ssymQQQ("y",1,3)
     p=SX("p")
 
     dh = p+q[0]**2
@@ -930,9 +930,9 @@ class Integrationtests(casadiTestCase):
     B=array([[1,2.3,4],[-2,1.3,4.7],[-2,6,9]])
 
     te=0.7
-    t=ssym("t")
-    q=ssym("q",3,1)
-    p=ssym("p",9,1)
+    t=ssymQQQ("t")
+    q=ssymQQQ("q",1,3)
+    p=ssymQQQ("p",1,9)
     f_in = daeIn(t=t, x=q, p=p)
     f_out = daeOut(ode=mul(c.reshape(p,3,3),q))
     f=SXFunction(f_in,f_out)
@@ -965,9 +965,9 @@ class Integrationtests(casadiTestCase):
     B=array([[1,2.3,4],[-2,1.3,4.7],[-2,6,9]])
     te=0.7
     Be=expm(B*te)
-    t=ssym("t")
-    q=ssym("q",3,1)
-    p=ssym("p",9,1)
+    t=ssymQQQ("t")
+    q=ssymQQQ("q",1,3)
+    p=ssymQQQ("p",1,9)
 
     f=SXFunction(daeIn(t=t,x=q,p=p),daeOut(ode=mul(c.reshape(p,3,3),q)))
     f.init()
@@ -1032,9 +1032,9 @@ class Integrationtests(casadiTestCase):
     B=array([1.3,4.3,2.7])
     te=0.7
 
-    t=ssym("t")
-    q=ssym("q",2,1)
-    p=ssym("p",3,1)
+    t=ssymQQQ("t")
+    q=ssymQQQ("q",1,2)
+    p=ssymQQQ("p",1,3)
 
     f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=horzcat([q[1],(p[0]-2*p[1]*cos(2*p[2]))*q[0]])))
     f.init()
@@ -1081,9 +1081,9 @@ class Integrationtests(casadiTestCase):
     yc0=dy0=A[1]
     te=0.4
 
-    t=ssym("t")
-    q=ssym("y",2,1)
-    p=ssym("p",1,1)
+    t=ssymQQQ("t")
+    q=ssymQQQ("y",1,2)
+    p=ssymQQQ("p",1,1)
     # y
     # y'
     f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=horzcat([q[1],p[0]+q[1]**2 ])))
@@ -1215,8 +1215,8 @@ class Integrationtests(casadiTestCase):
     x0_ = DMatrix([1,0.1])
     A_  = DMatrix([[3,1],[0.74,4]])
 
-    A = ssym("A",N,N)
-    x = ssym("x",N)
+    A = ssymQQQ("A",N,N)
+    x = ssymQQQ("x",1,N)
 
     ode = SXFunction(daeIn(x=x, p=flatten(A)),daeOut(ode=mul(A,x)))
     I = CVodesIntegrator(ode)
@@ -1255,15 +1255,15 @@ class Integrationtests(casadiTestCase):
     
   def test_issue535(self):
     self.message("regression test for #535")
-    t=ssym("t")
-    x=ssym("x")
-    rx=ssym("rx")
-    p=ssym("p")
-    dp=ssym("dp")
+    t=ssymQQQ("t")
+    x=ssymQQQ("x")
+    rx=ssymQQQ("rx")
+    p=ssymQQQ("p")
+    dp=ssymQQQ("dp")
 
-    z=ssym("z")
-    rz=ssym("rz")
-    rp=ssym("rp")
+    z=ssymQQQ("z")
+    rz=ssymQQQ("rz")
+    rp=ssymQQQ("rp")
     f = SXFunction(daeIn(**{'x': x, 'z': z}),daeOut(**{'alg': x-z, 'ode': z}))
     f.init()
     g = SXFunction(rdaeIn(**{'x': x, 'z': z, 'rx': rx, 'rz': rz}),rdaeOut(**{'alg': x-rz, 'ode': rz}))
