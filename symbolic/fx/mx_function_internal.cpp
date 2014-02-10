@@ -673,7 +673,7 @@ namespace CasADi{
       fsens[d].resize(outputv_.size());
       if(skip_fwd){
         for(int i=0; i<fsens[d].size(); ++i){
-          fsens[d][i] = MX::sparse(output(i).size2(),output(i).size1());
+          fsens[d][i] = MX::sparseQQQ(output(i).shape());
         }
       }
     }
@@ -687,7 +687,7 @@ namespace CasADi{
       asens[d].resize(inputv_.size());
       if(skip_adj){
         for(int i=0; i<asens[d].size(); ++i){
-          asens[d][i] = MX::sparse(input(i).size2(),input(i).size1());
+          asens[d][i] = MX::sparseQQQ(input(i).shape());
         }
       }
     }
@@ -796,7 +796,7 @@ namespace CasADi{
             // Give zero seed if null
             if(el>=0 && dwork[el][d].isNull()){
               if(d==0){
-                dwork[el][d] = MX::sparse(input_p[iind]->size2(),input_p[iind]->size1());
+                dwork[el][d] = MX::sparseQQQ(input_p[iind]->shape());
               } else {
                 dwork[el][d] = dwork[el][0];
               }
@@ -808,7 +808,7 @@ namespace CasADi{
             int el = it->res[oind];
             fsens_p[d][oind] = el<0 ? 0 : &dwork[el][d];
             if (el>=0 && dwork[el][d].isNull() && !output_p[oind]->isNull()) {
-              dwork[el][d] = MX::sparse(output_p[oind]->size2(),output_p[oind]->size1());
+              dwork[el][d] = MX::sparseQQQ(output_p[oind]->shape());
             }
           }
         }
@@ -860,7 +860,7 @@ namespace CasADi{
           // Collect the symbolic adjoint sensitivities
           for(int d=0; d<nadir; ++d){
             if(dwork[it->res.front()][d].isNull()){
-              asens[d][it->arg.front()] = MX::sparseWWW(input(it->arg.front()).shape());
+              asens[d][it->arg.front()] = MX::sparseQQQ(input(it->arg.front()).shape());
             } else {
               asens[d][it->arg.front()] = dwork[it->res.front()][d];
             }
@@ -905,7 +905,7 @@ namespace CasADi{
             
               // Provide a zero seed if no seed exists
               if(el>=0 && dwork[el][d].isNull()){
-                dwork[el][d] = MX::sparseWWW(swork[el].shape());
+                dwork[el][d] = MX::sparseQQQ(swork[el].shape());
               }
             }
 
@@ -916,7 +916,7 @@ namespace CasADi{
             
               // Set sensitivities to zero if not yet used
               if(el>=0 && dwork[el][d].isNull()){
-                dwork[el][d] = MX::sparseWWW(swork[el].shape());
+                dwork[el][d] = MX::sparseQQQ(swork[el].shape());
               }
             }
           }

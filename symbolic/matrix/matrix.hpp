@@ -664,23 +664,19 @@ namespace CasADi{
     
     //@{
     /** \brief  create a sparse matrix with all zeros */
-    static Matrix<T> sparse(int ncol, int nrow=1);
-    static Matrix<T> sparse(const std::pair<int,int>& nm);
-    static Matrix<T> sparseWWW(const std::pair<int, int> &nm){ return sparse(std::pair<int,int>(nm.second,nm.first));}
+    static Matrix<T> sparseQQQ(int nrow, int ncol=1);
+    static Matrix<T> sparseQQQ(const std::pair<int,int>& rc);
     //@}
     
     /* \brief Construct a sparse matrix from triplet form
      * Matrix size will be max(col) x max(row)
      */
-    static Matrix<T> sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d);
+    static Matrix<T> sparseQQQ(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d);
     
     //@{
     /// \brief Construct a sparse matrix from triplet form
-    static Matrix<T> sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d, int n, int m);
-    static Matrix<T> sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d, const std::pair<int,int>& nm);
-    static Matrix<T> sparseWWW(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d, const std::pair<int,int>& nm){
-      return sparse(col,row,d,std::pair<int,int>(nm.second,nm.first));
-    }
+    static Matrix<T> sparseQQQ(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d, int nrow, int ncol);
+    static Matrix<T> sparseQQQ(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d, const std::pair<int,int>& rc);
     //@}
     
     //@{

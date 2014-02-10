@@ -48,7 +48,7 @@ class SOCPSolverTests(casadiTestCase):
     E = DMatrix([0,0])
     F = DMatrix([4])
 
-    A = DMatrix.sparse(0,2)
+    A = DMatrix.sparseQQQ(2,0)
     LBA = DMatrix()
     UBA = DMatrix()
     LBX = DMatrix([ 0 ]*2)
@@ -89,7 +89,7 @@ class SOCPSolverTests(casadiTestCase):
     E = DMatrix([a,0])
     F = DMatrix([4])
 
-    A = DMatrix.sparse(0,2)
+    A = DMatrix.sparseQQQ(2,0)
     LBA = DMatrix()
     UBA = DMatrix()
     
@@ -129,7 +129,7 @@ class SOCPSolverTests(casadiTestCase):
     E = DMatrix([a,0])
     F = DMatrix([4])
 
-    A = DMatrix.sparse(0,2)
+    A = DMatrix.sparseQQQ(2,0)
     LBA = DMatrix()
     UBA = DMatrix()
     
@@ -171,7 +171,7 @@ class SOCPSolverTests(casadiTestCase):
     E = DMatrix([0,0,0,0])
     F = DMatrix([4,1])
 
-    A = DMatrix.sparse(0,2)
+    A = DMatrix.sparseQQQ(2,0)
     LBA = DMatrix()
     UBA = DMatrix()
     LBX = DMatrix([ 0 ]*2)
@@ -211,7 +211,7 @@ class SOCPSolverTests(casadiTestCase):
     H = DMatrix([-3,-2,0,3,-42])
     E = DMatrix([-12,-6,5,-3,6,-10])
     F = DMatrix([-12,27])
-    A = DMatrix.sparse(0,3)
+    A = DMatrix.sparseQQQ(3,0)
     LBA = DMatrix()
     UBA = DMatrix()
     LBX = DMatrix([ -inf ]*3)

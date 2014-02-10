@@ -310,11 +310,9 @@ namespace CasADi{
     //@}
 
     //@{
-    /** \brief  Sparse matrix of all zeros */
-    static MX sparse(int ncol, int nrow=1);
-    static MX sparse(const std::pair<int, int> &nm);
-    static MX sparseWWW(const std::pair<int, int> &nm){ return sparse(std::pair<int,int>(nm.second,nm.first));}
-
+    /** \brief Sparse matrix of all zeros */
+    static MX sparseQQQ(int nrow, int ncol=1);
+    static MX sparseQQQ(const std::pair<int, int> &rc);
     //@}
   
     //@{

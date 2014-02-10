@@ -1699,30 +1699,30 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::sparse(const std::pair<int,int> &nm){
-    return sparse(nm.first,nm.second);
+  Matrix<T> Matrix<T>::sparseQQQ(const std::pair<int,int> &rc){
+    return sparseQQQ(rc.first,rc.second);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::sparse(int n, int m){
-    return Matrix<T>(n,m);
+  Matrix<T> Matrix<T>::sparseQQQ(int nrow, int ncol){
+    return Matrix<T>(ncol,nrow);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d) {
-    return sparse(col,row,d,*std::max_element(col.begin(),col.end()),*std::max_element(row.begin(),row.end()));
+  Matrix<T> Matrix<T>::sparseQQQ(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d) {
+    return sparseQQQ(row,col,d,*std::max_element(row.begin(),row.end()),*std::max_element(col.begin(),col.end()));
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d, const std::pair<int,int>& nm) {
-    return sparse(col,row,d,nm.first,nm.second);
+  Matrix<T> Matrix<T>::sparseQQQ(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d, const std::pair<int,int>& rc) {
+    return sparseQQQ(row,col,d,rc.first,rc.second);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::sparse(const std::vector<int>& col, const std::vector<int>& row, const std::vector<T>& d, int n, int m) {
-    casadi_assert_message(col.size()==row.size() && col.size()==d.size(),"Argument error in Matrix<T>::sparse(col,row,d): supplied lists must all be of equal length, but got: " << col.size() << ", " << row.size()  << " and " << d.size());
+  Matrix<T> Matrix<T>::sparseQQQ(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d, int nrow, int ncol) {
+    casadi_assert_message(col.size()==row.size() && col.size()==d.size(),"Argument error in Matrix<T>::sparse(row,col,d): supplied lists must all be of equal length, but got: " << row.size() << ", " << col.size()  << " and " << d.size());
     std::vector<int> mapping;
-    Matrix<T> ret(sp_triplet(m,n,row,col,mapping),0);
+    Matrix<T> ret(sp_triplet(nrow,ncol,row,col,mapping),0);
   
     for (int k=0;k<mapping.size();++k) ret.data()[k] = d[mapping[k]];
   
@@ -1770,7 +1770,7 @@ namespace CasADi{
       if(x.dense()){
         return Matrix<T>(ncol,nrow,x.toScalar());
       } else {
-        return sparse(ncol,nrow);
+        return sparseQQQ(nrow,ncol);
       }
     } else {
       return vertcat(std::vector< Matrix<T> >(nrow,horzcat(std::vector< Matrix<T> >(ncol,x))));

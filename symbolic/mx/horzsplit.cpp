@@ -160,7 +160,7 @@ namespace CasADi{
           } else {
             int first_col = offset_[i];
             int last_col = offset_[i+1];
-            v.push_back(MX::sparse(last_col-first_col,dep().size1()));
+            v.push_back(MX::sparseQQQ(dep().size1(),last_col-first_col));
           }
         }
         *adjSens[d][0] += horzcat(v);
