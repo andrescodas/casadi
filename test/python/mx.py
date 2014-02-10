@@ -876,7 +876,7 @@ class MXtests(casadiTestCase):
     r=2*numpy.ones((7,8))
     r[1:4,[2,4,6,7]]=numpy.zeros((3,4))
     z = y *2
-    z.erase([1,2,3],[2,4,6,7])
+    z.eraseQQQ([2,4,6,7],[1,2,3])
     f = MXFunction([y],[z])
     f.init()
     f.setInput([1]*56)

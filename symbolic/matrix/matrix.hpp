@@ -558,16 +558,16 @@ namespace CasADi{
     void reserve(int nnz, int ncol);
     
     /** \brief Erase a submatrix
-        Erase cols and/or rows of a matrix */
-    void erase(const std::vector<int>& ii, const std::vector<int>& jj);
+        Erase rows and/or columns of a matrix */
+    void eraseQQQ(const std::vector<int>& rr, const std::vector<int>& cc);
     
     /** \brief Remove cols or rows
-        Rremove/delete cols and/or rows of a matrix */
-    void remove(const std::vector<int>& ii, const std::vector<int>& jj);
+        Rremove/delete rows and/or columns of a matrix */
+    void removeQQQ(const std::vector<int>& rr, const std::vector<int>& cc);
     
     /** \brief Enlarge matrix
-        Make the matrix larger by inserting empty cols and rows, keeping the existing non-zeros */
-    void enlarge(int ncol, int nrow, const std::vector<int>& ii, const std::vector<int>& jj);
+        Make the matrix larger by inserting empty rows and columns, keeping the existing non-zeros */
+    void enlargeQQQ(int nrow, int ncol, const std::vector<int>& rr, const std::vector<int>& cc);
     
     /// Access the non-zero elements
     std::vector<T>& data();

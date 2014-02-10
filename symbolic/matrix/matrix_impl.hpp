@@ -201,11 +201,11 @@ namespace CasADi{
       // Sparse mode
 
       // Remove submatrix to be replaced
-      erase(ii,jj);
+      eraseQQQ(jj,ii);
 
       // Extend el to the same dimension as this
       Matrix<T> el_ext = m;
-      el_ext.enlarge(size2(),size1(),ii,jj);
+      el_ext.enlargeQQQ(size1(),size2(),jj,ii);
 
       // Unite the sparsity patterns
       *this = unite(*this,el_ext);
@@ -1219,9 +1219,9 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::erase(const std::vector<int>& ii, const std::vector<int>& jj){
+  void Matrix<T>::eraseQQQ(const std::vector<int>& rr, const std::vector<int>& cc){
     // Erase from sparsity pattern
-    std::vector<int> mapping = sparsityRef().erase(jj,ii);
+    std::vector<int> mapping = sparsityRef().erase(rr,cc);
   
     // Update non-zero entries
     for(int k=0; k<mapping.size(); ++k)
@@ -1233,27 +1233,27 @@ namespace CasADi{
 
 
   template<class T>
-  void Matrix<T>::remove(const std::vector<int>& ii, const std::vector<int>& jj) {
-    if (!inBounds(ii,size2())) {
-      casadi_error("Remove(ii,jj) out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
+  void Matrix<T>::removeQQQ(const std::vector<int>& rr, const std::vector<int>& cc) {
+    if (!inBounds(rr,size1())) {
+      casadi_error("Remove(rr,cc) out of bounds. Your rr contains " << *std::min_element(rr.begin(),rr.end()) << " up to " << *std::max_element(rr.begin(),rr.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
-    if (!inBounds(jj,size1())) {
-      casadi_error("Remove(ii,jj) out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
+    if (!inBounds(cc,size2())) {
+      casadi_error("Remove(rr,cc) out of bounds. Your cc contains " << *std::min_element(cc.begin(),cc.end()) << " up to " << *std::max_element(cc.begin(),cc.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
     // Remove by performing a complementary slice
-    std::vector<int> iic = complement(ii,size2());
-    std::vector<int> jjc = complement(jj,size1());
+    std::vector<int> rrc = complement(rr,size1());
+    std::vector<int> ccc = complement(cc,size2());
   
-    Matrix<T> ret = (*this)(jjc,iic);
+    Matrix<T> ret = (*this)(rrc,ccc);
   
     operator=(ret);
   
   }
 
   template<class T>
-  void Matrix<T>::enlarge(int ncol, int nrow, const std::vector<int>& ii, const std::vector<int>& jj){
-    sparsityRef().enlarge(nrow,ncol,jj,ii);
+  void Matrix<T>::enlargeQQQ(int nrow, int ncol, const std::vector<int>& rr, const std::vector<int>& cc){
+    sparsityRef().enlarge(nrow,ncol,rr,cc);
   }
 
   template<class T>

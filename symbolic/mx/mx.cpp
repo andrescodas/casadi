@@ -276,11 +276,11 @@ namespace CasADi{
       // Sparse mode
 
       // Remove submatrix to be replaced
-      erase(ii,jj);
+      eraseQQQ(jj,ii);
 
       // Extend m to the same dimension as this
       MX el_ext = m;
-      el_ext.enlarge(size2(),size1(),ii,jj);
+      el_ext.enlargeQQQ(size1(),size2(),jj,ii);
 
       // Unite the sparsity patterns
       *this = unite(*this,el_ext);
@@ -594,12 +594,12 @@ namespace CasADi{
     return (*this)->sparsity_;
   }
 
-  void MX::erase(const vector<int>& ii, const vector<int>& jj){
+  void MX::eraseQQQ(const vector<int>& rr, const vector<int>& cc){
     // Get sparsity of the new matrix
     CCSSparsity sp = sparsity();
   
     // Erase from sparsity pattern
-    vector<int> mapping = sp.erase(jj,ii);
+    vector<int> mapping = sp.erase(rr,cc);
   
     // Create new matrix
     if(mapping.size()!=size()){
@@ -608,9 +608,9 @@ namespace CasADi{
     }
   }
 
-  void MX::enlarge(int ncol, int nrow, const vector<int>& ii, const vector<int>& jj){
+  void MX::enlargeQQQ(int nrow, int ncol, const vector<int>& rr, const vector<int>& cc){
     CCSSparsity sp = sparsity();
-    sp.enlarge(nrow,ncol,jj,ii);
+    sp.enlarge(nrow,ncol,rr,cc);
   
     MX ret = (*this)->getGetNonzeros(sp,range(size()));
     *this = ret;
