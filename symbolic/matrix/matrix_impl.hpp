@@ -201,11 +201,11 @@ namespace CasADi{
       // Sparse mode
 
       // Remove submatrix to be replaced
-      eraseQQQ(jj,ii);
+      erase(jj,ii);
 
       // Extend el to the same dimension as this
       Matrix<T> el_ext = m;
-      el_ext.enlargeQQQ(size1(),size2(),jj,ii);
+      el_ext.enlarge(size1(),size2(),jj,ii);
 
       // Unite the sparsity patterns
       *this = unite(*this,el_ext);
@@ -1219,7 +1219,7 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::eraseQQQ(const std::vector<int>& rr, const std::vector<int>& cc){
+  void Matrix<T>::erase(const std::vector<int>& rr, const std::vector<int>& cc){
     // Erase from sparsity pattern
     std::vector<int> mapping = sparsityRef().erase(rr,cc);
   
@@ -1233,7 +1233,7 @@ namespace CasADi{
 
 
   template<class T>
-  void Matrix<T>::removeQQQ(const std::vector<int>& rr, const std::vector<int>& cc) {
+  void Matrix<T>::remove(const std::vector<int>& rr, const std::vector<int>& cc) {
     if (!inBounds(rr,size1())) {
       casadi_error("Remove(rr,cc) out of bounds. Your rr contains " << *std::min_element(rr.begin(),rr.end()) << " up to " << *std::max_element(rr.begin(),rr.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
@@ -1252,7 +1252,7 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::enlargeQQQ(int nrow, int ncol, const std::vector<int>& rr, const std::vector<int>& cc){
+  void Matrix<T>::enlarge(int nrow, int ncol, const std::vector<int>& rr, const std::vector<int>& cc){
     sparsityRef().enlarge(nrow,ncol,rr,cc);
   }
 

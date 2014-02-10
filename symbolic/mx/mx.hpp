@@ -202,11 +202,11 @@ namespace CasADi{
     CCSSparsity& sparsityRef();
 
     /** \brief Erase a submatrix */
-    void eraseQQQ(const std::vector<int>& rr, const std::vector<int>& cc);
+    void erase(const std::vector<int>& rr, const std::vector<int>& cc);
 
     /** \brief Enlarge matrix
         Make the matrix larger by inserting empty rows and columns, keeping the existing non-zeros */
-    void enlargeQQQ(int nrow, int ncol, const std::vector<int>& rr, const std::vector<int>& cc);
+    void enlarge(int nrow, int ncol, const std::vector<int>& rr, const std::vector<int>& cc);
 
     MX operator-() const;
   

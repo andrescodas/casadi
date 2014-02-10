@@ -582,15 +582,15 @@ class Matrixtests(casadiTestCase):
     B = DMatrix([[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20]])
 
     A = DMatrix(B)
-    A.removeQQQ([],[])
+    A.remove([],[])
     self.checkarray(A, B,"remove nothing")
     
     A = DMatrix(B)
-    A.removeQQQ([1],[])
+    A.remove([1],[])
     self.checkarray(A, DMatrix([[1,3,4],[5,7,8],[9,11,12],[13,15,16],[17,19,20]]),"remove a row")
    
     A = DMatrix(B)
-    A.removeQQQ([1],[0,3])
+    A.remove([1],[0,3])
     self.checkarray(A, DMatrix([[5,7,8],[9,11,12],[17,19,20]]),"remove a row and two cols ")
     
   def test_comparisons(self):
