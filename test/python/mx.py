@@ -1423,9 +1423,9 @@ class MXtests(casadiTestCase):
     MX.setMaxNumCallsInPrint()
 
   def test_mul(self):
-    A = MX(DMatrix.onesQQQ((3,4)))
-    B = MX(DMatrix.onesQQQ((8,3)))
-    C = MX(DMatrix.onesQQQ((7,8)))
+    A = MX(DMatrix.ones((3,4)))
+    B = MX(DMatrix.ones((8,3)))
+    C = MX(DMatrix.ones((7,8)))
     
     self.assertRaises(RuntimeError,lambda : mul([]))
     
@@ -1680,7 +1680,7 @@ class MXtests(casadiTestCase):
     self.assertTrue(hash(flattenNZ(x))==hash(x))
     
   def test_constmxmul(self):
-    0.1*MX.onesQQQ(1,2)
+    0.1*MX.ones(1,2)
 
   def test_isRegular(self):
     self.assertTrue(isRegular(MX(DMatrix([0,1]))))
@@ -2152,7 +2152,7 @@ class MXtests(casadiTestCase):
     
     F.evaluate()
     
-    self.checkarray(F.output(),5*DMatrix.onesQQQ(4,4))
+    self.checkarray(F.output(),5*DMatrix.ones(4,4))
     
     D = msym("D",4,4)
     f = graph_substitute(f,[d],[D])
@@ -2165,7 +2165,7 @@ class MXtests(casadiTestCase):
     
     F.evaluate()
     
-    self.checkarray(F.output(),9*DMatrix.onesQQQ(4,4))
+    self.checkarray(F.output(),9*DMatrix.ones(4,4))
                  
 
   def test_matrix_expand(self):

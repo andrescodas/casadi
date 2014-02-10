@@ -481,11 +481,11 @@ namespace CasADi{
   }
 
   MX sumCols(const MX &x) {
-    return mul(MX::onesQQQ(x.size2(),1),x);
+    return mul(MX::ones(x.size2(),1),x);
   }
 
   MX sumRows(const MX &x) {
-    return mul(x,MX::onesQQQ(1,x.size1()));
+    return mul(x,MX::ones(1,x.size1()));
   }
 
   MX sumAll(const MX &x) {

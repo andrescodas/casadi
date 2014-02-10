@@ -1745,18 +1745,18 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::onesQQQ(const CCSSparsity& sp){
+  Matrix<T> Matrix<T>::ones(const CCSSparsity& sp){
     return Matrix<T>(sp,1);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::onesQQQ(const std::pair<int,int> &rc){
-    return onesQQQ(rc.first,rc.second);
+  Matrix<T> Matrix<T>::ones(const std::pair<int,int> &rc){
+    return ones(rc.first,rc.second);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::onesQQQ(int nrow, int ncol){
-    return onesQQQ(sp_dense(nrow,ncol));
+  Matrix<T> Matrix<T>::ones(int nrow, int ncol){
+    return ones(sp_dense(nrow,ncol));
   }
 
   template<class T>
@@ -1783,36 +1783,36 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::infQQQ(const CCSSparsity& sp){
+  Matrix<T> Matrix<T>::inf(const CCSSparsity& sp){
     casadi_assert_message(std::numeric_limits<T>::has_infinity,"Datatype cannot represent infinity");
     return Matrix<T>(sp,std::numeric_limits<T>::infinity());
   }
 
 
   template<class T>
-  Matrix<T> Matrix<T>::infQQQ(const std::pair<int,int>& rc){
-    return infQQQ(rc.first, rc.second);
+  Matrix<T> Matrix<T>::inf(const std::pair<int,int>& rc){
+    return inf(rc.first, rc.second);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::infQQQ(int nrow, int ncol){
-    return infQQQ(sp_dense(nrow,ncol));
+  Matrix<T> Matrix<T>::inf(int nrow, int ncol){
+    return inf(sp_dense(nrow,ncol));
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::nanQQQ(const CCSSparsity& sp){
+  Matrix<T> Matrix<T>::nan(const CCSSparsity& sp){
     casadi_assert_message(std::numeric_limits<T>::has_quiet_NaN,"Datatype cannot represent not-a-number");
     return Matrix<T>(sp,std::numeric_limits<T>::quiet_NaN());
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::nanQQQ(const std::pair<int,int>& rc){
-    return nanQQQ(rc.first, rc.second);
+  Matrix<T> Matrix<T>::nan(const std::pair<int,int>& rc){
+    return nan(rc.first, rc.second);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::nanQQQ(int nrow, int ncol){
-    return nanQQQ(sp_dense(nrow,ncol));
+  Matrix<T> Matrix<T>::nan(int nrow, int ncol){
+    return nan(sp_dense(nrow,ncol));
   }
 
   template<class T>

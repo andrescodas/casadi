@@ -527,39 +527,39 @@ namespace CasADi{
     return create(ConstantMX::create(sp,0));
   }
 
-  MX MX::onesQQQ(const CCSSparsity& sp){
+  MX MX::ones(const CCSSparsity& sp){
     return create(ConstantMX::create(sp,1));
   }
 
-  MX MX::onesQQQ(int nrow, int ncol){
-    return onesQQQ(sp_dense(nrow,ncol));
+  MX MX::ones(int nrow, int ncol){
+    return ones(sp_dense(nrow,ncol));
   }
 
-  MX MX::onesQQQ(const std::pair<int, int> &rc){
-    return onesQQQ(rc.first,rc.second);
+  MX MX::ones(const std::pair<int, int> &rc){
+    return ones(rc.first,rc.second);
   }
 
-  MX MX::infQQQ(int nrow, int ncol){
-    return infQQQ(sp_dense(nrow,ncol));
+  MX MX::inf(int nrow, int ncol){
+    return inf(sp_dense(nrow,ncol));
   }
 
-  MX MX::infQQQ(const std::pair<int, int> &rc){
-    return infQQQ(rc.first,rc.second);
+  MX MX::inf(const std::pair<int, int> &rc){
+    return inf(rc.first,rc.second);
   }
 
-  MX MX::infQQQ(const CCSSparsity& sp){
+  MX MX::inf(const CCSSparsity& sp){
     return create(ConstantMX::create(sp,numeric_limits<double>::infinity()));
   }
 
-  MX MX::nanQQQ(int nrow, int ncol){
-    return nanQQQ(sp_dense(nrow,ncol));
+  MX MX::nan(int nrow, int ncol){
+    return nan(sp_dense(nrow,ncol));
   }
 
-  MX MX::nanQQQ(const std::pair<int, int>& rc){
-    return nanQQQ(rc.first,rc.second);
+  MX MX::nan(const std::pair<int, int>& rc){
+    return nan(rc.first,rc.second);
   }
 
-  MX MX::nanQQQ(const CCSSparsity& sp){
+  MX MX::nan(const CCSSparsity& sp){
     return create(ConstantMX::create(sp,numeric_limits<double>::quiet_NaN()));
   }
 

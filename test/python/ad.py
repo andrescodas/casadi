@@ -542,7 +542,7 @@ class ADtests(casadiTestCase):
           (in1,v1,x*y[0],DMatrix.eye(2)*y[0]),
           (in1,v1,x[0],DMatrix.eye(2)[0,:]),
           (in1,v1,(x**2)[0],vertcat([2*x[0],MX(1,1)])),
-          (in1,v1,x[0]+x[1],DMatrix.onesQQQ(2,1)),
+          (in1,v1,x[0]+x[1],DMatrix.ones(2,1)),
           (in1,v1,horzcat([x[1],x[0]]),sparse(DMatrix([[0,1],[1,0]]))),
           #(in1,v1,horzsplit(x,[0,1,2])[1],sparse(DMatrix([[0,1]]))),
           (in1,v1,horzcat([x[1]**2,x[0]**2]),blockcat([[MX(1,1),2*x[1]],[2*x[0],MX(1,1)]])),

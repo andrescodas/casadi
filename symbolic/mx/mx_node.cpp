@@ -524,11 +524,11 @@ namespace CasADi{
         if(y.isEqual(this,maxDepth())) return MX::zeros(sparsity());
         break;
       case OP_DIV:
-        if(y->isZero()) return MX::nanQQQ(sparsity());
+        if(y->isZero()) return MX::nan(sparsity());
         // fall-through
       case OP_EQ:
       case OP_LE:
-        if(y.isEqual(this,maxDepth())) return MX::onesQQQ(sparsity());
+        if(y.isEqual(this,maxDepth())) return MX::ones(sparsity());
         break;
       case OP_MUL:
         if(y.isEqual(this,maxDepth())) return getUnary(OP_SQ);
@@ -546,7 +546,7 @@ namespace CasADi{
           switch(op) {
           case OP_CONSTPOW: 
             if(y->isValue(-1)) return getUnary(OP_INV);
-            else if(y->isValue(0)) return MX::onesQQQ(sparsity());
+            else if(y->isValue(0)) return MX::ones(sparsity());
             else if(y->isValue(1)) return shared_from_this<MX>();
             else if(y->isValue(2)) return getUnary(OP_SQ);
             break;

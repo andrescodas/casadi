@@ -72,10 +72,10 @@ void SOCPSolverInternal::init() {
   input(SOCP_SOLVER_F) = DMatrix::zeros(1,m_);
   input(SOCP_SOLVER_A) = DMatrix::zeros(A);
   input(SOCP_SOLVER_C) = DMatrix::zeros(1,n_);
-  input(SOCP_SOLVER_LBX) = -DMatrix::infQQQ(1,n_);
-  input(SOCP_SOLVER_UBX) = DMatrix::infQQQ(1,n_);
-  input(SOCP_SOLVER_LBA) = -DMatrix::infQQQ(1,nc_);
-  input(SOCP_SOLVER_UBA) = DMatrix::infQQQ(1,nc_);
+  input(SOCP_SOLVER_LBX) = -DMatrix::inf(1,n_);
+  input(SOCP_SOLVER_UBX) = DMatrix::inf(1,n_);
+  input(SOCP_SOLVER_LBA) = -DMatrix::inf(1,nc_);
+  input(SOCP_SOLVER_UBA) = DMatrix::inf(1,nc_);
 
   // Output arguments
   setNumOutputs(SOCP_SOLVER_NUM_OUT);

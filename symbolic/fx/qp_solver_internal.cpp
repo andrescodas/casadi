@@ -65,10 +65,10 @@ QPSolverInternal::QPSolverInternal(const std::vector<CCSSparsity> &st) : st_(st)
   input(QP_SOLVER_H) = DMatrix::zeros(H);
   input(QP_SOLVER_G) = DMatrix::zeros(x_sparsity);
   input(QP_SOLVER_A) = DMatrix::zeros(A);
-  input(QP_SOLVER_LBA) = -DMatrix::infQQQ(bounds_sparsity);
-  input(QP_SOLVER_UBA) =  DMatrix::infQQQ(bounds_sparsity);
-  input(QP_SOLVER_LBX) = -DMatrix::infQQQ(x_sparsity);
-  input(QP_SOLVER_UBX) =  DMatrix::infQQQ(x_sparsity);
+  input(QP_SOLVER_LBA) = -DMatrix::inf(bounds_sparsity);
+  input(QP_SOLVER_UBA) =  DMatrix::inf(bounds_sparsity);
+  input(QP_SOLVER_LBX) = -DMatrix::inf(x_sparsity);
+  input(QP_SOLVER_UBX) =  DMatrix::inf(x_sparsity);
   input(QP_SOLVER_LAM_X0) = DMatrix::zeros(x_sparsity);
   //input(QP_SOLVER_LAM_A0) = DMatrix::zeros(x_sparsity);
   

@@ -324,23 +324,23 @@ namespace CasADi{
 
     //@{
     /** \brief  Matrix of all ones */  
-    static MX onesQQQ(const CCSSparsity& sp);
-    static MX onesQQQ(int nrow, int ncol=1); 
-    static MX onesQQQ(const std::pair<int, int> &rc);
+    static MX ones(const CCSSparsity& sp);
+    static MX ones(int nrow, int ncol=1); 
+    static MX ones(const std::pair<int, int> &rc);
     //@}
 
     //@{
     /** \brief  create a matrix with all inf */
-    static MX infQQQ(const CCSSparsity& sp);
-    static MX infQQQ(int nrow=1, int ncol=1);
-    static MX infQQQ(const std::pair<int,int>& rc);
+    static MX inf(const CCSSparsity& sp);
+    static MX inf(int nrow=1, int ncol=1);
+    static MX inf(const std::pair<int,int>& rc);
     //@}
   
     //@{
     /** \brief  create a matrix with all nan */
-    static MX nanQQQ(const CCSSparsity& sp);
-    static MX nanQQQ(int nrow=1, int ncol=1);
-    static MX nanQQQ(const std::pair<int,int>& rc);
+    static MX nan(const CCSSparsity& sp);
+    static MX nan(int nrow=1, int ncol=1);
+    static MX nan(const std::pair<int,int>& rc);
     //@}
   
     //@{

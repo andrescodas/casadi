@@ -422,7 +422,7 @@ class CasadiStructureDerivable:
       except:
         raise Exception("Call to Structure has weird argument: expecting DMatrix-like")
     if a.shape[0] == 1 and a.shape[1] == 1 and self.size>1:
-      a = DMatrix.onesQQQ(1,self.size)*a
+      a = DMatrix.ones(1,self.size)*a
     return DMatrixStruct(self,data=a)
     
   def repeated(self,arg=0):
@@ -450,7 +450,7 @@ class CasadiStructureDerivable:
       except:
         raise Exception("Call to Structure has weird argument: expecting DMatrix-like")
     if a.shape[0] == 1 and a.shape[1] == 1 and self.size>1:
-       a = DMatrix.onesQQQ(self.size,self.size)*a
+       a = DMatrix.ones(self.size,self.size)*a
     if not(a.shape[1] == a.shape[0] and a.shape[0]==self.size):
        raise Exception("Expecting square DMatrix of size %s. Got %s" % (self.size,a.dimString()))
     s = struct([entry("t",shapestruct=(self,self))])
@@ -904,7 +904,7 @@ class MatrixStruct(CasadiStructured,MasterGettable,MasterSettable):
     if isinstance(data,mtype):
       self.master = data
     elif data is None:
-      self.master = mtype.nanQQQ(1,self.size)
+      self.master = mtype.nan(1,self.size)
     else:
       self.master = mtype(data)
       

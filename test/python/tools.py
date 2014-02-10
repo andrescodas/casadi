@@ -590,19 +590,19 @@ class Toolstests(casadiTestCase):
     num["P",indexf[["x","q"]],indexf[["x","q"]]] = 1
     
     self.checkarray(num["P"][[1,6],[1,6]],DMatrix.zeros(2,2))
-    self.checkarray(num["P"][[0,2,3,4,5],[0,2,3,4,5]],DMatrix.onesQQQ(5,5))
+    self.checkarray(num["P"][[0,2,3,4,5],[0,2,3,4,5]],DMatrix.ones(5,5))
 
     num = S(0)
     num["P",["x","q"],["x","q"]] = 1
     
     self.checkarray(num["P"][[1,6],[1,6]],DMatrix.zeros(2,2))
-    self.checkarray(num["P"][[0,2,3,4,5],[0,2,3,4,5]],DMatrix.onesQQQ(5,5))
+    self.checkarray(num["P"][[0,2,3,4,5],[0,2,3,4,5]],DMatrix.ones(5,5))
     
     num = S(0)
-    num["P",["x","q"],["x","q"]] = DMatrix.onesQQQ(5,5)
+    num["P",["x","q"],["x","q"]] = DMatrix.ones(5,5)
     
     self.checkarray(num["P"][[1,6],[1,6]],DMatrix.zeros(2,2))
-    self.checkarray(num["P"][[0,2,3,4,5],[0,2,3,4,5]],DMatrix.onesQQQ(5,5))
+    self.checkarray(num["P"][[0,2,3,4,5],[0,2,3,4,5]],DMatrix.ones(5,5))
     
     with self.assertRaises(Exception):
       struct_msym(['x','x','z'])
@@ -718,29 +718,29 @@ class Toolstests(casadiTestCase):
     init = shooting(nan)
     
     init['X',0,-1,'p',0] = 2
-    self.checkarray(init.cat[shooting.i['X',0,-1,'p',0]],DMatrix.onesQQQ(1,6)*2)
+    self.checkarray(init.cat[shooting.i['X',0,-1,'p',0]],DMatrix.ones(1,6)*2)
     self.assertEqual(sum([i!=i for i in init.cat.data()]),1503-6)
     
     init['X',0,-1,'p',0] = [3]*6
-    self.checkarray(init.cat[shooting.i['X',0,-1,'p',0]],DMatrix.onesQQQ(1,6)*3)
+    self.checkarray(init.cat[shooting.i['X',0,-1,'p',0]],DMatrix.ones(1,6)*3)
     self.assertEqual(sum([i!=i for i in init.cat.data()]),1503-6)
  
     init['X',0,-1,'p',0] = DMatrix([4]*6)
-    self.checkarray(init.cat[shooting.i['X',0,-1,'p',0]],DMatrix.onesQQQ(1,6)*4)
+    self.checkarray(init.cat[shooting.i['X',0,-1,'p',0]],DMatrix.ones(1,6)*4)
     self.assertEqual(sum([i!=i for i in init.cat.data()]),1503-6)
     
     init['X',0,-1,'p',:] = 7
     
-    self.checkarray(init.cat[shooting.i['X',0,-1,'p',1]],DMatrix.onesQQQ(1,6)*7)
+    self.checkarray(init.cat[shooting.i['X',0,-1,'p',1]],DMatrix.ones(1,6)*7)
     self.assertEqual(sum([i!=i for i in init.cat.data()]),1503-6*9)
     
-    self.checkarray(init['X',0,-1,'p',vertcat,:],DMatrix.onesQQQ(9,6)*7)
+    self.checkarray(init['X',0,-1,'p',vertcat,:],DMatrix.ones(9,6)*7)
 
     with self.assertRaises(Exception):
       init['X',0,-1,'p',:] = [1,2,3,4,5,6]
       
     init['X',0,-1,'p',:] = repeated([1,2,3,4,5,6])
-    self.checkarray(init['X',0,-1,'p',horzcat,:,2],DMatrix.onesQQQ(1,9)*3)
+    self.checkarray(init['X',0,-1,'p',horzcat,:,2],DMatrix.ones(1,9)*3)
     
     init = shooting(DMatrix(range(shooting.size)))
 
@@ -775,30 +775,30 @@ class Toolstests(casadiTestCase):
     
 
     
-    init['X',0,-1,'p',vertcat,:] = DMatrix.onesQQQ(9,6)*2
+    init['X',0,-1,'p',vertcat,:] = DMatrix.ones(9,6)*2
     
     self.assertEqual(sum(init.cat==2),6*9)
 
-    init['X',0,-1,'p',horzcat,:,2] = DMatrix.onesQQQ(1,9)*3
+    init['X',0,-1,'p',horzcat,:,2] = DMatrix.ones(1,9)*3
     
     self.assertEqual(sum(init.cat==2),6*9-9)
     self.assertEqual(sum(init.cat==3),9)
 
-    self.checkarray(init['X',0,-1,'p',vertcat,:,[2,3]],horzcat([DMatrix.onesQQQ(9,1)*3,DMatrix.onesQQQ(9,1)*2]))
+    self.checkarray(init['X',0,-1,'p',vertcat,:,[2,3]],horzcat([DMatrix.ones(9,1)*3,DMatrix.ones(9,1)*2]))
     
-    init['X',:,-1,'p',vertcat,:] = repeated(DMatrix.onesQQQ(9,6)*2)
+    init['X',:,-1,'p',vertcat,:] = repeated(DMatrix.ones(9,6)*2)
     
     self.assertEqual(sum(init.cat==2),4*6*9)
     
-    init['X',0,0,'v',blockcat] = DMatrix.onesQQQ(2,4)*7
+    init['X',0,0,'v',blockcat] = DMatrix.ones(2,4)*7
     
     self.assertEqual(sum(init.cat==7),4*2)
 
-    init['X',:,0,'v',blockcat] = repeated(DMatrix.onesQQQ(2,4)*7)
+    init['X',:,0,'v',blockcat] = repeated(DMatrix.ones(2,4)*7)
     
     self.assertEqual(sum(init.cat==7),4*2*4)
     
-    init['X',:,:,'v',blockcat] = repeated(DMatrix.onesQQQ(2,4)*7)
+    init['X',:,:,'v',blockcat] = repeated(DMatrix.ones(2,4)*7)
     self.assertEqual(sum(init.cat==7),4*2*4*5)
     
     init['X',0,0,'p',:] = range(9)

@@ -534,7 +534,7 @@ class Matrixtests(casadiTestCase):
     I_ = DMatrix(inv(x).sparsity(),1)
     
     # An irreducible matrix has a dense inverse in general
-    self.checkarray(DMatrix.onesQQQ(n,n),I_,"inv")
+    self.checkarray(DMatrix.ones(n,n),I_,"inv")
 
     x  = SXMatrix(sp,[SX("a%d" % i) for i in range(sp.size())])
     x[0,n/2] = 1 
@@ -556,9 +556,9 @@ class Matrixtests(casadiTestCase):
     self.assertTrue(isinstance(b,IMatrix))
     
   def test_mul(self):
-    A = DMatrix.onesQQQ((3,4))
-    B = DMatrix.onesQQQ((8,3))
-    C = DMatrix.onesQQQ((7,8))
+    A = DMatrix.ones((3,4))
+    B = DMatrix.ones((8,3))
+    C = DMatrix.ones((7,8))
     
     self.assertRaises(RuntimeError,lambda : mul([]))
     
@@ -787,12 +787,12 @@ class Matrixtests(casadiTestCase):
     makeSparse(a)
     self.assertEqual(sprank(a),0)
     
-    self.assertEqual(sprank(DMatrix.onesQQQ(3,1)),1)
-    self.assertEqual(sprank(DMatrix.onesQQQ(1,3)),1)
-    self.assertEqual(sprank(DMatrix.onesQQQ(3,2)),2)
-    self.assertEqual(sprank(DMatrix.onesQQQ(2,3)),2)
-    self.assertEqual(sprank(DMatrix.onesQQQ(3,3)),3)
-    self.assertEqual(sprank(DMatrix.onesQQQ(3,3)),3)
+    self.assertEqual(sprank(DMatrix.ones(3,1)),1)
+    self.assertEqual(sprank(DMatrix.ones(1,3)),1)
+    self.assertEqual(sprank(DMatrix.ones(3,2)),2)
+    self.assertEqual(sprank(DMatrix.ones(2,3)),2)
+    self.assertEqual(sprank(DMatrix.ones(3,3)),3)
+    self.assertEqual(sprank(DMatrix.ones(3,3)),3)
     
     A = DMatrix(6,4)
     A[0,0] = 1
@@ -822,7 +822,7 @@ class Matrixtests(casadiTestCase):
   def test_isRegular(self):
     self.assertTrue(isRegular(DMatrix([1,2])))
     self.assertFalse(isRegular(DMatrix([1,Inf])))
-    self.assertFalse(isRegular(DMatrix.nanQQQ(1,2)))
+    self.assertFalse(isRegular(DMatrix.nan(1,2)))
     
   def test_sizes(self):
     self.assertEqual(sp_diag(10).sizeD(),10)
@@ -842,12 +842,12 @@ class Matrixtests(casadiTestCase):
     self.checkarray(s,DMatrix([[0,1,3],[1,2,4],[3,4,5]]))
     
     with self.assertRaises(Exception):
-      tril2symm(DMatrix.onesQQQ(3,5))
+      tril2symm(DMatrix.ones(3,5))
     
-    print DMatrix.onesQQQ(5,5).sizeL()-DMatrix.onesQQQ(5,5).sizeD()
+    print DMatrix.ones(5,5).sizeL()-DMatrix.ones(5,5).sizeD()
     
     with self.assertRaises(Exception):
-      tril2symm(DMatrix.onesQQQ(5,5))
+      tril2symm(DMatrix.ones(5,5))
       
   def test_append_empty(self):
     a = DMatrix(0,0)
