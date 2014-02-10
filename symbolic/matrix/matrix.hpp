@@ -681,9 +681,9 @@ namespace CasADi{
     
     //@{
     /** \brief  create a dense matrix with all zeros */
-    static Matrix<T> zerosQQQ(const CCSSparsity& sp);
-    static Matrix<T> zerosQQQ(int nrow, int ncol=1);
-    static Matrix<T> zerosQQQ(const std::pair<int,int>& rc);
+    static Matrix<T> zeros(const CCSSparsity& sp);
+    static Matrix<T> zeros(int nrow, int ncol=1);
+    static Matrix<T> zeros(const std::pair<int,int>& rc);
     //@}
 
     //@{

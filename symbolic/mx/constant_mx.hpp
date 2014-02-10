@@ -294,7 +294,7 @@ namespace CasADi{
       if(v_.value==-1) return -y->getUnary(OP_INV);
       break;
     case OP_POW:
-      if(v_.value==0) return MX::zerosQQQ(y.sparsity());
+      if(v_.value==0) return MX::zeros(y.sparsity());
       if(v_.value==1) return MX::ones(y.sparsity());
       if(v_.value==std::exp(1.0)) return y->getUnary(OP_EXP);
       break;

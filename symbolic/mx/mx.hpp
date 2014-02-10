@@ -317,9 +317,9 @@ namespace CasADi{
   
     //@{
     /** \brief  Dense matrix of all zeros */
-    static MX zerosQQQ(const CCSSparsity& sp);
-    static MX zerosQQQ(int nrow, int ncol=1); 
-    static MX zerosQQQ(const std::pair<int, int> &rc);
+    static MX zeros(const CCSSparsity& sp);
+    static MX zeros(int nrow, int ncol=1); 
+    static MX zeros(const std::pair<int, int> &rc);
     //@}
 
     //@{

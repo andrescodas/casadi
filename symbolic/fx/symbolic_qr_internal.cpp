@@ -198,8 +198,8 @@ namespace CasADi{
     solv_fcn_N_.init();
 
     // Allocate storage for QR factorization
-    Q_ = DMatrix::zerosQQQ(Q.sparsity());
-    R_ = DMatrix::zerosQQQ(R.sparsity());      
+    Q_ = DMatrix::zeros(Q.sparsity());
+    R_ = DMatrix::zeros(R.sparsity());      
   }
 
   void SymbolicQRInternal::prepare(){

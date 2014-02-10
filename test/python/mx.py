@@ -822,7 +822,7 @@ class MXtests(casadiTestCase):
      numpy.random.seed(42)
      xn = numpy.random.random((3,4))
      r = numpy.zeros((7,8))
-     y=MX.zerosQQQ(8,7)
+     y=MX.zeros(8,7)
      y[1:4,[2,4,6,7]]=x
      r[1:4,[2,4,6,7]]=xn
      fy = MXFunction([x],[y])
@@ -1353,7 +1353,7 @@ class MXtests(casadiTestCase):
 
   def test_indexingOutOfBounds(self):
     self.message("Indexing out of bounds")
-    y = DMatrix.zerosQQQ(5,4) 
+    y = DMatrix.zeros(5,4) 
     self.assertRaises(RuntimeError,lambda : y[12,0] )
     self.assertRaises(RuntimeError,lambda : y[12,12] )
     self.assertRaises(RuntimeError,lambda : y[0,12] )
@@ -1600,7 +1600,7 @@ class MXtests(casadiTestCase):
     J.setInput(range(10))
     J.evaluate()
     
-    i = vertcat([diag([0,2,4,6,8,10]),IMatrix.zerosQQQ(4,6)])
+    i = vertcat([diag([0,2,4,6,8,10]),IMatrix.zeros(4,6)])
     i[[2,3],:] = i[[3,2],:]
     
     self.checkarray(i,J.getOutput())
@@ -1614,7 +1614,7 @@ class MXtests(casadiTestCase):
     J.setInput(range(10))
     J.evaluate()
     
-    i = vertcat([diag([0,2,4,6,8,10]),IMatrix.zerosQQQ(4,6)])
+    i = vertcat([diag([0,2,4,6,8,10]),IMatrix.zeros(4,6)])
     i[[2,3],:] = i[[3,2],:]
     
     self.checkarray(i,J.getOutput())
@@ -1646,7 +1646,7 @@ class MXtests(casadiTestCase):
     J.setInput(range(10))
     J.evaluate()
     
-    i = IMatrix.zerosQQQ(10,2)
+    i = IMatrix.zeros(10,2)
     i[0,4] = 8
     i[1,2] = 4
     
@@ -1808,7 +1808,7 @@ class MXtests(casadiTestCase):
     
   def test_mul_zero_wrong(self):
     with self.assertRaises(RuntimeError):
-      mul(msym("X",4,5),MX.zerosQQQ(2,3))
+      mul(msym("X",4,5),MX.zeros(2,3))
       
   def test_horzsplit(self):
     a = msym("X",sp_triu(5))

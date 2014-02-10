@@ -91,23 +91,23 @@ namespace CasADi{
     
     // Allocate space for inputs
     setNumInputs(NLP_SOLVER_NUM_IN);
-    input(NLP_SOLVER_X0)       =  DMatrix::zerosQQQ(x_sparsity);
+    input(NLP_SOLVER_X0)       =  DMatrix::zeros(x_sparsity);
     input(NLP_SOLVER_LBX)      = -DMatrix::inf(x_sparsity);
     input(NLP_SOLVER_UBX)      =  DMatrix::inf(x_sparsity);
     input(NLP_SOLVER_LBG)      = -DMatrix::inf(g_sparsity);
     input(NLP_SOLVER_UBG)      =  DMatrix::inf(g_sparsity);
-    input(NLP_SOLVER_LAM_X0)   =  DMatrix::zerosQQQ(x_sparsity);
-    input(NLP_SOLVER_LAM_G0)   =  DMatrix::zerosQQQ(g_sparsity);
-    input(NLP_SOLVER_P)        =  DMatrix::zerosQQQ(p_sparsity);
+    input(NLP_SOLVER_LAM_X0)   =  DMatrix::zeros(x_sparsity);
+    input(NLP_SOLVER_LAM_G0)   =  DMatrix::zeros(g_sparsity);
+    input(NLP_SOLVER_P)        =  DMatrix::zeros(p_sparsity);
   
     // Allocate space for outputs
     setNumOutputs(NLP_SOLVER_NUM_OUT);
-    output(NLP_SOLVER_X)       = DMatrix::zerosQQQ(x_sparsity);
-    output(NLP_SOLVER_F)       = DMatrix::zerosQQQ(1);
-    output(NLP_SOLVER_LAM_X)   = DMatrix::zerosQQQ(x_sparsity);
-    output(NLP_SOLVER_LAM_G)   = DMatrix::zerosQQQ(g_sparsity);
-    output(NLP_SOLVER_LAM_P)   = DMatrix::zerosQQQ(p_sparsity);
-    output(NLP_SOLVER_G)       = DMatrix::zerosQQQ(g_sparsity);
+    output(NLP_SOLVER_X)       = DMatrix::zeros(x_sparsity);
+    output(NLP_SOLVER_F)       = DMatrix::zeros(1);
+    output(NLP_SOLVER_LAM_X)   = DMatrix::zeros(x_sparsity);
+    output(NLP_SOLVER_LAM_G)   = DMatrix::zeros(g_sparsity);
+    output(NLP_SOLVER_LAM_P)   = DMatrix::zeros(p_sparsity);
+    output(NLP_SOLVER_G)       = DMatrix::zeros(g_sparsity);
   
     // Call the initialization method of the base class
     FXInternal::init();

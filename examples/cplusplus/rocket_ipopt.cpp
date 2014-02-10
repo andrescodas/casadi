@@ -50,9 +50,9 @@ int main(){
   SXMatrix beta = 0.1; // fuel consumption rate
 
   // Trajectory
-  SXMatrix s_traj = SXMatrix::zerosQQQ(1,nu);
-  SXMatrix v_traj = SXMatrix::zerosQQQ(1,nu);
-  SXMatrix m_traj = SXMatrix::zerosQQQ(1,nu);
+  SXMatrix s_traj = SXMatrix::zeros(1,nu);
+  SXMatrix v_traj = SXMatrix::zeros(1,nu);
+  SXMatrix m_traj = SXMatrix::zeros(1,nu);
 
   // Integrate over the interval with Euler forward
   SXMatrix s = s_0, v = v_0, m = m_0;

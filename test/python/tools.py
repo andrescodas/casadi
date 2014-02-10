@@ -465,7 +465,7 @@ class Toolstests(casadiTestCase):
     init = s(inf)
     self.checkarray(init.cat,DMatrix([inf,inf,inf]))
     
-    f = DMatrix.zerosQQQ(1,3)
+    f = DMatrix.zeros(1,3)
     init = s(f)
     f[0] = 5
     self.checkarray(init.cat,DMatrix([5,0,0]))
@@ -589,19 +589,19 @@ class Toolstests(casadiTestCase):
     num = S(0)
     num["P",indexf[["x","q"]],indexf[["x","q"]]] = 1
     
-    self.checkarray(num["P"][[1,6],[1,6]],DMatrix.zerosQQQ(2,2))
+    self.checkarray(num["P"][[1,6],[1,6]],DMatrix.zeros(2,2))
     self.checkarray(num["P"][[0,2,3,4,5],[0,2,3,4,5]],DMatrix.ones(5,5))
 
     num = S(0)
     num["P",["x","q"],["x","q"]] = 1
     
-    self.checkarray(num["P"][[1,6],[1,6]],DMatrix.zerosQQQ(2,2))
+    self.checkarray(num["P"][[1,6],[1,6]],DMatrix.zeros(2,2))
     self.checkarray(num["P"][[0,2,3,4,5],[0,2,3,4,5]],DMatrix.ones(5,5))
     
     num = S(0)
     num["P",["x","q"],["x","q"]] = DMatrix.ones(5,5)
     
-    self.checkarray(num["P"][[1,6],[1,6]],DMatrix.zerosQQQ(2,2))
+    self.checkarray(num["P"][[1,6],[1,6]],DMatrix.zeros(2,2))
     self.checkarray(num["P"][[0,2,3,4,5],[0,2,3,4,5]],DMatrix.ones(5,5))
     
     with self.assertRaises(Exception):
@@ -836,18 +836,18 @@ class Toolstests(casadiTestCase):
   def test_structure_repeated_dmatrix(self):
     self.message("repeated dmatrix")
     s = struct(["x","y","z"])
-    d = DMatrix.zerosQQQ(s.size,12)
+    d = DMatrix.zeros(s.size,12)
     a = s.repeated(d)
     
     a[:,"x"] = range(12)
     
     self.checkarray(a[4,"x"],DMatrix([4]))
-    self.checkarray(d,vertcat([range(12),DMatrix.zerosQQQ(1,12),DMatrix.zerosQQQ(1,12)]))
+    self.checkarray(d,vertcat([range(12),DMatrix.zeros(1,12),DMatrix.zeros(1,12)]))
 
   def test_structure_squared_dmatrix(self):
     self.message("squared dmatrix")
     s = struct(["x","y","z"])
-    d = DMatrix.zerosQQQ(3,3)
+    d = DMatrix.zeros(3,3)
     a = s.squared(d)
     
     a["x","y"] = 2
@@ -858,7 +858,7 @@ class Toolstests(casadiTestCase):
   def test_structure_squared_repeated_dmatrix(self):
     self.message("squared repeated dmatrix")
     s = struct(["x","y","z"])
-    d = DMatrix.zerosQQQ(3,9)
+    d = DMatrix.zeros(3,9)
     a = s.squared_repeated(d)
     
     a[0,"x","y"] = 2
@@ -870,7 +870,7 @@ class Toolstests(casadiTestCase):
   def test_typemaps(self):
     self.message("typemaps")
     s = struct(["x","y","z"])
-    d = DMatrix.zerosQQQ(3,3)
+    d = DMatrix.zeros(3,3)
     a = s.squared(d)
     
     print sin(a)

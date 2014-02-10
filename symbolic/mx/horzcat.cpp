@@ -150,7 +150,7 @@ namespace CasADi{
     }
 
     // Quick return if none
-    if(nz_test<0) return MX::zerosQQQ(sp);
+    if(nz_test<0) return MX::zeros(sp);
     
     // Find out to which dependency it might depend
     int begin=0, end=0;

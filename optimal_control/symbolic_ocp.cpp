@@ -1032,7 +1032,7 @@ void SymbolicOCP::makeExplicit(){
     casadi_assert_message(!dependsOn(Jb,der(xb)),"Cannot find an explicit expression for variable(s) " << xb);
       
     // Divide fb into a part which depends on vb and a part which doesn't according to "fb == mul(Jb,vb) + fb_res"
-    SXMatrix fb_res = substitute(fb,der(xb),SXMatrix::zerosQQQ(1,xb.size())).data();
+    SXMatrix fb_res = substitute(fb,der(xb),SXMatrix::zeros(1,xb.size())).data();
     SXMatrix fb_exp;
       
     // Solve for vb
@@ -1135,7 +1135,7 @@ void SymbolicOCP::eliminateAlgebraic(){
     } else { // The variables that we wish to determine enter linearly
       
       // Divide fb into a part which depends on vb and a part which doesn't according to "fb == mul(Jb,vb) + fb_res"
-      SXMatrix fb_res = substitute(fb,var(zb),SXMatrix::zerosQQQ(1,zb.size())).data();
+      SXMatrix fb_res = substitute(fb,var(zb),SXMatrix::zeros(1,zb.size())).data();
       SXMatrix fb_exp;
       
       // Solve for vb

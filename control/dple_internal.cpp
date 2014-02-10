@@ -80,18 +80,18 @@ namespace CasADi{
     
     for (int i=0;i<nfwd_+1;++i) {
       if (const_dim_) {
-        input(DPLE_NUM_IN*i+DPLE_A)  = DMatrix::zerosQQQ(horzcat(A_));
-        input(DPLE_NUM_IN*i+DPLE_V)  = DMatrix::zerosQQQ(horzcat(V_));
+        input(DPLE_NUM_IN*i+DPLE_A)  = DMatrix::zeros(horzcat(A_));
+        input(DPLE_NUM_IN*i+DPLE_V)  = DMatrix::zeros(horzcat(V_));
       } else {
-        input(DPLE_NUM_IN*i+DPLE_A)  = DMatrix::zerosQQQ(blkdiag(A_));
-        input(DPLE_NUM_IN*i+DPLE_V)  = DMatrix::zerosQQQ(blkdiag(V_));
+        input(DPLE_NUM_IN*i+DPLE_A)  = DMatrix::zeros(blkdiag(A_));
+        input(DPLE_NUM_IN*i+DPLE_V)  = DMatrix::zeros(blkdiag(V_));
       }
     }
     for (int i=0;i<nadj_;++i) {
       if (const_dim_) {
-        input(DPLE_NUM_IN*(1+nfwd_)+DPLE_NUM_OUT*i+DPLE_P)  = DMatrix::zerosQQQ(horzcat(A_));
+        input(DPLE_NUM_IN*(1+nfwd_)+DPLE_NUM_OUT*i+DPLE_P)  = DMatrix::zeros(horzcat(A_));
       } else {
-        input(DPLE_NUM_IN*(1+nfwd_)+DPLE_NUM_OUT*i+DPLE_P)  = DMatrix::zerosQQQ(blkdiag(A_));
+        input(DPLE_NUM_IN*(1+nfwd_)+DPLE_NUM_OUT*i+DPLE_P)  = DMatrix::zeros(blkdiag(A_));
       }
     }
     
@@ -103,18 +103,18 @@ namespace CasADi{
     setNumOutputs(DPLE_NUM_OUT*(1+nfwd_) + DPLE_NUM_IN*nadj_);
     for (int i=0;i<nfwd_+1;++i) {
       if (const_dim_) {
-        output(DPLE_NUM_OUT*i+DPLE_P) = DMatrix::zerosQQQ(horzcat(P));
+        output(DPLE_NUM_OUT*i+DPLE_P) = DMatrix::zeros(horzcat(P));
       } else {
-        output(DPLE_NUM_OUT*i+DPLE_P) = DMatrix::zerosQQQ(blkdiag(P));
+        output(DPLE_NUM_OUT*i+DPLE_P) = DMatrix::zeros(blkdiag(P));
       }
     }
     for (int i=0;i<nadj_;++i) {
       if (const_dim_) {
-        output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*i+DPLE_A)  = DMatrix::zerosQQQ(horzcat(A_));
-        output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*i+DPLE_V)  = DMatrix::zerosQQQ(horzcat(V_));
+        output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*i+DPLE_A)  = DMatrix::zeros(horzcat(A_));
+        output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*i+DPLE_V)  = DMatrix::zeros(horzcat(V_));
       } else {
-        output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*i+DPLE_A)  = DMatrix::zerosQQQ(blkdiag(A_));
-        output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*i+DPLE_V)  = DMatrix::zerosQQQ(blkdiag(V_));
+        output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*i+DPLE_A)  = DMatrix::zeros(blkdiag(A_));
+        output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*i+DPLE_V)  = DMatrix::zeros(blkdiag(V_));
       }
     }
   

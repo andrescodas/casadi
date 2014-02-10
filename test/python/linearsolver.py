@@ -84,7 +84,7 @@ class LinearSolverTests(casadiTestCase):
 
         solver.evaluate()
         
-        self.checkarray(mul(A.T,solver.output()),DMatrix.zerosQQQ(n-m,m))
+        self.checkarray(mul(A.T,solver.output()),DMatrix.zeros(n-m,m))
         self.checkarray(mul(solver.output().T,solver.output()),DMatrix.eye(n-m))
         
         solver.setOption("ad_mode","forward")

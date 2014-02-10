@@ -146,7 +146,7 @@ class Matrixtests(casadiTestCase):
     
   def test_indexingOutOfBounds(self):
     self.message("Indexing out of bounds")
-    y = DMatrix.zerosQQQ(5,4) 
+    y = DMatrix.zeros(5,4) 
     self.assertRaises(RuntimeError,lambda : y[12,0] )
     self.assertRaises(RuntimeError,lambda : y[12,12] )
     self.assertRaises(RuntimeError,lambda : y[0,12] )
@@ -383,7 +383,7 @@ class Matrixtests(casadiTestCase):
     B[1,1] = 1
     B[0,1] = 0
     
-    C = DMatrix.zerosQQQ((4,3))
+    C = DMatrix.zeros((4,3))
     C_ = DMatrix(2,2)
     C_[0,0] = 3
     C_[0,1] = 7
@@ -697,7 +697,7 @@ class Matrixtests(casadiTestCase):
     def check(d,colbase,rowbase):
       for row in permutations(rowbase):
         for col in permutations(colbase):
-          r = IMatrix.zerosQQQ(len(row),len(col))
+          r = IMatrix.zeros(len(row),len(col))
           for i,ii in enumerate(col):
             for j,jj in enumerate(row):
               r[i,j] = d[ii,jj]

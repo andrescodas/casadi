@@ -107,23 +107,23 @@ namespace CasADi{
 
     // Allocate space for inputs
     setNumInputs(INTEGRATOR_NUM_IN);
-    x0()  = DMatrix::zerosQQQ(f_.input(DAE_X).sparsity());
-    p()   = DMatrix::zerosQQQ(f_.input(DAE_P).sparsity());
-    z0()   = DMatrix::zerosQQQ(f_.input(DAE_Z).sparsity());
+    x0()  = DMatrix::zeros(f_.input(DAE_X).sparsity());
+    p()   = DMatrix::zeros(f_.input(DAE_P).sparsity());
+    z0()   = DMatrix::zeros(f_.input(DAE_Z).sparsity());
     if(!g_.isNull()){
-      rx0()  = DMatrix::zerosQQQ(g_.input(RDAE_RX).sparsity());
-      rp()  = DMatrix::zerosQQQ(g_.input(RDAE_RP).sparsity());
-      rz0()  = DMatrix::zerosQQQ(g_.input(RDAE_RZ).sparsity());
+      rx0()  = DMatrix::zeros(g_.input(RDAE_RX).sparsity());
+      rp()  = DMatrix::zeros(g_.input(RDAE_RP).sparsity());
+      rz0()  = DMatrix::zeros(g_.input(RDAE_RZ).sparsity());
     }
   
     // Allocate space for outputs
     setNumOutputs(INTEGRATOR_NUM_OUT);
     xf() = x0();
-    qf() = DMatrix::zerosQQQ(f_.output(DAE_QUAD).sparsity());
+    qf() = DMatrix::zeros(f_.output(DAE_QUAD).sparsity());
     zf() = z0();
     if(!g_.isNull()){
       rxf()  = rx0();
-      rqf()  = DMatrix::zerosQQQ(g_.output(RDAE_QUAD).sparsity());
+      rqf()  = DMatrix::zeros(g_.output(RDAE_QUAD).sparsity());
       rzf()  = rz0();
     }
 
@@ -206,7 +206,7 @@ namespace CasADi{
     vector<MX> tmp;
 
     // Zero with the dimension of t
-    MX zero_t = DMatrix::zerosQQQ(aug_t.sparsity());
+    MX zero_t = DMatrix::zeros(aug_t.sparsity());
 
     // The DAE being constructed
     vector<MX> f_ode, f_alg, f_quad, g_ode, g_alg, g_quad;
@@ -366,9 +366,9 @@ namespace CasADi{
         casadi_assert(g_quad_ind == g_quad.size());
 
         // Remove the dependency of rx,rz,rp in the forward integration (see Joel's thesis)
-        if(nrx_>0) g_arg[RDAE_RX] = MX::zerosQQQ(g_arg[RDAE_RX].sparsity());
-        if(nrz_>0) g_arg[RDAE_RZ] = MX::zerosQQQ(g_arg[RDAE_RZ].sparsity());
-        if(nrp_>0) g_arg[RDAE_RP] = MX::zerosQQQ(g_arg[RDAE_RP].sparsity());
+        if(nrx_>0) g_arg[RDAE_RX] = MX::zeros(g_arg[RDAE_RX].sparsity());
+        if(nrz_>0) g_arg[RDAE_RZ] = MX::zeros(g_arg[RDAE_RZ].sparsity());
+        if(nrp_>0) g_arg[RDAE_RP] = MX::zeros(g_arg[RDAE_RP].sparsity());
 
         // Call der again
         res = d.call(g_arg);

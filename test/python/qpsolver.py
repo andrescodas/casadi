@@ -648,7 +648,7 @@ class QPSolverTests(casadiTestCase):
 
       self.checkarray(solver.getOutput(),x0,str(qpsolver)+str(qp_options),digits=2)
       self.assertAlmostEqual(solver.getOutput("cost")[0],-0.5*mul([x0.T,H,x0]),3,str(qpsolver))
-      self.checkarray(solver.getOutput("lam_x"),DMatrix.zerosQQQ(1,N),str(qpsolver),digits=4)
+      self.checkarray(solver.getOutput("lam_x"),DMatrix.zeros(1,N),str(qpsolver),digits=4)
       
   def test_redundant(self):
     self.message("Redundant constraints")

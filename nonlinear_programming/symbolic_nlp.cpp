@@ -71,8 +71,8 @@ void SymbolicNLP::parseNL(const std::string& filename, const Dictionary& options
   x = ssym("x",n_var);
   
   // Allocate f and c
-  f = SXMatrix::zerosQQQ(1,n_obj);
-  g = SXMatrix::zerosQQQ(1,n_con);
+  f = SXMatrix::zeros(1,n_obj);
+  g = SXMatrix::zeros(1,n_con);
   
   // Allocate bounds for x and primal initial guess
   x_lb = DMatrix(x.sparsity(),-numeric_limits<double>::infinity());

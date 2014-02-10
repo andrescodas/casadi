@@ -356,9 +356,9 @@ namespace CasADi{
     MX z;
     if (sp_z.isNull()) {
       CCSSparsity sp_z_ = sparsity().patternProduct(trans_y.sparsity());
-      z = MX::zerosQQQ(sp_z_);
+      z = MX::zeros(sp_z_);
     } else {
-      z = MX::zerosQQQ(sp_z);
+      z = MX::zeros(sp_z);
     }
     casadi_assert_message(size2()==z.size2(),"Dimension error. Got lhs=" << size2() << " and z=" << z.dimString() << ".");
     casadi_assert_message(trans_y.size2()==z.size1(),"Dimension error. Got trans_y=" << trans_y.dimString() << " and z=" << z.dimString() << ".");
@@ -380,7 +380,7 @@ namespace CasADi{
 
   MX MXNode::getGetNonzeros(const CCSSparsity& sp, const std::vector<int>& nz) const{
     if(nz.size()==0){
-      return MX::zerosQQQ(sp);
+      return MX::zeros(sp);
     } else {
       MX ret;
       if(Slice::isSlice(nz)){
@@ -459,7 +459,7 @@ namespace CasADi{
   MX MXNode::getUnary(int op) const{
     if(operation_checker<F0XChecker>(op) && isZero()){
       // If identically zero
-      return MX::zerosQQQ(sparsity());
+      return MX::zeros(sparsity());
     } else {
       // Create a new node
       return MX::create(new UnaryMX(Operation(op),shared_from_this<MX>()));
@@ -510,7 +510,7 @@ namespace CasADi{
     
       // If identically zero due to one argumebt being zero
       if((operation_checker<F0XChecker>(op) && isZero()) ||(operation_checker<FX0Checker>(op) && y->isZero())){
-        return MX::zerosQQQ(sparsity());
+        return MX::zeros(sparsity());
       }
 
       // Handle special operations (independent of type)
@@ -521,7 +521,7 @@ namespace CasADi{
       case OP_SUB:
       case OP_NE:
       case OP_LT:
-        if(y.isEqual(this,maxDepth())) return MX::zerosQQQ(sparsity());
+        if(y.isEqual(this,maxDepth())) return MX::zeros(sparsity());
         break;
       case OP_DIV:
         if(y->isZero()) return MX::nan(sparsity());
@@ -702,7 +702,7 @@ namespace CasADi{
         if (!c[i]->isZero()) { zero = false; break; }
       }
       if (zero) {
-        return MX::zerosQQQ(Horzcat(c).sparsity());
+        return MX::zeros(Horzcat(c).sparsity());
       }
       // Split up existing horzcats
       vector<MX> c_split;
@@ -722,7 +722,7 @@ namespace CasADi{
     if (isZero()) {
       std::vector<MX> ret = MX::createMultipleOutput(new Horzsplit(shared_from_this<MX>(),output_offset));
       for (int i=0;i<ret.size();++i) {
-        ret[i]=MX::zerosQQQ(ret[i].sparsity());
+        ret[i]=MX::zeros(ret[i].sparsity());
       }
       return ret;
     }
