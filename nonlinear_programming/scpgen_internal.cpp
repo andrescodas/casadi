@@ -231,15 +231,15 @@ namespace CasADi{
       i=0;
 
       gL_defL = asens[0].at(i++);
-      if(gL_defL.isNull()) gL_defL = MX(00,00,00,x_.sparsity()); // Needed?
+      if(gL_defL.isNull()) gL_defL = MX(x_.sparsity()); // Needed?
 
       p_defL = asens[0].at(i++);
-      if(p_defL.isNull()) p_defL = MX(00,00,00,p_.sparsity()); // Needed?
+      if(p_defL.isNull()) p_defL = MX(p_.sparsity()); // Needed?
 
       for(vector<Var>::iterator it=v_.begin(); it!=v_.end(); ++it){
         it->v_defL = asens[0].at(i++);
         if(it->v_defL.isNull()){
-          it->v_defL = MX(00,00,00,it->v.sparsity());
+          it->v_defL = MX(it->v.sparsity());
         }
       }
 
@@ -528,7 +528,7 @@ namespace CasADi{
   
     // Allocate QP data
     CCSSparsity sp_tr_B_obj = mat_fcn_.output(mat_hes_).sparsity().transpose();
-    qpH_ = DMatrix(00,00,00,sp_tr_B_obj.patternProduct(sp_tr_B_obj));
+    qpH_ = DMatrix(sp_tr_B_obj.patternProduct(sp_tr_B_obj));
     qpA_ = mat_fcn_.output(mat_jac_);
     qpB_.resize(ng_);
 

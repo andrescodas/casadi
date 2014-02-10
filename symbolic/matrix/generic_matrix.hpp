@@ -42,7 +42,7 @@ namespace CasADi{
       The class is designed with the idea that "everything is a matrix", that is, also scalars and vectors.\n
       This philosophy makes it easy to use and to interface in particularily with Python and Matlab/Octave.\n
   
-      The syntax tries to stay as close as possible to Matlab when it comes to vector/matrix operations.\n
+      The syntax tries to stay as close as possible to the ublas syntax  when it comes to vector/matrix operations.\n
 
       Index starts with 0.\n
       Index vec happens as follows: (rr,cc) -> k = rr+cc*size1()\n

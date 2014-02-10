@@ -61,24 +61,24 @@ StabilizedQPSolverInternal::StabilizedQPSolverInternal(const std::vector<CCSSpar
   
   // Input arguments
   setNumInputs(STABILIZED_QP_SOLVER_NUM_IN);
-  input(STABILIZED_QP_SOLVER_X0) = DMatrix(00,00,00,x_sparsity,0);
-  input(STABILIZED_QP_SOLVER_H) = DMatrix(00,00,00,H);
-  input(STABILIZED_QP_SOLVER_G) = DMatrix(00,00,00,x_sparsity);
-  input(STABILIZED_QP_SOLVER_A) = DMatrix(00,00,00,A);
-  input(STABILIZED_QP_SOLVER_LBA) = DMatrix(00,00,00,bounds_sparsity, -std::numeric_limits<double>::infinity());
-  input(STABILIZED_QP_SOLVER_UBA) = DMatrix(00,00,00,bounds_sparsity,  std::numeric_limits<double>::infinity());
-  input(STABILIZED_QP_SOLVER_LBX) = DMatrix(00,00,00,x_sparsity,      -std::numeric_limits<double>::infinity());
-  input(STABILIZED_QP_SOLVER_UBX) = DMatrix(00,00,00,x_sparsity,       std::numeric_limits<double>::infinity());
+  input(STABILIZED_QP_SOLVER_X0) = DMatrix(x_sparsity,0);
+  input(STABILIZED_QP_SOLVER_H) = DMatrix(H);
+  input(STABILIZED_QP_SOLVER_G) = DMatrix(x_sparsity);
+  input(STABILIZED_QP_SOLVER_A) = DMatrix(A);
+  input(STABILIZED_QP_SOLVER_LBA) = DMatrix(bounds_sparsity, -std::numeric_limits<double>::infinity());
+  input(STABILIZED_QP_SOLVER_UBA) = DMatrix(bounds_sparsity,  std::numeric_limits<double>::infinity());
+  input(STABILIZED_QP_SOLVER_LBX) = DMatrix(x_sparsity,      -std::numeric_limits<double>::infinity());
+  input(STABILIZED_QP_SOLVER_UBX) = DMatrix(x_sparsity,       std::numeric_limits<double>::infinity());
   input(STABILIZED_QP_SOLVER_MUR) = DMatrix::zeros(1,1);
-  input(STABILIZED_QP_SOLVER_MUE) = DMatrix(00,00,00,bounds_sparsity,0);
-  input(STABILIZED_QP_SOLVER_MU) = DMatrix(00,00,00,bounds_sparsity,0);
+  input(STABILIZED_QP_SOLVER_MUE) = DMatrix(bounds_sparsity,0);
+  input(STABILIZED_QP_SOLVER_MU) = DMatrix(bounds_sparsity,0);
   
   // Output arguments
   setNumOutputs(QP_SOLVER_NUM_OUT);
-  output(QP_SOLVER_X) = DMatrix(00,00,00,x_sparsity);
+  output(QP_SOLVER_X) = DMatrix(x_sparsity);
   output(QP_SOLVER_COST) = 0.0;
-  output(QP_SOLVER_LAM_X) = DMatrix(00,00,00,x_sparsity);
-  output(QP_SOLVER_LAM_A) = DMatrix(00,00,00,bounds_sparsity);
+  output(QP_SOLVER_LAM_X) = DMatrix(x_sparsity);
+  output(QP_SOLVER_LAM_A) = DMatrix(bounds_sparsity);
   
   input_.scheme = SCHEME_StabilizedQPSolverInput;
   output_.scheme = SCHEME_QPSolverOutput;

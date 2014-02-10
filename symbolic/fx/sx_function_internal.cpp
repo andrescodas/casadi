@@ -788,13 +788,13 @@ namespace CasADi{
 
   FX SXFunctionInternal::getFullJacobian(){
     // Get all the inputs
-    SXMatrix arg(00,00,00,1,0);
+    SXMatrix arg(0,1); 
     for(vector<SXMatrix>::const_iterator i=inputv_.begin(); i!=inputv_.end(); ++i){
       arg.append(vec(*i));
     }
  
     // Get all the outputs
-    SXMatrix res(00,00,00,1,0); 
+    SXMatrix res(0,1); 
     for(vector<SXMatrix>::const_iterator i=outputv_.begin(); i!=outputv_.end(); ++i){
       res.append(vec(*i));
     }

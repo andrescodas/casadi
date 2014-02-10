@@ -35,11 +35,11 @@ CustomFunctionInternal::CustomFunctionInternal(const CustomEvaluate &c_fcn, cons
   setNumOutputs(outputscheme.size());
   
   for (int k=0;k<inputscheme.size();k++) {
-    input(k) = DMatrix(00,00,00,inputscheme[k],0);
+    input(k) = DMatrix(inputscheme[k],0);
   }
   
   for (int k=0;k<outputscheme.size();k++) {
-    output(k) = DMatrix(00,00,00,outputscheme[k],0);
+    output(k) = DMatrix(outputscheme[k],0);
   }
   
   // Make the ref object a non-refence counted pointer to this (as reference counting would prevent deletion of the object)

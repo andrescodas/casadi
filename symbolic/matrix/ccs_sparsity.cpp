@@ -330,7 +330,7 @@ namespace CasADi{
   }
 
   CCSSparsity CCSSparsity::operator+(const CCSSparsity& b) const {
-    return (DMatrix(00,00,00,*this,1)+DMatrix(00,00,00,b,1)).sparsity(); // NOTE: Very expensive duplicate of patternUnion
+    return (DMatrix(*this,1)+DMatrix(b,1)).sparsity();
   }
 
   CCSSparsity CCSSparsity::operator*(const CCSSparsity& b) const {

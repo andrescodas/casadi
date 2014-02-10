@@ -66,7 +66,7 @@ class Matrixtests(casadiTestCase):
     
   def test_trans(self):
     self.message("trans")
-    a = DMatrix(00,00,00,1,0)
+    a = DMatrix(0,1)
     b = trans(a)
     self.assertEquals(b.size2(),1)
     self.assertEquals(b.size1(),0)
@@ -86,8 +86,8 @@ class Matrixtests(casadiTestCase):
     
   def test_horzcat(self):
     self.message("horzcat")
-    A = DMatrix(00,00,00,3,2,1)
-    B = DMatrix(00,00,00,3,4)
+    A = DMatrix(2,3,1)
+    B = DMatrix(4,3)
     C = horzcat([A,B])
     
     self.checkarray(C.shapeQQQ,(3,6),"horzcat shape")
@@ -97,8 +97,8 @@ class Matrixtests(casadiTestCase):
     
   def test_vertcat(self):
     self.message("horcat")
-    A = DMatrix(00,00,00,2,3,1)
-    B = DMatrix(00,00,00,4,3)
+    A = DMatrix(3,2,1)
+    B = DMatrix(3,4)
     C = vertcat([A,B])
     
     self.checkarray(C.shapeQQQ,(6,3),"vertcat shape")
@@ -109,11 +109,11 @@ class Matrixtests(casadiTestCase):
     
   def test_veccat(self):
     self.message("flattenccat")
-    A = DMatrix(00,00,00,3,2)
+    A = DMatrix(2,3)
     A[0,1] = 2
     A[1,0] = 1
     A[1,2] = 3
-    B = DMatrix(00,00,00,1,3)
+    B = DMatrix(3,1)
     B[0,0] = 4
     B[1,0] = 5
     B[2,0] = 6
@@ -207,11 +207,11 @@ class Matrixtests(casadiTestCase):
     
   def test_vecNZcat(self):
     self.message("flattenNZcat")
-    A = DMatrix(00,00,00,3,2)
+    A = DMatrix(2,3)
     A[0,1] = 2
     A[1,0] = 1
     A[1,2] = 3
-    B = DMatrix(00,00,00,1,3)
+    B = DMatrix(3,1)
     B[0,0] = 4
     B[1,0] = 5
     B[2,0] = 6
@@ -224,7 +224,7 @@ class Matrixtests(casadiTestCase):
     
   def test_IMatrix_indexing(self):
     self.message("IMatrix")
-    A = IMatrix(00,00,00,2,2)
+    A = IMatrix(2,2)
     A[0,0] = 1
     A[1,1] = 3
     A[0,1] = 2
@@ -255,7 +255,7 @@ class Matrixtests(casadiTestCase):
     
     self.checkarray(array(B),DMatrix([1,1,2,4,3]),"Imatrix indexing assignement")
     
-    B = DMatrix(00,00,00,1,5)
+    B = DMatrix(5,1)
    
     self.assertRaises(Exception, lambda : B[A])
 
@@ -288,7 +288,7 @@ class Matrixtests(casadiTestCase):
   def test_IMatrix_index_slice(self):
     self.message("IMatrix combined with slice")
 
-    A = IMatrix(00,00,00,2,2)
+    A = IMatrix(2,2)
     A[0,0] = 0
     A[1,1] = 1
     A[0,1] = 2
@@ -310,7 +310,7 @@ class Matrixtests(casadiTestCase):
   def test_IMatrix_index_slice_assignment(self):
     self.message("IMatrix combined with slice assignment")
 
-    A = IMatrix(00,00,00,2,2)
+    A = IMatrix(2,2)
     A[0,0] = 0
     A[1,1] = 1
     A[0,1] = 2
@@ -335,12 +335,12 @@ class Matrixtests(casadiTestCase):
     
     self.checkarray(B,DMatrix([[6,6,6],[6,6,6],[6,6,6],[7,7,7]]),"B[A,:] = ")
     
-    B=DMatrix(00,00,00,4,3)
+    B=DMatrix(3,4)
     B[:,A] = 7
     
     self.checkarray(B,DMatrix([[7,7,7,0],[7,7,7,0],[7,7,7,0]]),"B[:,A] = ")
     
-    B=DMatrix(00,00,00,4,4)
+    B=DMatrix(4,4)
     B[A,:] = 8
 
     self.checkarray(B,DMatrix([[8,8,8,8],[8,8,8,8],[8,8,8,8],[0,0,0,0]]),"B[A,:] = ")
@@ -349,12 +349,12 @@ class Matrixtests(casadiTestCase):
   def test_IMatrix_IMatrix_index(self):
     self.message("IMatrix IMatrix index")
 
-    A = IMatrix(00,00,00,2,2)
+    A = IMatrix(2,2)
     A[0,0] = 0
     A[1,1] = 1
     A[0,1] = 2
     
-    B = IMatrix(00,00,00,2,2)
+    B = IMatrix(2,2)
     B[0,0] = 2
     B[1,1] = 1
     B[0,1] = 0
@@ -365,7 +365,7 @@ class Matrixtests(casadiTestCase):
     self.checkarray(C[A,B],DMatrix([[3,7],[0,5]]),"C[A,B]")
     self.assertRaises(Exception, lambda : F[A,B])
     
-    C = DMatrix(00,00,00,4,3)
+    C = DMatrix(3,4)
     C_ = C[A,B]
     self.assertEqual(C_.size(),3)
     self.checkarray(C_,DMatrix([[0,0],[0,0]]),"C[A,B]")
@@ -373,18 +373,18 @@ class Matrixtests(casadiTestCase):
   def test_IMatrix_IMatrix_index_assignment(self):
     self.message("IMatrix IMatrix index assignment")
 
-    A = IMatrix(00,00,00,2,2)
+    A = IMatrix(2,2)
     A[0,0] = 0
     A[1,1] = 1
     A[0,1] = 2
     
-    B = IMatrix(00,00,00,2,2)
+    B = IMatrix(2,2)
     B[0,0] = 2
     B[1,1] = 1
     B[0,1] = 0
     
     C = DMatrix.zeros((3,4))
-    C_ = DMatrix(00,00,00,2,2)
+    C_ = DMatrix(2,2)
     C_[0,0] = 3
     C_[0,1] = 7
     C_[1,1] = 5;
@@ -393,7 +393,7 @@ class Matrixtests(casadiTestCase):
 
     self.checkarray(C[A,B],DMatrix([[3,7],[0,5]]),"C[A,B]")
     
-    C = DMatrix(00,00,00,4,3)
+    C = DMatrix(3,4)
     C[A,B] = C_
     self.checkarray(C[A,B],DMatrix([[3,7],[0,5]]),"C[A,B]")
 
@@ -415,32 +415,32 @@ class Matrixtests(casadiTestCase):
     
   def test_issue298(self):
     self.message("Issue #298")
-    a = DMatrix(00,00,00,1,4)
+    a = DMatrix(4,1)
     b = c.reshape(a,2,2)
     self.assertEqual(type(a),type(b))
 
-    a = IMatrix(00,00,00,1,4)
+    a = IMatrix(4,1)
     b = DMatrix(a)
     self.assertTrue(isinstance(b,DMatrix))
     
-    a = DMatrix(00,00,00,1,4)
+    a = DMatrix(4,1)
     self.assertRaises(RuntimeError,lambda : IMatrix(a))
     
   def test_det(self):
     self.message("Determinant")
     npy_det = numpy.linalg.det
     
-    a = DMatrix(00,00,00,1,1)
+    a = DMatrix(1,1)
     a[0,0] = 5
     self.checkarray(det(a),npy_det(a),"det()")
 
-    a = DMatrix(00,00,00,5,5)
+    a = DMatrix(5,5)
     for i in range(5):
       a[i,i] = i+1
 
     self.checkarray(det(a),npy_det(a),"det()")
     
-    a = DMatrix(00,00,00,5,5)
+    a = DMatrix(5,5)
     for i in range(4):
       a[i,i] = i+1
     a[0,4] = 3
@@ -448,28 +448,28 @@ class Matrixtests(casadiTestCase):
     
     self.checkarray(det(a),npy_det(a),"det()")
     
-    a = DMatrix(00,00,00,5,5)
+    a = DMatrix(5,5)
     for i in range(5):
       for j in range(5):
         a[i,j] = i+j
     
     self.checkarray(det(a),npy_det(a),"det()")
 
-    a = DMatrix(00,00,00,5,5)
+    a = DMatrix(5,5)
     for i in range(4):
       for j in range(5):
         a[i,j] = i+j
     
     self.checkarray(det(a),npy_det(a),"det()")
     
-    a = DMatrix(00,00,00,5,5)
+    a = DMatrix(5,5)
     for i in range(5):
       for j in range(4):
         a[i,j] = i+j
     
     self.checkarray(det(a),npy_det(a),"det()")
     
-    a = DMatrix(00,00,00,5,5)
+    a = DMatrix(5,5)
     for i in range(4):
       for j in range(5):
         a[i,j] = i+j
@@ -477,7 +477,7 @@ class Matrixtests(casadiTestCase):
     
     self.checkarray(det(a),npy_det(a),"det()")
     
-    a = DMatrix(00,00,00,5,5)
+    a = DMatrix(5,5)
     for i in range(5):
       for j in range(4):
         a[i,j] = i+j
@@ -485,7 +485,7 @@ class Matrixtests(casadiTestCase):
     
     self.checkarray(det(a),npy_det(a),"det()")
     
-    a = DMatrix(00,00,00,5,5)
+    a = DMatrix(5,5)
     for i in range(4):
       for j in range(5):
         a[i,j] = i+j
@@ -493,7 +493,7 @@ class Matrixtests(casadiTestCase):
     
     self.checkarray(det(a),npy_det(a),"det()")
     
-    a = DMatrix(00,00,00,5,5)
+    a = DMatrix(5,5)
     for i in range(5):
       for j in range(4):
         a[i,j] = i+j
@@ -501,7 +501,7 @@ class Matrixtests(casadiTestCase):
     
     self.checkarray(det(a),npy_det(a),"det()")
     
-    a = DMatrix(00,00,00,50,50)
+    a = DMatrix(50,50)
     for i in range(50):
       a[i,i] = i+1
 
@@ -518,9 +518,9 @@ class Matrixtests(casadiTestCase):
     x  = SXMatrix(sp,[SX("a%d" % i) for i in range(sp.size())])
 
     
-    x_ = DMatrix(00,00,00,x.sparsity(),1)
+    x_ = DMatrix(x.sparsity(),1)
     
-    I_ = DMatrix(00,00,00,inv(x).sparsity(),1)
+    I_ = DMatrix(inv(x).sparsity(),1)
     
     # For a reducible matrix, struct(A^(-1)) = struct(A) 
     self.checkarray(x_,I_,"inv")
@@ -531,7 +531,7 @@ class Matrixtests(casadiTestCase):
     x[0,n-1] = 1 
     
     
-    I_ = DMatrix(00,00,00,inv(x).sparsity(),1)
+    I_ = DMatrix(inv(x).sparsity(),1)
     
     # An irreducible matrix has a dense inverse in general
     self.checkarray(DMatrix.ones(n,n),I_,"inv")
@@ -539,10 +539,10 @@ class Matrixtests(casadiTestCase):
     x  = SXMatrix(sp,[SX("a%d" % i) for i in range(sp.size())])
     x[0,n/2] = 1 
     
-    s_ = DMatrix(00,00,00,sp,1)
+    s_ = DMatrix(sp,1)
     s_[:,:n/2+1] = 1
     
-    I_ = DMatrix(00,00,00,inv(x).sparsity(),1)
+    I_ = DMatrix(inv(x).sparsity(),1)
     
     makeDense(s_)
     makeDense(I_)
@@ -551,7 +551,7 @@ class Matrixtests(casadiTestCase):
 
   def test_Imatrix_operations(self):
     self.message("IMatrix operations")
-    a = IMatrix(00,00,00,2,2,1)
+    a = IMatrix(2,2,1)
     b = vertcat([a,a])
     self.assertTrue(isinstance(b,IMatrix))
     
@@ -794,7 +794,7 @@ class Matrixtests(casadiTestCase):
     self.assertEqual(sprank(DMatrix.ones(3,3)),3)
     self.assertEqual(sprank(DMatrix.ones(3,3)),3)
     
-    A = DMatrix(00,00,00,4,6)
+    A = DMatrix(6,4)
     A[0,0] = 1
     A[1,2] = 1
     A[2,2] = 1
@@ -850,27 +850,27 @@ class Matrixtests(casadiTestCase):
       tril2symm(DMatrix.ones(5,5))
       
   def test_append_empty(self):
-    a = DMatrix(00,00,00,0,0)
-    a.append(DMatrix(00,00,00,2,0))
+    a = DMatrix(0,0)
+    a.append(DMatrix(0,2))
     
     self.assertEqual(a.size2(),0)
     self.assertEqual(a.size1(),2)
 
-    a = DMatrix(00,00,00,0,0)
-    a.append(DMatrix(00,00,00,0,2))
-    a.append(DMatrix(00,00,00,0,3))
+    a = DMatrix(0,0)
+    a.append(DMatrix(2,0))
+    a.append(DMatrix(3,0))
     
     self.assertEqual(a.size2(),5)
     self.assertEqual(a.size1(),0)
     
   def test_horzcat_empty(self):
-    a = DMatrix(00,00,00,2,0)
+    a = DMatrix(0,2)
     v = horzcat([a,a])
     
     self.assertEqual(v.size2(),0)
     self.assertEqual(v.size1(),2)
 
-    a = DMatrix(00,00,00,0,2)
+    a = DMatrix(2,0)
     v = horzcat([a,a])
     
     self.assertEqual(v.size2(),4)
@@ -997,7 +997,7 @@ class Matrixtests(casadiTestCase):
 
         try:
           self.checkarray(c,c_ref)
-          self.assertTrue(min(IMatrix(00,00,00,c_ref.sparsity(),1)-IMatrix(00,00,00,c.sparsity(),1))==0)
+          self.assertTrue(min(IMatrix(c_ref.sparsity(),1)-IMatrix(c.sparsity(),1))==0)
         except Exception as e:
           c.printDense()
           print "sol:"

@@ -35,13 +35,13 @@ class ADtests(casadiTestCase):
     z=SX("z")
     w=SX("w")
     
-    out=SXMatrix(00,00,00,1,6)
+    out=SXMatrix(6,1)
     out[0,0]=x
     out[2,0]=x+2*y**2
     out[4,0]=x+2*y**3+3*z**4
     out[5,0]=w
 
-    inp=SXMatrix(00,00,00,1,6)
+    inp=SXMatrix(6,1)
     inp[0,0]=x
     inp[2,0]=y
     inp[4,0]=z
@@ -65,21 +65,21 @@ class ADtests(casadiTestCase):
 
     self.mxinputs = {
        "row" : {
-            "dense": [MX(00,00,00,"xyzw",4,1)],
-            "sparse": [MX(00,00,00,"xyzw",sp)]
+            "dense": [MX("xyzw",4,1)],
+            "sparse": [MX("xyzw",sp)]
         },
         "col" : {
-            "dense": [MX(00,00,00,"xyzw",1,4)],
-            "sparse": [MX(00,00,00,"xyzw",spT)]
+            "dense": [MX("xyzw",1,4)],
+            "sparse": [MX("xyzw",spT)]
         },
         "matrix": {
-            "dense": [MX(00,00,00,"xyzw",2,2)],
-            "sparse": [MX(00,00,00,"xyzw",c.reshape(inp,3,2).sparsity())]
+            "dense": [MX("xyzw",2,2)],
+            "sparse": [MX("xyzw",c.reshape(inp,3,2).sparsity())]
         }
     }
     
     def temp1(xyz):
-      X=MX(00,00,00,1,6)
+      X=MX(6,1)
       X[0,0]=xyz[0]
       X[2,0]=xyz[0]+2*xyz[1]**2
       X[4,0]=xyz[0]+2*xyz[1]**3+3*xyz[2]**4
@@ -87,7 +87,7 @@ class ADtests(casadiTestCase):
       return [X]
     
     def temp2(xyz):
-      X=MX(00,00,00,6,1)
+      X=MX(1,6)
       X[0,0]=xyz[0]
       X[0,2]=xyz[0]+2*xyz[1]**2
       X[0,4]=xyz[0]+2*xyz[1]**3+3*xyz[2]**4
@@ -248,8 +248,8 @@ class ADtests(casadiTestCase):
             
             y = ssym("y",f.input().sparsity())
             
-            fseeds = map(lambda x: DMatrix(00,00,00,f.input().sparsity(),x), seeds)
-            aseeds = map(lambda x: DMatrix(00,00,00,f.output().sparsity(),x), seeds)
+            fseeds = map(lambda x: DMatrix(f.input().sparsity(),x), seeds)
+            aseeds = map(lambda x: DMatrix(f.output().sparsity(),x), seeds)
             res,fwdsens,adjsens = f.evalSX([y],map(lambda x: [x],fseeds),map(lambda x: [x],aseeds))
             fwdsens = map(lambda x: x[0],fwdsens)
             adjsens = map(lambda x: x[0],adjsens)
@@ -352,7 +352,7 @@ class ADtests(casadiTestCase):
             f=SXFunction(self.sxinputs[inputshape][inputtype],self.sxoutputs[outputshape][outputtype])
             f.init()
             J = self.jacobians[inputtype][outputtype](*n)
-            self.checkarray(DMatrix(00,00,00,f.jacSparsity(),1),array(J!=0,int),"jacsparsity")
+            self.checkarray(DMatrix(f.jacSparsity(),1),array(J!=0,int),"jacsparsity")
               
   def test_JacobianMX(self):
     n=array([1.2,2.3,7,4.6])
@@ -389,7 +389,7 @@ class ADtests(casadiTestCase):
               Jf.evaluate()
               J = self.jacobians[inputtype][outputtype](*n)
               self.checkarray(array(Jf.getOutput()),J,"jacobian")
-              self.checkarray(array(DMatrix(00,00,00,f.jacSparsity(),1)),array(J!=0,int),"jacsparsity")
+              self.checkarray(array(DMatrix(f.jacSparsity(),1)),array(J!=0,int),"jacsparsity")
               
      
               
@@ -403,7 +403,7 @@ class ADtests(casadiTestCase):
     f.init()
     J=f.jacobian(0,0)
     J.init()
-    m=MX(00,00,00,"m",3,1)
+    m=MX("m",3,1)
     JT,_ = J.call([m])
     JT = MXFunction([m],[JT.T])
     JT.init()
@@ -422,7 +422,7 @@ class ADtests(casadiTestCase):
     x=ssym("x")
     y=ssym("y")
 
-    inp=SXMatrix(00,00,00,1,5)
+    inp=SXMatrix(5,1)
     inp[0,0]=x
     inp[3,0]=y
 
@@ -443,7 +443,7 @@ class ADtests(casadiTestCase):
     x=SX("x")
     y=SX("y")
 
-    inp=SXMatrix(00,00,00,1,5)
+    inp=SXMatrix(5,1)
     inp[0,0]=x
     inp[3,0]=y
 
@@ -766,8 +766,8 @@ class ADtests(casadiTestCase):
             Jf.setInput(v,i)
           Jf.evaluate()
           self.checkarray(Jf.getOutput(),J_)
-          self.checkarray(DMatrix(00,00,00,Jf.output().sparsity(),1),DMatrix(00,00,00,J_.sparsity(),1),str(out)+str(mode))
-          self.checkarray(DMatrix(00,00,00,f.jacSparsity(),1),DMatrix(00,00,00,J_.sparsity(),1))
+          self.checkarray(DMatrix(Jf.output().sparsity(),1),DMatrix(J_.sparsity(),1),str(out)+str(mode))
+          self.checkarray(DMatrix(f.jacSparsity(),1),DMatrix(J_.sparsity(),1))
                 
       # Scalarized
       if out.empty(): continue

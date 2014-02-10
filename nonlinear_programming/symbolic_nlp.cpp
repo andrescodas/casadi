@@ -75,14 +75,14 @@ void SymbolicNLP::parseNL(const std::string& filename, const Dictionary& options
   g = SXMatrix::zeros(n_con);
   
   // Allocate bounds for x and primal initial guess
-  x_lb = DMatrix(00,00,00,x.sparsity(),-numeric_limits<double>::infinity());
-  x_ub = DMatrix(00,00,00,x.sparsity(), numeric_limits<double>::infinity());
-  x_init = DMatrix(00,00,00,x.sparsity(), 0.0);
+  x_lb = DMatrix(x.sparsity(),-numeric_limits<double>::infinity());
+  x_ub = DMatrix(x.sparsity(), numeric_limits<double>::infinity());
+  x_init = DMatrix(x.sparsity(), 0.0);
   
   // Allocate bounds for g and dual initial guess
-  g_lb = DMatrix(00,00,00,g.sparsity(),-numeric_limits<double>::infinity());
-  g_ub = DMatrix(00,00,00,g.sparsity(), numeric_limits<double>::infinity());
-  lambda_init = DMatrix(00,00,00,g.sparsity(), 0.0);
+  g_lb = DMatrix(g.sparsity(),-numeric_limits<double>::infinity());
+  g_ub = DMatrix(g.sparsity(), numeric_limits<double>::infinity());
+  lambda_init = DMatrix(g.sparsity(), 0.0);
   
   // All variables, including dependent
   vector<SX> v = x.data();

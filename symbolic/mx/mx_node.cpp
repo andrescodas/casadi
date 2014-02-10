@@ -552,7 +552,7 @@ namespace CasADi{
             break;
           case OP_ADD:
           case OP_SUB:
-            if(y->isZero()) return scX ? MX(00,00,00,y.size1(),y.size2(),shared_from_this<MX>()) : shared_from_this<MX>();
+            if(y->isZero()) return scX ? MX(y.size2(),y.size1(),shared_from_this<MX>()) : shared_from_this<MX>();
             break;
           case OP_MUL:
             if(y->isValue(1)) return shared_from_this<MX>();

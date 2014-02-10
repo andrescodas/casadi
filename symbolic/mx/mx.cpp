@@ -54,23 +54,23 @@ namespace CasADi{
     assignNode(ConstantMX::create(x));
   }
 
-  MX::MX(int dum1, int dum2, int dum3, const string& name, int n, int m){
+  MX::MX(const string& name, int n, int m){
     assignNode(new SymbolicMX(name,n,m));
   }
 
-  MX::MX(int dum1, int dum2, int dum3, const std::string& name,const std::pair<int,int> &nm) {
+  MX::MX(const std::string& name,const std::pair<int,int> &nm) {
     assignNode(new SymbolicMX(name,nm.first,nm.second));
   }
 
-  MX::MX(int dum1, int dum2, int dum3, const string& name, const CCSSparsity & sp){
+  MX::MX(const string& name, const CCSSparsity & sp){
     assignNode(new SymbolicMX(name,sp));
   }
 
-  MX::MX(int dum1, int dum2, int dum3, int nrow, int ncol){
+  MX::MX(int ncol, int nrow){
     assignNode(new Constant<CompiletimeConst<0> >(CCSSparsity(nrow,ncol)));
   }
 
-  MX::MX(int dum1, int dum2, int dum3, const CCSSparsity& sp, const MX& val){
+  MX::MX(const CCSSparsity& sp, const MX& val){
     // Make sure that val is dense and scalar
     casadi_assert(val.scalar());
   
@@ -96,7 +96,7 @@ namespace CasADi{
     for(int i=0; i<ret.size(); ++i){
       ret[i] = MX::create(new OutputNode(x, i));
       if(ret[i].null()){
-        ret[i] = MX(00,00,00,0,0);
+        ret[i] = MX(0,0);
       } else if(ret[i].size()==0){
         ret[i] = MX::sparseWWW(ret[i].shape());
       }
@@ -117,12 +117,12 @@ namespace CasADi{
     return sub(vector<int>(1,j),i);
   }
 
-  const MX MX::sub(const vector<int>& rr, const vector<int>& cc) const{
+  const MX MX::sub(const vector<int>& jj, const vector<int>& ii) const{
     // Nonzero mapping from submatrix to full
     vector<int> mapping;
   
     // Get the sparsity pattern
-    CCSSparsity sp = sparsity().sub(rr,cc,mapping);
+    CCSSparsity sp = sparsity().sub(jj,ii,mapping);
  
     // Create return MX
     return (*this)->getGetNonzeros(sp,mapping);
@@ -146,14 +146,14 @@ namespace CasADi{
     }
   }
 
-  const MX MX::sub(const Matrix<int>& k, const std::vector<int>& cc) const{
+  const MX MX::sub(const Matrix<int>& k, const std::vector<int>& ii) const{
     std::vector< int > rows = range(size1());
     std::vector< MX > temp;
 
-    for (int i=0;i<cc.size();++i) {
-      MX m(00,00,00,k.sparsity(),MX(0));
+    for (int i=0;i<ii.size();++i) {
+      MX m(k.sparsity(),MX(0));
       for (int j=0;j<m.size();++j) {
-        m[j] = sub(k.at(j),cc.at(i));
+        m[j] = sub(k.at(j),ii.at(i));
       }
       temp.push_back(m);
     }
@@ -162,14 +162,14 @@ namespace CasADi{
     return ret;
   }
 
-  const MX MX::sub(const std::vector<int>& rr, const Matrix<int>& k) const{
+  const MX MX::sub(const std::vector<int>& jj, const Matrix<int>& k) const{
     std::vector< int > cols = range(size2());
     std::vector< MX > temp;
 
-    for (int j=0;j<rr.size();++j) {
-      MX m(00,00,00,k.sparsity(),MX(0));
+    for (int j=0;j<jj.size();++j) {
+      MX m(k.sparsity(),MX(0));
       for (int i=0;i<m.size();++i) {
-        m[i] = sub(rr.at(j),k.at(i));
+        m[i] = sub(jj.at(j),k.at(i));
       }
       temp.push_back(m);
     }
@@ -181,7 +181,7 @@ namespace CasADi{
   const MX MX::sub(const Matrix<int>& j, const Matrix<int>& i) const {
     casadi_assert_message(i.sparsity()==j.sparsity(),"sub(Imatrix i, Imatrix j): sparsities must match. Got " << i.dimString() << " and " << j.dimString() << ".");
 
-    MX ret(00,00,00,i.sparsity(),MX(0));
+    MX ret(i.sparsity(),MX(0));
     for (int k=0;k<i.size();++k) {
       ret[k] = sub(j.at(k),i.at(k));
     }
@@ -234,7 +234,7 @@ namespace CasADi{
     // Allow m to be a 1x1
     if (m.dense() && m.scalar()) {
       if (k.numel()>1) {
-        setSub(MX(00,00,00,k.sparsity(),m),k);
+        setSub(MX(k.sparsity(),m),k);
         return;
       }
     }
@@ -249,25 +249,25 @@ namespace CasADi{
   }
 
 
-  void MX::setSub(const MX& m, const vector<int>& rr, const vector<int>& cc){
+  void MX::setSub(const MX& m, const vector<int>& jj, const vector<int>& ii){
     // Allow m to be a 1x1
     if (m.dense() && m.scalar()) {
-      if (cc.size()>1 || rr.size()>1) {
-        setSub(MX(00,00,00,rr.size(),cc.size(),m),rr,cc);
+      if (ii.size()>1 || jj.size()>1) {
+        setSub(MX(ii.size(),jj.size(),m),jj,ii);
         return;
       }
     }
   
-    casadi_assert_message(cc.size()==m.size2(),"Dimension mismatch." << "lhs is " << cc.size() << " x " << rr.size() << ", while rhs is " << m.dimString());
-    casadi_assert_message(rr.size()==m.size1(),"Dimension mismatch." << "lhs is " << cc.size() << " x " << rr.size() << ", while rhs is " << m.dimString());
+    casadi_assert_message(ii.size()==m.size2(),"Dimension mismatch." << "lhs is " << ii.size() << " x " << jj.size() << ", while rhs is " << m.dimString());
+    casadi_assert_message(jj.size()==m.size1(),"Dimension mismatch." << "lhs is " << ii.size() << " x " << jj.size() << ", while rhs is " << m.dimString());
 
     if(dense() && m.dense()){
       // Dense mode
       int ld = size1(), ld_el = m.size1(); // leading dimensions
       vector<int> kk1, kk2;
-      for(int i=0; i<cc.size(); ++i) {
-        for(int j=0; j<rr.size(); ++j) {
-          kk1.push_back(cc[i]*ld + rr[j]);
+      for(int i=0; i<ii.size(); ++i) {
+        for(int j=0; j<jj.size(); ++j) {
+          kk1.push_back(ii[i]*ld + jj[j]);
           kk2.push_back(i*ld_el+j);
         }
       }
@@ -276,39 +276,39 @@ namespace CasADi{
       // Sparse mode
 
       // Remove submatrix to be replaced
-      erase(cc,rr);
+      erase(ii,jj);
 
       // Extend m to the same dimension as this
       MX el_ext = m;
-      el_ext.enlarge(size2(),size1(),cc,rr);
+      el_ext.enlarge(size2(),size1(),ii,jj);
 
       // Unite the sparsity patterns
       *this = unite(*this,el_ext);
     }
   }
 
-  void MX::setSub(const MX& m, const std::vector<int>& rr, const Matrix<int>& i) {
+  void MX::setSub(const MX& m, const std::vector<int>& jj, const Matrix<int>& i) {
     // If m is scalar
-    if(m.scalar() && (rr.size() > 1 || i.size() > 1)){
-      setSub(repmat(MX(00,00,00,i.sparsity(),m),1,rr.size()),rr,i);
+    if(m.scalar() && (jj.size() > 1 || i.size() > 1)){
+      setSub(repmat(MX(i.sparsity(),m),1,jj.size()),jj,i);
       return;
     }
 
-    if (!inBounds(rr,size1())) {
-      casadi_error("setSub[.,i,rr] out of bounds. Your rr contains " << *std::min_element(rr.begin(),rr.end()) << " up to " << *std::max_element(rr.begin(),rr.end()) << ", which is outside of the matrix shape " << dimString() << ".");
+    if (!inBounds(jj,size1())) {
+      casadi_error("setSub[.,i,jj] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
-    //CCSSparsity result_sparsity = repmat(i,1,rr.size()).sparsity();
-    CCSSparsity result_sparsity = vertcat(std::vector< Matrix<int> >(rr.size(),i)).sparsity();
+    //CCSSparsity result_sparsity = repmat(i,1,jj.size()).sparsity();
+    CCSSparsity result_sparsity = vertcat(std::vector< Matrix<int> >(jj.size(),i)).sparsity();
   
-    casadi_assert_message(result_sparsity == m.sparsity(),"setSub(.,Imatrix" << i.dimString() << ",Ivector(length=" << rr.size() << "),Matrix<T>)::Dimension mismatch. The sparsity of repmat(Imatrix,1," << rr.size() << ") = " << result_sparsity.dimString()  << " must match the sparsity of MX = "  << m.dimString() << ".");
+    casadi_assert_message(result_sparsity == m.sparsity(),"setSub(.,Imatrix" << i.dimString() << ",Ivector(length=" << jj.size() << "),Matrix<T>)::Dimension mismatch. The sparsity of repmat(Imatrix,1," << jj.size() << ") = " << result_sparsity.dimString()  << " must match the sparsity of MX = "  << m.dimString() << ".");
 
     std::vector<int> slice_i = range(i.size2());
   
-    for(int k=0; k<rr.size(); ++k) {
+    for(int k=0; k<jj.size(); ++k) {
       MX el_k = m(range(k*i.size1(),(k+1)*i.size1()),slice_i);
       for (int j=0;j<i.size();++j) {
-        (*this)(rr[k],i.at(j))=el_k[j];
+        (*this)(jj[k],i.at(j))=el_k[j];
       }
     }
   
@@ -316,28 +316,28 @@ namespace CasADi{
 
 
 
-  void MX::setSub(const MX& m, const Matrix<int>& j, const std::vector<int>& cc) {
+  void MX::setSub(const MX& m, const Matrix<int>& j, const std::vector<int>& ii) {
     // If m is scalar
-    if(m.scalar() && (cc.size() > 1 || j.size() > 1)){
-      setSub(repmat(MX(00,00,00,j.sparsity(),m),cc.size(),1),j,cc);
+    if(m.scalar() && (ii.size() > 1 || j.size() > 1)){
+      setSub(repmat(MX(j.sparsity(),m),ii.size(),1),j,ii);
       return;
     }
 
-    if (!inBounds(cc,size2())) {
-      casadi_error("setSub[.,cc,j] out of bounds. Your cc contains " << *std::min_element(cc.begin(),cc.end()) << " up to " << *std::max_element(cc.begin(),cc.end()) << ", which is outside of the matrix shape " << dimString() << ".");
+    if (!inBounds(ii,size2())) {
+      casadi_error("setSub[.,ii,j] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
-    //CCSSparsity result_sparsity = repmat(j,cc.size(),1).sparsity();
-    CCSSparsity result_sparsity = horzcat(std::vector< Matrix<int> >(cc.size(),j)).sparsity();
+    //CCSSparsity result_sparsity = repmat(j,ii.size(),1).sparsity();
+    CCSSparsity result_sparsity = horzcat(std::vector< Matrix<int> >(ii.size(),j)).sparsity();
   
-    casadi_assert_message(result_sparsity == m.sparsity(),"setSub(Ivector(length=" << cc.size() << "),Imatrix" << j.dimString() << ",MX)::Dimension mismatch. The sparsity of repmat(Imatrix," << cc.size() << ",1) = " << result_sparsity.dimString() << " must match the sparsity of Matrix<T> = " << m.dimString() << ".");
+    casadi_assert_message(result_sparsity == m.sparsity(),"setSub(Ivector(length=" << ii.size() << "),Imatrix" << j.dimString() << ",MX)::Dimension mismatch. The sparsity of repmat(Imatrix," << ii.size() << ",1) = " << result_sparsity.dimString() << " must match the sparsity of Matrix<T> = " << m.dimString() << ".");
   
     std::vector<int> slice_j = range(j.size1());
   
-    for(int k=0; k<cc.size(); ++k) {
+    for(int k=0; k<ii.size(); ++k) {
       MX el_k = m(slice_j,range(k*j.size2(),(k+1)*j.size2()));
       for (int i=0;i<j.size();++i) {
-        (*this)(j.at(i),cc[k])=el_k[i];
+        (*this)(j.at(i),ii[k])=el_k[i];
       }
     }
   
@@ -349,7 +349,7 @@ namespace CasADi{
 
     // If m is scalar
     if(m.scalar() && i.numel() > 1){
-      setSub(MX(00,00,00,i.sparsity(),m),j,i);
+      setSub(MX(i.sparsity(),m),j,i);
       return;
     }
   
@@ -365,7 +365,7 @@ namespace CasADi{
     
     // If m is scalar
     if(m.scalar()){
-      setSub(MX(00,00,00,sp,m),sp,dummy);
+      setSub(MX(sp,m),sp,dummy);
       return;
     }
     
@@ -500,7 +500,7 @@ namespace CasADi{
 
   MX MX::repmat(const MX& x, int ncol, int nrow){
     if(x.scalar()){
-      return MX(00,00,00,nrow,ncol,x);
+      return MX(ncol,nrow,x);
     } else {
       casadi_assert_message(0,"not implemented");
       return MX();
@@ -508,7 +508,7 @@ namespace CasADi{
   }
 
   MX MX::sparse(int ncol, int nrow){
-    return MX(00,00,00,nrow,ncol);
+    return MX(ncol,nrow);
   }
 
   MX MX::sparse(const std::pair<int, int> &nm){
@@ -564,7 +564,7 @@ namespace CasADi{
   }
 
   MX MX::eye(int n){
-    Matrix<double> I(00,00,00,CCSSparsity::createDiagonal(n),1);
+    Matrix<double> I(CCSSparsity::createDiagonal(n),1);
     return MX(I);
   }
 
@@ -594,12 +594,12 @@ namespace CasADi{
     return (*this)->sparsity_;
   }
 
-  void MX::erase(const vector<int>& cc, const vector<int>& rr){
+  void MX::erase(const vector<int>& ii, const vector<int>& jj){
     // Get sparsity of the new matrix
     CCSSparsity sp = sparsity();
   
     // Erase from sparsity pattern
-    vector<int> mapping = sp.erase(rr,cc);
+    vector<int> mapping = sp.erase(jj,ii);
   
     // Create new matrix
     if(mapping.size()!=size()){
@@ -608,15 +608,15 @@ namespace CasADi{
     }
   }
 
-  void MX::enlarge(int ncol, int nrow, const vector<int>& cc, const vector<int>& rr){
+  void MX::enlarge(int ncol, int nrow, const vector<int>& ii, const vector<int>& jj){
     CCSSparsity sp = sparsity();
-    sp.enlarge(nrow,ncol,rr,cc);
+    sp.enlarge(nrow,ncol,jj,ii);
   
     MX ret = (*this)->getGetNonzeros(sp,range(size()));
     *this = ret;
   }
 
-  MX::MX(int dum1, int dum2, int dum3, int nrow, int ncol, const MX& val){
+  MX::MX(int ncol, int nrow, const MX& val){
     // Make sure that val is scalar
     casadi_assert(val.scalar());
     casadi_assert(val.dense());
@@ -938,7 +938,7 @@ namespace CasADi{
     if(dense()){
       return *this;
     } else {
-      MX ret(00,00,00,size1(),size2(),val);
+      MX ret(size2(),size1(),val);
       ret(sparsity()) = *this;
       return ret;
     }

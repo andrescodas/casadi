@@ -574,8 +574,8 @@ class Integrationtests(casadiTestCase):
     integrator.setOption("t0",0)
     integrator.setOption("tf",2.3)
     integrator.init()
-    q0   = MX(00,00,00,"q0")
-    par  = MX(00,00,00,"p")
+    q0   = MX("q0")
+    par  = MX("p")
     
     # qend,*_ = integrator.call([q0,par]) # Valid Python3 syntax
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
@@ -687,7 +687,7 @@ class Integrationtests(casadiTestCase):
     self.message("regression check for issue 92")
     t=SX("t")
     x=SX("x")
-    var = MX(00,00,00,"var",2,1)
+    var = MX("var",2,1)
 
     q = horzcat([x,SX("problem")])
 
@@ -800,8 +800,8 @@ class Integrationtests(casadiTestCase):
 
     integrator.init()
 
-    q0   = MX(00,00,00,"q0",3,1)
-    par  = MX(00,00,00,"p",1,1)
+    q0   = MX("q0",3,1)
+    par  = MX("p",1,1)
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
     qe=MXFunction([q0,par],[qend])
     qe.init()
@@ -827,8 +827,8 @@ class Integrationtests(casadiTestCase):
 
     integrator.init()
 
-    q0   = MX(00,00,00,"q0",3,1)
-    par  = MX(00,00,00,"p",1,1)
+    q0   = MX("q0",3,1)
+    par  = MX("p",1,1)
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
     qe=MXFunction([q0,par],[qend])
     qe.init()
@@ -864,8 +864,8 @@ class Integrationtests(casadiTestCase):
     J=self.integrator.jacobian("p","xf")
     J.init()
     
-    q0=MX(00,00,00,"q0")
-    p=MX(00,00,00,"p")
+    q0=MX("q0")
+    p=MX("p")
     Ji = MXFunction([q0,p],J.call(integratorIn(x0=q0,p=p)))
     #Ji.setOption("ad_mode","reverse")
     Ji.init()
@@ -883,8 +883,8 @@ class Integrationtests(casadiTestCase):
   def test_hess5(self):
     self.message('CVodes integration: hessian to p in an MX tree')
     num=self.num
-    q0=MX(00,00,00,"q0")
-    p=MX(00,00,00,"p")
+    q0=MX("q0")
+    p=MX("p")
     qe = MXFunction([q0,p],self.integrator.call(integratorIn(x0=q0,p=p)))
     qe.init()
 
@@ -908,8 +908,8 @@ class Integrationtests(casadiTestCase):
   def test_hess6(self):
     self.message('CVodes integration: hessian to p in an MX tree')
     num=self.num
-    q0=MX(00,00,00,"q0")
-    p=MX(00,00,00,"p")
+    q0=MX("q0")
+    p=MX("p")
     qe = MXFunction([q0,p],self.integrator.call(integratorIn(x0=q0,p=p)))
     qe.init()
     
@@ -943,8 +943,8 @@ class Integrationtests(casadiTestCase):
     integrator.setOption("t0",0)
     integrator.setOption("tf",te)
     integrator.init()
-    q0   = MX(00,00,00,"q0",3,1)
-    par  = MX(00,00,00,"p",9,1)
+    q0   = MX("q0",3,1)
+    par  = MX("p",9,1)
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
     qe=integrator.jacobian("p","xf")
     qe.init()
@@ -983,8 +983,8 @@ class Integrationtests(casadiTestCase):
 
     integrator.init()
 
-    q0   = MX(00,00,00,"q0",3,1)
-    par  = MX(00,00,00,"p",9,1)
+    q0   = MX("q0",3,1)
+    par  = MX("p",9,1)
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
     qe=MXFunction([q0,par],[qend])
     qe.init()
@@ -1050,8 +1050,8 @@ class Integrationtests(casadiTestCase):
 
     integrator.init()
 
-    q0   = MX(00,00,00,"q0",2,1)
-    par  = MX(00,00,00,"p",3,1)
+    q0   = MX("q0",2,1)
+    par  = MX("p",3,1)
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
     qe=MXFunction([q0,par],[qend])
     qe.init()
@@ -1102,8 +1102,8 @@ class Integrationtests(casadiTestCase):
 
     t0   = MX(0)
     tend = MX(te)
-    q0   = MX(00,00,00,"q0",2,1)
-    par  = MX(00,00,00,"p",1,1)
+    q0   = MX("q0",2,1)
+    par  = MX("p",1,1)
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
     qe=MXFunction([q0,par],[qend])
     qe.init()
@@ -1227,8 +1227,8 @@ class Integrationtests(casadiTestCase):
     I.setInput(flatten(A_),"p")
     I.evaluate()
 
-    q0=MX(00,00,00,"q0",N)
-    p=MX(00,00,00,"p",N*N)
+    q0=MX("q0",N)
+    p=MX("p",N*N)
     qe = MXFunction([q0,p],I.call(integratorIn(x0=q0,p=p)))
     qe.init()
 
