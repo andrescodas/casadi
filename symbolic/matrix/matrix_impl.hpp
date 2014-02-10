@@ -538,36 +538,36 @@ namespace CasADi{
     } else {
       stream.unsetf(std::ios::scientific);
     }
+
+    // Index counter for each column
+    std::vector<int> cind = colind();
   
-    for(int i=0; i<size2(); ++i){
-      if(i==0)
+    // Loop over rows
+    for(int rr=0; rr<size1(); ++rr){
+      if(rr==0)
         stream << "[[";
       else
         stream << " [";
-      int j=0;
-      int maxj=size1()-1;
-    
-      for(int el=colind(i); el<colind(i+1); ++el){
-        // Print leading zeros
-        for(;j<row(el); ++j)
-          stream << "00" << (j==maxj? " " : ",  ");
       
-        // Print element
-        stream << data()[el] << (j==maxj? " " : ",  ");
-        j++;
+      // Loop over columns
+      for(int cc=0; cc<size2(); ++cc){
+        // Separating comma
+        if(cc>0) stream << ",";
+
+        // Check if nonzero
+        if(cind[cc]<colind(cc+1) && row(cind[cc])==rr){
+          stream << data().at(cind[cc]++);
+        } else {
+          stream << "00";
+        }
       }
     
-      // Print trailing zeros
-      for(;j<size1(); ++j)
-        stream << "00" << (j==maxj? " " : ",  ");
-    
       // New col
-      if(i==size2()-1)
+      if(rr==size2()-1)
         stream << "]]" << std::endl;
       else
         stream << "]" << std::endl;
-    }
-  
+    }  
     
     stream.precision(precision);
     stream.width(width);
@@ -576,20 +576,21 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::printDense(std::ostream &stream) const{
-    stream << className() << "(cols = " << size2() << ", rows = " << size1() << "):" << std::endl;
+    stream << className() << "(rows = " << size1() << ", columns = " << size2() << "):" << std::endl;
     printMatrix(stream);
   }
 
 
   template<class T>
   void Matrix<T>::printSparse(std::ostream &stream) const {
-    stream << className() << "(cols = " << size2() << ", rows = " << size1() << ", nnz = " << size() << ")";
+    stream << className() << "(rows = " << size1() << ", columns = " << size2() << ", nnz = " << size() << ")";
     if (size()>0) stream << ":" << std::endl;
-    for(int i=0; i<size2(); ++i)
-      for(int el=colind(i); el<colind(i+1); ++el){
-        int j=row(el);
-        stream << "[" << i << "," << j << "] -> " << data()[el] << std::endl;
+    for(int cc=0; cc<size2(); ++cc){
+      for(int el=colind(cc); el<colind(cc+1); ++el){
+        int rr=row(el);
+        stream << "[" << rr << "," << cc << "] -> " << data()[el] << std::endl;
       }
+    }
   }
 
   template<class T>
