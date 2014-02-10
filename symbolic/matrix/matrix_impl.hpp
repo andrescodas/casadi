@@ -1699,27 +1699,27 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::sparseQQQ(const std::pair<int,int> &rc){
-    return sparseQQQ(rc.first,rc.second);
+  Matrix<T> Matrix<T>::sparse(const std::pair<int,int> &rc){
+    return sparse(rc.first,rc.second);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::sparseQQQ(int nrow, int ncol){
+  Matrix<T> Matrix<T>::sparse(int nrow, int ncol){
     return Matrix<T>(ncol,nrow);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::sparseQQQ(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d) {
-    return sparseQQQ(row,col,d,*std::max_element(row.begin(),row.end()),*std::max_element(col.begin(),col.end()));
+  Matrix<T> Matrix<T>::sparse(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d) {
+    return sparse(row,col,d,*std::max_element(row.begin(),row.end()),*std::max_element(col.begin(),col.end()));
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::sparseQQQ(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d, const std::pair<int,int>& rc) {
-    return sparseQQQ(row,col,d,rc.first,rc.second);
+  Matrix<T> Matrix<T>::sparse(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d, const std::pair<int,int>& rc) {
+    return sparse(row,col,d,rc.first,rc.second);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::sparseQQQ(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d, int nrow, int ncol) {
+  Matrix<T> Matrix<T>::sparse(const std::vector<int>& row, const std::vector<int>& col, const std::vector<T>& d, int nrow, int ncol) {
     casadi_assert_message(col.size()==row.size() && col.size()==d.size(),"Argument error in Matrix<T>::sparse(row,col,d): supplied lists must all be of equal length, but got: " << row.size() << ", " << col.size()  << " and " << d.size());
     std::vector<int> mapping;
     Matrix<T> ret(sp_triplet(nrow,ncol,row,col,mapping),0);
@@ -1770,7 +1770,7 @@ namespace CasADi{
       if(x.dense()){
         return Matrix<T>(ncol,nrow,x.toScalar());
       } else {
-        return sparseQQQ(nrow,ncol);
+        return sparse(nrow,ncol);
       }
     } else {
       return vertcat(std::vector< Matrix<T> >(nrow,horzcat(std::vector< Matrix<T> >(ncol,x))));

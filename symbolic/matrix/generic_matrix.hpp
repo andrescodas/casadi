@@ -271,7 +271,7 @@ namespace CasADi{
         return y;
       } else {
         if (x.size()==0 || y.size()==0 || y.empty() || x.empty()) {
-          return MatType::sparseQQQ(y.size1(),x.size2());
+          return MatType::sparse(y.size1(),x.size2());
         } else {
           return MatType::zeros(x.size2(),y.size1());
         }

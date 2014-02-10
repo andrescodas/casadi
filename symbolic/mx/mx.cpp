@@ -79,7 +79,7 @@ namespace CasADi{
       *this = val->getGetNonzeros(sp,vector<int>(sp.size(),0));
      } else {
       // Empty matrix
-      *this = sparseQQQ(sp.size1(),sp.size2());
+      *this = sparse(sp.size1(),sp.size2());
     }
   }
 
@@ -98,7 +98,7 @@ namespace CasADi{
       if(ret[i].null()){
         ret[i] = MX(0,0);
       } else if(ret[i].size()==0){
-        ret[i] = MX::sparseQQQ(ret[i].shape());
+        ret[i] = MX::sparse(ret[i].shape());
       }
     }
     return ret;
@@ -507,12 +507,12 @@ namespace CasADi{
     }
   }
 
-  MX MX::sparseQQQ(int nrow, int ncol){
+  MX MX::sparse(int nrow, int ncol){
     return MX(ncol,nrow);
   }
 
-  MX MX::sparseQQQ(const std::pair<int, int> &rc){
-    return sparseQQQ(rc.first,rc.second);
+  MX MX::sparse(const std::pair<int, int> &rc){
+    return sparse(rc.first,rc.second);
   }
 
   MX MX::zeros(int ncol, int nrow){

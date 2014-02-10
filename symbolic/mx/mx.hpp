@@ -311,8 +311,8 @@ namespace CasADi{
 
     //@{
     /** \brief Sparse matrix of all zeros */
-    static MX sparseQQQ(int nrow, int ncol=1);
-    static MX sparseQQQ(const std::pair<int, int> &rc);
+    static MX sparse(int nrow, int ncol=1);
+    static MX sparse(const std::pair<int, int> &rc);
     //@}
   
     //@{

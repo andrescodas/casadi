@@ -247,7 +247,7 @@ namespace CasADi{
 
       // Create a sparsity pattern from vectors
       if(r_nz.size()==0){
-        res = MX::sparseQQQ(osp.shape());
+        res = MX::sparse(osp.shape());
       } else {
         CCSSparsity f_sp(osp.size1(),osp.size2(),r_colind,r_row);
         res = arg->getGetNonzeros(f_sp,r_nz);

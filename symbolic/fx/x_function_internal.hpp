@@ -509,7 +509,7 @@ namespace CasADi{
 
     // Quick return if trivially empty
     if(input(iind).size()==0 || output(oind).size()==0 || jacSparsity(iind,oind,true,false).size()==0){
-      return MatType::sparseQQQ(input(iind).shape());
+      return MatType::sparse(input(iind).shape());
     }
 
     // Dummy forward seeds and sensitivities
@@ -572,7 +572,7 @@ namespace CasADi{
       std::pair<int,int> jac_shape;
       jac_shape.first = compact ? input(iind).size() : input(iind).numel();
       jac_shape.second = compact ? output(oind).size() : output(oind).numel();
-      return MatType::sparseQQQ(jac_shape);
+      return MatType::sparse(jac_shape);
     }
     
     // Create return object
@@ -686,7 +686,7 @@ namespace CasADi{
           if(ind==iind){
             fseed[d][ind] = MatType::ones(sp_triplet(nrow,ncol,seed_row,seed_col));
           } else {
-            fseed[d][ind] = MatType::sparseQQQ(nrow,ncol);
+            fseed[d][ind] = MatType::sparse(nrow,ncol);
           }
         }
       }
@@ -716,7 +716,7 @@ namespace CasADi{
           if(ind==oind){
             aseed[d][ind] = MatType::ones(sp_triplet(nrow,ncol,seed_row,seed_col));
           } else {
-            aseed[d][ind] = MatType::sparseQQQ(nrow,ncol);
+            aseed[d][ind] = MatType::sparse(nrow,ncol);
           }
         }
       }
