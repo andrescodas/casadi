@@ -216,7 +216,7 @@ namespace CasADi{
   void Matrix<T>::setSub(const Matrix<T>& m, const std::vector<int>& jj, const Matrix<int>& i) {
     // If el is scalar
     if(m.scalar() && (jj.size() > 1 || i.size() > 1)){
-      setSub(repmatQQQ(Matrix<T>(i.sparsity(),m.toScalar()),jj.size(),1),jj,i);
+      setSub(repmat(Matrix<T>(i.sparsity(),m.toScalar()),jj.size(),1),jj,i);
       return;
     }
 
@@ -224,7 +224,7 @@ namespace CasADi{
       casadi_error("setSub[.,i,jj] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
-    CCSSparsity result_sparsity = repmatQQQ(i,jj.size(),1).sparsity();
+    CCSSparsity result_sparsity = repmat(i,jj.size(),1).sparsity();
   
   
     casadi_assert_message(result_sparsity == m.sparsity(),"setSub(Imatrix" << i.dimString() << ",Ivector(length=" << jj.size() << "),Matrix<T>)::Dimension mismatch. The sparsity of repmat(IMatrix," << jj.size() << ",1) = " << result_sparsity.dimString()  << " must match the sparsity of Matrix<T> = "  << m.dimString() << ".");
@@ -246,7 +246,7 @@ namespace CasADi{
   
     // If el is scalar
     if(m.scalar() && (ii.size() > 1 || j.size() > 1)){
-      setSub(repmatQQQ(Matrix<T>(j.sparsity(),m.toScalar()),1,ii.size()),j,ii);
+      setSub(repmat(Matrix<T>(j.sparsity(),m.toScalar()),1,ii.size()),j,ii);
       return;
     }
 
@@ -254,7 +254,7 @@ namespace CasADi{
       casadi_error("setSub[.,ii,j] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
-    CCSSparsity result_sparsity = repmatQQQ(j,1,ii.size()).sparsity();
+    CCSSparsity result_sparsity = repmat(j,1,ii.size()).sparsity();
   
   
     casadi_assert_message(result_sparsity == m.sparsity(),"setSub(Ivector(length=" << ii.size() << "),Imatrix" << j.dimString() << ",Matrix<T>)::Dimension mismatch. The sparsity of repmat(Imatrix,1," << ii.size() << ") = " << result_sparsity.dimString() << " must match the sparsity of Matrix<T> = " << m.dimString() << ".");
@@ -655,7 +655,7 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::resizeQQQ(int nrow, int ncol){
+  void Matrix<T>::resize(int nrow, int ncol){
     sparsity_.resize(nrow,ncol);
   }
 
@@ -1760,12 +1760,12 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::repmatQQQ(const Matrix<T>& x, const std::pair<int,int>& rc){
-    return repmatQQQ(x,rc.first,rc.second);
+  Matrix<T> Matrix<T>::repmat(const Matrix<T>& x, const std::pair<int,int>& rc){
+    return repmat(x,rc.first,rc.second);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::repmatQQQ(const Matrix<T>& x, int nrow, int ncol){
+  Matrix<T> Matrix<T>::repmat(const Matrix<T>& x, int nrow, int ncol){
     if(x.scalar()){
       if(x.dense()){
         return Matrix<T>(ncol,nrow,x.toScalar());

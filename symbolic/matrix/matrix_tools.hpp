@@ -1178,7 +1178,7 @@ namespace CasADi{
       // Permute the right hand side
       Matrix<T> bperm(0,b.size1());
       for(int i=0; i<b.size2(); ++i){
-        bperm.resizeQQQ(b.size1(),i+1);
+        bperm.resize(b.size1(),i+1);
         for(int el=b.colind(colperm[i]); el<b.colind(colperm[i]+1); ++el){
           bperm(b.row(el),i) = b[el];
         }
@@ -1187,7 +1187,7 @@ namespace CasADi{
       // Permute the linear system
       Matrix<T> Aperm(0,A.size1());
       for(int i=0; i<A.size2(); ++i){
-        Aperm.resizeQQQ(A.size1(),i+1);
+        Aperm.resize(A.size1(),i+1);
         for(int el=A.colind(colperm[i]); el<A.colind(colperm[i]+1); ++el){
           Aperm(inv_rowperm[A.row(el)],i) = A[el];
         }
@@ -1220,7 +1220,7 @@ namespace CasADi{
       // Permute back the solution
       Matrix<T> x(0,xperm.size1());
       for(int i=0; i<xperm.size2(); ++i){
-        x.resizeQQQ(xperm.size1(),i+1);
+        x.resize(xperm.size1(),i+1);
         for(int el=xperm.colind(inv_rowperm[i]); el<xperm.colind(inv_rowperm[i]+1); ++el){
           x(xperm.row(el),i) = xperm[el];
         }
@@ -1441,7 +1441,7 @@ namespace CasADi{
     // Loop over the cols
     for(int i=0; i<A.size2(); ++i){
       // Resize the matrix to accomodate the col
-      Asp.resizeQQQ(A.size1(),i+1);
+      Asp.resize(A.size1(),i+1);
     
       // Loop over the existing, possible nonzeros
       for(int el=A.colind(i); el<A.colind(i+1); ++el){

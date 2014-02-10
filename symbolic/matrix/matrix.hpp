@@ -554,7 +554,7 @@ namespace CasADi{
     int row(int el) const;
     int colind(int col) const;
     void clear();
-    void resizeQQQ(int nrow, int ncol);
+    void resize(int nrow, int ncol);
     void reserve(int nnz);
     void reserve(int nnz, int ncol);
     
@@ -710,8 +710,8 @@ namespace CasADi{
 
     //@{
     /** \brief  create a matrix by repeating an existing matrix */
-    static Matrix<T> repmatQQQ(const Matrix<T>& x, int nrow, int ncol=1);
-    static Matrix<T> repmatQQQ(const Matrix<T>& x, const std::pair<int,int>& rc);
+    static Matrix<T> repmat(const Matrix<T>& x, int nrow, int ncol=1);
+    static Matrix<T> repmat(const Matrix<T>& x, const std::pair<int,int>& rc);
     //@}
 
     /** \brief  create an n-by-n identity matrix */
