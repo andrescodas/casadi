@@ -324,26 +324,23 @@ namespace CasADi{
 
     //@{
     /** \brief  Matrix of all ones */  
-    static MX ones(const CCSSparsity& sp);
-    static MX ones(int ncol, int nrow=1); 
-    static MX ones(const std::pair<int, int> &nm);
-    static MX onesWWW(const std::pair<int, int> &nm){ return ones(std::pair<int,int>(nm.second,nm.first));}
+    static MX onesQQQ(const CCSSparsity& sp);
+    static MX onesQQQ(int nrow, int ncol=1); 
+    static MX onesQQQ(const std::pair<int, int> &rc);
     //@}
 
     //@{
     /** \brief  create a matrix with all inf */
-    static MX inf(const CCSSparsity& sp);
-    static MX inf(int ncol=1, int nrow=1);
-    static MX inf(const std::pair<int,int>& nm);
-    static MX infWWW(const std::pair<int, int> &nm){ return inf(std::pair<int,int>(nm.second,nm.first));}
+    static MX infQQQ(const CCSSparsity& sp);
+    static MX infQQQ(int nrow=1, int ncol=1);
+    static MX infQQQ(const std::pair<int,int>& rc);
     //@}
   
     //@{
     /** \brief  create a matrix with all nan */
-    static MX nan(const CCSSparsity& sp);
-    static MX nan(int ncol=1, int nrow=1);
-    static MX nan(const std::pair<int,int>& nm);
-    static MX nanWWW(const std::pair<int, int> &nm){ return nan(std::pair<int,int>(nm.second,nm.first));}
+    static MX nanQQQ(const CCSSparsity& sp);
+    static MX nanQQQ(int nrow=1, int ncol=1);
+    static MX nanQQQ(const std::pair<int,int>& rc);
     //@}
   
     //@{

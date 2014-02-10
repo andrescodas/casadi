@@ -61,23 +61,23 @@ QPSolverInternal::QPSolverInternal(const std::vector<CCSSparsity> &st) : st_(st)
   
   // Input arguments
   setNumInputs(QP_SOLVER_NUM_IN);
-  input(QP_SOLVER_X0) = DMatrix(x_sparsity,0);
-  input(QP_SOLVER_H) = DMatrix(H);
-  input(QP_SOLVER_G) = DMatrix(x_sparsity);
-  input(QP_SOLVER_A) = DMatrix(A);
-  input(QP_SOLVER_LBA) = DMatrix(bounds_sparsity, -std::numeric_limits<double>::infinity());
-  input(QP_SOLVER_UBA) = DMatrix(bounds_sparsity,  std::numeric_limits<double>::infinity());
-  input(QP_SOLVER_LBX) = DMatrix(x_sparsity,      -std::numeric_limits<double>::infinity());
-  input(QP_SOLVER_UBX) = DMatrix(x_sparsity,       std::numeric_limits<double>::infinity());
-  input(QP_SOLVER_LAM_X0) = DMatrix(x_sparsity,0);
-  //input(QP_SOLVER_LAM_A0) = DMatrix(x_sparsity,   0);
+  input(QP_SOLVER_X0) = DMatrix::zeros(x_sparsity);
+  input(QP_SOLVER_H) = DMatrix::zeros(H);
+  input(QP_SOLVER_G) = DMatrix::zeros(x_sparsity);
+  input(QP_SOLVER_A) = DMatrix::zeros(A);
+  input(QP_SOLVER_LBA) = -DMatrix::infQQQ(bounds_sparsity);
+  input(QP_SOLVER_UBA) =  DMatrix::infQQQ(bounds_sparsity);
+  input(QP_SOLVER_LBX) = -DMatrix::infQQQ(x_sparsity);
+  input(QP_SOLVER_UBX) =  DMatrix::infQQQ(x_sparsity);
+  input(QP_SOLVER_LAM_X0) = DMatrix::zeros(x_sparsity);
+  //input(QP_SOLVER_LAM_A0) = DMatrix::zeros(x_sparsity);
   
   // Output arguments
   setNumOutputs(QP_SOLVER_NUM_OUT);
-  output(QP_SOLVER_X) = DMatrix(x_sparsity);
+  output(QP_SOLVER_X) = DMatrix::zeros(x_sparsity);
   output(QP_SOLVER_COST) = 0.0;
-  output(QP_SOLVER_LAM_X) = DMatrix(x_sparsity);
-  output(QP_SOLVER_LAM_A) = DMatrix(bounds_sparsity);
+  output(QP_SOLVER_LAM_X) = DMatrix::zeros(x_sparsity);
+  output(QP_SOLVER_LAM_A) = DMatrix::zeros(bounds_sparsity);
   
   input_.scheme = SCHEME_QPSolverInput;
   output_.scheme = SCHEME_QPSolverOutput;

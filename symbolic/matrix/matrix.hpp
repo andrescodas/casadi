@@ -688,26 +688,23 @@ namespace CasADi{
 
     //@{
     /** \brief  create a matrix with all ones */
-    static Matrix<T> ones(const CCSSparsity& sp);
-    static Matrix<T> ones(int ncol, int nrow=1);
-    static Matrix<T> ones(const std::pair<int,int>& nm);
-    static Matrix<T> onesWWW(const std::pair<int, int> &nm){ return ones(std::pair<int,int>(nm.second,nm.first));}
+    static Matrix<T> onesQQQ(const CCSSparsity& sp);
+    static Matrix<T> onesQQQ(int nrow, int ncol=1);
+    static Matrix<T> onesQQQ(const std::pair<int,int>& rc);
     //@}
 
     //@{
     /** \brief  create a matrix with all inf */
-    static Matrix<T> inf(const CCSSparsity& sp);
-    static Matrix<T> inf(int ncol=1, int nrow=1);
-    static Matrix<T> inf(const std::pair<int,int>& nm);
-    static Matrix<T> infWWW(const std::pair<int, int> &nm){ return inf(std::pair<int,int>(nm.second,nm.first));}
+    static Matrix<T> infQQQ(const CCSSparsity& sp);
+    static Matrix<T> infQQQ(int nrow=1, int ncol=1);
+    static Matrix<T> infQQQ(const std::pair<int,int>& rc);
     //@}
     
     //@{
     /** \brief  create a matrix with all nan */
-    static Matrix<T> nan(const CCSSparsity& sp);
-    static Matrix<T> nan(int ncol=1, int nrow=1);
-    static Matrix<T> nan(const std::pair<int,int>& nm);
-    static Matrix<T> nanWWW(const std::pair<int, int> &nm){ return nan(std::pair<int,int>(nm.second,nm.first));}
+    static Matrix<T> nanQQQ(const CCSSparsity& sp);
+    static Matrix<T> nanQQQ(int nrow=1, int ncol=1);
+    static Matrix<T> nanQQQ(const std::pair<int,int>& rc);
     //@}
 
     //@{

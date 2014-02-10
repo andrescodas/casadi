@@ -190,7 +190,7 @@ namespace CasADi{
       if(op==OP_ADD && y.getOp()==OP_SQ) /*sum of squares:*/ 
         if((dep().getOp()==OP_SIN && y->dep().getOp()==OP_COS) || (dep().getOp()==OP_COS && y->dep()->getOp()==OP_SIN)) /* sin^2(x)+sin^2(y) */
           if(dep()->dep().isEqual(y->dep()->dep(),maxDepth())) /*sin^2(x) + cos^2(x) */
-            return MX::ones(y.sparsity());
+            return MX::onesQQQ(y.sparsity());
       break;
     default: break; // no rule
     }

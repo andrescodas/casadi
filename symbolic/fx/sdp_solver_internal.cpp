@@ -57,14 +57,14 @@ SDPSolverInternal::SDPSolverInternal(const std::vector<CCSSparsity> &st) : st_(s
   
   // Input arguments
   setNumInputs(SDP_SOLVER_NUM_IN);
-  input(SDP_SOLVER_G) = DMatrix(G,0);
-  input(SDP_SOLVER_F) = DMatrix(F,0);
-  input(SDP_SOLVER_A) = DMatrix(A,0);
+  input(SDP_SOLVER_G) = DMatrix::zeros(G);
+  input(SDP_SOLVER_F) = DMatrix::zeros(F);
+  input(SDP_SOLVER_A) = DMatrix::zeros(A);
   input(SDP_SOLVER_C) = DMatrix::zeros(1,n_);
-  input(SDP_SOLVER_LBX) = -DMatrix::inf(n_);
-  input(SDP_SOLVER_UBX) = DMatrix::inf(n_);
-  input(SDP_SOLVER_LBA) = -DMatrix::inf(nc_);
-  input(SDP_SOLVER_UBA) = DMatrix::inf(nc_);
+  input(SDP_SOLVER_LBX) = -DMatrix::infQQQ(1,n_);
+  input(SDP_SOLVER_UBX) = DMatrix::infQQQ(1,n_);
+  input(SDP_SOLVER_LBA) = -DMatrix::infQQQ(1,nc_);
+  input(SDP_SOLVER_UBA) = DMatrix::infQQQ(1,nc_);
 
   for (int i=0;i<n_;i++) {
     CCSSparsity s = input(SDP_SOLVER_F)(ALL,range(i*m_,(i+1)*m_)).sparsity();

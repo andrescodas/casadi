@@ -966,12 +966,12 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> sumCols(const Matrix<T> &x) {
-    return mul(Matrix<T>::ones(1,x.size2()),x);
+    return mul(Matrix<T>::onesQQQ(x.size2(),1),x);
   }
 
   template<class T>
   Matrix<T> sumRows(const Matrix<T> &x) {
-    return mul(x,Matrix<T>::ones(x.size1(),1));
+    return mul(x,Matrix<T>::onesQQQ(1,x.size1()));
   }
 
   template<class T>
