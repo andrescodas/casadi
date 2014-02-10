@@ -605,8 +605,8 @@ void simplify(SX& ex){
 }
 
 void fill(SXMatrix& mat, const SX& val){
-  if(val->isZero())    mat.makeEmpty(mat.size2(),mat.size1());
-  else                 mat.makeDense(mat.size2(),mat.size1(),val);
+  if(val->isZero())    mat.makeEmptyQQQ(mat.size1(),mat.size2());
+  else                 mat.makeDenseQQQ(mat.size1(),mat.size2(),val);
 }
 
 // SXMatrix binary(int op, const SXMatrix &x, const SXMatrix &y){
@@ -819,13 +819,13 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
   // Permuted equations
   vector<SX> fp(f.size());
   for(int i=0; i<fp.size(); ++i){
-    fp[i] = f.elem(colperm[i]);
+    fp[i] = f.elemQQQ(0,colperm[i]);
   }
   
   // Permuted variables
   vector<SX> xp(x.size());
   for(int i=0; i<xp.size(); ++i){
-    xp[i]= x.elem(rowperm[i]);
+    xp[i]= x.elemQQQ(0,rowperm[i]);
   }
   
   // Number of blocks

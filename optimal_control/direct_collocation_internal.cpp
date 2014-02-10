@@ -225,26 +225,26 @@ void DirectCollocationInternal::getGuess(vector<double>& V_init) const{
   
   // Pass guess for parameters
   for(int i=0; i<np_; ++i){
-    V_init[el++] = p_init.elem(i);
+    V_init[el++] = p_init.elemQQQ(0,i);
   }
   
   for(int k=0; k<nk_; ++k){
     // Pass guess for state
     for(int j=0; j<=deg_; ++j){
       for(int i=0; i<nx_; ++i){
-         V_init[el++] = x_init.elem(i,k);
+        V_init[el++] = x_init.elemQQQ(k,i);
       }
     }
     
     // Pass guess for control
     for(int i=0; i<nu_; ++i){
-      V_init[el++] = u_init.elem(i,k);
+      V_init[el++] = u_init.elemQQQ(k,i);
     }
   }
 
   // Pass guess for final state
   for(int i=0; i<nx_; ++i){
-    V_init[el++] = x_init.elem(i,nk_);
+    V_init[el++] = x_init.elemQQQ(nk_,i);
   }
   
   casadi_assert(el==V_init.size());
@@ -264,37 +264,37 @@ void DirectCollocationInternal::getVariableBounds(vector<double>& V_min, vector<
   
   // Pass bounds on parameters
   for(int i=0; i<np_; ++i){
-    V_min[min_el++] = p_min.elem(i);
-    V_max[max_el++] = p_max.elem(i);
+    V_min[min_el++] = p_min.elemQQQ(0,i);
+    V_max[max_el++] = p_max.elemQQQ(0,i);
   }
 
   for(int k=0; k<nk_; ++k){
     
     // Pass bounds on state
     for(int i=0; i<nx_; ++i){
-      V_min[min_el++] = x_min.elem(i,k);
-      V_max[max_el++] = x_max.elem(i,k);
+      V_min[min_el++] = x_min.elemQQQ(k,i);
+      V_max[max_el++] = x_max.elemQQQ(k,i);
     }
     
     // Pass bounds on collocation points
     for(int j=0; j<deg_; ++j){
       for(int i=0; i<nx_; ++i){
-        V_min[min_el++] = std::min(x_min.elem(i,k),x_min.elem(i,k+1));
-        V_max[max_el++] = std::max(x_max.elem(i,k),x_max.elem(i,k+1));
+        V_min[min_el++] = std::min(x_min.elemQQQ(k,i),x_min.elemQQQ(k+1,i));
+        V_max[max_el++] = std::max(x_max.elemQQQ(k,i),x_max.elemQQQ(k+1,i));
       }
     }
 
     // Pass bounds on control
     for(int i=0; i<nu_; ++i){
-      V_min[min_el++] = u_min.elem(i,k);
-      V_max[max_el++] = u_max.elem(i,k);
+      V_min[min_el++] = u_min.elemQQQ(k,i);
+      V_max[max_el++] = u_max.elemQQQ(k,i);
     }
   }
 
   // Pass bounds on final state
   for(int i=0; i<nx_; ++i){
-    V_min[min_el++] = x_min.elem(i,nk_);
-    V_max[max_el++] = x_max.elem(i,nk_);
+    V_min[min_el++] = x_min.elemQQQ(nk_,i);
+    V_max[max_el++] = x_max.elemQQQ(nk_,i);
   }
   
   casadi_assert(min_el==V_min.size() && max_el==V_max.size());
@@ -317,8 +317,8 @@ void DirectCollocationInternal::getConstraintBounds(vector<double>& G_min, vecto
     }
     
     for(int i=0; i<nh_; ++i){
-      G_min[min_el++] = h_min.elem(i,k);
-      G_max[max_el++] = h_max.elem(i,k);
+      G_min[min_el++] = h_min.elemQQQ(k,i);
+      G_max[max_el++] = h_max.elemQQQ(k,i);
     }
   }
   casadi_assert(min_el==G_min.size() && max_el==G_max.size());
