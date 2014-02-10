@@ -344,6 +344,7 @@ namespace CasADi{
   
     //@{
     /** \brief  create a matrix by repeating an existing matrix */
+    static MX repmat(const MX& x, const CCSSparsity& sp);
     static MX repmat(const MX& x, int nrow, int ncol=1);
     static MX repmat(const MX& x, const std::pair<int, int> &rc);
     //@}

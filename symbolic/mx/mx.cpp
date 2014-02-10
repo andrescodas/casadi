@@ -494,6 +494,11 @@ namespace CasADi{
     return static_cast<const MXNode*>(SharedObject::operator->());
   }
 
+  MX MX::repmat(const MX& x, const CCSSparsity& sp){
+    casadi_assert_message(x.scalar(),"repmat(MX x,CCSSparsity sp) only defined for scalar x");
+    return MX(sp,x);
+  }
+
   MX MX::repmat(const MX& x, const std::pair<int, int> &rc){
     return repmat(x,rc.first,rc.second);
   }

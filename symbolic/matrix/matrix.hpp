@@ -710,6 +710,8 @@ namespace CasADi{
 
     //@{
     /** \brief  create a matrix by repeating an existing matrix */
+    static Matrix<T> repmat(const T& x, const CCSSparsity& sp);
+    static Matrix<T> repmat(const Matrix<T>& x, const CCSSparsity& sp);
     static Matrix<T> repmat(const Matrix<T>& x, int nrow, int ncol=1);
     static Matrix<T> repmat(const Matrix<T>& x, const std::pair<int,int>& rc);
     //@}

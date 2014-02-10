@@ -1761,6 +1761,17 @@ namespace CasADi{
   }
 
   template<class T>
+  Matrix<T> Matrix<T>::repmat(const T& x, const CCSSparsity& sp){
+    return Matrix<T>(sp,x);
+  }
+
+  template<class T>
+  Matrix<T> Matrix<T>::repmat(const Matrix<T>& x, const CCSSparsity& sp){
+    casadi_assert_message(x.scalar(),"repmat(Matrix<T> x,CCSSparsity sp) only defined for scalar x");
+    return Matrix<T>(sp,x.toScalar());
+  }
+
+  template<class T>
   Matrix<T> Matrix<T>::repmat(const Matrix<T>& x, const std::pair<int,int>& rc){
     return repmat(x,rc.first,rc.second);
   }
