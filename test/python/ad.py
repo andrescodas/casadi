@@ -471,13 +471,13 @@ class ADtests(casadiTestCase):
     f1 = MXFunction([x,y],[x+y[0],mul(y,x)])
     f1.init()
     
-    f2 = MXFunction([x,y],[mul(MX.zeros(0,2),x)])
+    f2 = MXFunction([x,y],[mul(MX.zerosQQQ(2,0),x)])
     f2.init()
 
-    f3 = MXFunction([x,y],[MX.zeros(0,0),mul(y,x)])
+    f3 = MXFunction([x,y],[MX.zerosQQQ(0,0),mul(y,x)])
     f3.init()
     
-    f4 = MXFunction([x,y],[MX.zeros(0,2),mul(y,x)])
+    f4 = MXFunction([x,y],[MX.zerosQQQ(2,0),mul(y,x)])
     f4.init()
     
     ndir = 2
@@ -581,14 +581,14 @@ class ADtests(casadiTestCase):
           #(in1,v1,c.det(vertcat([x,DMatrix([1,2])])),DMatrix([-1,2])), not implemented
           (in1,v1,f1.call(in1)[1],y),
           (in1,v1,f1.call([x**2,y])[1],y*2*horzcat([x.T,x.T])),
-          (in1,v1,f2.call(in1)[0],DMatrix.zeros(0,2)),
-          (in1,v1,f2.call([x**2,y])[0],DMatrix.zeros(0,2)),
-          (in1,v1,f3.call(in1)[0],DMatrix.zeros(0,2)),
-          (in1,v1,f3.call([x**2,y])[0],DMatrix.zeros(0,2)),
-          (in1,v1,f4.call(in1)[0],DMatrix.zeros(0,2)),
-          (in1,v1,f4.call([x**2,y])[0],DMatrix.zeros(0,2)),
-          #(in1,v1,f1.call([x**2,[]])[1],DMatrix.zeros(2,2)),
-          #(in1,v1,f1.call([[],y])[1],DMatrix.zeros(2,2)),
+          (in1,v1,f2.call(in1)[0],DMatrix.zerosQQQ(2,0)),
+          (in1,v1,f2.call([x**2,y])[0],DMatrix.zerosQQQ(2,0)),
+          (in1,v1,f3.call(in1)[0],DMatrix.zerosQQQ(2,0)),
+          (in1,v1,f3.call([x**2,y])[0],DMatrix.zerosQQQ(2,0)),
+          (in1,v1,f4.call(in1)[0],DMatrix.zerosQQQ(2,0)),
+          (in1,v1,f4.call([x**2,y])[0],DMatrix.zerosQQQ(2,0)),
+          #(in1,v1,f1.call([x**2,[]])[1],DMatrix.zerosQQQ(3,2)),
+          #(in1,v1,f1.call([[],y])[1],DMatrix.zerosQQQ(2,2)),
           (in1,v1,horzcat([x,DMatrix(0,1)]),DMatrix.eye(2)),
           (in1,v1,(x**2).setSparse(sparse(DMatrix([0,1])).sparsity()),blockcat([[MX(1,1),MX(1,1)],[MX(1,1),2*x[1]]])),
      ]:

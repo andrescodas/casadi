@@ -183,7 +183,7 @@ namespace CasADi{
     // Forward sensitivities, collect arguments for calling f_der
     for(int d=0; d<nfwd; ++d){
       argv = MXNode::getVector(fseed[d]);
-      argv[iin_] = MX::zeros(input(iin_).sparsity());
+      argv[iin_] = MX::zerosQQQ(input(iin_).sparsity());
       v.insert(v.end(),argv.begin(),argv.end());
     }
 

@@ -74,8 +74,8 @@ QCQPSolverInternal::QCQPSolverInternal(const std::vector<CCSSparsity> &st) : st_
   input(QCQP_SOLVER_G) = DMatrix(x_sparsity);
   input(QCQP_SOLVER_A) = DMatrix(A);
   input(QCQP_SOLVER_P) = DMatrix(P);
-  input(QCQP_SOLVER_Q) = DMatrix::zeros(nq_*n_,1);
-  input(QCQP_SOLVER_R) = DMatrix::zeros(nq_,1);  
+  input(QCQP_SOLVER_Q) = DMatrix::zerosQQQ(1,nq_*n_);
+  input(QCQP_SOLVER_R) = DMatrix::zerosQQQ(1,nq_);  
   input(QCQP_SOLVER_LBA) = DMatrix(bounds_sparsity, -std::numeric_limits<double>::infinity());
   input(QCQP_SOLVER_UBA) = DMatrix(bounds_sparsity,  std::numeric_limits<double>::infinity());
   input(QCQP_SOLVER_LBX) = DMatrix(x_sparsity,      -std::numeric_limits<double>::infinity());

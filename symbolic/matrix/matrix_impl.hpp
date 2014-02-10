@@ -1730,18 +1730,18 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::zeros(const CCSSparsity& sp){
+  Matrix<T> Matrix<T>::zerosQQQ(const CCSSparsity& sp){
     return Matrix<T>(sp,0);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::zeros(const std::pair<int,int> &nm){
-    return zeros(nm.first,nm.second);
+  Matrix<T> Matrix<T>::zerosQQQ(const std::pair<int,int> &rc){
+    return zerosQQQ(rc.first,rc.second);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::zeros(int n, int m){
-    return zeros(sp_dense(m,n));
+  Matrix<T> Matrix<T>::zerosQQQ(int nrow, int ncol){
+    return zerosQQQ(sp_dense(nrow,ncol));
   }
 
   template<class T>

@@ -62,11 +62,11 @@ namespace CasADi{
     FXInternal::init();
     
     setNumInputs(1);
-    input(0)  = DMatrix::zeros(A_sp_);
+    input(0)  = DMatrix::zerosQQQ(A_sp_);
     
     setNumOutputs(1);
     if (dense_) {
-      output(0)  = DMatrix::zeros(dense);
+      output(0)  = DMatrix::zerosQQQ(dense);
     }
   
   }

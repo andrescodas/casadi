@@ -278,7 +278,7 @@ namespace CasADi{
     
     // Get an expression for the state at the end of the finite element
     std::vector<MX> ifcn_call_in(5);
-    ifcn_call_in[0] = MX::zeros(V.sparsity()); 
+    ifcn_call_in[0] = MX::zerosQQQ(V.sparsity()); 
     std::copy(vfcn_inputs.begin()+1,vfcn_inputs.end(),ifcn_call_in.begin()+1);
     std::vector<MX> ifcn_call_out = ifcn.eval(ifcn_call_in);
     Vs = horzsplit(ifcn_call_out[0],splitPositions);

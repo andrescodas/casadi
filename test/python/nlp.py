@@ -1026,7 +1026,7 @@ class NLPtests(casadiTestCase):
       solver.solve()
       self.checkarray(solver.getOutput("x"),x0,str(Solver),digits=2)
       self.assertAlmostEqual(solver.getOutput("f")[0],0,3,str(Solver))
-      self.checkarray(solver.getOutput("lam_x"),DMatrix.zeros(N,1),str(Solver),digits=4)
+      self.checkarray(solver.getOutput("lam_x"),DMatrix.zerosQQQ(1,N),str(Solver),digits=4)
       
       
   def test_tol_pr(self):

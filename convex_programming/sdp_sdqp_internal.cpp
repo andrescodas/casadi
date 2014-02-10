@@ -145,15 +145,15 @@ void SDPSDQPInternal::init(){
   
   // Output arguments
   setNumOutputs(SDQP_SOLVER_NUM_OUT);
-  output(SDQP_SOLVER_X) = DMatrix::zeros(n_,1);
+  output(SDQP_SOLVER_X) = DMatrix::zerosQQQ(1,n_);
   
   std::vector<int> r = range(input(SDQP_SOLVER_G).size2());
   output(SDQP_SOLVER_P) = sdpsolver_.output(SDP_SOLVER_P).empty() ? DMatrix() : sdpsolver_.output(SDP_SOLVER_P)(r,r);
   output(SDQP_SOLVER_DUAL) = sdpsolver_.output(SDP_SOLVER_DUAL).empty() ? DMatrix() : sdpsolver_.output(SDP_SOLVER_DUAL)(r,r);
   output(SDQP_SOLVER_COST) = 0.0;
   output(SDQP_SOLVER_DUAL_COST) = 0.0;
-  output(SDQP_SOLVER_LAM_X) = DMatrix::zeros(n_,1);
-  output(SDQP_SOLVER_LAM_A) = DMatrix::zeros(nc_,1);
+  output(SDQP_SOLVER_LAM_X) = DMatrix::zerosQQQ(1,n_);
+  output(SDQP_SOLVER_LAM_A) = DMatrix::zerosQQQ(1,nc_);
  
 }
 

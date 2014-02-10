@@ -102,7 +102,7 @@ void SimulatorInternal::init(){
   
   states_.resize(grid_.size());
   for (int k = 0; k < grid_.size(); ++k) {
-    states_[k]=Matrix<double>::zeros(integrator_.input(INTEGRATOR_X0).size2());
+    states_[k]=Matrix<double>::zerosQQQ(1,integrator_.input(INTEGRATOR_X0).size2());
   }
     
 }

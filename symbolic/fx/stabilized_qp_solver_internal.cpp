@@ -69,7 +69,7 @@ StabilizedQPSolverInternal::StabilizedQPSolverInternal(const std::vector<CCSSpar
   input(STABILIZED_QP_SOLVER_UBA) = DMatrix(bounds_sparsity,  std::numeric_limits<double>::infinity());
   input(STABILIZED_QP_SOLVER_LBX) = DMatrix(x_sparsity,      -std::numeric_limits<double>::infinity());
   input(STABILIZED_QP_SOLVER_UBX) = DMatrix(x_sparsity,       std::numeric_limits<double>::infinity());
-  input(STABILIZED_QP_SOLVER_MUR) = DMatrix::zeros(1,1);
+  input(STABILIZED_QP_SOLVER_MUR) = DMatrix::zerosQQQ(1,1);
   input(STABILIZED_QP_SOLVER_MUE) = DMatrix(bounds_sparsity,0);
   input(STABILIZED_QP_SOLVER_MU) = DMatrix(bounds_sparsity,0);
   

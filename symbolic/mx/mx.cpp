@@ -515,15 +515,15 @@ namespace CasADi{
     return sparse(rc.first,rc.second);
   }
 
-  MX MX::zeros(int ncol, int nrow){
-    return zeros(sp_dense(nrow,ncol));
+  MX MX::zerosQQQ(int nrow, int ncol){
+    return zerosQQQ(sp_dense(nrow,ncol));
   }
 
-  MX MX::zeros(const std::pair<int, int> &nm){
-    return zeros(nm.first,nm.second);
+  MX MX::zerosQQQ(const std::pair<int, int> &rc){
+    return zerosQQQ(rc.first,rc.second);
   }
 
-  MX MX::zeros(const CCSSparsity& sp){
+  MX MX::zerosQQQ(const CCSSparsity& sp){
     return create(ConstantMX::create(sp,0));
   }
 

@@ -254,7 +254,7 @@ class SDPtests(casadiTestCase):
       self.checkarray(sdp.getOutput("cost"),DMatrix(n1*n2/n3),digits=5)
       self.checkarray(sdp.getOutput("dual_cost"),DMatrix(n1*n2/n3),digits=5)
       self.checkarray(sdp.getOutput("x"),DMatrix(n2/n3),digits=5)
-      self.checkarray(sdp.getOutput("p"),DMatrix.zeros(2,2),digits=5)
+      self.checkarray(sdp.getOutput("p"),DMatrix.zerosQQQ(2,2),digits=5)
       
       self.checkarray(sdp.getOutput("dual")[0,0]-sdp.getOutput("dual")[1,1],DMatrix(n1/n3),digits=5)
 
@@ -500,7 +500,7 @@ class SDPtests(casadiTestCase):
       self.checkarray(sdp.getOutput("x"),DMatrix([-1.1,-2.7375,-0.55]),digits=5)
       
       self.checkarray(sdp.getOutput("dual"),DMatrix([[5.9,-1.375],[-1.375,1]]),digits=5)
-      self.checkarray(sdp.getOutput("p"),DMatrix.zeros(2,2),digits=5)
+      self.checkarray(sdp.getOutput("p"),DMatrix.zerosQQQ(2,2),digits=5)
       
       try:
         IpoptSolver

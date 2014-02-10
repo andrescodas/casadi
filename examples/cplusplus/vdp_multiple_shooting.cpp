@@ -54,13 +54,13 @@ int main(){
   SXMatrix L = ssym("cost");
   
   // All states
-  SXMatrix states = SXMatrix::zeros(3);
+  SXMatrix states = SXMatrix::zerosQQQ(1,3);
   states(0,0) = x;
   states(0,1) = y;
   states(0,2) = L;
 
   //ODE right hand side
-  SXMatrix f = SXMatrix::zeros(3);
+  SXMatrix f = SXMatrix::zerosQQQ(1,3);
   f(0,0) = (1 - y*y)*x - y + u;
   f(0,1) = x;
   f(0,2) = x*x + y*y + u*u;

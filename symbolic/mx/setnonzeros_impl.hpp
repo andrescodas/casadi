@@ -143,7 +143,7 @@ namespace CasADi{
         res.sparsity().getNZInplace(r_nz);
         
         // Zero out the corresponding entries
-        res = MX::zeros(isp)->getSetNonzeros(res,r_nz);
+        res = MX::zerosQQQ(isp)->getSetNonzeros(res,r_nz);
       }
 
       // Get the nz locations of the elements in arg corresponding to the argument sparsity pattern
@@ -251,7 +251,7 @@ namespace CasADi{
         CCSSparsity f_sp(isp.size1(),isp.size2(),r_colind,r_row);
         asens += aseed->getGetNonzeros(f_sp,r_nz);
         if(!Add){
-          aseed = MX::zeros(f_sp)->getSetNonzeros(aseed,r_nz);
+          aseed = MX::zerosQQQ(f_sp)->getSetNonzeros(aseed,r_nz);
         }
       }
 

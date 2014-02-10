@@ -127,7 +127,7 @@ namespace CasADi{
     vector<MX> eq;
 
     // Quadratures
-    MX qf = MX::zeros(f_.output(DAE_QUAD).sparsity());
+    MX qf = MX::zerosQQQ(f_.output(DAE_QUAD).sparsity());
 
     // End state
     MX xf = D[0]*x0;
@@ -205,7 +205,7 @@ namespace CasADi{
       eq.clear();
 
       // Quadratures
-      MX rqf = MX::zeros(g_.output(RDAE_QUAD).sparsity());
+      MX rqf = MX::zerosQQQ(g_.output(RDAE_QUAD).sparsity());
 
       // End state
       MX rxf = D[0]*rx0;

@@ -287,7 +287,7 @@ namespace CasADi{
     }
 
     // Create mapping
-    MX ret = MX::zeros(sp);
+    MX ret = MX::zerosQQQ(sp);
     ret = A->getSetNonzeros(ret,nzA);
     ret = B->getSetNonzeros(ret,nzB);
     return ret;

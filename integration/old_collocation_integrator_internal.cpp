@@ -204,8 +204,8 @@ namespace CasADi{
     g.reserve(2*(nk+1));
   
     // Quadrature expressions
-    MX QF = MX::zeros(nq_);
-    MX RQF = MX::zeros(nrq_);
+    MX QF = MX::zerosQQQ(1,nq_);
+    MX RQF = MX::zerosQQQ(1,nrq_);
   
     // Counter
     int jk = 0;
