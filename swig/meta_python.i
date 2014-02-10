@@ -763,7 +763,7 @@ int meta< CasADi::Matrix<double> >::as(PyObject * p,CasADi::Matrix<double> &m) {
     int* colindd=(int*) array_data(colind);
     std::vector<int> colindv(colindd,colindd+(ncols+1));
     
-    m = CasADi::Matrix<double>(00,00,00,nrows,ncols,colindv,rowv, v);
+    m = CasADi::Matrix<double>(ncols,nrows,rowv,colindv, v);
     
     Py_DECREF(narray);Py_DECREF(shape);Py_DECREF(row);Py_DECREF(colind);
     
