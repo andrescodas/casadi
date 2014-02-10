@@ -845,7 +845,7 @@ int meta< CasADi::Matrix<CasADi::SX> >::as(PyObject * p,CasADi::Matrix<CasADi::S
 		  PyArray_ITER_NEXT(it);
 		}
     Py_DECREF(it);
-    m = CasADi::Matrix< CasADi::SX >(00,00,00,v,nrows,ncols);
+		m = CasADi::Matrix< CasADi::SX >(v, ncols, nrows);
   } else if (PyObject_HasAttrString(p,"__SXMatrix__")) {
     char name[] = "__SXMatrix__";
     PyObject *cr = PyObject_CallMethod(p, name,0);
