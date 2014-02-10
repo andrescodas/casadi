@@ -518,7 +518,7 @@ class MXtests(casadiTestCase):
     sp=CCSSparsity(4,3,[0,2,2,3],[1,2,1])
     x=msym("X",sp)
     sx0=[0.738,0.39,0.99]
-    x0=DMatrix(3,4,[1,2,1],[0,2,2,3],[0.738,0.39,0.99]).toArray()
+    x0=DMatrix(00,00,00,4,3,[0,2,2,3],[1,2,1],[0.738,0.39,0.99]).toArray()
     self.numpyEvaluationCheck(lambda x: x[0][0,0], lambda x: matrix(x)[0,0],[x],x0,name="x[0,0]",setx0=[sx0])
     self.numpyEvaluationCheck(lambda x: x[0][1,0], lambda x: matrix(x)[1,0],[x],x0,name="x[1,0]",setx0=[sx0])
     self.numpyEvaluationCheck(lambda x: x[0][0,1], lambda x: matrix(x)[0,1],[x],x0,name="x[1,0]",setx0=[sx0])
@@ -622,12 +622,12 @@ class MXtests(casadiTestCase):
       
       x=msym("x",sp)
       if scipy_available:
-        x0=DMatrix(3,4,[1,2,1],[0,2,2,3],[0.738,0.1,0.99]).toCsr_matrix()
+        x0=DMatrix(00,00,00,4,3,[0,2,2,3],[1,2,1],[0.738,0.1,0.99]).toCsr_matrix()
         
         self.numpyEvaluationCheckPool(self.pool,[x],array(x0.todense()),name="MX",setx0=x0,excludeflags={'nozero'})
         self.numpyEvaluationCheckPool(self.matrixpool,[x],array(x0.todense()),name="MX",setx0=x0)
       else:
-        x0=DMatrix(3,4,[1,2,1],[0,2,2,3],[0.738,0.1,0.99]).toArray()
+        x0=DMatrix(00,00,00,4,3,[0,2,2,3],[1,2,1],[0.738,0.1,0.99]).toArray()
         
         self.numpyEvaluationCheckPool(self.pool,[x],x0,name="MX",setx0=x0)
         self.numpyEvaluationCheckPool(self.matrixpool,[x],x0,name="MX",setx0=x0)
@@ -639,13 +639,13 @@ class MXtests(casadiTestCase):
       xx=msym("x",spx)
       yy=msym("y",spy)
       if scipy_available:
-        x0=DMatrix(3,4,[1,2,1],[0,2,2,3],[0.738,0.1,0.99]).toCsr_matrix()
-        y0=DMatrix(3,4,[0,2,3],[0,2,2,3],[1.738,0.7,-6]).toCsr_matrix()
+        x0=DMatrix(00,00,00,4,3,[0,2,2,3],[1,2,1],[0.738,0.1,0.99]).toCsr_matrix()
+        y0=DMatrix(00,00,00,4,3,[0,2,2,3],[0,2,3],[1.738,0.7,-6]).toCsr_matrix()
         
         self.numpyEvaluationCheckPool(self.matrixbinarypool,[xx,yy],[array(x0.todense()),array(y0.todense())],name="MX",setx0=[x0,y0])
       else:
-        x0=DMatrix(3,4,[1,2,1],[0,2,2,3],[0.738,0.1,0.99]).toArray()
-        y0=DMatrix(3,4,[0,2,3],[0,2,2,3],[1.738,0.7,-6]).toArray()
+        x0=DMatrix(00,00,00,4,3,[0,2,2,3],[1,2,1],[0.738,0.1,0.99]).toArray()
+        y0=DMatrix(00,00,00,4,3,[0,2,2,3],[0,2,3],[1.738,0.7,-6]).toArray()
         
         self.numpyEvaluationCheckPool(self.matrixbinarypool,[xx,yy],[x0,y0],name="MX",setx0=[x0,y0])
 

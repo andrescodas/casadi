@@ -107,14 +107,14 @@ namespace CasADi{
     Matrix<T>& operator=(const Matrix<T>& m);
 #endif // SWIG
     
-    /// empty n-by-m matrix constructor
+    /// Empty n-by-m matrix constructor
     Matrix(int n, int m);
     
-    /// dense n-by-m matrix filled with val constructor
+    /// Dense n-by-m matrix filled with val constructor
     Matrix(int n, int m, const T& val);
 
-    /// sparse n-by-m matrix filled with given sparsity
-    Matrix(int n, int m, const std::vector<int>& row, const std::vector<int>& colind, const std::vector<T>& d=std::vector<T>());
+    /// Sparse n-by-m matrix filled with given sparsity
+    Matrix(int dum1, int dum2, int dum3, int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row, const std::vector<T>& d=std::vector<T>());
 
     /// dense matrix constructor with data given as vector of vectors
     explicit Matrix(const std::vector< std::vector<T> >& m);
