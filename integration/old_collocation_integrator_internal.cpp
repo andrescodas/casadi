@@ -135,23 +135,23 @@ namespace CasADi{
     casadi_assert_message(fabs(sumAll(D_num)-1).at(0)<1e-9,"Check on collocation coefficients");
   
     // Initial state
-    MX X0("X0",nx_);
+    MX X0 = msym("X0",1,nx_);
   
     // Parameters
-    MX P("P",np_);
+    MX P = msym("P",1,np_);
   
     // Backward state
-    MX RX0("RX0",nrx_);
+    MX RX0 = msym("RX0",1,nrx_);
   
     // Backward parameters
-    MX RP("RP",nrp_);
+    MX RP = msym("RP",1,nrp_);
   
     // Collocated differential states and algebraic variables
     int nX = (nk*(deg+1)+1)*(nx_+nrx_);
     int nZ = nk*deg*(nz_+nrz_);
   
     // Unknowns
-    MX V("V",nX+nZ);
+    MX V = msym("V",1,nX+nZ);
     int offset = 0;
   
     // Get collocated states, algebraic variables and times

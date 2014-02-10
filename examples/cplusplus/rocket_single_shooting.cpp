@@ -120,7 +120,7 @@ int main(){
   integrator.init();
 
   // control for all segments
-  MX U("U",nu); 
+  MX U = msym("U",1,nu); 
 
   // Integrate over all intervals
   MX X=X0;

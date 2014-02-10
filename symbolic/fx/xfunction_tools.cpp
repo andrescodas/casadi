@@ -69,7 +69,7 @@ MXFunction flatten (const FX &a_) {
   for (int i=0;i<symbolicInputMX.size();++i) {
     std::stringstream s;
     s << "X_flat_" << i;
-    symbolicInputMX_vec[i] = MX(s.str(),flatten(symbolicInputMX[i].sparsity()));
+    symbolicInputMX_vec[i] = msym(s.str(),flatten(symbolicInputMX[i].sparsity()));
     symbolicInputMX_vec_reshape[i] = trans(reshape(symbolicInputMX_vec[i],trans(symbolicInputMX[i].sparsity())));
   }
   

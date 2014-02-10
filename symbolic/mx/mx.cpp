@@ -54,15 +54,15 @@ namespace CasADi{
     assignNode(ConstantMX::create(x));
   }
 
-  MX::MX(const string& name, int n, int m){
-    assignNode(new SymbolicMX(name,n,m));
+  MX::MX(int dum1, int dum2, int dum3, const string& name, int nrow, int ncol){
+    assignNode(new SymbolicMX(name,ncol,nrow));
   }
 
-  MX::MX(const std::string& name,const std::pair<int,int> &nm) {
-    assignNode(new SymbolicMX(name,nm.first,nm.second));
+  MX::MX(int dum1, int dum2, int dum3, const std::string& name,const std::pair<int,int>& rc) {
+    assignNode(new SymbolicMX(name,rc.second,rc.first));
   }
 
-  MX::MX(const string& name, const CCSSparsity & sp){
+  MX::MX(int dum1, int dum2, int dum3, const string& name, const CCSSparsity& sp){
     assignNode(new SymbolicMX(name,sp));
   }
 

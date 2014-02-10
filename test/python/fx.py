@@ -65,8 +65,8 @@ class FXtests(casadiTestCase):
   
   def test_Parallelizer(self):
     self.message("Parallelizer")
-    x = MX("x",2)
-    y = MX("y")
+    x = msym("x",1,2)
+    y = msym("y")
 
     f = MXFunction([x,y],[sin(x) + y])
     f.init()
@@ -95,10 +95,10 @@ class FXtests(casadiTestCase):
       
   def test_MXFunctionSeed(self):
     self.message("MXFunctionSeed")
-    x1 = MX("x",2)
-    y1 = MX("y")
-    x2 = MX("x",2)
-    y2 = MX("y")
+    x1 = msym("x",1,2)
+    y1 = msym("y")
+    x2 = msym("x",1,2)
+    y2 = msym("y")
     p= MXFunction([x1,y1,x2,y2],[sin(x1) + y1,sin(x2) + y2])
     p.init()
     
@@ -119,8 +119,8 @@ class FXtests(casadiTestCase):
         
   def test_Parallelizer2(self):
     self.message("Parallelizer")
-    x = MX("x",2)
-    y = MX("y")
+    x = msym("x",1,2)
+    y = msym("y")
 
     f = MXFunction([x,y],[sin(x) + y])
     f.init()
@@ -131,10 +131,10 @@ class FXtests(casadiTestCase):
       pp.setOption("parallelization",mode)
       pp.init()
       
-      x1 = MX("x",2)
-      y1 = MX("y")
-      x2 = MX("x",2)
-      y2 = MX("y")
+      x1 = msym("x",1,2)
+      y1 = msym("y")
+      x2 = msym("x",1,2)
+      y2 = msym("y")
       p = MXFunction([x1,y1,x2,y2], pp.call([x1,y1,x2,y2]) )
       p.init()
       
@@ -155,17 +155,17 @@ class FXtests(casadiTestCase):
           
   def test_ParallelizerMXCall(self):
     self.message("MX parallel call")
-    x = MX("x",2)
-    y = MX("y")
+    x = msym("x",1,2)
+    y = msym("y")
 
     f = MXFunction([x,y],[sin(x) + y])
     f.init()
 
     #! Evaluate this function ten times in parallel
-    x1 = MX("x",2)
-    y1 = MX("y")
-    x2 = MX("x",2)
-    y2 = MX("y")
+    x1 = msym("x",1,2)
+    y1 = msym("y")
+    x2 = msym("x",1,2)
+    y2 = msym("y")
     [[F1],[F2]] = f.call([[x1,y1],[x2,y2]])
     p = MXFunction([x1,y1,x2,y2],[F1,F2])
     p.init()
@@ -203,7 +203,7 @@ class FXtests(casadiTestCase):
     f = SXFunction([x],[x**2,x**3])
     f.init()
 
-    X = [MX("X")]
+    X = [msym("X")]
 
     z=f.call(X)
 

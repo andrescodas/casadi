@@ -397,7 +397,7 @@ namespace CasADi{
     }
   
     // Create the parent
-    MX P("P",index[deps.size()],1);
+    MX P = msym("P",1,index[deps.size()]);
   
     // Make the arguments dependent on the parent
     for (int k=0;k<deps.size();k++) {
@@ -415,7 +415,7 @@ namespace CasADi{
     }
   
     // Create the parent
-    MX P("P",index[deps.size()],1);
+    MX P = msym("P",1,index[deps.size()]);
   
     std::vector<MX> ret(deps.size());
   
@@ -512,11 +512,11 @@ namespace CasADi{
   }
 
   MX msym(const std::string& name, int nrow, int ncol){
-    return MX(name,ncol,nrow);
+    return MX(00,00,00,name,nrow,ncol);
   }
 
   MX msym(const std::string& name, const std::pair<int,int> & rc) {
-    return MX(name,rc.second,rc.first);
+    return MX(00,00,00,name,rc.first,rc.second);
   }
 
   MX msym(const Matrix<double>& x){
@@ -524,7 +524,7 @@ namespace CasADi{
   }
 
   MX msym(const std::string& name, const CCSSparsity& sp) {
-    return MX(name,sp);
+    return MX(00,00,00,name,sp);
   }
 
   bool isEqual(const MX& ex1,const MX &ex2){
@@ -889,7 +889,7 @@ namespace CasADi{
               // Create a new variable
               v_name.str(string());
               v_name << v_prefix << v.size() << v_suffix;
-              v.push_back(MX(v_name.str()));
+              v.push_back(msym(v_name.str()));
             
               // Use in calculations
               work[ind] = v.back();

@@ -79,7 +79,7 @@ void DirectMultipleShootingInternal::init(){
   // ------
   // nx x 1  (states at time i=nk)
   
-  MX V("V",NV);
+  MX V = msym("V",1,NV);
 
   // Global parameters
   MX P = V(0,Slice(0,np_));

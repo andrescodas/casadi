@@ -97,8 +97,8 @@ class OCPtests(casadiTestCase):
 
     integrator.init()
 
-    var = MX("var",2,1)
-    par = MX("par",1,1)
+    var = msym("var",1,2)
+    par = msym("par",1,1)
     parMX= par
     
     q0   = horzcat([var[0],par])
@@ -156,8 +156,8 @@ class OCPtests(casadiTestCase):
 
     integrator.init()
 
-    var = MX("var",2,1)
-    par = MX("par",1,1)
+    var = msym("var",1,2)
+    par = msym("par",1,1)
     
     q0   = horzcat([var[0],par])
     parl  = var[1]

@@ -311,7 +311,7 @@ class typemaptests(casadiTestCase):
        
     # numeric & MX
     for s in nums:
-      for z in [MX("x",2,2)]:
+      for z in [msym("x",2,2)]:
         print "z = %s, s = %s" % (str(z),str(s))
         print "  z = %s, s = %s" % (type(z),type(s))
         tests(z,s)
@@ -324,14 +324,14 @@ class typemaptests(casadiTestCase):
         tests(z,s)
          
     ## MX & MX
-    for s in [MX("x"),MX("x",2,2)]:
-      for z in [MX("x"),MX("x",2,2)]:
+    for s in [msym("x"),msym("x",2,2)]:
+      for z in [msym("x"),msym("x",2,2)]:
         print "z = %s, s = %s" % (str(z),str(s))
         print "  z = %s, s = %s" % (type(z),type(s))
         tests(z,s)
         
     for (s,x,y) in [
-                  (matrix([[1,2],[3,4]]),ssym("x",2,2),MX("x",2,2))    
+                  (matrix([[1,2],[3,4]]),ssym("x",2,2),msym("x",2,2))    
                   ]:
       for z,ztype in zip([x,y],[[type(SXMatrix()),type(SX())],[type(MX())]]):
         print "z = %s, s = %s" % (str(z),str(s))
@@ -389,7 +389,7 @@ class typemaptests(casadiTestCase):
        
     # numeric & MX
     for s in nums:
-      for z in [MX("x",2,2)]:
+      for z in [msym("x",2,2)]:
         print "z = %s, s = %s" % (str(z),str(s))
         print "  z = %s, s = %s" % (type(z),type(s))
         tests(z,s)
@@ -402,8 +402,8 @@ class typemaptests(casadiTestCase):
         tests(z,s)
          
     # MX & MX
-    for s in [MX("x"),MX("x",2,2)]:
-      for z in [MX("x"),MX("x",2,2)]:
+    for s in [msym("x"),msym("x",2,2)]:
+      for z in [msym("x"),msym("x",2,2)]:
         print "z = %s, s = %s" % (str(z),str(s))
         print "  z = %s, s = %s" % (type(z),type(s))
         tests(z,s)
@@ -616,7 +616,7 @@ class typemaptests(casadiTestCase):
   def test_DMatrixMX(self):
     self.message("Casting DMatrix to MX")
     w = DMatrix([[1,2,3],[4,5,6]])
-    x = MX("x")
+    x = msym("x")
     
     f = MXFunction([x],[w])
     
@@ -697,7 +697,7 @@ class typemaptests(casadiTestCase):
     x * numpy.array(1.2)
 
     ssym("x") * numpy.array(1.0) 
-    MX("x") * numpy.array(1.0)
+    msym("x") * numpy.array(1.0)
     
   def test_array_cat(self):
     vertcat((ssym("x",3,4),ones((4,3))))
@@ -811,7 +811,7 @@ class typemaptests(casadiTestCase):
     
     class Foo:
       def __SXMatrix__(self):
-        return MX("x")
+        return msym("x")
         
     self.assertRaises(TypeError,lambda : SXFunction([x],[Foo()]))
     

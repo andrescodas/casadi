@@ -57,13 +57,13 @@ namespace CasADi{
     MX();
 
     /** \brief  Construct a symbolic matrix (matrix variable) */
-    explicit MX(const std::string& name, int n=1, int m=1);
+    explicit MX(int dum1, int dum2, int dum3, const std::string& name, int nrow=1, int ncol=1);
 
     /** \brief  Construct a symbolic matrix (matrix variable) */
-    explicit MX(const std::string& name, const std::pair<int,int> &nm);
+    explicit MX(int dum1, int dum2, int dum3, const std::string& name, const std::pair<int,int> &rc);
 
     /** \brief  Construct a symbolic matrix (matrix variable) */
-    explicit MX(const std::string& name, const CCSSparsity & sp);
+    explicit MX(int dum1, int dum2, int dum3, const std::string& name, const CCSSparsity & sp);
 
     /** \brief  Construct MX with a given sparsity */
     explicit MX(const CCSSparsity& sp, const MX& val=0);

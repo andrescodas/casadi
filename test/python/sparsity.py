@@ -267,7 +267,7 @@ class Sparsitytests(casadiTestCase):
     self.message("flatten MXFunction")
     q = DMatrix([[1,2,3,4,9],[5,6,7,8,8],[9,10,11,12,6],[1,2,3,4,5]])
 
-    X = MX("X",4,5)
+    X = msym("X",5,4)
 
     F = MXFunction([X],[X**2])
     F.init()

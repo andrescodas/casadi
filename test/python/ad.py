@@ -65,16 +65,16 @@ class ADtests(casadiTestCase):
 
     self.mxinputs = {
        "row" : {
-            "dense": [MX("xyzw",4,1)],
-            "sparse": [MX("xyzw",sp)]
+            "dense": [msym("xyzw",1,4)],
+            "sparse": [msym("xyzw",sp)]
         },
         "col" : {
-            "dense": [MX("xyzw",1,4)],
-            "sparse": [MX("xyzw",spT)]
+            "dense": [msym("xyzw",4,1)],
+            "sparse": [msym("xyzw",spT)]
         },
         "matrix": {
-            "dense": [MX("xyzw",2,2)],
-            "sparse": [MX("xyzw",c.reshape(inp,3,2).sparsity())]
+            "dense": [msym("xyzw",2,2)],
+            "sparse": [msym("xyzw",c.reshape(inp,3,2).sparsity())]
         }
     }
     
@@ -403,7 +403,7 @@ class ADtests(casadiTestCase):
     f.init()
     J=f.jacobian(0,0)
     J.init()
-    m=MX("m",3,1)
+    m=msym("m",1,3)
     JT,_ = J.call([m])
     JT = MXFunction([m],[JT.T])
     JT.init()

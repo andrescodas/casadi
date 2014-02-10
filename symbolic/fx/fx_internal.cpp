@@ -318,7 +318,7 @@ namespace CasADi{
     for(int i=0; i<ret.size(); ++i){
       stringstream name;
       name << "x_" << i;
-      ret[i] = MX(name.str(),input(i).sparsity());
+      ret[i] = msym(name.str(),input(i).sparsity());
     }
     return ret;
   }
