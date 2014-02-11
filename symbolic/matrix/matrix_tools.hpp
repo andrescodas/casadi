@@ -43,11 +43,11 @@ namespace CasADi{
    * inspect the trace of it. sp_z diagonal will be more efficient then. 
    */
   template<class T>
-  Matrix<T> mulQQQ(const Matrix<T> &x, const Matrix<T> &y, const CCSSparsity& sp_z=CCSSparsity());
+  Matrix<T> mul(const Matrix<T> &x, const Matrix<T> &y, const CCSSparsity& sp_z=CCSSparsity());
 
   /// Matrix product of n matrices
   template<class T>
-  Matrix<T> mulQQQ(const std::vector< Matrix<T> > &args);
+  Matrix<T> mul(const std::vector< Matrix<T> > &args);
 
   /** \brief  check if the matrix is constant (note that false negative answers are possible)*/
   template<class T>
@@ -281,7 +281,7 @@ namespace CasADi{
       with x and y vectors
   */
   template<class T>
-  Matrix<T> outer_prodQQQ(const Matrix<T> &x, const Matrix<T> &y);
+  Matrix<T> outer_prod(const Matrix<T> &x, const Matrix<T> &y);
 
   /** \brief  QR factorization using the modified Gram-Schmidt algorithm 
    * More stable than the classical Gram-Schmidt, but may break down if the rows of A are nearly linearly dependent
@@ -520,17 +520,17 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> mulQQQ(const Matrix<T> &x, const Matrix<T> &y, const CCSSparsity &sp_z){
-    return x.mulQQQ(y,sp_z);
+  Matrix<T> mul(const Matrix<T> &x, const Matrix<T> &y, const CCSSparsity &sp_z){
+    return x.mul(y,sp_z);
   }
 
   template<class T>
-  Matrix<T> mulQQQ(const std::vector< Matrix<T> > &args){
+  Matrix<T> mul(const std::vector< Matrix<T> > &args){
     casadi_assert_message(args.size()>=1,"mul(std::vector< Matrix<T> > &args): supplied list must not be empty.");
     if (args.size()==1) return args[0];
-    Matrix<T> ret = args[0].mulQQQ(args[1]);
+    Matrix<T> ret = args[0].mul(args[1]);
     for (int i=2;i<args.size();++i) {
-      ret = ret.mulQQQ(args[i]);
+      ret = ret.mul(args[i]);
     }
     return ret;
   }
@@ -947,9 +947,9 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> outer_prodQQQ(const Matrix<T> &x, const Matrix<T> &y){
+  Matrix<T> outer_prod(const Matrix<T> &x, const Matrix<T> &y){
     casadi_assert_message(x.vector() && y.vector(), "outer_prod: arguments must be vectors");
-    return mulQQQ(x,trans(y));  
+    return mul(x,trans(y));  
   }
 
   template<class T>
@@ -966,12 +966,12 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> sumCols(const Matrix<T> &x) {
-    return mulQQQ(x,Matrix<T>::ones(x.size2(),1));
+    return mul(x,Matrix<T>::ones(x.size2(),1));
   }
 
   template<class T>
   Matrix<T> sumRows(const Matrix<T> &x) {
-    return mulQQQ(Matrix<T>::ones(1,x.size1()),x);
+    return mul(Matrix<T>::ones(1,x.size1()),x);
   }
 
   template<class T>
@@ -1052,7 +1052,7 @@ namespace CasADi{
         // Get the j-th row of Q
         Matrix<T> qj = QT(ALL,j);
 
-        ri(j,0) = mulQQQ(trans(qi),qj); // Modified Gram-Schmidt
+        ri(j,0) = mul(trans(qi),qj); // Modified Gram-Schmidt
         // ri[j] = inner_prod(qj,ai); // Classical Gram-Schmidt
      
         // Remove projection in direction j
@@ -1102,13 +1102,13 @@ namespace CasADi{
       u(range(1,m-i),0)*= 1/(x0-b);
       beta = 1-x0/b;
       
-      X(range(i,m),range(i,n))-= beta*mulQQQ(u,mulQQQ(trans(u),X(range(i,m),range(i,n))));
+      X(range(i,m),range(i,n))-= beta*mul(u,mul(trans(u),X(range(i,m),range(i,n))));
       us.push_back(u);
       betas.push_back(beta);
     }
     
     for (int i=n-1;i>=0;--i) {
-      seed(range(m-n),range(i,m)) -= betas[i]*mulQQQ(mulQQQ(seed(range(m-n),range(i,m)),us[i]),trans(us[i]));
+      seed(range(m-n),range(i,m)) -= betas[i]*mul(mul(seed(range(m-n),range(i,m)),us[i]),trans(us[i]));
     }
     
     return seed;
@@ -1205,7 +1205,7 @@ namespace CasADi{
       } else if(A.size2()<=3){
       
         // Form inverse by minor expansion and multiply if very small (up to 3-by-3)
-        xperm = mulQQQ(bperm,inv(Aperm));
+        xperm = mul(bperm,inv(Aperm));
 
       } else {
       
@@ -1214,7 +1214,7 @@ namespace CasADi{
         qr(Aperm,Q,R);
 
         // Solve the factorized system (note that solve will now be fast since it is triangular)
-        xperm = solve(R,mulQQQ(bperm,trans(Q)));
+        xperm = solve(R,mul(bperm,trans(Q)));
       }
     
       // Permute back the solution
@@ -1232,9 +1232,9 @@ namespace CasADi{
   template<class T>
   Matrix<T> pinv(const Matrix<T>& A) {
     if (A.size1()>=A.size2()) {
-      return trans(solve(mulQQQ(trans(A),A),A));
+      return trans(solve(mul(trans(A),A),A));
     } else {
-      return solve(mulQQQ(A,trans(A)),trans(A));
+      return solve(mul(A,trans(A)),trans(A));
     }
   }
   
@@ -1592,7 +1592,7 @@ namespace CasADi{
 // Define template instanciations
 #define MATRIX_TOOLS_TEMPLATES_COMMON(T)        \
   MTT_INST(T,trans)                             \
-  MTT_INST(T,mulQQQ)                               \
+  MTT_INST(T,mul)                               \
   MTT_INST(T,isConstant)                        \
   MTT_INST(T,isDense)                           \
   MTT_INST(T,isEmpty)                           \
@@ -1618,7 +1618,7 @@ namespace CasADi{
   MTT_INST(T,horzcat)                           \
   MTT_INST(T,horzsplit)                         \
   MTT_INST(T,inner_prod)                        \
-  MTT_INST(T,outer_prodQQQ)                        \
+  MTT_INST(T,outer_prod)                        \
   MTT_INST(T,norm_1)                            \
   MTT_INST(T,norm_2)                            \
   MTT_INST(T,norm_inf)                          \

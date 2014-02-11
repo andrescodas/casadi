@@ -350,7 +350,7 @@ namespace CasADi{
   }
   
   
-  MX MXNode::getMultiplicationQQQ(const MX& y,const CCSSparsity& sp_z) const{
+  MX MXNode::getMultiplication(const MX& y,const CCSSparsity& sp_z) const{
     // Get reference to transposed first argument
     MX trans_x = trans(shared_from_this<MX>());
 

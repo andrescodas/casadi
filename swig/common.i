@@ -350,8 +350,8 @@ memberbinops_custom(gt,>,argtype,argCast,selfCast,returntype) \
 memberbinops_custom(lt,<,argtype,argCast,selfCast,returntype) \
 memberbinops_custom(eq,==,argtype,argCast,selfCast,returntype) \
 memberbinops_custom(ne,!=,argtype,argCast,selfCast,returntype) \
-returntype mulQQQ (argtype) const{ return mulQQQ(selfCast(*$self) , argCast(b));} \
-returntype rmulQQQ (argtype) const{ return mulQQQ(argCast(b) , selfCast(*$self));} \
+returntype mul (argtype) const{ return mul(selfCast(*$self) , argCast(b));} \
+returntype rmul (argtype) const{ return mul(argCast(b) , selfCast(*$self));} \
 memberbinops(div,argtype,argCast,selfCast,returntype) \
 memberbinops(truediv,argtype,argCast,selfCast,returntype) \
 memberbinops(mldivide,argtype,argCast,selfCast,returntype) \

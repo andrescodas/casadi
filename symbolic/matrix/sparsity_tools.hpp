@@ -151,7 +151,7 @@ namespace CasADi{
   
   /** \brief Get the sparsity resulting from a matrix multiplication
    */
-  CCSSparsity mulQQQ(const  CCSSparsity& a, const  CCSSparsity &b);
+  CCSSparsity mul(const  CCSSparsity& a, const  CCSSparsity &b);
   
   /** \brief Concatenate a list of sparsities vertically
   * Alternative terminology: vertical stack, vstack, vertical append, [a;b]

@@ -163,7 +163,7 @@ namespace CasADi{
      * Attempts to identify quick returns on matrix-level and 
      * delegates to MatType::mul_full if no such quick returns are found.
      */
-    MatType mul_smartQQQ(const MatType& y, const CCSSparsity& sp_z) const;
+    MatType mul_smart(const MatType& y, const CCSSparsity& sp_z) const;
     
   };
 
@@ -251,7 +251,7 @@ namespace CasADi{
   }
 
   template<typename MatType>
-  MatType GenericMatrix<MatType>::mul_smartQQQ(const MatType& y, const CCSSparsity &sp_z) const {
+  MatType GenericMatrix<MatType>::mul_smart(const MatType& y, const CCSSparsity &sp_z) const {
     const MatType& x = *static_cast<const MatType*>(this);
   
     if (!(x.scalar() || y.scalar())) {
@@ -279,7 +279,7 @@ namespace CasADi{
     } else if(x.scalar() || y.scalar()){
       return x*y;
     } else {
-      return x.mul_fullQQQ(y,sp_z);
+      return x.mul_full(y,sp_z);
     }
   }
 

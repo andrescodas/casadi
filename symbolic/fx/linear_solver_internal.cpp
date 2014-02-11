@@ -138,9 +138,9 @@ namespace CasADi{
       // Get right hand side
       MX rhs_d;
       if(tr){
-        rhs_d = B_hat - mulQQQ(trans(A_hat),X);
+        rhs_d = B_hat - mul(trans(A_hat),X);
       } else {
-        rhs_d = B_hat - mulQQQ(A_hat,X);
+        rhs_d = B_hat - mul(A_hat,X);
       }
       
       // Simplifiy if zero
@@ -195,9 +195,9 @@ namespace CasADi{
 
         // Propagate to A
         if(!tr){
-          *adjSens[d][1] -= mulQQQ(rhs[i],trans(X),A.sparsity());
+          *adjSens[d][1] -= mul(rhs[i],trans(X),A.sparsity());
         } else {
-          *adjSens[d][1] -= mulQQQ(X,trans(rhs[i]),A.sparsity());
+          *adjSens[d][1] -= mul(X,trans(rhs[i]),A.sparsity());
         }
 
         // Propagate to B

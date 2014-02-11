@@ -1266,12 +1266,12 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::mulQQQ(const Matrix<T> &y, const CCSSparsity& sp_z) const {
-    return this->mul_smartQQQ(y, sp_z);
+  Matrix<T> Matrix<T>::mul(const Matrix<T> &y, const CCSSparsity& sp_z) const {
+    return this->mul_smart(y, sp_z);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::mul_fullQQQ(const Matrix<T> &y, const CCSSparsity& sp_z) const{
+  Matrix<T> Matrix<T>::mul_full(const Matrix<T> &y, const CCSSparsity& sp_z) const{
     // First factor
     const Matrix<T>& x = *this;
   

@@ -630,21 +630,21 @@ namespace CasADi{
     *this = val->getGetNonzeros(sp,vector<int>(sp.size(),0));
   }
 
-  MX MX::mul_fullQQQ(const MX& y, const CCSSparsity &z) const{
+  MX MX::mul_full(const MX& y, const CCSSparsity &z) const{
     const MX& x = *this;
-    return x->getMultiplicationQQQ(y,z);
+    return x->getMultiplication(y,z);
   }
   
-  MX MX::mulQQQ(const MX& y, const CCSSparsity &z) const {
-    return mul_smartQQQ(y, z);
+  MX MX::mul(const MX& y, const CCSSparsity &z) const {
+    return mul_smart(y, z);
   }
 
   MX MX::inner_prod(const MX& y) const{
     return (*this)->getInnerProd(y);
   }
 
-  MX MX::outer_prodQQQ(const MX& y) const{
-    return mulQQQ(trans(y));
+  MX MX::outer_prod(const MX& y) const{
+    return mul(trans(y));
   }
 
   MX MX::__pow__(const MX& n) const{

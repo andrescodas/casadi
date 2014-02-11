@@ -50,9 +50,9 @@ namespace CasADi{
 
   Matrix<double> pinv(const Matrix<double>& A, linearSolverCreator lsolver, const Dictionary& dict) {
     if (A.size1()>=A.size2()) {
-      return trans(solve(mulQQQ(trans(A),A),A,lsolver,dict));
+      return trans(solve(mul(trans(A),A),A,lsolver,dict));
     } else {
-      return solve(mulQQQ(A,trans(A)),trans(A),lsolver,dict);
+      return solve(mul(A,trans(A)),trans(A),lsolver,dict);
     }
   }
     
