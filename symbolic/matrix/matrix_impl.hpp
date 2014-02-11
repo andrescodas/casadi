@@ -436,8 +436,8 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T>::Matrix(const std::vector<T>& x, int n, int m) : sparsity_(CCSSparsity(m,n,true)), data_(x){
-    casadi_assert_message(x.size() == n*m, "Dimension mismatch." << std::endl << "You supplied a vector of length " << x.size() << ", but " << n << " x " << m << " = " << n*m);
+  Matrix<T>::Matrix(int dum1, int dum2, int dum3, const std::vector<T>& x, int nrow, int ncol) : sparsity_(CCSSparsity(nrow,ncol,true)), data_(x){
+    casadi_assert_message(x.size() == nrow*ncol, "Dimension mismatch." << std::endl << "You supplied a vector of length " << x.size() << ", but " << nrow << " x " << ncol << " = " << nrow*ncol);
   }
 
   template<class T>
