@@ -66,7 +66,7 @@ namespace CasADi {
   
   /// Sparse matrix-matrix multiplication, the first argument is transposed: z <- z + x'*y
   template<typename real_t>
-  void casadi_mm_tn_sparseQQQ(const real_t* trans_x, const int* sp_trans_x, const real_t* y, const int* sp_y, real_t* z, const int* sp_z);
+  void casadi_mm_tn_sparse(const real_t* trans_x, const int* sp_trans_x, const real_t* y, const int* sp_y, real_t* z, const int* sp_z);
   
   /// NRM2: ||x||_2 -> return
   template<typename real_t>
