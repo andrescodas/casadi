@@ -27,15 +27,12 @@
 
 /** \defgroup LinearSolver_doc 
  * 
- * Solves the linear system X*A = B or X*A^T = B for X
+ * Solves the linear system A*X = B or A^T*X = B for X
  * with A square and non-singular
  *
  *  If A is structurally singular, an error will be thrown during init.
  *  If A is numerically singular, the prepare step will fail.
  *
- *
- * Note: the transposed form is equivalent to A X^T = B^T
- *       which is the same as A x = b  with x = X^T, b = B^T
  */
 
 namespace CasADi{
@@ -44,7 +41,7 @@ namespace CasADi{
 enum LinsolInput{
   /// The square matrix A: sparse, (n x n). [A]
   LINSOL_A,
-  /// The right-hand-side matrix b: dense,  (m x n) [B]
+  /// The right-hand-side matrix b: dense,  (n x m) [B]
   LINSOL_B,
   LINSOL_NUM_IN};
 
