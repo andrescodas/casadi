@@ -28,10 +28,6 @@
 #include "matrix_tools.hpp"
 #include "sparsity_tools.hpp"
 
-#ifdef WITH_EIGEN3
-#include <Eigen/Dense>
-#endif
-
 namespace CasADi{
   // Implementations
 
@@ -1440,17 +1436,6 @@ namespace CasADi{
     const std::vector<int> &z_colind = z.colind();
     const std::vector<int> &z_row = z.row();
     std::vector<T> &z_data = z.data();
-
-#ifdef WITH_EIGEN3
-    // NOTE: this doesn't belong here. It should be put at some higher level. Also, is this really fast than the implementation below?
-    if (y.dense() && x_trans.dense() && z.dense()) {
-      Eigen::Map< const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic , Eigen::ColMajor > > X(&y_data[0],y.size2(),y.size1());
-      Eigen::Map< const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic > > Y(&x_trans_data[0],x_trans.size1(),x_trans.size2());
-      Eigen::Map< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic , Eigen::ColMajor> > Z(&z.data()[0],z.size2(),z.size1());
-      Z = X*Y;
-      return;
-    }
-#endif
   
     // loop over the cols of the resulting matrix
     for(int i=0; i<z_colind.size()-1; ++i){
