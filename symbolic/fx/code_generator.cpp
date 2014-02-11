@@ -257,8 +257,8 @@ namespace CasADi{
     case AUX_FILL: 
       auxiliaries_ << codegen_str_fill << endl; 
       break;
-    case AUX_MM_NT_SPARSE: 
-      auxiliaries_ << codegen_str_mm_nt_sparse << endl; 
+    case AUX_MM_TN_SPARSE: 
+      auxiliaries_ << codegen_str_mm_tn_sparse << endl; 
       break;
     case AUX_SQ: 
       auxSq(); 

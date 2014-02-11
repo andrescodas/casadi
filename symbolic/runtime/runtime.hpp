@@ -64,9 +64,9 @@ namespace CasADi {
   template<typename real_t>
   void casadi_fill(int n, real_t alpha, real_t* x, int inc_x);
   
-  /// Sparse matrix-matrix multiplication, the second argument is transposed: z <- z + x*y'
+  /// Sparse matrix-matrix multiplication, the first argument is transposed: z <- z + x'*y
   template<typename real_t>
-  void casadi_mm_nt_sparse(const real_t* x, const int* sp_x, const real_t* trans_y, const int* sp_trans_y, real_t* z, const int* sp_z);
+  void casadi_mm_tn_sparseQQQ(const real_t* trans_x, const int* sp_trans_x, const real_t* y, const int* sp_y, real_t* z, const int* sp_z);
   
   /// NRM2: ||x||_2 -> return
   template<typename real_t>
@@ -223,19 +223,19 @@ namespace CasADi {
   }
   
   template<typename real_t>
-  void casadi_mm_nt_sparse(const real_t* x, const int* sp_x, const real_t* trans_y, const int* sp_trans_y, real_t* z, const int* sp_z){
+  void casadi_mm_tn_sparse(const real_t* trans_x, const int* sp_trans_x, const real_t* y, const int* sp_y, real_t* z, const int* sp_z){
 
-    int ncol_x = sp_x[0];
-    int nrow_x = sp_x[1];
-    const int* colind_x = sp_x+2;
-    const int* row_x = sp_x + 2 + ncol_x+1;
-    int nnz_x = colind_x[ncol_x];
+    int ncol_y = sp_y[0];
+    int nrow_y = sp_y[1];
+    const int* colind_y = sp_y+2;
+    const int* row_y = sp_y + 2 + ncol_y+1;
+    int nnz_y = colind_y[ncol_y];
 
-    int nrow_y = sp_trans_y[0];
-    int ncol_y = sp_trans_y[1];
-    const int* rowind_y = sp_trans_y+2;
-    const int* col_y = sp_trans_y + 2 + nrow_y+1;
-    int nnz_y = rowind_y[nrow_y];
+    int nrow_x = sp_trans_x[0];
+    int ncol_x = sp_trans_x[1];
+    const int* rowind_x = sp_trans_x+2;
+    const int* col_x = sp_trans_x + 2 + nrow_x+1;
+    int nnz_x = rowind_x[nrow_x];
 
     int ncol_z = sp_z[0];
     int nrow_z = sp_z[1];
@@ -248,13 +248,13 @@ namespace CasADi {
       int el;
       for(el=colind_z[i]; el<colind_z[i+1]; ++el){
         int j = row_z[el];
-        int el1 = colind_x[i];
-        int el2 = rowind_y[j];
-        while(el1 < colind_x[i+1] && el2 < rowind_y[j+1]){ 
-          int j1 = row_x[el1];
-          int i2 = col_y[el2];
+        int el1 = colind_y[i];
+        int el2 = rowind_x[j];
+        while(el1 < colind_y[i+1] && el2 < rowind_x[j+1]){ 
+          int j1 = row_y[el1];
+          int i2 = col_x[el2];
           if(j1==i2){
-            z[el] += x[el1++] * trans_y[el2++];
+            z[el] += y[el1++] * trans_x[el2++];
           } else if(j1<i2) {
             el1++;
           } else {

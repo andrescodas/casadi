@@ -130,10 +130,10 @@ namespace CasADi{
     }
 
     // Perform sparse matrix multiplication
-    gen.addAuxiliary(CodeGenerator::AUX_MM_NT_SPARSE);
-    stream << "  casadi_mm_nt_sparse(";
-    stream << arg.at(2) << ",s" << gen.getSparsity(dep(2).sparsity()) << ",";
+    gen.addAuxiliary(CodeGenerator::AUX_MM_TN_SPARSE);
+    stream << "  casadi_mm_tn_sparse(";
     stream << arg.at(1) << ",s" << gen.getSparsity(dep(1).sparsity()) << ",";
+    stream << arg.at(2) << ",s" << gen.getSparsity(dep(2).sparsity()) << ",";
     stream << res.front() << ",s" << gen.getSparsity(sparsity()) << ");" << endl;
   }
 
