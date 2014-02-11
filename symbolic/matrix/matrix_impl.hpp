@@ -174,38 +174,38 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::setSub(const Matrix<T>& m, const std::vector<int>& jj, const std::vector<int>& ii){
-    casadi_assert_message(m.numel()==1 || (ii.size() == m.size2() && jj.size() == m.size1()),"Dimension mismatch." << std::endl << "lhs is " << ii.size() << " x " << jj.size() << ", while rhs is " << m.dimString());
+  void Matrix<T>::setSub(const Matrix<T>& m, const std::vector<int>& rr, const std::vector<int>& cc){
+    casadi_assert_message(m.numel()==1 || (cc.size() == m.size2() && rr.size() == m.size1()),"Dimension mismatch." << std::endl << "lhs is " << cc.size() << " x " << rr.size() << ", while rhs is " << m.dimString());
 
-    if (!inBounds(jj,size1())) {
-      casadi_error("setSub[.,jj,ii] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
+    if (!inBounds(rr,size1())) {
+      casadi_error("setSub[.,rr,cc] out of bounds. Your rr contains " << *std::min_element(rr.begin(),rr.end()) << " up to " << *std::max_element(rr.begin(),rr.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
-    if (!inBounds(ii,size2())) {
-      casadi_error("setSub [.,jj,ii] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
+    if (!inBounds(cc,size2())) {
+      casadi_error("setSub [.,rr,cc] out of bounds. Your cc contains " << *std::min_element(cc.begin(),cc.end()) << " up to " << *std::max_element(cc.begin(),cc.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
     // If m is scalar
-    if(m.numel() != ii.size() * jj.size()){
-      setSub(Matrix<T>(ii.size(),jj.size(),m.toScalar()),jj,ii);
+    if(m.numel() != cc.size() * rr.size()){
+      setSub(Matrix<T>::repmat(m.toScalar(),rr.size(),cc.size()),rr,cc);
       return;
     }
 
     if(dense() && m.dense()){
       // Dense mode
-      for(int i=0; i<ii.size(); ++i) {
-        for(int j=0; j<jj.size(); ++j) {
-          data()[ii[i]*size1() + jj[j]]=m.data()[i*m.size1()+j];
+      for(int i=0; i<cc.size(); ++i) {
+        for(int j=0; j<rr.size(); ++j) {
+          data()[cc[i]*size1() + rr[j]]=m.data()[i*m.size1()+j];
         }
       }
     } else {
       // Sparse mode
 
       // Remove submatrix to be replaced
-      erase(jj,ii);
+      erase(rr,cc);
 
       // Extend el to the same dimension as this
       Matrix<T> el_ext = m;
-      el_ext.enlarge(size1(),size2(),jj,ii);
+      el_ext.enlarge(size1(),size2(),rr,cc);
 
       // Unite the sparsity patterns
       *this = unite(*this,el_ext);
@@ -310,7 +310,7 @@ namespace CasADi{
   template<class T>
   const Matrix<T> Matrix<T>::getNZ(const std::vector<int>& k) const{
     try{
-      Matrix<T> ret(k.size(),1,0);
+      Matrix<T> ret = zeros(1,k.size());
       for(int el=0; el<k.size(); ++el)
         ret.data()[el] = data().at(k[el]);
   
@@ -325,7 +325,7 @@ namespace CasADi{
   template<class T>
   const Matrix<T> Matrix<T>::getNZ(const Matrix<int>& k) const{
     try{
-      Matrix<T> ret(k.sparsity(),0);
+      Matrix<T> ret = zeros(k.sparsity());
       for(int el=0; el<k.size(); ++el)
         ret.data()[el] = data().at(k.at(el));
   
@@ -452,7 +452,7 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T>::Matrix(int n, int m, const T& val) : sparsity_(CCSSparsity(m,n,true)), data_(std::vector<T>(n*m, val)){
+  Matrix<T>::Matrix(int dum1, int dum2, int dum3, int nrow, int ncol, const T& val) : sparsity_(CCSSparsity(nrow,ncol,true)), data_(std::vector<T>(nrow*ncol, val)){
   }
 
   template<class T>
@@ -1293,9 +1293,9 @@ namespace CasADi{
       CCSSparsity spres = x.sparsity().patternProduct(y_trans.sparsity());
 
       // Create the return object
-      ret = Matrix<T>(spres, 0);
+      ret = Matrix<T>::zeros(spres);
     } else {
-      ret = Matrix<T>(sp_z, 0);
+      ret = Matrix<T>::zeros(sp_z);
     }
 
     // Carry out the matrix product
@@ -1780,7 +1780,7 @@ namespace CasADi{
   Matrix<T> Matrix<T>::repmat(const Matrix<T>& x, int nrow, int ncol){
     if(x.scalar()){
       if(x.dense()){
-        return Matrix<T>(ncol,nrow,x.toScalar());
+        return Matrix<T>(00,00,00,nrow,ncol,x.toScalar());
       } else {
         return sparse(nrow,ncol);
       }

@@ -81,11 +81,11 @@ void OCPSolverInternal::init(){
   
   // Specify the inputs
   setNumInputs(OCP_NUM_IN);
-  input(OCP_LBX) = input(OCP_UBX) = input(OCP_X_INIT) = Matrix<double>(nx_,nk_+1,0);
-  input(OCP_LBU) = input(OCP_UBU) = input(OCP_U_INIT) = Matrix<double>(nu_,nk_,0);
-  input(OCP_LBP) = input(OCP_UBP) = input(OCP_P_INIT) = Matrix<double>(np_,1,0);
-  input(OCP_LBH) = input(OCP_UBH) = Matrix<double>(nh_,nk_+1,0);
-  input(OCP_LBG) = input(OCP_UBG) = Matrix<double>(ng_,1,0);
+  input(OCP_LBX) = input(OCP_UBX) = input(OCP_X_INIT) = DMatrix::zeros(nk_+1,nx_);
+  input(OCP_LBU) = input(OCP_UBU) = input(OCP_U_INIT) = DMatrix::zeros(nk_,nu_);
+  input(OCP_LBP) = input(OCP_UBP) = input(OCP_P_INIT) = DMatrix::zeros(1,np_);
+  input(OCP_LBH) = input(OCP_UBH) = DMatrix::zeros(nk_+1,nh_);
+  input(OCP_LBG) = input(OCP_UBG) = DMatrix::zeros(1,ng_);
   
   // Specify the outputs
   setNumOutputs(OCP_NUM_OUT);

@@ -241,7 +241,7 @@ namespace CasADi{
         if (isZero() && operation_checker<F0XChecker>(op)) {
           return MX(sparsity(),ret);
         } else {
-          return MX(size2(),size1(),ret);
+          return MX::repmat(ret,size1(),size2());
         }
       }
       double ret2;
@@ -279,10 +279,10 @@ namespace CasADi{
     
     switch(op){
     case OP_ADD:
-      if(v_.value==0) return ScY && !y->isZero() ? MX(size2(),size1(),y) : y;
+      if(v_.value==0) return ScY && !y->isZero() ? MX::repmat(y,size1(),size2()) : y;
       break;
     case OP_SUB:
-      if(v_.value==0) return ScY && !y->isZero() ? MX(size2(),size1(),-y) : -y;
+      if(v_.value==0) return ScY && !y->isZero() ? MX::repmat(-y,size1(),size2()) : -y;
       break;
     case OP_MUL:
       if(v_.value==1) return y;

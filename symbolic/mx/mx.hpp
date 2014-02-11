@@ -84,7 +84,7 @@ namespace CasADi{
     MX(int dum1, int dum2, int dum3, int nrow, int ncol);
     
     /** \brief  Dense matrix filled with value val */
-    MX(int ncol, int nrow, const MX& val);
+    MX(int dum1, int dum2, int dum3, int nrow, int ncol, const MX& val);
     
     /** \brief  Destructor */
     virtual ~MX();

@@ -666,7 +666,7 @@ namespace CasADi{
   }
 
   SX::operator Matrix<SX>() const{
-    return Matrix<SX>(1,1,*this);
+    return Matrix<SX>(00,00,00,1,1,*this);
   }
 
   SX SX::fmin(const SX &b) const{

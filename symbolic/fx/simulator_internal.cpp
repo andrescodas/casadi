@@ -85,7 +85,7 @@ void SimulatorInternal::init(){
   // Allocate outputs
   setNumOutputs(output_fcn_->getNumOutputs());
   for(int i=0; i<getNumOutputs(); ++i) {
-    output(i) = Matrix<double>(grid_.size(),output_fcn_.output(i).numel(),0);
+    output(i) = DMatrix::zeros(output_fcn_.output(i).numel(),grid_.size());
     if (!output_fcn_.output(i).empty()) {
       casadi_assert_message(output_fcn_.output(i).size1()==1,"SimulatorInternal::init: Output function output #" << i << " has shape " << output_fcn_.output(i).dimString() << ", while a row-matrix shape is expected.");
     }
@@ -102,7 +102,7 @@ void SimulatorInternal::init(){
   
   states_.resize(grid_.size());
   for (int k = 0; k < grid_.size(); ++k) {
-    states_[k]=Matrix<double>::zeros(1,integrator_.input(INTEGRATOR_X0).size2());
+    states_[k]=DMatrix::zeros(1,integrator_.input(INTEGRATOR_X0).size2());
   }
     
 }
@@ -154,8 +154,8 @@ void SimulatorInternal::evaluate(){
 
     // Save the output of the function
     for(int i=0; i<getNumOutputs(); ++i){
-      const Matrix<double> &res = output_fcn_.output(i);
-      Matrix<double> &ores = output(i);
+      const DMatrix &res = output_fcn_.output(i);
+      DMatrix &ores = output(i);
       for(int j=0; j<res.numel(); ++j){
         ores(j,k) = res(0,j); // NOTE: inefficient implementation
       }

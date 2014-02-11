@@ -86,7 +86,7 @@ class Matrixtests(casadiTestCase):
     
   def test_horzcat(self):
     self.message("horzcat")
-    A = DMatrix(2,3,1)
+    A = DMatrix.ones(3,2)
     B = DMatrix.sparse(3,4)
     C = horzcat([A,B])
     
@@ -97,7 +97,7 @@ class Matrixtests(casadiTestCase):
     
   def test_vertcat(self):
     self.message("horcat")
-    A = DMatrix(3,2,1)
+    A = DMatrix.ones(2,3)
     B = DMatrix.sparse(4,3)
     C = vertcat([A,B])
     
@@ -551,7 +551,7 @@ class Matrixtests(casadiTestCase):
 
   def test_Imatrix_operations(self):
     self.message("IMatrix operations")
-    a = IMatrix(2,2,1)
+    a = IMatrix.ones(2,2)
     b = vertcat([a,a])
     self.assertTrue(isinstance(b,IMatrix))
     

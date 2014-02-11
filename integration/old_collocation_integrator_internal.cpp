@@ -90,16 +90,16 @@ namespace CasADi{
     vector<vector<MX> > C(deg+1,vector<MX>(deg+1));
   
     // Coefficients of the collocation equation as DMatrix
-    DMatrix C_num = DMatrix(deg+1,deg+1,0);
+    DMatrix C_num = DMatrix::zeros(deg+1,deg+1);
 
     // Coefficients of the continuity equation
     vector<MX> D(deg+1);
   
     // Coefficients of the collocation equation as DMatrix
-    DMatrix D_num = DMatrix(deg+1,1,0);
+    DMatrix D_num = DMatrix::zeros(1,deg+1);
 
     // Coefficients of the quadratures
-    DMatrix Q = DMatrix(deg+1,1,0);
+    DMatrix Q = DMatrix::zeros(1,deg+1);
 
     // For all collocation points
     for(int j=0; j<deg+1; ++j){

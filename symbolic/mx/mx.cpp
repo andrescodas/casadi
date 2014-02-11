@@ -249,25 +249,25 @@ namespace CasADi{
   }
 
 
-  void MX::setSub(const MX& m, const vector<int>& jj, const vector<int>& ii){
+  void MX::setSub(const MX& m, const vector<int>& rr, const vector<int>& cc){
     // Allow m to be a 1x1
     if (m.dense() && m.scalar()) {
-      if (ii.size()>1 || jj.size()>1) {
-        setSub(MX(ii.size(),jj.size(),m),jj,ii);
+      if(rr.size()>1 || cc.size()>1) {
+        setSub(repmat(m,rr.size(),cc.size()),rr,cc);
         return;
       }
     }
   
-    casadi_assert_message(ii.size()==m.size2(),"Dimension mismatch." << "lhs is " << ii.size() << " x " << jj.size() << ", while rhs is " << m.dimString());
-    casadi_assert_message(jj.size()==m.size1(),"Dimension mismatch." << "lhs is " << ii.size() << " x " << jj.size() << ", while rhs is " << m.dimString());
+    casadi_assert_message(rr.size()==m.size1(),"Dimension mismatch." << "lhs is " << rr.size() << " x " << cc.size() << ", while rhs is " << m.dimString());
+    casadi_assert_message(cc.size()==m.size2(),"Dimension mismatch." << "lhs is " << rr.size() << " x " << cc.size() << ", while rhs is " << m.dimString());
 
     if(dense() && m.dense()){
       // Dense mode
       int ld = size1(), ld_el = m.size1(); // leading dimensions
       vector<int> kk1, kk2;
-      for(int i=0; i<ii.size(); ++i) {
-        for(int j=0; j<jj.size(); ++j) {
-          kk1.push_back(ii[i]*ld + jj[j]);
+      for(int i=0; i<cc.size(); ++i) {
+        for(int j=0; j<rr.size(); ++j) {
+          kk1.push_back(cc[i]*ld + rr[j]);
           kk2.push_back(i*ld_el+j);
         }
       }
@@ -276,11 +276,11 @@ namespace CasADi{
       // Sparse mode
 
       // Remove submatrix to be replaced
-      erase(jj,ii);
+      erase(rr,cc);
 
       // Extend m to the same dimension as this
       MX el_ext = m;
-      el_ext.enlarge(size1(),size2(),jj,ii);
+      el_ext.enlarge(size1(),size2(),rr,cc);
 
       // Unite the sparsity patterns
       *this = unite(*this,el_ext);
@@ -505,7 +505,7 @@ namespace CasADi{
 
   MX MX::repmat(const MX& x, int nrow, int ncol){
     if(x.scalar()){
-      return MX(ncol,nrow,x);
+      return MX(00,00,00,nrow,ncol,x);
     } else {
       casadi_assert_message(0,"not implemented");
       return MX();
@@ -621,7 +621,7 @@ namespace CasADi{
     *this = ret;
   }
 
-  MX::MX(int ncol, int nrow, const MX& val){
+  MX::MX(int dum1, int dum2, int dum3, int nrow, int ncol, const MX& val){
     // Make sure that val is scalar
     casadi_assert(val.scalar());
     casadi_assert(val.dense());
@@ -943,7 +943,7 @@ namespace CasADi{
     if(dense()){
       return *this;
     } else {
-      MX ret(size2(),size1(),val);
+      MX ret = repmat(val,size1(),size2());
       ret(sparsity()) = *this;
       return ret;
     }

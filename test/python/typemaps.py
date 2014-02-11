@@ -718,10 +718,10 @@ class typemaptests(casadiTestCase):
   def test_imatrix(self):
     self.message("IMatrix")
     
-    A = IMatrix(2,2,1)
+    A = IMatrix.ones(2,2)
     B = A + 1
     self.assertEqual(type(B),type(A))
-    self.checkarray(array(B),DMatrix(2,2,2),"Imatrix")
+    self.checkarray(array(B),DMatrix.repmat(2,2,2),"Imatrix")
     
   def test_issue314(self):
     self.message("regression test for #314: SXMatrix sparsity constructor")

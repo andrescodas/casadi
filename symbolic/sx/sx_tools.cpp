@@ -905,7 +905,7 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
             
       // Write the equation in matrix form
       SXMatrix Jb = fcnb.jac();
-      SXMatrix rb = -fcnb.eval(SXMatrix(xb_lin.size(),1,0));
+      SXMatrix rb = -fcnb.eval(SXMatrix::zeros(1,xb_lin.size()));
       
       // Simple solve if there are no nonlinear variables
       if(xb_nonlin.empty()){
@@ -1174,8 +1174,8 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
     }
 
     // Gather all variables
-    SXMatrix v_all(n,1,0);
-    SXMatrix vdef_all(n,1,0);
+    SXMatrix v_all = SXMatrix::zeros(1,n);
+    SXMatrix vdef_all = SXMatrix::zeros(1,n);
     vector<SX>::iterator it_v = v_all.begin();
     vector<SX>::iterator it_vdef = vdef_all.begin();
     for(int i=0; i<v.size(); ++i){

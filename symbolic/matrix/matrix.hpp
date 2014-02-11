@@ -111,7 +111,7 @@ namespace CasADi{
     Matrix(int dum1, int dum2, int dum3, int nrow, int ncol);
     
     /// Dense n-by-m matrix filled with val constructor
-    Matrix(int n, int m, const T& val);
+    Matrix(int dum1, int dum2, int dum3, int nrow, int ncol, const T& val);
 
     /// Sparse n-by-m matrix filled with given sparsity
     Matrix(int dum1, int dum2, int dum3, int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row, const std::vector<T>& d=std::vector<T>());

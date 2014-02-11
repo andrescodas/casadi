@@ -95,7 +95,7 @@ class Misctests(casadiTestCase):
     
   def test_copyconstr_norefcount(self):
     self.message("Copy constructor for non-refcounted classes")
-    x = DMatrix(2,3,1)
+    x = DMatrix.ones(3,2)
 
     y = DMatrix(x)
     x[0,0] = 5
@@ -138,7 +138,7 @@ class Misctests(casadiTestCase):
     self.message("Shallow copy for non-refcounted classes")
     import copy
     
-    x = DMatrix(2,3,1)
+    x = DMatrix.ones(3,2)
 
     y = copy.copy(x)
     x[0,0] = 5
@@ -181,7 +181,7 @@ class Misctests(casadiTestCase):
     self.message("Deep copy for non-refcounted classes")
     import copy
     
-    x = DMatrix(2,3,1)
+    x = DMatrix.ones(3,2)
 
     y = copy.deepcopy(x)
     x[0,0] = 5
