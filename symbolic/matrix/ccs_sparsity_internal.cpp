@@ -28,8 +28,6 @@
 #include <cmath>
 #include "matrix.hpp"
 
-//#include "../external_packages/ColPack/ReducedHeader.h"
-
 using namespace std;
 
 namespace CasADi{
