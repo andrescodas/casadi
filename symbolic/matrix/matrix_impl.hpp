@@ -1460,36 +1460,36 @@ namespace CasADi{
 
   template<class T>
   template<bool Fwd>
-  void Matrix<T>::mul_sparsity(Matrix<T> &x, Matrix<T> &y_trans, Matrix<T>& z){
+  void Matrix<T>::mul_sparsityQQQ(Matrix<T> &x_trans, Matrix<T> &y, Matrix<T>& z){
     // Direct access to the arrays
     const std::vector<int> &z_row = z.row();
     const std::vector<int> &z_colind = z.colind();
-    const std::vector<int> &x_row = x.row();
-    const std::vector<int> &y_col = y_trans.row();
-    const std::vector<int> &x_colind = x.colind();
-    const std::vector<int> &y_rowind = y_trans.colind();
+    const std::vector<int> &y_row = y.row();
+    const std::vector<int> &x_col = x_trans.row();
+    const std::vector<int> &y_colind = y.colind();
+    const std::vector<int> &x_rowind = x_trans.colind();
 
     // Convert data array to arrays of integers
-    bvec_t *x_data = get_bvec_t(x.data());
-    bvec_t *y_trans_data = get_bvec_t(y_trans.data());
+    bvec_t *y_data = get_bvec_t(y.data());
+    bvec_t *x_trans_data = get_bvec_t(x_trans.data());
     bvec_t *z_data = get_bvec_t(z.data());
   
     // loop over the cols of the resulting matrix)
     for(int i=0; i<z_colind.size()-1; ++i){
       for(int el=z_colind[i]; el<z_colind[i+1]; ++el){ // loop over the non-zeros of the resulting matrix
         int j = z_row[el];
-        int el1 = x_colind[i];
-        int el2 = y_rowind[j];
-        while(el1 < x_colind[i+1] && el2 < y_rowind[j+1]){ // loop over non-zero elements
-          int j1 = x_row[el1];
-          int i2 = y_col[el2];      
+        int el1 = y_colind[i];
+        int el2 = x_rowind[j];
+        while(el1 < y_colind[i+1] && el2 < x_rowind[j+1]){ // loop over non-zero elements
+          int j1 = y_row[el1];
+          int i2 = x_col[el2];      
           if(j1==i2){
             // | and not & since we are propagating dependencies
             if(Fwd){
-              z_data[el] |= x_data[el1] | y_trans_data[el2];
+              z_data[el] |= y_data[el1] | x_trans_data[el2];
             } else {
-              x_data[el1] |= z_data[el];
-              y_trans_data[el2] |= z_data[el];
+              y_data[el1] |= z_data[el];
+              x_trans_data[el2] |= z_data[el];
             }
             el1++;
             el2++;

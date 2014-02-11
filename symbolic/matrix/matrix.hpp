@@ -486,9 +486,9 @@ namespace CasADi{
     /// vector-matrix product, no memory allocation: z += mul(x,y)
     static void mul_no_alloc_nn(const Matrix<T>& x, const std::vector<T> &y, std::vector<T>& z);
   
-    /// Propagate sparsity using 0-1 logic through a matrix product, no memory allocation: z = mul(x,y)
+    /// Propagate sparsity using 0-1 logic through a matrix product, no memory allocation: z = mul(trans(x),y)
     template<bool Fwd>
-    static void mul_sparsity(Matrix<T> &x, Matrix<T> &y_trans, Matrix<T>& z);
+    static void mul_sparsityQQQ(Matrix<T> &x_trans, Matrix<T> &y, Matrix<T>& z);
   
     /// Calculates inner_prod(x,mul(A,x)) without memory allocation
     static T quad_form(const Matrix<T>& A, const std::vector<T>& x);
