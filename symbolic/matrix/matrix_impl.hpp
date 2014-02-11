@@ -1304,34 +1304,34 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::mul_no_alloc_nnQQQ(const Matrix<T> &y, const Matrix<T> &x, Matrix<T>& z){
+  void Matrix<T>::mul_no_alloc_nnQQQ(const Matrix<T> &x, const Matrix<T> &y, Matrix<T>& z){
     // Assert dimensions
-    casadi_assert_message(x.size2()==z.size2(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(y.size1()==z.size1(),"Dimension error. Got y=" << y.dimString() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(x.size1()==y.size2(),"Dimension error. Got x=" << x.dimString() << " and y=" << y.dimString() << ".");
+    casadi_assert_message(x.size1()==z.size1(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(y.size2()==z.size2(),"Dimension error. Got y=" << y.dimString() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(y.size1()==x.size2(),"Dimension error. Got y=" << y.dimString() << " and x=" << x.dimString() << ".");
   
     // Direct access to the arrays
-    const std::vector<int> &x_colind = x.colind();
-    const std::vector<int> &x_row = x.row();
-    const std::vector<T> &x_data = x.data();
     const std::vector<int> &y_colind = y.colind();
     const std::vector<int> &y_row = y.row();
     const std::vector<T> &y_data = y.data();
+    const std::vector<int> &x_colind = x.colind();
+    const std::vector<int> &x_row = x.row();
+    const std::vector<T> &x_data = x.data();
     const std::vector<int> &z_colind = z.colind();
     const std::vector<int> &z_row = z.row();
     std::vector<T> &z_data = z.data();
 
     // loop over the cols of the first argument
-    for(int i=0; i<x_colind.size()-1; ++i){
-      for(int el=x_colind[i]; el<x_colind[i+1]; ++el){ // loop over the non-zeros of the first argument
-        int j = x_row[el];
+    for(int i=0; i<y_colind.size()-1; ++i){
+      for(int el=y_colind[i]; el<y_colind[i+1]; ++el){ // loop over the non-zeros of the first argument
+        int j = y_row[el];
         int el1 = z_colind[i];
-        int el2 = y_colind[j];
-        while(el1 < z_colind[i+1] && el2 < y_colind[j+1]){ // loop over matching non-zero elements
+        int el2 = x_colind[j];
+        while(el1 < z_colind[i+1] && el2 < x_colind[j+1]){ // loop over matching non-zero elements
           int j1 = z_row[el1];
-          int i2 = y_row[el2];      
+          int i2 = x_row[el2];      
           if(j1==i2){
-            z_data[el1++] += x_data[el]*y_data[el2++];
+            z_data[el1++] += y_data[el]*x_data[el2++];
           } else if(j1<i2) {
             el1++;
           } else {
@@ -1343,76 +1343,76 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::mul_no_alloc_tnQQQ(const Matrix<T> &x, const std::vector<T> &y, std::vector<T>& z){
+  void Matrix<T>::mul_no_alloc_tnQQQ(const Matrix<T> &x_trans, const std::vector<T> &y, std::vector<T>& z){
     // Assert dimensions
-    casadi_assert_message(x.size2()==z.size(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.size() << ".");
-    casadi_assert_message(x.size1()==y.size(),"Dimension error. Got x=" << x.dimString() << " and y=" << y.size() << ".");
+    casadi_assert_message(x_trans.size2()==z.size(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and z=" << z.size() << ".");
+    casadi_assert_message(x_trans.size1()==y.size(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and y=" << y.size() << ".");
+    
+    // Direct access to the arrays
+    const std::vector<int> &x_rowind = x_trans.colind();
+    const std::vector<int> &x_col = x_trans.row();
+    const std::vector<T> &x_trans_data = x_trans.data();
+    
+    // loop over the columns of the matrix
+    for(int i=0; i<x_rowind.size()-1; ++i){
+      for(int el=x_rowind[i]; el<x_rowind[i+1]; ++el){ // loop over the non-zeros of the matrix
+        int j = x_col[el];
+        
+        // Perform operation
+        z[i] += x_trans_data[el] * y[j];
+      }
+    }
+  }
+  
+  template<class T>
+  void Matrix<T>::mul_no_alloc_nnQQQ(const Matrix<T>& x, const std::vector<T> &y, std::vector<T> &z){
+    // Assert dimensions
+    casadi_assert_message(x.size1()==z.size(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.size() << ".");
+    casadi_assert_message(x.size2()==y.size(),"Dimension error. Got x=" << x.dimString() << " and y=" << y.size() << ".");
     
     // Direct access to the arrays
     const std::vector<int> &x_colind = x.colind();
     const std::vector<int> &x_row = x.row();
     const std::vector<T> &x_data = x.data();
     
-    // loop over the columns of the matrix
+    // loop over the rows of the matrix
     for(int i=0; i<x_colind.size()-1; ++i){
       for(int el=x_colind[i]; el<x_colind[i+1]; ++el){ // loop over the non-zeros of the matrix
         int j = x_row[el];
-        
-        // Perform operation
-        z[i] += x_data[el] * y[j];
+        z[j] += x_data[el] * y[i];
       }
     }
   }
   
   template<class T>
-  void Matrix<T>::mul_no_alloc_nnQQQ(const Matrix<T>& x_trans, const std::vector<T> &y, std::vector<T> &z){
+  void Matrix<T>::mul_no_alloc_ntQQQ(const Matrix<T> &x, const Matrix<T>& y_trans, Matrix<T> &z){
     // Assert dimensions
-    casadi_assert_message(x_trans.size1()==z.size(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and z=" << z.size() << ".");
-    casadi_assert_message(x_trans.size2()==y.size(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and y=" << y.size() << ".");
-    
-    // Direct access to the arrays
-    const std::vector<int> &x_rowind = x_trans.colind();
-    const std::vector<int> &x_col = x_trans.row();
-    const std::vector<T> &x_trans_data = x_trans.data();
-    
-    // loop over the rows of the matrix
-    for(int i=0; i<x_rowind.size()-1; ++i){
-      for(int el=x_rowind[i]; el<x_rowind[i+1]; ++el){ // loop over the non-zeros of the matrix
-        int j = x_col[el];
-        z[j] += x_trans_data[el] * y[i];
-      }
-    }
-  }
-  
-  template<class T>
-  void Matrix<T>::mul_no_alloc_ntQQQ(const Matrix<T> &y, const Matrix<T>& x_trans, Matrix<T> &z){
-    // Assert dimensions
-    casadi_assert_message(x_trans.size1()==z.size2(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(y.size1()==z.size1(),"Dimension error. Got y=" << y.dimString() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(x_trans.size2()==y.size2(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and y=" << y.dimString() << ".");
+    casadi_assert_message(y_trans.size1()==z.size2(),"Dimension error. Got y_trans=" << y_trans.dimString() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(x.size1()==z.size1(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(y_trans.size2()==x.size2(),"Dimension error. Got y_trans=" << y_trans.dimString() << " and x=" << x.dimString() << ".");
   
     // Direct access to the arrays
-    const std::vector<int> &x_rowind = x_trans.colind();
-    const std::vector<int> &x_col = x_trans.row();
-    const std::vector<T> &x_trans_data = x_trans.data();
-    const std::vector<int> &y_colind = y.colind();
-    const std::vector<int> &y_row = y.row();
-    const std::vector<T> &y_data = y.data();
+    const std::vector<int> &y_rowind = y_trans.colind();
+    const std::vector<int> &y_col = y_trans.row();
+    const std::vector<T> &y_trans_data = y_trans.data();
+    const std::vector<int> &x_colind = x.colind();
+    const std::vector<int> &x_row = x.row();
+    const std::vector<T> &x_data = x.data();
     const std::vector<int> &z_colind = z.colind();
     const std::vector<int> &z_row = z.row();
     std::vector<T> &z_data = z.data();
 
     // loop over the rows of the first argument
-    for(int i=0; i<x_rowind.size()-1; ++i){
-      for(int el=x_rowind[i]; el<x_rowind[i+1]; ++el){ // loop over the non-zeros of the first argument
-        int j = x_col[el];
-        int el1 = y_colind[i];
+    for(int i=0; i<y_rowind.size()-1; ++i){
+      for(int el=y_rowind[i]; el<y_rowind[i+1]; ++el){ // loop over the non-zeros of the first argument
+        int j = y_col[el];
+        int el1 = x_colind[i];
         int el2 = z_colind[j];
-        while(el1 < y_colind[i+1] && el2 < z_colind[j+1]){ // loop over matching non-zero elements
-          int j1 = y_row[el1];
+        while(el1 < x_colind[i+1] && el2 < z_colind[j+1]){ // loop over matching non-zero elements
+          int j1 = x_row[el1];
           int i2 = z_row[el2];      
           if(j1==i2){
-            z_data[el2++] += x_trans_data[el] * y_data[el1++];
+            z_data[el2++] += y_trans_data[el] * x_data[el1++];
           } else if(j1<i2) {
             el1++;
           } else {
@@ -1424,28 +1424,28 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::mul_no_alloc_tnQQQ(const Matrix<T> &y_trans, const Matrix<T> &x, Matrix<T>& z){
+  void Matrix<T>::mul_no_alloc_tnQQQ(const Matrix<T> &x_trans, const Matrix<T> &y, Matrix<T>& z){
     // Assert dimensions
-    casadi_assert_message(x.size2()==z.size2(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(y_trans.size2()==z.size1(),"Dimension error. Got y_trans=" << y_trans.dimString() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(x.size1()==y_trans.size1(),"Dimension error. Got x=" << x.dimString() << " and y_trans=" << y_trans.dimString() << ".");
+    casadi_assert_message(y.size2()==z.size2(),"Dimension error. Got y=" << y.dimString() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(x_trans.size2()==z.size1(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(y.size1()==x_trans.size1(),"Dimension error. Got y=" << y.dimString() << " and x_trans=" << x_trans.dimString() << ".");
   
     // Direct access to the arrays
-    const std::vector<int> &x_colind = x.colind();
-    const std::vector<int> &x_row = x.row();
-    const std::vector<T> &x_data = x.data();
-    const std::vector<int> &y_rowind = y_trans.colind();
-    const std::vector<int> &y_col = y_trans.row();
-    const std::vector<T> &y_trans_data = y_trans.data();
+    const std::vector<int> &y_colind = y.colind();
+    const std::vector<int> &y_row = y.row();
+    const std::vector<T> &y_data = y.data();
+    const std::vector<int> &x_rowind = x_trans.colind();
+    const std::vector<int> &x_col = x_trans.row();
+    const std::vector<T> &x_trans_data = x_trans.data();
     const std::vector<int> &z_colind = z.colind();
     const std::vector<int> &z_row = z.row();
     std::vector<T> &z_data = z.data();
 
 #ifdef WITH_EIGEN3
     // NOTE: this doesn't belong here. It should be put at some higher level. Also, is this really fast than the implementation below?
-    if (x.dense() && y_trans.dense() && z.dense()) {
-      Eigen::Map< const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic , Eigen::ColMajor > > X(&x_data[0],x.size2(),x.size1());
-      Eigen::Map< const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic > > Y(&y_trans_data[0],y_trans.size1(),y_trans.size2());
+    if (y.dense() && x_trans.dense() && z.dense()) {
+      Eigen::Map< const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic , Eigen::ColMajor > > X(&y_data[0],y.size2(),y.size1());
+      Eigen::Map< const Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic > > Y(&x_trans_data[0],x_trans.size1(),x_trans.size2());
       Eigen::Map< Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic , Eigen::ColMajor> > Z(&z.data()[0],z.size2(),z.size1());
       Z = X*Y;
       return;
@@ -1456,13 +1456,13 @@ namespace CasADi{
     for(int i=0; i<z_colind.size()-1; ++i){
       for(int el=z_colind[i]; el<z_colind[i+1]; ++el){ // loop over the non-zeros of the resulting matrix
         int j = z_row[el];
-        int el1 = x_colind[i];
-        int el2 = y_rowind[j];
-        while(el1 < x_colind[i+1] && el2 < y_rowind[j+1]){ // loop over non-zero elements
-          int j1 = x_row[el1];
-          int i2 = y_col[el2];      
+        int el1 = y_colind[i];
+        int el2 = x_rowind[j];
+        while(el1 < y_colind[i+1] && el2 < x_rowind[j+1]){ // loop over non-zero elements
+          int j1 = y_row[el1];
+          int i2 = x_col[el2];      
           if(j1==i2){
-            z_data[el] += x_data[el1++] * y_trans_data[el2++];
+            z_data[el] += y_data[el1++] * x_trans_data[el2++];
           } else if(j1<i2) {
             el1++;
           } else {
