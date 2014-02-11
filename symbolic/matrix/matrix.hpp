@@ -472,19 +472,19 @@ namespace CasADi{
     Matrix<T> mul(const Matrix<T> &y, const CCSSparsity & sp_z=CCSSparsity()) const;
     
     /// Matrix-matrix product, no memory allocation: z += mul(x,y)
-    static void mul_no_alloc_nn(const Matrix<T>& x, const Matrix<T> &y, Matrix<T>& z);
+    static void mul_no_alloc_nnQQQ(const Matrix<T> &x, const Matrix<T>& y, Matrix<T>& z);
     
-    /// Matrix-matrix product, no memory allocation: z += mul(x,trans(y))
-    static void mul_no_alloc_nt(const Matrix<T> &x, const Matrix<T> &y_trans, Matrix<T>& z);
-
     /// Matrix-matrix product, no memory allocation: z += mul(trans(x),y)
-    static void mul_no_alloc_tn(const Matrix<T>& trans_x, const Matrix<T> &y, Matrix<T>& z);
-  
-    /// Matrix-vector product, no memory allocation: z += mul(x,y)
-    static void mul_no_alloc_nn(const Matrix<T>& x, const std::vector<T> &y, std::vector<T>& z);
+    static void mul_no_alloc_tnQQQ(const Matrix<T> &trans_x, const Matrix<T> &y, Matrix<T>& z);
 
-    /// vector-matrix product, no memory allocation: z += mul(trans(x),y)
-    static void mul_no_alloc_tn(const Matrix<T>& trans_x, const std::vector<T> &y, std::vector<T>& z);
+    /// Matrix-matrix product, no memory allocation: z += mul(x,trans(y))
+    static void mul_no_alloc_ntQQQ(const Matrix<T>& x, const Matrix<T> &trans_y, Matrix<T>& z);
+  
+    /// Matrix-vector product, no memory allocation: z += mul(trans(x),y)
+    static void mul_no_alloc_tnQQQ(const Matrix<T>& trans_x, const std::vector<T> &y, std::vector<T>& z);
+
+    /// vector-matrix product, no memory allocation: z += mul(x,y)
+    static void mul_no_alloc_nnQQQ(const Matrix<T>& x, const std::vector<T> &y, std::vector<T>& z);
   
     /// Propagate sparsity using 0-1 logic through a matrix product, no memory allocation: z = mul(x,y)
     template<bool Fwd>

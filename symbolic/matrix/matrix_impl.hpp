@@ -1298,13 +1298,13 @@ namespace CasADi{
     }
 
     // Carry out the matrix product
-    mul_no_alloc_nt(x,y_trans,ret);
+    mul_no_alloc_tnQQQ(y_trans,x,ret);
   
     return ret;
   }
 
   template<class T>
-  void Matrix<T>::mul_no_alloc_nn(const Matrix<T> &x, const Matrix<T> &y, Matrix<T>& z){
+  void Matrix<T>::mul_no_alloc_nnQQQ(const Matrix<T> &y, const Matrix<T> &x, Matrix<T>& z){
     // Assert dimensions
     casadi_assert_message(x.size2()==z.size2(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.dimString() << ".");
     casadi_assert_message(y.size1()==z.size1(),"Dimension error. Got y=" << y.dimString() << " and z=" << z.dimString() << ".");
@@ -1343,7 +1343,7 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::mul_no_alloc_nn(const Matrix<T> &x, const std::vector<T> &y, std::vector<T>& z){
+  void Matrix<T>::mul_no_alloc_tnQQQ(const Matrix<T> &x, const std::vector<T> &y, std::vector<T>& z){
     // Assert dimensions
     casadi_assert_message(x.size2()==z.size(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.size() << ".");
     casadi_assert_message(x.size1()==y.size(),"Dimension error. Got x=" << x.dimString() << " and y=" << y.size() << ".");
@@ -1353,7 +1353,7 @@ namespace CasADi{
     const std::vector<int> &x_row = x.row();
     const std::vector<T> &x_data = x.data();
     
-    // loop over the cols of the matrix
+    // loop over the columns of the matrix
     for(int i=0; i<x_colind.size()-1; ++i){
       for(int el=x_colind[i]; el<x_colind[i+1]; ++el){ // loop over the non-zeros of the matrix
         int j = x_row[el];
@@ -1365,7 +1365,7 @@ namespace CasADi{
   }
   
   template<class T>
-  void Matrix<T>::mul_no_alloc_tn(const Matrix<T>& x_trans, const std::vector<T> &y, std::vector<T> &z){
+  void Matrix<T>::mul_no_alloc_nnQQQ(const Matrix<T>& x_trans, const std::vector<T> &y, std::vector<T> &z){
     // Assert dimensions
     casadi_assert_message(x_trans.size1()==z.size(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and z=" << z.size() << ".");
     casadi_assert_message(x_trans.size2()==y.size(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and y=" << y.size() << ".");
@@ -1385,7 +1385,7 @@ namespace CasADi{
   }
   
   template<class T>
-  void Matrix<T>::mul_no_alloc_tn(const Matrix<T>& x_trans, const Matrix<T> &y, Matrix<T> &z){
+  void Matrix<T>::mul_no_alloc_ntQQQ(const Matrix<T> &y, const Matrix<T>& x_trans, Matrix<T> &z){
     // Assert dimensions
     casadi_assert_message(x_trans.size1()==z.size2(),"Dimension error. Got x_trans=" << x_trans.dimString() << " and z=" << z.dimString() << ".");
     casadi_assert_message(y.size1()==z.size1(),"Dimension error. Got y=" << y.dimString() << " and z=" << z.dimString() << ".");
@@ -1424,7 +1424,7 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::mul_no_alloc_nt(const Matrix<T> &x, const Matrix<T> &y_trans, Matrix<T>& z){
+  void Matrix<T>::mul_no_alloc_tnQQQ(const Matrix<T> &y_trans, const Matrix<T> &x, Matrix<T>& z){
     // Assert dimensions
     casadi_assert_message(x.size2()==z.size2(),"Dimension error. Got x=" << x.dimString() << " and z=" << z.dimString() << ".");
     casadi_assert_message(y_trans.size2()==z.size1(),"Dimension error. Got y_trans=" << y_trans.dimString() << " and z=" << z.dimString() << ".");
