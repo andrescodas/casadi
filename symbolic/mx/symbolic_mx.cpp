@@ -27,8 +27,8 @@ using namespace std;
 
 namespace CasADi{
 
-  SymbolicMX::SymbolicMX(const std::string& name, int n, int m) : name_(name) {
-    setSparsity(CCSSparsity(m,n,true));
+  SymbolicMX::SymbolicMX(const std::string& name, int nrow, int ncol) : name_(name) {
+    setSparsity(CCSSparsity(nrow,ncol,true));
   }
 
   SymbolicMX::SymbolicMX(const std::string& name, const CCSSparsity & sp) : name_(name) {

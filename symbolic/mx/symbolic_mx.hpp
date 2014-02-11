@@ -36,7 +36,7 @@ namespace CasADi{
   public:
 
     /** \brief  Constructors */
-    explicit SymbolicMX(const std::string& name, int n=1, int m=1);
+    explicit SymbolicMX(const std::string& name, int nrow=1, int ncol=1);
 
     /** \brief  Constructors */
     explicit SymbolicMX(const std::string& name, const CCSSparsity & sp);
