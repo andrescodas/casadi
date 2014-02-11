@@ -1460,7 +1460,7 @@ namespace CasADi{
 
   template<class T>
   template<bool Fwd>
-  void Matrix<T>::mul_sparsityQQQ(Matrix<T> &x_trans, Matrix<T> &y, Matrix<T>& z){
+  void Matrix<T>::mul_sparsity(Matrix<T> &x_trans, Matrix<T> &y, Matrix<T>& z){
     // Direct access to the arrays
     const std::vector<int> &z_row = z.row();
     const std::vector<int> &z_colind = z.colind();

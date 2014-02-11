@@ -107,9 +107,9 @@ namespace CasADi{
     const size_t n = this->size();
     if(fwd){
       if(zd!=rd) copy(zd,zd+n,rd);
-      DMatrix::mul_sparsityQQQ<true>(*input[2],*input[1],*input[0]);
+      DMatrix::mul_sparsity<true>(*input[2],*input[1],*input[0]);
     } else {
-      DMatrix::mul_sparsityQQQ<false>(*input[2],*input[1],*output[0]);
+      DMatrix::mul_sparsity<false>(*input[2],*input[1],*output[0]);
       if(zd!=rd){
         for(int i=0; i<n; ++i){
           zd[i] |= rd[i];
