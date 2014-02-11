@@ -313,8 +313,8 @@ namespace CasADi{
     return (*this)->patternCombine(y, true, true);
   }
 
-  CCSSparsity CCSSparsity::patternProduct(const CCSSparsity& y_trans) const{
-    return (*this)->patternProduct(y_trans);
+  CCSSparsity CCSSparsity::patternProduct(const CCSSparsity& y) const{
+    return (*this)->patternProduct(y);
   }
 
   CCSSparsity CCSSparsity::patternProduct(const CCSSparsity& y_trans, vector< vector< pair<int,int> > >& mapping) const{

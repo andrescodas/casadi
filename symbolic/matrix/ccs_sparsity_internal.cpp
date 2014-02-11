@@ -1850,14 +1850,14 @@ namespace CasADi{
     return ss.str();
   }
 
-  CCSSparsity CCSSparsityInternal::patternProduct(const CCSSparsity& y_trans) const{
+  CCSSparsity CCSSparsityInternal::patternProduct(const CCSSparsity& y) const{
     // Dimensions
     int x_ncol = ncol_;
-    int y_nrow = y_trans.size2();
+    int y_nrow = y.size2();
 
     // Quick return if both are dense
-    if(dense() && y_trans.dense()){
-      return CCSSparsity(y_nrow,x_ncol,!empty() && !y_trans.empty());
+    if(dense() && y.dense()){
+      return CCSSparsity(y_nrow,x_ncol,!empty() && !y.empty());
     }
   
     // return object
@@ -1869,9 +1869,9 @@ namespace CasADi{
   
     // Direct access to the arrays
     const vector<int> &x_row = row_;
-    const vector<int> &y_col = y_trans.row();
+    const vector<int> &y_col = y.row();
     const vector<int> &x_colind = colind_;
-    const vector<int> &y_rowind = y_trans.colind();
+    const vector<int> &y_rowind = y.colind();
 
     // If the compiler supports C99, we shall use the long long datatype, which is 64 bit, otherwise long
 #if __STDC_VERSION__ >= 199901L
@@ -1937,9 +1937,9 @@ namespace CasADi{
     return ret;
   }
 
-  CCSSparsity CCSSparsityInternal::patternProduct(const CCSSparsity& y_trans, vector< vector< pair<int,int> > >& mapping) const{
+  CCSSparsity CCSSparsityInternal::patternProduct(const CCSSparsity& y, vector< vector< pair<int,int> > >& mapping) const{
     // return object
-    CCSSparsity ret = patternProduct(y_trans);
+    CCSSparsity ret = patternProduct(y);
   
     // Get the vectors for the return pattern
     const vector<int>& c = ret.row();
@@ -1947,9 +1947,9 @@ namespace CasADi{
   
     // Direct access to the arrays
     const vector<int> &x_row = row_;
-    const vector<int> &y_col = y_trans.row();
+    const vector<int> &y_col = y.row();
     const vector<int> &x_colind = colind_;
-    const vector<int> &y_rowind = y_trans.colind();
+    const vector<int> &y_rowind = y.colind();
 
     // Clear the mapping
     mapping.resize(ret.size());
