@@ -406,8 +406,8 @@ namespace CasADi{
   }
 
 
-  CCSSparsity mul(const  CCSSparsity& a, const  CCSSparsity &b) {
-    return (mul(DMatrix(a,1),DMatrix(b,1))).sparsity();
+  CCSSparsity mulQQQ(const  CCSSparsity& a, const  CCSSparsity &b) {
+    return (mulQQQ(DMatrix(a,1),DMatrix(b,1))).sparsity();
   }
 
   std::size_t hash_sparsity(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row){

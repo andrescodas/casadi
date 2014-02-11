@@ -466,10 +466,10 @@ namespace CasADi{
     //@}
     
     /// Matrix-matrix product
-    Matrix<T> mul_full(const Matrix<T> &y, const CCSSparsity & sp_z=CCSSparsity()) const;
+    Matrix<T> mul_fullQQQ(const Matrix<T> &y, const CCSSparsity & sp_z=CCSSparsity()) const;
 
     /// Matrix-matrix product
-    Matrix<T> mul(const Matrix<T> &y, const CCSSparsity & sp_z=CCSSparsity()) const;
+    Matrix<T> mulQQQ(const Matrix<T> &y, const CCSSparsity & sp_z=CCSSparsity()) const;
     
     /// Matrix-matrix product, no memory allocation: z += mul(x,y)
     static void mul_no_alloc_nn(const Matrix<T> &x, const Matrix<T>& y, Matrix<T>& z);

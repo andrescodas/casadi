@@ -146,14 +146,14 @@ namespace CasADi{
     return CasADi::isIdentity(x_);
   }
 
-  MX ConstantMX::getMultiplication(const MX& y) const{
+  MX ConstantMX::getMultiplicationQQQ(const MX& y) const{
     if(y.isConstant()){
       // Constant folding
       DMatrix xv = getMatrixValue();
       DMatrix yv = y->getMatrixValue();
-      return mul(xv,yv);
+      return mulQQQ(xv,yv);
     } else {
-      return MXNode::getMultiplication(y);
+      return MXNode::getMultiplicationQQQ(y);
     }
   }
 

@@ -288,7 +288,7 @@ namespace CasADi{
     *  
     *  The optinal argument sp_z will be used as the sparsity pattern of the result
     */
-    virtual MX getMultiplication(const MX& y, const CCSSparsity& sp_z=CCSSparsity()) const;
+    virtual MX getMultiplicationQQQ(const MX& y, const CCSSparsity& sp_z=CCSSparsity()) const;
 
     /** \brief Solve a system of linear equations
     *

@@ -404,10 +404,10 @@ namespace CasADi{
     MX __constpow__(const MX& b) const;
     MX __mrdivide__  (const MX& b) const;
     MX __mpower__(const MX& b) const;
-    MX mul(const MX& y, const CCSSparsity &sp_z=CCSSparsity()) const;
-    MX mul_full(const MX& y, const CCSSparsity &sp_z=CCSSparsity()) const;
+    MX mulQQQ(const MX& y, const CCSSparsity &sp_z=CCSSparsity()) const;
+    MX mul_fullQQQ(const MX& y, const CCSSparsity &sp_z=CCSSparsity()) const;
     MX inner_prod(const MX& y) const;
-    MX outer_prod(const MX& y) const;
+    MX outer_prodQQQ(const MX& y) const;
     MX constpow(const MX& y) const;
     MX fmin(const MX& y) const;
     MX fmax(const MX& y) const;

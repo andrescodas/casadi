@@ -142,10 +142,10 @@ namespace CasADi{
   * inspect the trace of it. sp_z diagonal will be more efficient then.
   *
   */
-  MX mul(const MX &x, const MX &y, const CCSSparsity& sp_z=CCSSparsity());
+  MX mulQQQ(const MX &x, const MX &y, const CCSSparsity& sp_z=CCSSparsity());
 
   /** \brief  Take the matrix product of n MX objects */
-  MX mul(const std::vector< MX > &x);
+  MX mulQQQ(const std::vector< MX > &x);
 
   /** \brief  Take the inner product of two vectors 
       Equals
@@ -163,7 +163,7 @@ namespace CasADi{
       \endcode
       with x and y vectors
   */
-  MX outer_prod(const MX &x, const MX &y);
+  MX outer_prodQQQ(const MX &x, const MX &y);
 
   /** \brief Branching on MX nodes
       Ternary operator, "cond ? if_true : if_false"

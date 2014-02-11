@@ -163,7 +163,7 @@ namespace CasADi{
      * Attempts to identify quick returns on matrix-level and 
      * delegates to MatType::mul_full if no such quick returns are found.
      */
-    MatType mul_smart(const MatType& y, const CCSSparsity& sp_z) const;
+    MatType mul_smartQQQ(const MatType& y, const CCSSparsity& sp_z) const;
     
   };
 
@@ -251,11 +251,11 @@ namespace CasADi{
   }
 
   template<typename MatType>
-  MatType GenericMatrix<MatType>::mul_smart(const MatType& y, const CCSSparsity &sp_z) const {
+  MatType GenericMatrix<MatType>::mul_smartQQQ(const MatType& y, const CCSSparsity &sp_z) const {
     const MatType& x = *static_cast<const MatType*>(this);
   
     if (!(x.scalar() || y.scalar())) {
-      casadi_assert_message(size1()==y.size2(),"Matrix product with incompatible dimensions. Lhs is " << dimString() << " and rhs is " << y.dimString() << ".");
+      casadi_assert_message(size2()==y.size1(),"Matrix product with incompatible dimensions. Lhs is " << dimString() << " and rhs is " << y.dimString() << ".");
     }
   
     // Check if we can simplify the product
@@ -265,21 +265,21 @@ namespace CasADi{
       return x;
     } else if(isZero(x) || isZero(y)){
       // See if one of the arguments can be used as result
-      if(x.size()==0 && y.size2()==y.size1()) {
-        return x;
-      } else if(y.size()==0 && x.size2()==x.size1()) {
+      if(y.size()==0 && x.size2()==x.size1()) {
         return y;
+      } else if(x.size()==0 && y.size2()==y.size1()) {
+        return x;
       } else {
-        if (x.size()==0 || y.size()==0 || y.empty() || x.empty()) {
-          return MatType::sparse(y.size1(),x.size2());
+        if (y.size()==0 || x.size()==0 || x.empty() || y.empty()) {
+          return MatType::sparse(x.size1(),y.size2());
         } else {
-          return MatType::zeros(y.size1(),x.size2());
+          return MatType::zeros(x.size1(),y.size2());
         }
       }
     } else if(x.scalar() || y.scalar()){
       return x*y;
     } else {
-      return x.mul_full(y,sp_z);
+      return x.mul_fullQQQ(y,sp_z);
     }
   }
 

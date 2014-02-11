@@ -149,7 +149,7 @@ namespace CasADi{
     
       SXMatrix sk = x - x_old;
       SXMatrix yk = gLag - gLag_old;
-      SXMatrix qk = mul(Bk, sk);
+      SXMatrix qk = mulQQQ(sk, Bk);
     
       // Calculating theta
       SXMatrix skBksk = inner_prod(sk, qk);
@@ -159,7 +159,7 @@ namespace CasADi{
       yk = omega * yk + (1 - omega) * qk;
       SXMatrix theta = 1. / inner_prod(sk, yk);
       SXMatrix phi = 1. / inner_prod(qk, sk);
-      SXMatrix Bk_new = Bk + theta * mul(yk, trans(yk)) - phi * mul(qk, trans(qk));
+      SXMatrix Bk_new = Bk + theta * mulQQQ(trans(yk),yk) - phi * mulQQQ(trans(qk),qk);
     
       // Inputs of the BFGS update function
       vector<SXMatrix> bfgs_in(BFGS_NUM_IN);

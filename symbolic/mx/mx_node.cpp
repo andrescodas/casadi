@@ -350,23 +350,25 @@ namespace CasADi{
   }
   
   
-  MX MXNode::getMultiplication(const MX& y,const CCSSparsity& sp_z) const{
-    // Transpose the second argument
-    MX trans_y = trans(y);
+  MX MXNode::getMultiplicationQQQ(const MX& y,const CCSSparsity& sp_z) const{
+    // Get reference to transposed first argument
+    MX trans_x = trans(shared_from_this<MX>());
+
+    // Form result of the right sparsity
     MX z;
     if (sp_z.isNull()) {
-      CCSSparsity sp_z_ = sparsity().patternProduct(trans_y.sparsity());
+      CCSSparsity sp_z_ = y.sparsity().patternProduct(trans_x.sparsity());
       z = MX::zeros(sp_z_);
     } else {
       z = MX::zeros(sp_z);
     }
-    casadi_assert_message(size2()==z.size2(),"Dimension error. Got lhs=" << size2() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(trans_y.size2()==z.size1(),"Dimension error. Got trans_y=" << trans_y.dimString() << " and z=" << z.dimString() << ".");
-    casadi_assert_message(size1()==trans_y.size1(),"Dimension error. Got lhs=" << size1() << " and trans_y" << trans_y.dimString() << ".");
-    if(sparsity().dense() && y.dense()){
-      return MX::create(new DenseMultiplication<true,false>(z,trans_y,shared_from_this<MX>()));
+    casadi_assert_message(y.size2()==z.size2(),"Dimension error. Got y=" << y.size2() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(trans_x.size2()==z.size1(),"Dimension error. Got trans_x=" << trans_x.dimString() << " and z=" << z.dimString() << ".");
+    casadi_assert_message(y.size1()==trans_x.size1(),"Dimension error. Got y=" << y.size1() << " and trans_x" << trans_x.dimString() << ".");
+    if(trans_x.dense() && y.dense()){
+      return MX::create(new DenseMultiplication<true,false>(z,trans_x,y));
     } else {
-      return MX::create(new Multiplication<true,false>(z,trans_y,shared_from_this<MX>()));    
+      return MX::create(new Multiplication<true,false>(z,trans_x,y));    
     }
   }
     

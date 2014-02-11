@@ -141,16 +141,16 @@ namespace CasADi{
     return x->getNormInf();
   }
 
-  MX mul(const MX &x, const MX &y, const CCSSparsity& sp_z){
-    return x.mul(y,sp_z);
+  MX mulQQQ(const MX &x, const MX &y, const CCSSparsity& sp_z){
+    return x.mulQQQ(y,sp_z);
   }
 
-  MX mul(const std::vector< MX > &args){
+  MX mulQQQ(const std::vector< MX > &args){
     casadi_assert_message(args.size()>=1,"mul(std::vector< MX > &args): supplied list must not be empty.");
     if (args.size()==1) return args[0];
-    MX ret = args[0].mul(args[1]);
+    MX ret = args[0].mulQQQ(args[1]);
     for (int i=2;i<args.size();++i) {
-      ret = ret.mul(args[i]);
+      ret = ret.mulQQQ(args[i]);
     }
     return ret;
   }
@@ -180,8 +180,8 @@ namespace CasADi{
     return x.inner_prod(y);
   }
 
-  MX outer_prod(const MX &x, const MX &y){
-    return x.outer_prod(y);
+  MX outer_prodQQQ(const MX &x, const MX &y){
+    return x.outer_prodQQQ(y);
   }
 
   void simplify(MX& ex){
@@ -479,11 +479,11 @@ namespace CasADi{
   }
 
   MX sumCols(const MX &x) {
-    return mul(MX::ones(x.size2(),1),x);
+    return mulQQQ(x,MX::ones(x.size2(),1));
   }
 
   MX sumRows(const MX &x) {
-    return mul(x,MX::ones(1,x.size1()));
+    return mulQQQ(MX::ones(1,x.size1()),x);
   }
 
   MX sumAll(const MX &x) {
@@ -1031,9 +1031,9 @@ namespace CasADi{
   
   MX pinv(const MX& A, linearSolverCreator lsolver, const Dictionary& dict) {
     if (A.size1()>=A.size2()) {
-      return trans(solve(mul(A,trans(A)),A,lsolver,dict));
+      return trans(solve(mulQQQ(trans(A),A),A,lsolver,dict));
     } else {
-      return solve(mul(trans(A),A),trans(A),lsolver,dict);
+      return solve(mulQQQ(A,trans(A)),trans(A),lsolver,dict);
     }
   }
   

@@ -1708,7 +1708,7 @@ namespace CasADi{
         MX d_all = horzcat(d);
         
         // Calculate the derivatives using a matrix multiplication with the Jacobian
-        d_all = mul(J,d_all);
+        d_all = mulQQQ(d_all,J);
         
         // Split up the left hand sides
         d = horzsplit(d_all,offset);
@@ -1745,7 +1745,7 @@ namespace CasADi{
         MX d_all = horzcat(d);
         
         // Calculate the derivatives using a matrix multiplication with the Jacobian
-        d_all = mul(JT,d_all);
+        d_all = mulQQQ(d_all,JT);
         
         // Split up the left hand sides
         d = horzsplit(d_all,offset);

@@ -1038,7 +1038,7 @@ void SymbolicOCP::makeExplicit(){
     // Solve for vb
     if (bs <= 3){
       // Calculate inverse and multiply for very small matrices
-      fb_exp = mul(inv(Jb),-fb_res);
+      fb_exp = mulQQQ(-fb_res,inv(Jb));
     } else {
       // QR factorization
       fb_exp = solve(Jb,-fb_res);
@@ -1141,7 +1141,7 @@ void SymbolicOCP::eliminateAlgebraic(){
       // Solve for vb
       if (bs <= 3){
         // Calculate inverse and multiply for very small matrices
-        fb_exp = mul(inv(Jb),-fb_res);
+        fb_exp = mulQQQ(-fb_res,inv(Jb));
       } else {
         // QR factorization
         fb_exp = solve(Jb,-fb_res);

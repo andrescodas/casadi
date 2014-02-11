@@ -80,19 +80,19 @@ namespace CasADi{
   template<bool TrX, bool TrY>
   void Multiplication<TrX,TrY>::evaluateMX(const MXPtrV& input, MXPtrV& output, const MXPtrVV& fwdSeed, MXPtrVV& fwdSens, const MXPtrVV& adjSeed, MXPtrVV& adjSens, bool output_given){
     if(!output_given)
-      *output[0] = *input[0] + mul(tr<TrY>(*input[2]),tr<TrX>(*input[1]),(*input[0]).sparsity());
+      *output[0] = *input[0] + mulQQQ(tr<TrX>(*input[1]),tr<TrY>(*input[2]),(*input[0]).sparsity());
 
     // Forward sensitivities
     int nfwd = fwdSens.size();
     for(int d=0; d<nfwd; ++d){
-      *fwdSens[d][0] = *fwdSeed[d][0] + mul(tr<TrY>(*fwdSeed[d][2]),tr<TrX>(*input[1]),(*input[0]).sparsity()) + mul(tr<TrY>(*input[2]),tr<TrX>(*fwdSeed[d][1]),(*input[0]).sparsity());
+      *fwdSens[d][0] = *fwdSeed[d][0] + mulQQQ(tr<TrX>(*input[1]),tr<TrY>(*fwdSeed[d][2]),(*input[0]).sparsity()) + mulQQQ(tr<TrX>(*fwdSeed[d][1]),tr<TrY>(*input[2]),(*input[0]).sparsity());
     }
   
     // Adjoint sensitivities
     int nadj = adjSeed.size();
     for(int d=0; d<nadj; ++d){
-      *adjSens[d][1] += tr<TrX>(mul(tr<!TrY>(*input[2]),*adjSeed[d][0],tr<TrX>(*input[1]).sparsity()));
-      *adjSens[d][2] += tr<TrY>(mul(*adjSeed[d][0],tr<!TrX>(*input[1]),tr<TrY>(*input[2]).sparsity()));
+      *adjSens[d][1] += tr<TrX>(mulQQQ(*adjSeed[d][0],tr<!TrY>(*input[2]),tr<TrX>(*input[1]).sparsity()));
+      *adjSens[d][2] += tr<TrY>(mulQQQ(tr<!TrX>(*input[1]),*adjSeed[d][0],tr<TrY>(*input[2]).sparsity()));
       if(adjSeed[d][0]!=adjSens[d][0]){
         *adjSens[d][0] += *adjSeed[d][0];
         *adjSeed[d][0] = MX();
