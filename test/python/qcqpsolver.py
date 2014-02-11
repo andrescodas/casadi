@@ -101,7 +101,7 @@ class QCQPSolverTests(casadiTestCase):
 
       self.checkarray(solver.getOutput("lam_a"),DMatrix([]),str(qcqpsolver),digits=5)
       
-      self.checkarray(solver.getOutput("cost"),mul(G.T,solver.getOutput()),str(qcqpsolver),digits=4)
+      self.checkarray(solver.getOutput("cost"),mul(solver.getOutput(),G.T),str(qcqpsolver),digits=4)
 
   def test_qp(self):
     #  min  1/2 x' H x + 2 x + y

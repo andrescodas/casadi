@@ -44,7 +44,7 @@ class Matrixtests(casadiTestCase):
   def test_inv(self):
     self.message("Matrix inverse")
     a = DMatrix(00,00,00,[[1,1],[2,3]])
-    self.checkarray(mul(c.inv(a),a),eye(2),"DMatrix inverse")
+    self.checkarray(mul(a,c.inv(a)),eye(2),"DMatrix inverse")
 
   def test_iter(self):
     self.message("iterator")
@@ -567,12 +567,12 @@ class Matrixtests(casadiTestCase):
     self.assertEqual(D.shapeQQQ[0],3)
     self.assertEqual(D.shapeQQQ[1],4)
 
-    D = mul([A,B])
+    D = mul([B,A])
     
     self.assertEqual(D.shapeQQQ[0],8)
     self.assertEqual(D.shapeQQQ[1],4)
     
-    D = mul([A,B,C])
+    D = mul([C,B,A])
     
     self.assertEqual(D.shapeQQQ[0],7)
     self.assertEqual(D.shapeQQQ[1],4)

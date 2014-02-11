@@ -256,7 +256,7 @@ class FXtests(casadiTestCase):
     
     def test(sp):
       x = ssym("x",1,sp.size1())
-      sp2 = jacobian(mul(DMatrix(sp,1),x),x).sparsity()
+      sp2 = jacobian(mul(x,DMatrix(sp,1)),x).sparsity()
       self.checkarray(sp.row(),sp2.row());
       self.checkarray(sp.colind(),sp2.colind());   
 
@@ -347,7 +347,7 @@ class FXtests(casadiTestCase):
     def test(sp):
       x = ssym("x",1,sp.size1())
       self.assertTrue(sp==sp.transpose())
-      f = SXFunction([x],[mul([x.T,DMatrix(sp,1),x])])
+      f = SXFunction([x],[mul([x,DMatrix(sp,1),x.T])])
       f.init()
       J = f.hessian()
       J.init()
@@ -811,7 +811,7 @@ class FXtests(casadiTestCase):
     n = 1
     x = ssym("x",1,n)
 
-    M = SXFunction([x],[mul((x-DMatrix(range(n))),x.T)])
+    M = SXFunction([x],[mul(x.T,(x-DMatrix(range(n))))])
     M.setOption("name","M")
     M.init()
     M.evaluate()
@@ -822,7 +822,7 @@ class FXtests(casadiTestCase):
 
     MX= M.call([X])[0]
 
-    Pf = MXFunction([X,P],[mul(MX,P)])
+    Pf = MXFunction([X,P],[mul(P,MX)])
     Pf.setOption("name","P")
     Pf.init()
 

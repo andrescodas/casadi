@@ -617,7 +617,7 @@ class QPSolverTests(casadiTestCase):
     H = c.diag(range(1,N+1))
     x0 = DMatrix(range(N))
     
-    G = -1.0*mul(H,x0)
+    G = -1.0*mul(x0,H)
 
     A =  DMatrix.sparse(N,0)
 
@@ -647,7 +647,7 @@ class QPSolverTests(casadiTestCase):
       solver.solve()
 
       self.checkarray(solver.getOutput(),x0,str(qpsolver)+str(qp_options),digits=2)
-      self.assertAlmostEqual(solver.getOutput("cost")[0],-0.5*mul([x0.T,H,x0]),3,str(qpsolver))
+      self.assertAlmostEqual(solver.getOutput("cost")[0],-0.5*mul([x0,H,x0.T]),3,str(qpsolver))
       self.checkarray(solver.getOutput("lam_x"),DMatrix.zeros(1,N),str(qpsolver),digits=4)
       
   def test_redundant(self):
@@ -691,7 +691,7 @@ class QPSolverTests(casadiTestCase):
         self.checkarray(solver.getOutput(),DMatrix([-0.19230768069,1.6846153915,0.692307690769276]),str(qpsolver),digits=6)
         self.assertAlmostEqual(solver.getOutput("cost")[0],-5.850384678537,5,str(qpsolver))
         self.checkarray(solver.getOutput("lam_x"),DMatrix([0,0,0]),str(qpsolver),digits=6)
-        self.checkarray(mul(A.T,solver.getOutput("lam_a")),DMatrix([3.876923073076,2.4384615365384965,-1]),str(qpsolver),digits=6)
+        self.checkarray(mul(solver.getOutput("lam_a"),A.T),DMatrix([3.876923073076,2.4384615365384965,-1]),str(qpsolver),digits=6)
         
   def test_linear(self):
     H = DMatrix.sparse(2,2)

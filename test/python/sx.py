@@ -76,7 +76,7 @@ class SXtests(casadiTestCase):
     self.matrixbinarypool.append(lambda a: a[0]-a[1],lambda a: a[0]-a[1],"Matrix-Matrix")
     self.matrixbinarypool.append(lambda a: a[0]*a[1],lambda a: a[0]*a[1],"Matrix*Matrix")
     #self.matrixbinarypool.append(lambda a: inner_prod(a[0],trans(a[1])),lambda a: dot(a[0].T,a[1]),name="inner_prod(Matrix,Matrix)") 
-    self.matrixbinarypool.append(lambda a: mul(a[0],trans(a[1])),lambda a: dot(a[0],a[1].T),"dot(Matrix,Matrix.T)")
+    self.matrixbinarypool.append(lambda a: mul(trans(a[1]),a[0]),lambda a: dot(a[0],a[1].T),"dot(Matrix,Matrix.T)")
 
     #self.pool.append(lambda x: erf(x[0]),erf,"erf") # numpy has no erf
     
@@ -225,7 +225,7 @@ class SXtests(casadiTestCase):
       x0=array([[0.738,0.2],[ 0.1,0.39 ],[0.99,0.999999]])
       y0=array([[1.738,0.6],[ 0.7,12 ],[0,-6]])
       self.numpyEvaluationCheckPool(self.matrixbinarypool,[x,y],[x0,y0],name="SXMatrix")
-      self.assertRaises(RuntimeError, lambda : mul(x,y))
+      self.assertRaises(RuntimeError, lambda : mul(y,x))
 
   def test_SXMatrixbinarySparse(self):
       self.message("SXMatrix binary operations")
@@ -248,7 +248,7 @@ class SXtests(casadiTestCase):
         y0=DMatrix(00,00,00,4,3,[0,2,2,3],[0,2,3],[1.738,0.7,-6]).toArray()
         
         self.numpyEvaluationCheckPool(self.matrixbinarypool,[xx,yy],[x0,y0],name="SXMatrix",setx0=[x0,y0])
-      self.assertRaises(RuntimeError, lambda : mul(xx,yy))
+      self.assertRaises(RuntimeError, lambda : mul(yy,xx))
 
 
   def test_SXMatrixslicing(self):
@@ -1116,11 +1116,11 @@ class SXtests(casadiTestCase):
 
     filt = sp_diag(N)+sp_triplet(N,N,[3],[1])
 
-    f = SXFunction([x,y],[mul(x,y)])
+    f = SXFunction([x,y],[mul(y,x)])
     f.init()
     f.setInput(x_,0)
     f.setInput(y_,1)
-    g = SXFunction([x,y],[mul(x,y,filt)])
+    g = SXFunction([x,y],[mul(y,x,filt)])
     g.init()
     g.setInput(x_,0)
     g.setInput(y_,1)
@@ -1146,7 +1146,7 @@ class SXtests(casadiTestCase):
     
     x = ssym("x",1,H.size2())
     
-    f = SXFunction([x],[mul([x.T,H,x])])
+    f = SXFunction([x],[mul([x,H,x.T])])
     H *= 2
     f.setOption("verbose",True)
     f.init()
@@ -1195,14 +1195,14 @@ class SXtests(casadiTestCase):
      a = SXMatrix.sparse(0,5)
      b = SXMatrix.sparse(3,0)
      
-     c = mul(a,b)
+     c = mul(b,a)
      
      self.assertEqual(c.size(),0)
      
      a = SXMatrix.sparse(3,5)
      b = SXMatrix.sparse(4,3)
      
-     c = mul(a,b)
+     c = mul(b,a)
      
      self.assertEqual(c.size(),0)
      

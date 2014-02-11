@@ -54,7 +54,7 @@ class ControlTests(casadiTestCase):
           print (n,K)
           A_ = [DMatrix(numpy.random.random((n,n))) for i in range(K)]
           
-          V_ = [mul(v,v.T) for v in [DMatrix(numpy.random.random((n,n))) for i in range(K)]]
+          V_ = [mul(v.T,v) for v in [DMatrix(numpy.random.random((n,n))) for i in range(K)]]
           
           
           solver = Solver([sp_dense(n,n) for i in range(K)],[sp_dense(n,n) for i in range(K)])
@@ -88,7 +88,7 @@ class ControlTests(casadiTestCase):
           solver.evaluate()
           X = list(horzsplit(solver.output(),n))
           
-          a0 = (mul([blkdiag(A_),blkdiag(X),blkdiag(A_).T])+blkdiag(V_))
+          a0 = (mul([blkdiag(A_).T,blkdiag(X),blkdiag(A_)])+blkdiag(V_))
           
           def sigma(a):
             return a[1:] + [a[0]]
@@ -111,7 +111,7 @@ class ControlTests(casadiTestCase):
           print (n,K)
           A_ = [DMatrix(numpy.random.random((n,n))) for i in range(K)]
           
-          V_ = [mul(v,v.T) for v in [DMatrix(numpy.random.random((n,n))) for i in range(K)]]
+          V_ = [mul(v.T,v) for v in [DMatrix(numpy.random.random((n,n))) for i in range(K)]]
           
           
           solver = Solver([sp_dense(n,n) for i in range(K)],[sp_dense(n,n) for i in range(K)])
@@ -123,7 +123,7 @@ class ControlTests(casadiTestCase):
           solver.evaluate()
           X = list(horzsplit(solver.output(),n))
           
-          a0 = (mul([blkdiag(A_),blkdiag(X),blkdiag(A_).T])+blkdiag(V_))
+          a0 = (mul([blkdiag(A_).T,blkdiag(X),blkdiag(A_)])+blkdiag(V_))
           
           def sigma(a):
             return a[1:] + [a[0]]

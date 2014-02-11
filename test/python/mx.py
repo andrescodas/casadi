@@ -127,10 +127,10 @@ class MXtests(casadiTestCase):
     self.matrixbinarypool.append(lambda a: fmax(a[0],a[1]),lambda a: fmax(a[0],a[1]),"fmin")
 
     self.matrixbinarypool.append(lambda a: fmin(a[0],a[1]),lambda a: fmin(a[0],a[1]),"fmax")
-    self.matrixbinarypool.append(lambda a: mul(a[0],trans(a[1])),lambda a: dot(a[0],a[1].T),"mul(Matrix,Matrix.T)")
+    self.matrixbinarypool.append(lambda a: mul(trans(a[1]),a[0]),lambda a: dot(a[0],a[1].T),"mul(Matrix.T,Matrix)")
     self.matrixbinarypool.append(lambda a: arctan2(a[0],a[1]),lambda a: arctan2(a[0],a[1]),"arctan2")
     #self.matrixbinarypool.append(lambda a: inner_mul(a[0],trans(a[1])),lambda a: dot(a[0].T,a[1]),name="inner_mul(Matrix,Matrix)") 
-    self.matrixbinarypool.append(lambda a: mul(a[0],trans(a[1])),lambda a: dot(a[0],a[1].T),"mul(Matrix,Matrix.T)")
+    self.matrixbinarypool.append(lambda a: mul(trans(a[1]),a[0]),lambda a: dot(a[0],a[1].T),"mul(Matrix.T,Matrix)")
     
   def test_MX1(self):
     self.message("MX constructor")
@@ -904,9 +904,9 @@ class MXtests(casadiTestCase):
     x_ = numpy.random.random((n,1))
     x = msym("x",1,n)
     
-    Axb = mul(A,x)+b
-    Dxe = mul(D,x)+e
-    a = mul(mul(trans(Axb),C),Dxe)
+    Axb = mul(x,A)+b
+    Dxe = mul(x,D)+e
+    a = mul(Dxe,mul(C,trans(Axb)))
     
     f = MXFunction([x,A,b,C,D,e],[a])
     f.init()
@@ -972,9 +972,9 @@ class MXtests(casadiTestCase):
     x_ = numpy.random.random((n,1))
     x = msym("x",1,n)
     
-    Axb = mul(A,x)+b
-    Dxe = mul(D,x)+e
-    a = mul(mul(trans(Axb),C),Dxe)
+    Axb = mul(x,A)+b
+    Dxe = mul(x,D)+e
+    a = mul(Dxe,mul(C,trans(Axb)))
     
     f = MXFunction([x,A,b,C,D,e],[a])
     f.init()
@@ -1048,9 +1048,9 @@ class MXtests(casadiTestCase):
     x_ = numpy.random.random((n,1))
     x = msym("x",1,n)
     
-    Axb = mul(A,x)+b
-    Dxe = mul(D,x)+e
-    a = mul(mul(trans(Axb),C),Dxe)
+    Axb = mul(x,A)+b
+    Dxe = mul(x,D)+e
+    a = mul(Dxe,mul(C,trans(Axb)))
     
     f = MXFunction([x,A,b,C,D,e],[a])
     f.init()
@@ -1216,30 +1216,30 @@ class MXtests(casadiTestCase):
     def eye(n):
       return DMatrix(numpy.eye(n))
     
-    Axb = mul(A,x)-b
-    ab = mul(a,b.T)
+    Axb = mul(x,A)-b
+    ab = mul(b.T,a)
     tests = [
     (grad(x,x),eye(k)),
     (grad(x,x.T),eye(k)),
     (grad(x,Axb),A.T),
     #(grad(x,Axb.T),A)   incorrect?
-    (grad(x,mul(Axb.T,Axb)),2*mul(A.T,Axb)),
-    #(grad(x,norm_2(Axb)),mul(A.T,Axb)/norm_2(Axb)), #  norm_2 not implemented
-    (grad(x,mul(mul(x.T,A),x)+2*mul(mul(x.T,B),y)+mul(mul(y.T,C),y)),mul((A+A.T),x)+2*mul(B,y)),
-    #(grad(x,mul(a.T,mul(x.T,x)*b)),2*mul(mul(x,a.T),b))
+    (grad(x,mul(Axb,Axb.T)),2*mul(Axb,A.T)),
+    #(grad(x,norm_2(Axb)),mul(Axb,A.T)/norm_2(Axb)), #  norm_2 not implemented
+    (grad(x,mul(x,mul(A,x.T))+2*mul(y,mul(B,x.T))+mul(y,mul(C,y.T))),mul(x,(A+A.T))+2*mul(y,B)),
+    #(grad(x,mul(mul(x,x.T)*b,a.T)),2*mul(b,mul(a.T,x)))
     (grad(X,X),eye(k**2)),
     #(grad(X,X.T),eye(k**2))
-    (grad(X,mul(a.T,mul(X,b))),ab),
-    (grad(X,mul(b.T,mul(X.T,a))),ab),
-    (grad(X,mul(a.T,mul(mul(X,X),b))),mul(X.T,ab)+mul(ab,X.T)),
-    (grad(X,mul(a.T,mul(mul(X.T,X),b))),mul(X,ab + ab.T)),
+    (grad(X,mul(mul(b,X),a.T)),ab),
+    (grad(X,mul(mul(a,X.T),b.T)),ab),
+    (grad(X,mul(mul(b,mul(X,X)),a.T)),mul(ab,X.T)+mul(X.T,ab)),
+    (grad(X,mul(mul(b,mul(X,X.T)),a.T)),mul(ab + ab.T,X)),
     (grad(x,x*mu),MX(eye(k))*mu),
     (grad(X,c.trace(X*mu)),MX(eye(k))*mu),
-    (grad(X,c.trace(mul(X.T,Y))),Y),
     (grad(X,c.trace(mul(Y,X.T))),Y),
-    (grad(X,c.trace(mul(Y.T,X))),Y),
+    (grad(X,c.trace(mul(X.T,Y))),Y),
     (grad(X,c.trace(mul(X,Y.T))),Y),
-    (grad(X,c.trace(mul(a.T,mul(X,b)))),ab)
+    (grad(X,c.trace(mul(Y.T,X))),Y),
+    (grad(X,c.trace(mul(mul(b,X),a.T))),ab)
     #(grad(X,log(c.det(X))),c.inv(X_)),
     ]
 
@@ -1434,12 +1434,12 @@ class MXtests(casadiTestCase):
     self.assertEqual(D.shape[0],4)
     self.assertEqual(D.shape[1],3)
 
-    D = mul([A,B])
+    D = mul([B,A])
     
     self.assertEqual(D.shape[0],4)
     self.assertEqual(D.shape[1],8)
     
-    D = mul([A,B,C])
+    D = mul([C,B,A])
     
     self.assertEqual(D.shape[0],4)
     self.assertEqual(D.shape[1],7)
@@ -1790,11 +1790,11 @@ class MXtests(casadiTestCase):
 
     filt = sp_diag(N)+sp_triplet(N,N,[3],[1])
 
-    f = MXFunction([x,y],[mul(x,y)])
+    f = MXFunction([x,y],[mul(y,x)])
     f.init()
     f.setInput(x_,0)
     f.setInput(y_,1)
-    g = MXFunction([x,y],[mul(x,y,filt)])
+    g = MXFunction([x,y],[mul(y,x,filt)])
     g.init()
     g.setInput(x_,0)
     g.setInput(y_,1)
@@ -1808,7 +1808,7 @@ class MXtests(casadiTestCase):
     
   def test_mul_zero_wrong(self):
     with self.assertRaises(RuntimeError):
-      mul(msym("X",5,4),MX.zeros(2,3))
+      mul(MX.zeros(2,3),msym("X",5,4))
       
   def test_horzsplit(self):
     a = msym("X",sp_triu(5))
@@ -1981,14 +1981,14 @@ class MXtests(casadiTestCase):
      a = MX.sparse(0,5)
      b = MX.sparse(3,0)
      
-     c = mul(a,b)
+     c = mul(b,a)
      
      self.assertEqual(c.size(),0)
      
      a = MX.sparse(3,5)
      b = MX.sparse(4,3)
      
-     c = mul(a,b)
+     c = mul(b,a)
      
      self.assertEqual(c.size(),0)
      

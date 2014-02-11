@@ -934,7 +934,7 @@ class Integrationtests(casadiTestCase):
     q=ssym("q",1,3)
     p=ssym("p",1,9)
     f_in = daeIn(t=t, x=q, p=p)
-    f_out = daeOut(ode=mul(c.reshape(p,3,3),q))
+    f_out = daeOut(ode=mul(q,c.reshape(p,3,3)))
     f=SXFunction(f_in,f_out)
     f.init()
     integrator = CVodesIntegrator(f)
@@ -969,7 +969,7 @@ class Integrationtests(casadiTestCase):
     q=ssym("q",1,3)
     p=ssym("p",1,9)
 
-    f=SXFunction(daeIn(t=t,x=q,p=p),daeOut(ode=mul(c.reshape(p,3,3),q)))
+    f=SXFunction(daeIn(t=t,x=q,p=p),daeOut(ode=mul(q,c.reshape(p,3,3))))
     f.init()
 
     integrator = CVodesIntegrator(f)
@@ -1218,7 +1218,7 @@ class Integrationtests(casadiTestCase):
     A = ssym("A",N,N)
     x = ssym("x",1,N)
 
-    ode = SXFunction(daeIn(x=x, p=flatten(A)),daeOut(ode=mul(A,x)))
+    ode = SXFunction(daeIn(x=x, p=flatten(A)),daeOut(ode=mul(x,A)))
     I = CVodesIntegrator(ode)
     I.setOption("fsens_err_con", True)
     I.setOption('reltol',1e-12)

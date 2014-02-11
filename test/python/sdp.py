@@ -514,13 +514,13 @@ class SDPtests(casadiTestCase):
       L = V["L"]
       x = V["x"] 
 
-      P = mul(L,L.T)
+      P = mul(L.T,L)
 
 
       g = []
       g.append(sum([-Fi[i]*x[i] for i in range(3)]) + G - P)
 
-      nlp = SXFunction(nlpIn(x=V),nlpOut(f=mul(c.T,x),g=flattencat(g)))
+      nlp = SXFunction(nlpIn(x=V),nlpOut(f=mul(x,c.T),g=flattencat(g)))
 
       sol = IpoptSolver(nlp)
       sol.init()

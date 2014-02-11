@@ -1010,7 +1010,7 @@ class NLPtests(casadiTestCase):
     x = ssym("x",1,N)
     x0 = DMatrix(range(N))
     H = diag(range(1,N+1))
-    obj = 0.5*mul([(x-x0).T,H,(x-x0)])
+    obj = 0.5*mul([(x-x0),H,(x-x0).T])
 
     nlp = SXFunction(nlpIn(x=x),nlpOut(f=obj))
     for Solver, solver_options in solvers:
@@ -1043,7 +1043,7 @@ class NLPtests(casadiTestCase):
     UBX = DMatrix([0.5,inf])
 
     x=ssym("x",1,2)
-    nlp=SXFunction(nlpIn(x=x),nlpOut(f=0.5*mul([x.T,H,x])+mul(G.T,x),g=mul(A,x)))
+    nlp=SXFunction(nlpIn(x=x),nlpOut(f=0.5*mul([x,H,x.T])+mul(x,G.T),g=mul(x,A)))
 
     for Solver, solver_options in solvers:
       self.message(str(Solver))
@@ -1083,7 +1083,7 @@ class NLPtests(casadiTestCase):
     UBX = DMatrix([0.5,inf])
 
     x=ssym("x",1,2)
-    nlp=SXFunction(nlpIn(x=x),nlpOut(f=0.5*mul([x.T,H,x])+mul(G.T,x),g=mul(A,x)))
+    nlp=SXFunction(nlpIn(x=x),nlpOut(f=0.5*mul([x,H,x.T])+mul(x,G.T),g=mul(x,A)))
 
     for Solver, solver_options in solvers:
       self.message(str(Solver))
@@ -1151,7 +1151,7 @@ class NLPtests(casadiTestCase):
     UBX = DMatrix([inf]*2)
 
     x=ssym("x",1,2)
-    nlp=SXFunction(nlpIn(x=x),nlpOut(f=0.5*mul([x.T,H,x])+mul(G.T,x),g=mul(A,x)))
+    nlp=SXFunction(nlpIn(x=x),nlpOut(f=0.5*mul([x,H,x.T])+mul(x,G.T),g=mul(x,A)))
 
     for Solver, solver_options in solvers:
       self.message(str(Solver))

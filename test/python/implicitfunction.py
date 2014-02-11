@@ -117,7 +117,7 @@ class NLPtests(casadiTestCase):
       y=ssym("y",s)
       y0 = DMatrix(sp_diag(N),0.1)
 
-      f=SXFunction([flattenNZ(y),flattenNZ(x)],[flattenNZ((mul((x+y0),(x+y0).T)-mul((y+y0),(y+y0).T))[s])])
+      f=SXFunction([flattenNZ(y),flattenNZ(x)],[flattenNZ((mul((x+y0).T,(x+y0))-mul((y+y0).T,(y+y0)))[s])])
       f.init()
       solver=Solver(f)
       solver.setOption(options)
@@ -189,7 +189,7 @@ class NLPtests(casadiTestCase):
       if 'Kinsol' in str(Solver): continue
       if 'Newton' in str(Solver): continue
       x=ssym("x",1,2)
-      f=SXFunction([x],[horzcat([mul((x+3).T,(x-2)),mul((x-4).T,(x+horzcat([1,2])))])])
+      f=SXFunction([x],[horzcat([mul((x-2),(x+3).T),mul((x+horzcat([1,2])),(x-4).T)])])
       f.init()
       
       solver=Solver(f)
@@ -200,7 +200,7 @@ class NLPtests(casadiTestCase):
       
       self.checkarray(solver.output(),DMatrix([-3.0/50*(sqrt(1201)-1),2.0/25*(sqrt(1201)-1)]),digits=6)
 
-      f=SXFunction([x],[horzcat([mul((x+3).T,(x-2)),mul((x-4).T,(x+horzcat([1,2])))])])
+      f=SXFunction([x],[horzcat([mul((x-2),(x+3).T),mul((x+horzcat([1,2])),(x-4).T)])])
       f.init()
       
       solver=Solver(f)
