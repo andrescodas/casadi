@@ -364,9 +364,9 @@ namespace CasADi{
     casadi_assert_message(trans_y.size2()==z.size1(),"Dimension error. Got trans_y=" << trans_y.dimString() << " and z=" << z.dimString() << ".");
     casadi_assert_message(size1()==trans_y.size1(),"Dimension error. Got lhs=" << size1() << " and trans_y" << trans_y.dimString() << ".");
     if(sparsity().dense() && y.dense()){
-      return MX::create(new DenseMultiplication<false,true>(z,shared_from_this<MX>(),trans_y));
+      return MX::create(new DenseMultiplication<true,false>(z,trans_y,shared_from_this<MX>()));
     } else {
-      return MX::create(new Multiplication<false,true>(z,shared_from_this<MX>(),trans_y));    
+      return MX::create(new Multiplication<true,false>(z,trans_y,shared_from_this<MX>()));    
     }
   }
     
