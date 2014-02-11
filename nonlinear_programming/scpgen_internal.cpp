@@ -890,11 +890,11 @@ namespace CasADi{
       // Gauss-Newton Hessian
       const DMatrix& B_obj =  mat_fcn_.output(mat_hes_);
       fill(qpH_.begin(),qpH_.end(),0);
-      DMatrix::mul_no_alloc_ntQQQ(B_obj,B_obj,qpH_);
+      DMatrix::mul_no_alloc_nt(B_obj,B_obj,qpH_);
 
       // Gradient of the objective in Gauss-Newton
       fill(gf_.begin(),gf_.end(),0);
-      DMatrix::mul_no_alloc_nnQQQ(B_obj,b_gn_,gf_);
+      DMatrix::mul_no_alloc_nn(B_obj,b_gn_,gf_);
     } else {
       // Exact Hessian
       mat_fcn_.getOutput(qpH_,mat_hes_);

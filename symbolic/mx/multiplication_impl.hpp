@@ -74,7 +74,7 @@ namespace CasADi{
     if(input[0]!=output[0]){
       copy(input[0]->begin(),input[0]->end(),output[0]->begin());
     }
-    Matrix<T>::mul_no_alloc_tnQQQ(*input[2],*input[1],*output[0]);
+    Matrix<T>::mul_no_alloc_tn(*input[2],*input[1],*output[0]);
   }
 
   template<bool TrX, bool TrY>
