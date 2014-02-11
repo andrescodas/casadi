@@ -66,7 +66,7 @@ namespace CasADi{
     assignNode(new SymbolicMX(name,sp));
   }
 
-  MX::MX(int ncol, int nrow){
+  MX::MX(int dum1, int dum2, int dum3, int nrow, int ncol){
     assignNode(new Constant<CompiletimeConst<0> >(CCSSparsity(nrow,ncol)));
   }
 
@@ -96,7 +96,7 @@ namespace CasADi{
     for(int i=0; i<ret.size(); ++i){
       ret[i] = MX::create(new OutputNode(x, i));
       if(ret[i].null()){
-        ret[i] = MX(0,0);
+        ret[i] = MX::sparse(0,0);
       } else if(ret[i].size()==0){
         ret[i] = MX::sparse(ret[i].shape());
       }
@@ -513,7 +513,7 @@ namespace CasADi{
   }
 
   MX MX::sparse(int nrow, int ncol){
-    return MX(ncol,nrow);
+    return MX(00,00,00,nrow,ncol);
   }
 
   MX MX::sparse(const std::pair<int, int> &rc){

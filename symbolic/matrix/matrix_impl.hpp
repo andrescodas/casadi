@@ -448,7 +448,7 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T>::Matrix(int n, int m) : sparsity_(CCSSparsity(m,n,false)){
+  Matrix<T>::Matrix(int dum1, int dum2, int dum3, int nrow, int ncol) : sparsity_(CCSSparsity(nrow,ncol,false)){
   }
 
   template<class T>
@@ -1706,7 +1706,7 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> Matrix<T>::sparse(int nrow, int ncol){
-    return Matrix<T>(ncol,nrow);
+    return Matrix<T>(00,00,00,nrow,ncol);
   }
 
   template<class T>

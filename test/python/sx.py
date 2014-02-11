@@ -506,7 +506,7 @@ class SXtests(casadiTestCase):
 
     x=DMatrix(xn)
     
-    y=DMatrix(7,8)
+    y=DMatrix.sparse(8,7)
     z = numpy.zeros((7,8))
     y[0,0]=12; z[0,0] = 12
     self.checkarray(y,z,"scalar assignment")
@@ -628,10 +628,10 @@ class SXtests(casadiTestCase):
     r = f.eval([x,[]])
     self.assertTrue(r[1].empty())
     
-    r = f.eval([x,SXMatrix(0,1)])
+    r = f.eval([x,SXMatrix.sparse(1,0)])
     self.assertTrue(r[1].empty())
 
-    r = f.eval([x,SXMatrix(1,0)])
+    r = f.eval([x,SXMatrix.sparse(0,1)])
     self.assertTrue(r[1].empty())
     
     #self.assertRaises(Exception,lambda : f.eval([x,x]))
@@ -1090,7 +1090,7 @@ class SXtests(casadiTestCase):
   def test_jacobian_empty(self):
     x = ssym("x",1,3)
 
-    s = jacobian(DMatrix(0,0),x).shape
+    s = jacobian(DMatrix.sparse(0,0),x).shape
     self.assertEqual(s[0],0)
     self.assertEqual(s[1],3)
 
@@ -1160,7 +1160,7 @@ class SXtests(casadiTestCase):
     self.checkarray(h.output().data(),H.data())
 
   def test_mxnulloutput(self):
-     a = SXMatrix(5,0)
+     a = SXMatrix.sparse(0,5)
      b = ssym("x",1,2)
      bm = msym("x",1,2)
      
@@ -1176,7 +1176,7 @@ class SXtests(casadiTestCase):
      self.assertEqual(c.size2(),5)
      self.assertEqual(c.size1(),0)
      
-     a = SXMatrix(0,0)
+     a = SXMatrix.sparse(0,0)
      
      f = SXFunction([b],[a])
      f.init()
@@ -1192,22 +1192,22 @@ class SXtests(casadiTestCase):
      self.assertEqual(c.size1(),0)
      
   def test_mxnull(self):
-     a = SXMatrix(5,0)
-     b = SXMatrix(0,3)
+     a = SXMatrix.sparse(0,5)
+     b = SXMatrix.sparse(3,0)
      
      c = mul(a,b)
      
      self.assertEqual(c.size(),0)
      
-     a = SXMatrix(5,3)
-     b = SXMatrix(3,4)
+     a = SXMatrix.sparse(3,5)
+     b = SXMatrix.sparse(4,3)
      
      c = mul(a,b)
      
      self.assertEqual(c.size(),0)
      
   def  test_mxnullop(self):
-    c = SXMatrix(0,0)
+    c = SXMatrix.sparse(0,0)
     x = ssym("x",3,2)
     
     with self.assertRaises(RuntimeError):

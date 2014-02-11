@@ -463,7 +463,7 @@ class Sparsitytests(casadiTestCase):
     
   def test_dm(self):
   
-    A = DMatrix(6,4)
+    A = DMatrix.sparse(4,6)
     A[0,0] = 1
     A[1,2] = 1
     A[2,2] = 1
@@ -481,7 +481,7 @@ class Sparsitytests(casadiTestCase):
     self.checkarray(coarse_rowblock,DMatrix([ 0, 1,3,3,4]).T)
     
     
-    A = DMatrix(6,4)
+    A = DMatrix.sparse(4,6)
     A[0,0] = 1
     A[1,2] = 1
     A[2,2] = 1
@@ -502,7 +502,7 @@ class Sparsitytests(casadiTestCase):
     self.checkarray(coarse_colblock,DMatrix([ 0, 2, 4,6,6]).T)
     self.checkarray(coarse_rowblock,DMatrix([ 0, 2,4,4,4]).T)
     
-    A = DMatrix(6,4)
+    A = DMatrix.sparse(4,6)
     A[0,0] = 1
     A[1,2] = 1
     A[2,2] = 1

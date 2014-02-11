@@ -446,22 +446,20 @@ namespace CasADi{
   
   MX blkdiag(const std::vector<MX> &A) {
     // This implementation does not pretend to be efficient
-    int col=0;
-    int row=0;
+    int nrow=0, ncol=0;
     for (int i=0;i<A.size();++i) {
-      col+=A[i].size2();
-      row+=A[i].size1();
+      nrow += A[i].size1();
+      ncol += A[i].size2();
     }
     
-    MX ret = MX(col,row);
-    
-    col = 0;
-    row = 0;
+    MX ret = MX::sparse(nrow,ncol);
+    nrow = 0;
+    ncol = 0;
     
     for (int i=0;i<A.size();++i) {
-      ret(range(row,row+A[i].size1()),range(col,col+A[i].size2())) = A[i];
-      col+=A[i].size2();
-      row+=A[i].size1();
+      ret(range(nrow,nrow+A[i].size1()),range(ncol,ncol+A[i].size2())) = A[i];
+      nrow += A[i].size1();
+      ncol += A[i].size2();
     }
     
     return ret;
@@ -1011,7 +1009,7 @@ namespace CasADi{
   
   MX kron(const MX& a, const MX& b) {
     const CCSSparsity &a_sp = a.sparsity();
-    MX filler(b.size2(),b.size1());
+    MX filler = MX::sparse(b.shape());
     std::vector< std::vector< MX > > blocks(a.size2(),std::vector< MX >(a.size1(),filler));
     for (int i=0;i<a.size2();++i) {
       for (int j=0;j<a.size1();++j) {

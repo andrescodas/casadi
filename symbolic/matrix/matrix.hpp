@@ -108,7 +108,7 @@ namespace CasADi{
 #endif // SWIG
     
     /// Empty n-by-m matrix constructor
-    Matrix(int n, int m);
+    Matrix(int dum1, int dum2, int dum3, int nrow, int ncol);
     
     /// Dense n-by-m matrix filled with val constructor
     Matrix(int n, int m, const T& val);
@@ -116,13 +116,13 @@ namespace CasADi{
     /// Sparse n-by-m matrix filled with given sparsity
     Matrix(int dum1, int dum2, int dum3, int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row, const std::vector<T>& d=std::vector<T>());
 
-    /// dense matrix constructor with data given as vector of vectors
+    /// Dense matrix constructor with data given as vector of vectors
     explicit Matrix(const std::vector< std::vector<T> >& m);
     
-    /// sparse matrix with a given sparsity
+    /// Sparse matrix with a given sparsity
     explicit Matrix(const CCSSparsity& sparsity, const T& val=0);
     
-    /// sparse matrix with a given sparsity and non-zero elements.
+    /// Sparse matrix with a given sparsity and non-zero elements.
     Matrix(const CCSSparsity& sparsity, const std::vector<T>& d);
     
     /** \brief Check if the dimensions and colind,row vectors are compatible.

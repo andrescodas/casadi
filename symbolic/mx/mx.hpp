@@ -81,7 +81,7 @@ namespace CasADi{
     MX(const Matrix<double> &x);
 
     /** \brief  Matrix with all zeros */
-    MX(int ncol, int nrow);
+    MX(int dum1, int dum2, int dum3, int nrow, int ncol);
     
     /** \brief  Dense matrix filled with value val */
     MX(int ncol, int nrow, const MX& val);

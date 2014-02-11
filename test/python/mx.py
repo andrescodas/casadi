@@ -364,7 +364,7 @@ class MXtests(casadiTestCase):
     
   def test_trans(self):
     self.message("trans")
-    a = MX(0,1)
+    a = MX.sparse(1,0)
     b = trans(a)
     self.assertEquals(b.size2(),1)
     self.assertEquals(b.size1(),0)
@@ -405,7 +405,7 @@ class MXtests(casadiTestCase):
     
   def test_MXflattenNZ(self):
 
-    u = DMatrix(4,3)
+    u = DMatrix.sparse(3,4)
     u[0,0] = 7
     u[1,1] = 8
     u[2,2] = 6
@@ -658,7 +658,7 @@ class MXtests(casadiTestCase):
     import numpy
     numpy.random.seed(42)
     xn = numpy.random.random((3,4))
-    x=MX(3,4)
+    x=MX.sparse(4,3)
     y=msym("x",4,3)
     z=unite(x,y)
     f = MXFunction([y],[z])
@@ -716,7 +716,7 @@ class MXtests(casadiTestCase):
   def test_IMatrix_index_slice(self):
     self.message("IMatrix combined with slice")
 
-    A = IMatrix(2,2)
+    A = IMatrix.sparse(2,2)
     A[0,0] = 0
     A[1,1] = 1
     A[0,1] = 2
@@ -789,12 +789,12 @@ class MXtests(casadiTestCase):
   def test_IMatrix_IMatrix_index(self):
     self.message("IMatrix IMatrix index")
 
-    A = IMatrix(2,2)
+    A = IMatrix.sparse(2,2)
     A[0,0] = 0
     A[1,1] = 1
     A[0,1] = 2
     
-    B = IMatrix(2,2)
+    B = IMatrix.sparse(2,2)
     B[0,0] = 2
     B[1,1] = 1
     B[0,1] = 0
@@ -832,7 +832,7 @@ class MXtests(casadiTestCase):
      
      self.checkarray(fy.getOutput(),r,"subscripted assigment")
      
-     y=MX(7,8)
+     y=MX.sparse(8,7)
      y[1:4,[2,4,6,7]]=x
      r[1:4,[2,4,6,7]]=xn
      fy = MXFunction([x],[y])
@@ -1771,7 +1771,7 @@ class MXtests(casadiTestCase):
   def test_jacobian_empty(self):
     x = msym("x",1,3)
 
-    s = jacobian(DMatrix(0,0),x).shape
+    s = jacobian(DMatrix.sparse(0,0),x).shape
     self.assertEqual(s[0],0)
     self.assertEqual(s[1],3)
 
@@ -1947,7 +1947,7 @@ class MXtests(casadiTestCase):
     self.checkarray(blockcat(v),f.input())
 
   def test_mxnulloutput(self):
-     a = MX(5,0)
+     a = MX.sparse(0,5)
      b = msym("x",1,2)
      
      f = MXFunction([b],[a])
@@ -1962,7 +1962,7 @@ class MXtests(casadiTestCase):
      self.assertEqual(c.size2(),5)
      self.assertEqual(c.size1(),0)
      
-     a = MX(0,0)
+     a = MX.sparse(0,0)
      b = msym("x",1,2)
      
      f = MXFunction([b],[a])
@@ -1978,22 +1978,22 @@ class MXtests(casadiTestCase):
      self.assertEqual(c.size1(),0)
      
   def test_mxnull(self):
-     a = MX(5,0)
-     b = MX(0,3)
+     a = MX.sparse(0,5)
+     b = MX.sparse(3,0)
      
      c = mul(a,b)
      
      self.assertEqual(c.size(),0)
      
-     a = MX(5,3)
-     b = MX(3,4)
+     a = MX.sparse(3,5)
+     b = MX.sparse(4,3)
      
      c = mul(a,b)
      
      self.assertEqual(c.size(),0)
      
   def  test_mxnullop(self):
-    c = MX(0,0)
+    c = MX.sparse(0,0)
     x = msym("x",3,2)
     
     with self.assertRaises(RuntimeError):

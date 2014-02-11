@@ -106,10 +106,10 @@ void SDPSDQPInternal::init(){
   MX g_sdqp = msym("g",input(SDQP_SOLVER_G).sparsity());
   
   std::vector<MX> fi(n_+1);
-  MX znp = DMatrix(n_+1,n_+1);
+  MX znp = DMatrix::sparse(n_+1,n_+1);
   for (int k=0;k<n_;++k) {
-    MX gk = horzcat(g_socp(k,ALL),DMatrix(1,1));
-    MX fk = -blockcat(znp,gk,trans(gk),DMatrix(1,1));
+    MX gk = horzcat(g_socp(k,ALL),DMatrix::sparse(1,1));
+    MX fk = -blockcat(znp,gk,trans(gk),DMatrix::sparse(1,1));
     // TODO: replace with ALL
     fi.push_back(blkdiag(f_sdqp(range(f_sdqp.size1()),range(f_sdqp.size1()*k,f_sdqp.size1()*(k+1))),fk));
   }
@@ -117,9 +117,9 @@ void SDPSDQPInternal::init(){
   fin(n_+1,n_) = en_socp;
   fin(n_,n_+1) = en_socp;
   
-  fi.push_back(blkdiag(DMatrix(f_sdqp.size1(),f_sdqp.size1()),-fin));
+  fi.push_back(blkdiag(DMatrix::sparse(f_sdqp.size1(),f_sdqp.size1()),-fin));
   
-  MX h0 = horzcat(h_socp,DMatrix(1,1));
+  MX h0 = horzcat(h_socp,DMatrix::sparse(1,1));
   MX g = blockcat(f_socp*DMatrix::eye(n_+1),h0,trans(h0),f_socp);
   
   g = blkdiag(g_sdqp,g);

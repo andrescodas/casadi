@@ -96,13 +96,13 @@ SXMatrix pw_lin(const SX &t, const SXMatrix &tval, const SXMatrix &val){
   casadi_assert_message(N>=2,"pw_lin: N>=2");
 
   // Gradient for each line segment
-  SXMatrix g(N-1,1);
+  SXMatrix g = SXMatrix::sparse(1,N-1);
   for(int i=0; i<N-1; ++i){
     g(0,i) = (val(0,i+1)- val(0,i))/(tval(0,i+1)-tval(0,i));
   }
 
   // Line segments
-  SXMatrix lseg(N-1,1);
+  SXMatrix lseg = SXMatrix::sparse(1,N-1);
   for(int i=0; i<N-1; ++i)
     lseg(0,i) = val(0,i) + g(0,i)*(t-tval(0,i)); 
 
@@ -371,7 +371,7 @@ void makeSmooth(SXMatrix &ex, SXMatrix &bvar, SXMatrix &bexpr){
 #endif
 
 SXMatrix spy(const SXMatrix& A){
-  SXMatrix s(A.size2(),A.size1());
+  SXMatrix s = SXMatrix::sparse(A.size1(),A.size2());
   for(int i=0; i<A.size2(); ++i)
     for(int j=0; j<A.size1(); ++j)
       if(!A(j,i).toScalar()->isZero())

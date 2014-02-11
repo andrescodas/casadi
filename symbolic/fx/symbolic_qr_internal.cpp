@@ -82,7 +82,7 @@ namespace CasADi{
       inv_rowperm[rowperm[k]] = k;
     
     // Permute the linear system
-    SXMatrix Aperm(0,A.size1());
+    SXMatrix Aperm = SXMatrix::sparse(A.size1(),0);
     for(int i=0; i<A.size2(); ++i){
       Aperm.resize(A.size1(),i+1);
       for(int el=A.colind(colperm[i]); el<A.colind(colperm[i]+1); ++el){
@@ -117,7 +117,7 @@ namespace CasADi{
     // We have inv(A) = inv(Px) * inv(R) * Q' * Pb
 
     // Permute the right hand side
-    SXMatrix bperm(0,b.size1());
+    SXMatrix bperm = SXMatrix::sparse(b.size1(),0);
     for(int i=0; i<b.size2(); ++i){
       bperm.resize(b.size1(),i+1);
       for(int el=b.colind(colperm[i]); el<b.colind(colperm[i]+1); ++el){
@@ -129,7 +129,7 @@ namespace CasADi{
     SXMatrix xperm = CasADi::solve(R,mul(trans(Q),bperm));
 
     // Permute back the solution
-    SXMatrix x(0,xperm.size1());
+    SXMatrix x = SXMatrix::sparse(xperm.size1(),0);
     for(int i=0; i<xperm.size2(); ++i){
       x.resize(xperm.size1(),i+1);
       for(int el=xperm.colind(inv_rowperm[i]); el<xperm.colind(inv_rowperm[i]+1); ++el){
@@ -161,7 +161,7 @@ namespace CasADi{
     // We have inv(A)' = inv(Pb) * Q *inv(R') * Px
 
     // Permute the right hand side
-    bperm = SXMatrix(0,b.size1());
+    bperm = SXMatrix::sparse(b.size1(),0);
     for(int i=0; i<b.size2(); ++i){
       bperm.resize(b.size1(),i+1);
       for(int el=b.colind(rowperm[i]); el<b.colind(rowperm[i]+1); ++el){
@@ -173,7 +173,7 @@ namespace CasADi{
     xperm = mul(Q,CasADi::solve(trans(R),bperm));
 
     // Permute back the solution
-    x = SXMatrix(0,xperm.size1());
+    x = SXMatrix::sparse(xperm.size1(),0);
     for(int i=0; i<xperm.size2(); ++i){
       x.resize(xperm.size1(),i+1);
       for(int el=xperm.colind(inv_colperm[i]); el<xperm.colind(inv_colperm[i]+1); ++el){

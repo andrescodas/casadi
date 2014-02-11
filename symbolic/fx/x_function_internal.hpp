@@ -155,7 +155,7 @@ namespace CasADi{
     // Null output arguments become empty
     for(int i=0; i<outputv_.size(); ++i) {
       if (outputv_[i].isNull()) {
-        outputv_[i] = MatType(0,0);
+        outputv_[i] = MatType::sparse(0,0);
       }
     }
 

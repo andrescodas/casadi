@@ -684,7 +684,7 @@ namespace CasADi{
     if(n==1) return 1;
 
     // Remove col i and row j
-    Matrix<T> M(n-1,n-1);
+    Matrix<T> M = Matrix<T>::sparse(n-1,n-1);
   
     std::vector<int> col = x.sparsity().getCol();
     const std::vector<int> &row = x.sparsity().row();
@@ -724,7 +724,7 @@ namespace CasADi{
     T temp;
   
     // Cofactor matrix
-    Matrix<T> C(n,n);
+    Matrix<T> C = Matrix<T>::sparse(n,n);
     for(int i=0; i<n; ++i)
       for(int j=0; j<n; ++j) {
         temp = cofactor(a,i,j);
@@ -955,7 +955,7 @@ namespace CasADi{
   template<class T>
   Matrix<T> sumAll(const Matrix<T> &x) {
     // Quick return if empty
-    if (x.empty()) return Matrix<T>(1,1);
+    if (x.empty()) return Matrix<T>::sparse(1,1);
     // Sum non-zero elements
     T res=0;
     for(int k=0; k<x.size(); k++){
@@ -1044,7 +1044,7 @@ namespace CasADi{
       Matrix<T> ai = AT(ALL,i);
       Matrix<T> qi = ai;
       // The i-th row of R
-      Matrix<T> ri(1,n);
+      Matrix<T> ri = Matrix<T>::sparse(n,1);
   
       // subtract the projection of qi in the previous directions from ai
       for(int j=0; j<i; ++j){
@@ -1176,7 +1176,7 @@ namespace CasADi{
         inv_rowperm[rowperm[k]] = k;
     
       // Permute the right hand side
-      Matrix<T> bperm(0,b.size1());
+      Matrix<T> bperm = Matrix<T>::sparse(b.size1(),0);
       for(int i=0; i<b.size2(); ++i){
         bperm.resize(b.size1(),i+1);
         for(int el=b.colind(colperm[i]); el<b.colind(colperm[i]+1); ++el){
@@ -1185,7 +1185,7 @@ namespace CasADi{
       }
 
       // Permute the linear system
-      Matrix<T> Aperm(0,A.size1());
+      Matrix<T> Aperm = Matrix<T>::sparse(A.size1(),0);
       for(int i=0; i<A.size2(); ++i){
         Aperm.resize(A.size1(),i+1);
         for(int el=A.colind(colperm[i]); el<A.colind(colperm[i]+1); ++el){
@@ -1218,7 +1218,7 @@ namespace CasADi{
       }
     
       // Permute back the solution
-      Matrix<T> x(0,xperm.size1());
+      Matrix<T> x = Matrix<T>::sparse(xperm.size1(),0);
       for(int i=0; i<xperm.size2(); ++i){
         x.resize(xperm.size1(),i+1);
         for(int el=xperm.colind(inv_rowperm[i]); el<xperm.colind(inv_rowperm[i]+1); ++el){
@@ -1241,7 +1241,7 @@ namespace CasADi{
   template<class T>
   Matrix<T> kron(const Matrix<T>& a, const Matrix<T>& b) {
     const CCSSparsity &a_sp = a.sparsity();
-    Matrix<T> filler(b.size2(),b.size1());
+    Matrix<T> filler = Matrix<T>::sparse(b.shape());
     std::vector< std::vector< Matrix<T> > > blocks(a.size2(),std::vector< Matrix<T> >(a.size1(),filler));
     for (int i=0;i<a.size2();++i) {
       for (int j=0;j<a.size1();++j) {
@@ -1436,7 +1436,7 @@ namespace CasADi{
       return;
   
     // Start with a matrix with no cols
-    Matrix<T> Asp(0,A.size1());
+    Matrix<T> Asp = Matrix<T>::sparse(A.size1(),0);
 
     // Loop over the cols
     for(int i=0; i<A.size2(); ++i){
