@@ -457,7 +457,7 @@ class SXtests(casadiTestCase):
                 ("number",2.3, (1,1)),
                 ("list(SX)", [SX("x"),SX("y")], (2,1)),
                 ("list(SX,number)", [SX("x"),2.3], (2,1) ),
-                ("list(list(SX,number))", [[SX("x"),2.3],[1,SX("y")]], (2,2) ),
+                ("list(list(SX,number))", [[SX("x"),1],[2.3,SX("y")]], (2,2) ),
                 ("tuple(SX)", (SX("x"),SX("y")), (2,1)),
                 ("tuple(SX,number)", (SX("x"),2.3), (2,1)),
                 ("SXMatrix", ssym("x"), (1,1)),
@@ -1017,7 +1017,7 @@ class SXtests(casadiTestCase):
     x = ssym("x",2,2)
     f = SXFunction([x],[eig_symbolic(x)])
     f.init()
-    f.setInput(DMatrix([[2,0.1],[0.3,0.7]]))
+    f.setInput(DMatrix(00,00,00,[[2,0.1],[0.3,0.7]]).T)
     f.evaluate()
     self.checkarray(f.output(),DMatrix([0.67732,2.02268]),digits=5)
     
@@ -1041,7 +1041,7 @@ class SXtests(casadiTestCase):
     y = ssym("y",1,2)
     f = SXFunction([x,y],[eig_symbolic(blkdiag([x,c.diag(y)]))])
     f.init()
-    f.setInput(DMatrix([[2,0.1],[0.3,0.7]]),0)
+    f.setInput(DMatrix(00,00,00,[[2,0.1],[0.3,0.7]]).T,0)
     f.setInput([3,7],1)
     f.evaluate()
     self.checkarray(f.output(),DMatrix([0.67732,2.02268,3,7]),digits=5)

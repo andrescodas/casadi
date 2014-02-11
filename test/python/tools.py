@@ -50,8 +50,8 @@ class Toolstests(casadiTestCase):
         self.assertTrue(isEqual(p.z,p["z"]))
 
       self.checkarray(p.i_x,IMatrix([0,1]),"")
-      self.checkarray(p.i_z,IMatrix([[2,4,6,8],[3,5,7,9]]),"")
-      self.checkarray(p.i_y,IMatrix([[10,13],[11,14],[12,15]]),"")
+      self.checkarray(p.i_z,IMatrix(00,00,00,[[2,4,6,8],[3,5,7,9]]).T,"")
+      self.checkarray(p.i_y,IMatrix(00,00,00,[[10,13],[11,14],[12,15]]).T,"")
       
       self.checkarray(p.iv_x,list(IMatrix([0,1])),"")
       
@@ -181,11 +181,11 @@ class Toolstests(casadiTestCase):
       self.assertEqual(p.xother.I_a,0,"Index")
       self.assertEqual(p.xother.I_b,1,"Index")
       
-      self.checkarray(array(p.i_x),DMatrix([[0],[1]]),"index")
-      self.checkarray(array(p.i_y),DMatrix([[5,8],[6,9],[7,10]]),"index")
-      self.checkarray(array(p.i_z),DMatrix([[11,13,15,17],[12,14,16,18]]),"index")
+      self.checkarray(array(p.i_x),DMatrix(00,00,00,[[0],[1]]).T,"index")
+      self.checkarray(array(p.i_y),DMatrix(00,00,00,[[5,8],[6,9],[7,10]]).T,"index")
+      self.checkarray(array(p.i_z),DMatrix(00,00,00,[[11,13,15,17],[12,14,16,18]]).T,"index")
       self.checkarray(array(p.xother.i_a),DMatrix(0),"index")
-      self.checkarray(array(p.xother.i_b),DMatrix([[1,0],[0,2]]),"index")
+      self.checkarray(array(p.xother.i_b),DMatrix(00,00,00,[[1,0],[0,2]]).T,"index")
 
       self.assertEqual(p.flattencat().numel(),21)
       self.assertEqual(p.flattencat().size(),19)
@@ -220,7 +220,7 @@ class Toolstests(casadiTestCase):
       p.x_ = [5,8]
 
       p.xother.b_.setAll(7)
-      p.z_ = DMatrix([[1,2,3,4],[5,6,7,8]])
+      p.z_ = DMatrix(00,00,00,[[1,2,3,4],[5,6,7,8]]).T
 
 
       A = p.flattenNZcat_()
@@ -251,9 +251,9 @@ class Toolstests(casadiTestCase):
       self.assertEqual(p.getNumel(),9)
       self.assertEqual(p.getSize(),9)
       
-      self.checkarray(array(p.i_a),DMatrix([[0],[1]]),"index")
-      self.checkarray(array(p.i_b[0]),DMatrix([[2],[3],[4]]),"index")
-      self.checkarray(array(p.i_b[1]),DMatrix([[5],[6],[7]]),"index")
+      self.checkarray(array(p.i_a),DMatrix(00,00,00,[[0],[1]]).T,"index")
+      self.checkarray(array(p.i_b[0]),DMatrix(00,00,00,[[2],[3],[4]]).T,"index")
+      self.checkarray(array(p.i_b[1]),DMatrix(00,00,00,[[5],[6],[7]]).T,"index")
       self.checkarray(array(p.i_c),DMatrix(8),"index")
 
       self.assertEqual(p.o_a,0,"Offset")
@@ -304,9 +304,9 @@ class Toolstests(casadiTestCase):
       
 
       
-      self.checkarray(array(p.i_a),DMatrix([[0],[1]]),"index")
-      self.checkarray(array(p.i_b[0]),DMatrix([[2,5],[3,6],[4,7]]),"index")
-      self.checkarray(array(p.i_b[1]),DMatrix([[8],[9],[10]]),"index")
+      self.checkarray(array(p.i_a),DMatrix(00,00,00,[[0],[1]]).T,"index")
+      self.checkarray(array(p.i_b[0]),DMatrix(00,00,00,[[2,5],[3,6],[4,7]]).T,"index")
+      self.checkarray(array(p.i_b[1]),DMatrix(00,00,00,[[8],[9],[10]]).T,"index")
       self.checkarray(array(p.i_c),DMatrix(11),"index")
 
       self.assertEqual(p.o_a,0,"Offset")
@@ -357,11 +357,11 @@ class Toolstests(casadiTestCase):
       p.c = ssym("c")
       p.freeze()
       
-      self.checkarray(array(p.i_a),DMatrix([[0],[1]]),"index")
-      self.checkarray(array(p.i_b[0]),DMatrix([[2],[3],[4]]),"index")
-      self.checkarray(array(p.i_b[1]),DMatrix([[5],[6],[7]]),"index")
-      self.checkarray(array(p.i_b[2][0]),DMatrix([[8],[9],[10]]),"index")
-      self.checkarray(array(p.i_b[2][1]),DMatrix([[11],[12],[13]]),"index")
+      self.checkarray(array(p.i_a),DMatrix(00,00,00,[[0],[1]]).T,"index")
+      self.checkarray(array(p.i_b[0]),DMatrix(00,00,00,[[2],[3],[4]]).T,"index")
+      self.checkarray(array(p.i_b[1]),DMatrix(00,00,00,[[5],[6],[7]]).T,"index")
+      self.checkarray(array(p.i_b[2][0]),DMatrix(00,00,00,[[8],[9],[10]]).T,"index")
+      self.checkarray(array(p.i_b[2][1]),DMatrix(00,00,00,[[11],[12],[13]]).T,"index")
       self.checkarray(array(p.i_c),DMatrix(14),"index")
 
       self.assertEqual(p.o_a,0,"Offset")
@@ -537,15 +537,15 @@ class Toolstests(casadiTestCase):
     S = struct_ssym([entry("P",shapestruct=(s0,s0))])
  
     num = S(0)
-    num["P"] = DMatrix([[1,2,3],[4,5,6],[7,8,9]])
+    num["P"] = DMatrix(00,00,00,[[1,2,3],[4,5,6],[7,8,9]]).T
     self.checkarray(num["P",index["x"],index["y"]],DMatrix([2]))
     self.checkarray(num["P",index["x"],:],DMatrix([1,2,3]).T)
     self.checkarray(num["P",:,index["y"]],DMatrix([2,5,8]))
-    self.checkarray(num["P",:,:],DMatrix([[1,2,3],[4,5,6],[7,8,9]]))
+    self.checkarray(num["P",:,:],DMatrix(00,00,00,[[1,2,3],[4,5,6],[7,8,9]]).T)
     
-    self.checkarray(num["P",indexf[["x","y"]],indexf[["z","x"]]],DMatrix([[3,1],[6,4]]))
+    self.checkarray(num["P",indexf[["x","y"]],indexf[["z","x"]]],DMatrix(00,00,00,[[3,1],[6,4]]).T)
     
-    self.checkarray(num["P",index[list,horzcat,["x","y"]],index[list,horzcat,["z","x"]]],DMatrix([[3,1],[6,4]]))
+    self.checkarray(num["P",index[list,horzcat,["x","y"]],index[list,horzcat,["z","x"]]],DMatrix(00,00,00,[[3,1],[6,4]]).T)
     self.checkarray(num["P",index[horzcat,["x","y"]],index[horzcat,["z","x"]]],DMatrix([3,4]))
     
     S = struct_ssym([entry("P",shapestruct=s0)])
@@ -565,17 +565,17 @@ class Toolstests(casadiTestCase):
     S = struct_ssym([entry("P",shapestruct=(3,s0))])
  
     num = S(0)
-    num["P"] = DMatrix([[1,2,3],[4,5,6],[7,8,9]])
+    num["P"] = DMatrix(00,00,00,[[1,2,3],[4,5,6],[7,8,9]]).T
     with self.assertRaises(Exception):
       self.checkarray(num["P",index["x"],index["y"]],DMatrix([2]))
     with self.assertRaises(Exception):
       self.checkarray(num["P",index["x"],:],DMatrix([1,2,3]).T)
     self.checkarray(num["P",:,index["y"]],DMatrix([2,5,8]))
-    self.checkarray(num["P",:,:],DMatrix([[1,2,3],[4,5,6],[7,8,9]]))
+    self.checkarray(num["P",:,:],DMatrix(00,00,00,[[1,2,3],[4,5,6],[7,8,9]]).T)
     
-    self.checkarray(num["P",:,indexf[["z","x"]]],DMatrix([[3,1],[6,4],[9,7]]))
+    self.checkarray(num["P",:,indexf[["z","x"]]],DMatrix(00,00,00,[[3,1],[6,4],[9,7]]).T)
     
-    self.checkarray(num["P",:,index[list,horzcat,["z","x"]]],DMatrix([[3,1],[6,4],[9,7]]))
+    self.checkarray(num["P",:,index[list,horzcat,["z","x"]]],DMatrix(00,00,00,[[3,1],[6,4],[9,7]]).T)
     self.checkarray(num["P",:,index[horzcat,["z","x"]]],DMatrix([3,1,6,4,9,7]))
     
     S = struct_ssym([entry("P",shapestruct=s0)])
@@ -853,7 +853,7 @@ class Toolstests(casadiTestCase):
     a["x","y"] = 2
     a["y","x"] = 1
     
-    self.checkarray(d,DMatrix([[0,2,0],[1,0,0],[0,0,0]]))
+    self.checkarray(d,DMatrix(00,00,00,[[0,2,0],[1,0,0],[0,0,0]]).T)
 
   def test_structure_squared_repeated_dmatrix(self):
     self.message("squared repeated dmatrix")
@@ -865,7 +865,7 @@ class Toolstests(casadiTestCase):
     a[0,"y","x"] = 1
     a[-1,"x","y"] = 2
     a[-1,"y","x"] = 1
-    self.checkarray(d,DMatrix([[0,2,0],[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,2,0],[1,0,0],[0,0,0]]))
+    self.checkarray(d,DMatrix(00,00,00,[[0,2,0],[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,2,0],[1,0,0],[0,0,0]]).T)
     
   def test_typemaps(self):
     self.message("typemaps")
@@ -887,7 +887,7 @@ class Toolstests(casadiTestCase):
     a = struct_ssym([entry("P",shape=(3,3),type='symm')])
     
     b = a()
-    b["P"] = DMatrix([[0,1,2],[3,4,5],[6,7,8]])
+    b["P"] = DMatrix(00,00,00,[[0,1,2],[3,4,5],[6,7,8]]).T
     
     self.assertEqual(a.size,6)
     self.checkarray(a["P"].shape,(3,3))
@@ -897,8 +897,8 @@ class Toolstests(casadiTestCase):
     f.setInput(range(6))
     f.evaluate()
     
-    self.checkarray(f.getOutput(),DMatrix([[0,1,3],[1,2,4],[3,4,5]]))
-    self.checkarray(b["P"],DMatrix([[0,3,6],[3,4,7],[6,7,8]]))
+    self.checkarray(f.getOutput(),DMatrix(00,00,00,[[0,1,3],[1,2,4],[3,4,5]]).T)
+    self.checkarray(b["P"],DMatrix(00,00,00,[[0,3,6],[3,4,7],[6,7,8]]).T)
     self.checkarray(b.cat,DMatrix([0,3,4,6,7,8]))
     
     states = struct_ssym(["x","y","z"])
@@ -906,36 +906,36 @@ class Toolstests(casadiTestCase):
     a = struct_ssym([entry("P",shapestruct=(states,states),type='symm')])
 
     b = a()
-    b["P"] = DMatrix([[0,1,2],[3,4,5],[6,7,8]])
+    b["P"] = DMatrix(00,00,00,[[0,1,2],[3,4,5],[6,7,8]]).T
 
-    self.checkarray(b["P",["x","z"],["x","z"]] ,DMatrix([[0,6],[6,8]]))
+    self.checkarray(b["P",["x","z"],["x","z"]] ,DMatrix(00,00,00,[[0,6],[6,8]]).T)
 
     b["P","y","x"] = 66
-    self.checkarray(b["P"],DMatrix([[0,66,6],[66,4,7],[6,7,8]]))
+    self.checkarray(b["P"],DMatrix(00,00,00,[[0,66,6],[66,4,7],[6,7,8]]).T)
 
     
     b["P","x","y"] = 666
     
-    self.checkarray(b["P"],DMatrix([[0,666,6],[666,4,7],[6,7,8]]))
+    self.checkarray(b["P"],DMatrix(00,00,00,[[0,666,6],[666,4,7],[6,7,8]]).T)
 
     b["P",["x"],["y","z"]] = DMatrix([1,12]).T
-    self.checkarray(b["P"],DMatrix([[0,1,12],[1,4,7],[12,7,8]]))
+    self.checkarray(b["P"],DMatrix(00,00,00,[[0,1,12],[1,4,7],[12,7,8]]).T)
     
-    b["P",["x","z"],["x","z"]] = DMatrix([[11,0],[0,11]])
-    self.checkarray(b["P"],DMatrix([[11,1,0],[1,4,7],[0,7,11]]))
+    b["P",["x","z"],["x","z"]] = DMatrix(00,00,00,[[11,0],[0,11]]).T
+    self.checkarray(b["P"],DMatrix(00,00,00,[[11,1,0],[1,4,7],[0,7,11]]).T)
     
     a = struct_ssym([entry("P",shape=sp_banded(3,1),type='symm')])
 
     b = a()
     with self.assertRaises(Exception):
-      b["P"] = DMatrix([[11,1,2],[1,4,5],[2,5,8]])
+      b["P"] = DMatrix(00,00,00,[[11,1,2],[1,4,5],[2,5,8]]).T
       
     with self.assertRaises(Exception):
-      b["P"] = sparse(DMatrix([[11,0,1],[1,4,5],[0,5,8]]))
+      b["P"] = sparse(DMatrix(00,00,00,[[11,0,1],[1,4,5],[0,5,8]]).T)
     
-    b["P"] = sparse(DMatrix([[11,1,0],[1,4,5],[0,5,8]]))
+    b["P"] = sparse(DMatrix(00,00,00,[[11,1,0],[1,4,5],[0,5,8]]).T)
     
-    self.checkarray(b["P"],DMatrix([[11,1,0],[1,4,5],[0,5,8]]))
+    self.checkarray(b["P"],DMatrix(00,00,00,[[11,1,0],[1,4,5],[0,5,8]]).T)
     
     with self.assertRaises(Exception):
       b["P",:,0] = DMatrix([1,2,3])
@@ -944,10 +944,10 @@ class Toolstests(casadiTestCase):
       b["P",0,:] = DMatrix([1,2,3]).T
       
     b["P",:,0] = sparse(DMatrix([1,2,0]))
-    self.checkarray(b["P"],DMatrix([[1,2,0],[2,4,5],[0,5,8]]))
+    self.checkarray(b["P"],DMatrix(00,00,00,[[1,2,0],[2,4,5],[0,5,8]]).T)
 
     b["P",0,:] = sparse(DMatrix([11,12,0])).T
-    self.checkarray(b["P"],DMatrix([[11,12,0],[12,4,5],[0,5,8]]))
+    self.checkarray(b["P"],DMatrix(00,00,00,[[11,12,0],[12,4,5],[0,5,8]]).T)
     
   def test_callableExtraIndex(self):
     a = struct_ssym([entry("a",shape=(5,3)),entry("b",shape=(4,3))])

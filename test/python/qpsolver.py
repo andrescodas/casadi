@@ -62,9 +62,9 @@ class QPSolverTests(casadiTestCase):
 
   def testboundsviol(self):
   
-    H = DMatrix([[1,-1],[-1,2]])
+    H = DMatrix(00,00,00,[[1,-1],[-1,2]]).T
     G = DMatrix([-2,-6])
-    A =  DMatrix([[1, 1],[-1, 2],[2, 1]])
+    A =  DMatrix(00,00,00,[[1, 1],[-1, 2],[2, 1]]).T
     
     LBA = DMatrix([-inf]*3)
     UBA = DMatrix([2, 2, 3])
@@ -95,9 +95,9 @@ class QPSolverTests(casadiTestCase):
       with self.assertRaises(Exception):
         solver.solve()
 
-    H = DMatrix([[1,-1],[-1,2]])
+    H = DMatrix(00,00,00,[[1,-1],[-1,2]]).T
     G = DMatrix([-2,-6])
-    A =  DMatrix([[1, 1],[-1, 2],[2, 1]])
+    A =  DMatrix(00,00,00,[[1, 1],[-1, 2],[2, 1]]).T
     
     LBA = DMatrix([-inf,5,-inf])
     UBA = DMatrix([2, 2, 3])
@@ -173,9 +173,9 @@ class QPSolverTests(casadiTestCase):
 
   def test_general_convex_dense(self):
     self.message("Convex dense QP with solvers: " + str([qpsolver for qpsolver,options in qpsolvers]))
-    H = DMatrix([[1,-1],[-1,2]])
+    H = DMatrix(00,00,00,[[1,-1],[-1,2]]).T
     G = DMatrix([-2,-6])
-    A =  DMatrix([[1, 1],[-1, 2],[2, 1]])
+    A =  DMatrix(00,00,00,[[1, 1],[-1, 2],[2, 1]]).T
     
     LBA = DMatrix([-inf]*3)
     UBA = DMatrix([2, 2, 3])
@@ -269,7 +269,7 @@ class QPSolverTests(casadiTestCase):
     H[2,1]=0.1
     
     G = DMatrix([-2,-6,1,0,0])
-    A =  DMatrix([[1, 0,0.1,0.7,-1],[0.1, 2,-0.3,4,0.1]])
+    A =  DMatrix(00,00,00,[[1, 0,0.1,0.7,-1],[0.1, 2,-0.3,4,0.1]]).T
     makeSparse(A)
     
     LBA = DMatrix([-inf])
@@ -310,9 +310,9 @@ class QPSolverTests(casadiTestCase):
 
   def test_general_nonconvex_dense(self):
     self.message("Non convex dense QP with solvers: " + str([qpsolver for qpsolver,options in qpsolvers]))
-    H = DMatrix([[1,-1],[-1,-2]])
+    H = DMatrix(00,00,00,[[1,-1],[-1,-2]]).T
     G = DMatrix([-2,-6])
-    A =  DMatrix([[1, 1],[-1, 2],[2, 1]])
+    A =  DMatrix(00,00,00,[[1, 1],[-1, 2],[2, 1]]).T
     
     LBA = DMatrix([-inf]*3)
     UBA = DMatrix([2, 2, 3])
@@ -346,7 +346,7 @@ class QPSolverTests(casadiTestCase):
 
   def test_equality(self):
     self.message("Regression 452 test: equality constraints give wrong multipliers")
-    H = DMatrix([[1,-1],[-1,2]])
+    H = DMatrix(00,00,00,[[1,-1],[-1,2]]).T
     G = DMatrix([-2,-6])
 
     options = {"mutol": 1e-12, "artol": 1e-12, "tol":1e-12}
@@ -363,7 +363,7 @@ class QPSolverTests(casadiTestCase):
       solver.init()
       
       
-      A =  DMatrix([[1, 1],[-1, 2],[2, 1]])
+      A =  DMatrix(00,00,00,[[1, 1],[-1, 2],[2, 1]]).T
 
       LBA = DMatrix([-inf]*3)
       UBA = DMatrix([2, 2, 3])
@@ -395,7 +395,7 @@ class QPSolverTests(casadiTestCase):
       
       self.assertAlmostEqual(solver.getOutput("cost")[0],-7.4375,6,str(qpsolver))
     
-      A =  DMatrix([[1, 1],[-1, 2],[2, 1]])
+      A =  DMatrix(00,00,00,[[1, 1],[-1, 2],[2, 1]]).T
       LBA = DMatrix([2,-inf,-inf])
       UBA = DMatrix([2, inf, inf])
 
@@ -426,10 +426,10 @@ class QPSolverTests(casadiTestCase):
   def test_degenerate_hessian(self):
     self.message("Degenerate hessian")
     
-    H = DMatrix([[1,-1,0],[-1,2,0],[0,0,0]])
+    H = DMatrix(00,00,00,[[1,-1,0],[-1,2,0],[0,0,0]]).T
     makeSparse(H)
     G = DMatrix([-2,-6,1])
-    A =  DMatrix([[1, 1,1]])
+    A =  DMatrix(00,00,00,[[1, 1,1]]).T
 
       
 
@@ -474,9 +474,9 @@ class QPSolverTests(casadiTestCase):
     
   def test_no_inequality(self):
     self.message("No inequalities present")
-    H = DMatrix([[1,-1],[-1,2]])
+    H = DMatrix(00,00,00,[[1,-1],[-1,2]]).T
     G = DMatrix([-2,-6])
-    A =  DMatrix([[1, 1]])
+    A =  DMatrix(00,00,00,[[1, 1]]).T
 
       
 
@@ -524,7 +524,7 @@ class QPSolverTests(casadiTestCase):
 
   def test_no_A(self):
     self.message("No A present")
-    H = DMatrix([[1,-1],[-1,2]])
+    H = DMatrix(00,00,00,[[1,-1],[-1,2]]).T
     G = DMatrix([-2,-6])
     A =  DMatrix.sparse(2,0)
 
@@ -569,7 +569,7 @@ class QPSolverTests(casadiTestCase):
       self.assertAlmostEqual(solver.getOutput("cost")[0],-34,5,str(qpsolver))
       
   def test_standard_form(self):
-    H = DMatrix([[1,-1],[-1,2]])
+    H = DMatrix(00,00,00,[[1,-1],[-1,2]]).T
     G = DMatrix([-2,-6])
     A =  DMatrix([1,1]).T
 
@@ -653,7 +653,7 @@ class QPSolverTests(casadiTestCase):
   def test_redundant(self):
     self.message("Redundant constraints")
     
-    H = DMatrix([[1,-1,0],[-1,2,0],[0,0,0]])
+    H = DMatrix(00,00,00,[[1,-1,0],[-1,2,0],[0,0,0]]).T
     G = DMatrix([-2,-6,1])
     a = DMatrix([1,0,1])
     a_ = DMatrix([0,1,-2])
@@ -695,7 +695,7 @@ class QPSolverTests(casadiTestCase):
         
   def test_linear(self):
     H = DMatrix.sparse(2,2)
-    A = DMatrix([ [-1,1],[1,1],[1,-2]])
+    A = DMatrix(00,00,00,[[-1,1],[1,1],[1,-2]]).T
     LBA = DMatrix([ -inf, 2, -inf ])
     UBA = DMatrix([ 1, inf, 4 ])
     LBX = DMatrix([ -inf, 0 ])

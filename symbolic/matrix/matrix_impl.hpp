@@ -678,30 +678,29 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T>::Matrix(const std::vector< std::vector<T> >& d){
-    int n=d.size();
-    int m=-1;
-    for (int i=0;i<n;i++) {
-      if (m==-1) {
-        m = d[i].size();
-      } else {
-        casadi_assert_message(m==d[i].size(), 
-                              "Matrix<T>::Matrix(const std::vector< std::vector<T> >& d): shape mismatch" << std::endl <<
-                              "Attempting to construct a matrix from a nested list." << std::endl <<
-                              "I got convinced that the desired size is ("<< n << " x " << m << " ), but now I encounter a vector of size (" << d[i].size() <<  " )" << std::endl
-                              );
+  Matrix<T>::Matrix(int dum1, int dum2, int dum3, const std::vector< std::vector<T> >& d){
+    // Get dimensions
+    int nrow=d.size();
+    int ncol=d.empty() ? 1 : d.front().size();
+
+    // Assert consistency
+    for(int rr=0; rr<nrow; ++rr){
+      casadi_assert_message(ncol==d[rr].size(), 
+        "Matrix<T>::Matrix(const std::vector< std::vector<T> >& d): shape mismatch" << std::endl <<
+        "Attempting to construct a matrix from a nested list." << std::endl <<
+        "I got convinced that the desired size is ("<< nrow << " x " << ncol << " ), but now I encounter a vector of size (" << 
+        d[rr].size() <<  " )" << std::endl);
+    }
+
+    // Form matrix
+    sparsity_ = CCSSparsity(nrow,ncol,true);
+    data().resize(nrow*ncol);
+    typename std::vector<T>::iterator it=begin();
+    for(int cc=0; cc<ncol; ++cc){
+      for(int rr=0; rr<nrow; ++rr){
+        *it++ = d[rr][cc];
       }
     }
-    if (m==-1) m=1;
-  
-    sparsity_ = CCSSparsity(m,n,true);
-  
-    data().resize(n*m);
-
-    for (int i=0;i<n;i++) {
-      copy(d[i].begin(),d[i].end(),begin()+i*m);
-    }
-  
   }
 
   template<class T>

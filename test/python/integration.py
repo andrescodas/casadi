@@ -1213,7 +1213,7 @@ class Integrationtests(casadiTestCase):
     N=2
 
     x0_ = DMatrix([1,0.1])
-    A_  = DMatrix([[3,1],[0.74,4]])
+    A_  = DMatrix(00,00,00,[[3,1],[0.74,4]]).T
 
     A = ssym("A",N,N)
     x = ssym("x",1,N)

@@ -1032,9 +1032,9 @@ class NLPtests(casadiTestCase):
   def test_tol_pr(self):
     return
     self.message("Low tol_pr")
-    H = DMatrix([[1,-1],[-1,2]])
+    H = DMatrix(00,00,00,[[1,-1],[-1,2]]).T
     G = DMatrix([-2,-6])
-    A =  DMatrix([[1, 1],[-1, 2],[2, 1]])
+    A =  DMatrix(00,00,00,[[1, 1],[-1, 2],[2, 1]]).T
 
     LBA = DMatrix([-inf]*3)
     UBA = DMatrix([2, 2, 3])
@@ -1072,9 +1072,9 @@ class NLPtests(casadiTestCase):
       self.assertAlmostEqual(solver.getOutput("f")[0],-7.4375,6,str(Solver))
       
   def test_QP2(self):
-    H = DMatrix([[1,-1],[-1,2]])
+    H = DMatrix(00,00,00,[[1,-1],[-1,2]]).T
     G = DMatrix([-2,-6])
-    A =  DMatrix([[1, 1],[-1, 2],[2, 1]])
+    A =  DMatrix(00,00,00,[[1, 1],[-1, 2],[2, 1]]).T
 
     LBA = DMatrix([-inf]*3)
     UBA = DMatrix([2, 2, 3])
@@ -1140,9 +1140,9 @@ class NLPtests(casadiTestCase):
       self.assertAlmostEqual(solver.getOutput("f")[0],-7.4375,6,str(Solver))
 
   def test_QP2_unconvex(self):
-    H = DMatrix([[1,-1],[-1,-2]])
+    H = DMatrix(00,00,00,[[1,-1],[-1,-2]]).T
     G = DMatrix([-2,-6])
-    A =  DMatrix([[1, 1],[-1, 2],[2, 1]])
+    A =  DMatrix(00,00,00,[[1, 1],[-1, 2],[2, 1]]).T
     
     LBA = DMatrix([-inf]*3)
     UBA = DMatrix([2, 2, 3])

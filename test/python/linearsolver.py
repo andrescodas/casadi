@@ -69,11 +69,11 @@ class LinearSolverTests(casadiTestCase):
   def test_nullspace(self):
   
     for A in  [
-                  DMatrix([[1,1.3],[2,5],[1,0.5],[1.8,1.7]]),
-                  DMatrix([[1,1.3],[2,5],[1,0.5]]),
-                  DMatrix([[1,1.3],[2,5],[1,0.5],[0.2,0.3],[-0.3,0.7]]),
-                  DMatrix([[1,0],[0,0],[0,1],[0,0]]),
-                  DMatrix([[1.3,0,0.4,1],[0.2,0.1,11,0],[0,1,0,0],[0.7,0.9,0,0],[1.1,0.99,0,0]])
+                  DMatrix(00,00,00,[[1,1.3],[2,5],[1,0.5],[1.8,1.7]]).T,
+                  DMatrix(00,00,00,[[1,1.3],[2,5],[1,0.5]]).T,
+                  DMatrix(00,00,00,[[1,1.3],[2,5],[1,0.5],[0.2,0.3],[-0.3,0.7]]).T,
+                  DMatrix(00,00,00,[[1,0],[0,0],[0,1],[0,0]]).T,
+                  DMatrix(00,00,00,[[1.3,0,0.4,1],[0.2,0.1,11,0],[0,1,0,0],[0.7,0.9,0,0],[1.1,0.99,0,0]]).T
               ]:
       n ,m = A.shape
       for Solver, options in nsolvers:
@@ -160,7 +160,7 @@ class LinearSolverTests(casadiTestCase):
         self.checkarray(a,b,digits=5)
   
   def test_simple_solve(self):
-    A_ = DMatrix([[3,7],[1,2]])
+    A_ = DMatrix(00,00,00,[[3,7],[1,2]]).T
     b_ = DMatrix([1,0.5])
     
     A = msym("A",A_.sparsity())
@@ -234,7 +234,7 @@ class LinearSolverTests(casadiTestCase):
       #self.checkarray(mul(pinv(A_,Solver,options),A_),DMatrix.eye(3))
       
   def test_simple_solve_dmatrix(self):
-    A = DMatrix([[3,7],[1,2]])
+    A = DMatrix(00,00,00,[[3,7],[1,2]]).T
     b = DMatrix([1,0.5])
     for Solver, options in lsolvers:
       print Solver.creator
@@ -244,7 +244,7 @@ class LinearSolverTests(casadiTestCase):
       
     
   def test_simple_trans(self):
-    A = DMatrix([[3,7],[1,2]])
+    A = DMatrix(00,00,00,[[3,7],[1,2]]).T
     for Solver, options in lsolvers:
       solver = Solver(A.sparsity())
       solver.setOption(options)
@@ -263,7 +263,7 @@ class LinearSolverTests(casadiTestCase):
       #   result' = A\b'               Ax = b
 
   def test_simple(self):
-    A = DMatrix([[3,7],[1,2]])
+    A = DMatrix(00,00,00,[[3,7],[1,2]]).T
     for Solver, options in lsolvers:
       print Solver
       solver = Solver(A.sparsity())
@@ -283,7 +283,7 @@ class LinearSolverTests(casadiTestCase):
       #   result' = A'\b'             Ax = b
 
   def test_simple_fx_direct(self):
-    A_ = DMatrix([[3,7],[1,2]])
+    A_ = DMatrix(00,00,00,[[3,7],[1,2]]).T
     A = msym("A",A_.sparsity())
     b_ = DMatrix([1,0.5]).T
     b = msym("b",b_.sparsity())
@@ -313,7 +313,7 @@ class LinearSolverTests(casadiTestCase):
       self.checkfx(solver,solution,fwd=False,adj=False,jacobian=False,evals=False)
        
   def test_simple_fx_indirect(self):
-    A_ = DMatrix([[3,7],[1,2]])
+    A_ = DMatrix(00,00,00,[[3,7],[1,2]]).T
     A = msym("A",A_.sparsity())
     b_ = DMatrix([1,0.5]).T
     b = msym("b",b_.sparsity())
@@ -349,7 +349,7 @@ class LinearSolverTests(casadiTestCase):
       self.checkfx(solver,solution,fwd=False,adj=False,jacobian=False,evals=False)
 
   def test_simple_solve_node(self):
-    A_ = DMatrix([[3,7],[1,2]])
+    A_ = DMatrix(00,00,00,[[3,7],[1,2]]).T
     A = msym("A",A_.sparsity())
     b_ = DMatrix([1,0.5]).T
     b = msym("b",b_.sparsity())
@@ -390,7 +390,7 @@ class LinearSolverTests(casadiTestCase):
 
 
   def test_simple_solve_node_sparseA(self):
-    A_ = DMatrix([[3,7],[0,2]])
+    A_ = DMatrix(00,00,00,[[3,7],[0,2]]).T
     makeSparse(A_)
     A = msym("A",A_.sparsity())
     print A.size(), A_.size()
@@ -432,7 +432,7 @@ class LinearSolverTests(casadiTestCase):
         self.checkfx(f,solution,sens_der=False,digits_sens=7)
 
   def test_simple_solve_node_sparseB(self):
-    A_ = DMatrix([[3,7],[1,2]])
+    A_ = DMatrix(00,00,00,[[3,7],[1,2]]).T
     A = msym("A",A_.sparsity())
     b_ = DMatrix([1,0]).T
     makeSparse(b_)

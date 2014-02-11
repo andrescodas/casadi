@@ -392,7 +392,7 @@ class MXtests(casadiTestCase):
       
   def test_MXflatten(self):
 
-    u = DMatrix([[10*j+i for i in range(3)] for j in range(4) ])
+    u = DMatrix(00,00,00,[[10*j+i for i in range(3)] for j in range(4) ]).T
 
     U = msym("u",u.shapeQQQ)
 
@@ -693,7 +693,7 @@ class MXtests(casadiTestCase):
   def test_imatrix_index(self):
     self.message("IMatrix indexing")
     X = msym("x",2,2)
-    Y = X[IMatrix([[0,2],[1,1],[3,3]])]
+    Y = X[IMatrix(00,00,00,[[0,2],[1,1],[3,3]]).T]
     
     f = MXFunction([X],[Y])
     f.init()
@@ -703,7 +703,7 @@ class MXtests(casadiTestCase):
     self.checkarray(f.getOutput(),array([[1,3],[2,2],[4,4]]),"IMatrix indexing")
     
     Y = X[:,:]
-    Y[IMatrix([[0,2]])] = DMatrix([[9,8]])
+    Y[IMatrix(00,00,00,[[0,2]]).T] = DMatrix(00,00,00,[[9,8]]).T
     
     f = MXFunction([X],[Y])
     f.init()
@@ -723,19 +723,19 @@ class MXtests(casadiTestCase):
     A[1,0] = 0
     
     
-    B = MX(DMatrix([[1,2,3],[4,5,6],[7,8,9],[10,11,12]]))
-    F = MX(DMatrix([[1,2],[4,5]]))
+    B = MX(DMatrix(00,00,00,[[1,2,3],[4,5,6],[7,8,9],[10,11,12]]).T)
+    F = MX(DMatrix(00,00,00,[[1,2],[4,5]]).T)
 
     f = MXFunction([],[B[:,A]])
     f.init()
     f.evaluate()
 
-    self.checkarray(f.getOutput(),DMatrix([[1,3],[1,2],[4,6],[4,5],[7,9],[7,8],[10,12],[10,11]]),"B[:,A]")
+    self.checkarray(f.getOutput(),DMatrix(00,00,00,[[1,3],[1,2],[4,6],[4,5],[7,9],[7,8],[10,12],[10,11]]).T,"B[:,A]")
     
     f = MXFunction([],[B[A,:]])
     f.init()
     f.evaluate()
-    self.checkarray(f.getOutput(),DMatrix([[1,7,2,8,3,9],[1,4,2,5,3,6]]),"B[A,:]")
+    self.checkarray(f.getOutput(),DMatrix(00,00,00,[[1,7,2,8,3,9],[1,4,2,5,3,6]]).T,"B[A,:]")
     
     self.assertRaises(Exception, lambda : F[:,A])
     
@@ -743,15 +743,15 @@ class MXtests(casadiTestCase):
     f.init()
     f.evaluate()
     
-    self.checkarray(f.getOutput(),DMatrix([[2,8],[2,5]]),"B[A,1]")
+    self.checkarray(f.getOutput(),DMatrix(00,00,00,[[2,8],[2,5]]).T,"B[A,1]")
 
     f = MXFunction([],[B[1,A]])
     f.init()
     f.evaluate()
     
-    self.checkarray(f.getOutput(),DMatrix([[4,6],[4,5]]),"B[1,A]")
+    self.checkarray(f.getOutput(),DMatrix(00,00,00,[[4,6],[4,5]]).T,"B[1,A]")
 
-    B = MX(DMatrix([[1,2,3],[4,5,6],[7,8,9],[10,11,12]]))
+    B = MX(DMatrix(00,00,00,[[1,2,3],[4,5,6],[7,8,9],[10,11,12]]).T)
     A = IMatrix([2,0])
     
     B[1,A] = DMatrix([20,21])
@@ -760,10 +760,10 @@ class MXtests(casadiTestCase):
     f.init()
     f.evaluate()
 
-    self.checkarray(f.getOutput(),DMatrix([[1,2,3],[21,5,20],[7,8,9],[10,11,12]]),"B[1,A] setter")
+    self.checkarray(f.getOutput(),DMatrix(00,00,00,[[1,2,3],[21,5,20],[7,8,9],[10,11,12]]).T,"B[1,A] setter")
 
 
-    B = MX(DMatrix([[1,2,3],[4,5,6],[7,8,9],[10,11,12]]))
+    B = MX(DMatrix(00,00,00,[[1,2,3],[4,5,6],[7,8,9],[10,11,12]]).T)
     A = IMatrix([2,0])
     
     B[A,1] = DMatrix([20,21])
@@ -772,19 +772,19 @@ class MXtests(casadiTestCase):
     f.init()
     f.evaluate()
 
-    self.checkarray(f.getOutput(),DMatrix([[1,21,3],[4,5,6],[7,20,9],[10,11,12]]),"B[A,:] setter")
+    self.checkarray(f.getOutput(),DMatrix(00,00,00,[[1,21,3],[4,5,6],[7,20,9],[10,11,12]]).T,"B[A,:] setter")
     
     
-    B = MX(DMatrix([[1,2,3],[4,5,6],[7,8,9],[10,11,12]]))
+    B = MX(DMatrix(00,00,00,[[1,2,3],[4,5,6],[7,8,9],[10,11,12]]).T)
     A = IMatrix([2,0])
     
-    B[A,:] = DMatrix([[20,21,22],[24,25,26]])
+    B[A,:] = DMatrix(00,00,00,[[20,21,22],[24,25,26]]).T
 
     f = MXFunction([],[B])
     f.init()
     f.evaluate()
 
-    self.checkarray(f.getOutput(),DMatrix([[24,25,26],[4,5,6],[20,21,22],[10,11,12]]),"B[A,:] setter")
+    self.checkarray(f.getOutput(),DMatrix(00,00,00,[[24,25,26],[4,5,6],[20,21,22],[10,11,12]]).T,"B[A,:] setter")
     
   def test_IMatrix_IMatrix_index(self):
     self.message("IMatrix IMatrix index")
@@ -799,14 +799,14 @@ class MXtests(casadiTestCase):
     B[1,1] = 1
     B[0,1] = 0
     
-    C = MX(DMatrix([[1,2,3],[4,5,6],[7,8,9],[10,11,12]]))
-    F = MX(DMatrix([[1,2],[4,5]]))
+    C = MX(DMatrix(00,00,00,[[1,2,3],[4,5,6],[7,8,9],[10,11,12]]).T)
+    F = MX(DMatrix(00,00,00,[[1,2],[4,5]]).T)
 
     f = MXFunction([],[C[A,B]])
     f.init()
     f.evaluate()
     
-    self.checkarray(f.getOutput(),DMatrix([[3,7],[0,5]]),"C[A,B]")
+    self.checkarray(f.getOutput(),DMatrix(00,00,00,[[3,7],[0,5]]).T,"C[A,B]")
     self.assertRaises(Exception, lambda : F[A,B])
 
   def test_subsass(self):
@@ -1671,7 +1671,7 @@ class MXtests(casadiTestCase):
     f.init()
     f.setInput(3)
     f.evaluate()
-    self.checkarray(f.getOutput(),DMatrix([[3,6],[9,12]]))
+    self.checkarray(f.getOutput(),DMatrix(00,00,00,[[3,6],[9,12]]).T)
     
     
   def test_veccats(self):
@@ -1689,9 +1689,9 @@ class MXtests(casadiTestCase):
       self.assertFalse(isRegular(msym("x",1,2)))
 
   def test_blkdiag(self):
-    C = blkdiag([MX(DMatrix(([[-1.4,-3.2],[-3.2,-28]]))),DMatrix([[15,-12,2.1],[-12,16,-3.8],[2.1,-3.8,15]]),1.8,-4.0])
+    C = blkdiag([MX(DMatrix(00,00,00,[[-1.4,-3.2],[-3.2,-28]]).T),DMatrix(00,00,00,[[15,-12,2.1],[-12,16,-3.8],[2.1,-3.8,15]]).T,1.8,-4.0])
     self.assertTrue(isinstance(C,MX))
-    r = DMatrix([[-1.4,-3.2,0,0,0,0,0],[-3.2,-28,0,0,0,0,0],[0,0,15,-12,2.1,0,0],[0,0,-12,16,-3.8,0,0],[0,0,2.1,-3.8,15,0,0],[0,0,0,0,0,1.8,0],[0,0,0,0,0,0,-4]])
+    r = DMatrix(00,00,00,[[-1.4,-3.2,0,0,0,0,0],[-3.2,-28,0,0,0,0,0],[0,0,15,-12,2.1,0,0],[0,0,-12,16,-3.8,0,0],[0,0,2.1,-3.8,15,0,0],[0,0,0,0,0,1.8,0],[0,0,0,0,0,0,-4]]).T
     makeSparse(r)
     f = MXFunction([],[C])
     f.init()
@@ -1705,15 +1705,15 @@ class MXtests(casadiTestCase):
     f.init()
     f.setInput(range(6))
     f.evaluate()
-    self.checkarray(f.getOutput(),DMatrix([[0,1,3],[1,2,4],[3,4,5]]))
+    self.checkarray(f.getOutput(),DMatrix(00,00,00,[[0,1,3],[1,2,4],[3,4,5]]).T)
     
   def test_sparsity_indexing(self):
     self.message("sparsity")
 
-    B_ = DMatrix([[1,2,3,4,5],[6,7,8,9,10]])
+    B_ = DMatrix(00,00,00,[[1,2,3,4,5],[6,7,8,9,10]]).T
     B = msym("B",5,2)
     
-    A = IMatrix([[1,1,0,0,0],[0,0,1,0,0]])
+    A = IMatrix(00,00,00,[[1,1,0,0,0],[0,0,1,0,0]]).T
     makeSparse(A)
     sp = A.sparsity()
     import copy
@@ -1725,17 +1725,17 @@ class MXtests(casadiTestCase):
       f.evaluate()
       return f.getOutput() 
     
-    self.checkarray(meval(B[sp]),DMatrix([[1,2,0,0,0],[0,0,8,0,0]]),"sparsity indexing")
+    self.checkarray(meval(B[sp]),DMatrix(00,00,00,[[1,2,0,0,0],[0,0,8,0,0]]).T,"sparsity indexing")
 
     Bmod = copy.copy(B)
     Bmod[sp] = -4
     
-    self.checkarray(meval(Bmod),DMatrix([[-4,-4,3,4,5],[6,7,-4,9,10]]),"sparsity indexing assignement")
+    self.checkarray(meval(Bmod),DMatrix(00,00,00,[[-4,-4,3,4,5],[6,7,-4,9,10]]).T,"sparsity indexing assignement")
 
     Bmod = copy.copy(B)
     Bmod[sp] = 2*B
     
-    self.checkarray(meval(Bmod),DMatrix([[2,4,3,4,5],[6,7,16,9,10]]),"Imatrix indexing assignement")
+    self.checkarray(meval(Bmod),DMatrix(00,00,00,[[2,4,3,4,5],[6,7,16,9,10]]).T,"Imatrix indexing assignement")
     
     self.assertRaises(Exception, lambda : B[sp_dense(4,4)])
 
@@ -1822,9 +1822,9 @@ class MXtests(casadiTestCase):
     v = [f.output(i) for i in range(len(v))]
     
     self.assertEqual(len(v),3)
-    self.checkarray(v[0],DMatrix([[0,0,0,0,0],[1,2,0,0,0]]))
-    self.checkarray(v[1],DMatrix([[3,4,5,0,0],[6,7,8,9,0]]))
-    self.checkarray(v[2],DMatrix([[10,11,12,13,14]]))
+    self.checkarray(v[0],DMatrix(00,00,00,[[0,0,0,0,0],[1,2,0,0,0]]).T)
+    self.checkarray(v[1],DMatrix(00,00,00,[[3,4,5,0,0],[6,7,8,9,0]]).T)
+    self.checkarray(v[2],DMatrix(00,00,00,[[10,11,12,13,14]]).T)
     
     v = horzsplit(a)
     
@@ -1836,11 +1836,11 @@ class MXtests(casadiTestCase):
     v = [f.output(i) for i in range(len(v))]
     
     self.assertEqual(len(v),a.size2())
-    self.checkarray(v[0],DMatrix([[0,0,0,0,0]]))
-    self.checkarray(v[1],DMatrix([[1,2,0,0,0]]))
-    self.checkarray(v[2],DMatrix([[3,4,5,0,0]]))
-    self.checkarray(v[3],DMatrix([[6,7,8,9,0]]))
-    self.checkarray(v[4],DMatrix([[10,11,12,13,14]]))
+    self.checkarray(v[0],DMatrix(00,00,00,[[0,0,0,0,0]]).T)
+    self.checkarray(v[1],DMatrix(00,00,00,[[1,2,0,0,0]]).T)
+    self.checkarray(v[2],DMatrix(00,00,00,[[3,4,5,0,0]]).T)
+    self.checkarray(v[3],DMatrix(00,00,00,[[6,7,8,9,0]]).T)
+    self.checkarray(v[4],DMatrix(00,00,00,[[10,11,12,13,14]]).T)
     
     v = horzsplit(a,2)
     
@@ -1852,9 +1852,9 @@ class MXtests(casadiTestCase):
     v = [f.output(i) for i in range(len(v))]
     
     self.assertEqual(len(v),3)
-    self.checkarray(v[0],DMatrix([[0,0,0,0,0],[1,2,0,0,0]]))
-    self.checkarray(v[1],DMatrix([[3,4,5,0,0],[6,7,8,9,0]]))
-    self.checkarray(v[2],DMatrix([[10,11,12,13,14]]))
+    self.checkarray(v[0],DMatrix(00,00,00,[[0,0,0,0,0],[1,2,0,0,0]]).T)
+    self.checkarray(v[1],DMatrix(00,00,00,[[3,4,5,0,0],[6,7,8,9,0]]).T)
+    self.checkarray(v[2],DMatrix(00,00,00,[[10,11,12,13,14]]).T)
     
     v = horzsplit(a,[0,0,3])
     
@@ -1868,8 +1868,8 @@ class MXtests(casadiTestCase):
     self.assertEqual(len(v),3)
     self.assertEqual(v[0].size2(),0)
     self.assertEqual(v[0].size1(),5)  # why not 5?
-    self.checkarray(V[1],DMatrix([[0,0,0,0,0],[1,2,0,0,0],[3,4,5,0,0]]))
-    self.checkarray(V[2],DMatrix([[6,7,8,9,0],[10,11,12,13,14]]))
+    self.checkarray(V[1],DMatrix(00,00,00,[[0,0,0,0,0],[1,2,0,0,0],[3,4,5,0,0]]).T)
+    self.checkarray(V[2],DMatrix(00,00,00,[[6,7,8,9,0],[10,11,12,13,14]]).T)
  
   def test_vertsplit(self):
     a = msym("X",sp_triu(5))
@@ -1882,9 +1882,9 @@ class MXtests(casadiTestCase):
     f.evaluate()
     v = [f.output(i) for i in range(len(v))]
     self.assertEqual(len(v),3)
-    self.checkarray(v[0],DMatrix([[0,0],[1,2],[3,4],[6,7],[10,11]]))
-    self.checkarray(v[1],DMatrix([[0,0],[0,0],[5,0],[8,9],[12,13]]))
-    self.checkarray(v[2],DMatrix([[0],[0],[0],[0],[14]]))
+    self.checkarray(v[0],DMatrix(00,00,00,[[0,0],[1,2],[3,4],[6,7],[10,11]]).T)
+    self.checkarray(v[1],DMatrix(00,00,00,[[0,0],[0,0],[5,0],[8,9],[12,13]]).T)
+    self.checkarray(v[2],DMatrix(00,00,00,[[0],[0],[0],[0],[14]]).T)
     
     v = vertsplit(a)
     
@@ -1911,9 +1911,9 @@ class MXtests(casadiTestCase):
     v = [f.output(i) for i in range(len(v))]
     
     self.assertEqual(len(v),3)
-    self.checkarray(v[0],DMatrix([[0,0],[1,2],[3,4],[6,7],[10,11]]))
-    self.checkarray(v[1],DMatrix([[0,0],[0,0],[5,0],[8,9],[12,13]]))
-    self.checkarray(v[2],DMatrix([[0],[0],[0],[0],[14]]))
+    self.checkarray(v[0],DMatrix(00,00,00,[[0,0],[1,2],[3,4],[6,7],[10,11]]).T)
+    self.checkarray(v[1],DMatrix(00,00,00,[[0,0],[0,0],[5,0],[8,9],[12,13]]).T)
+    self.checkarray(v[2],DMatrix(00,00,00,[[0],[0],[0],[0],[14]]).T)
     
     v = vertsplit(a,[0,0,3])
     f = MXFunction([a],v)
@@ -1926,8 +1926,8 @@ class MXtests(casadiTestCase):
     self.assertEqual(len(v),3)
     self.assertEqual(v[0].size2(),5)
     self.assertEqual(v[0].size1(),0)
-    self.checkarray(V[1],DMatrix([[0,0,0],[1,2,0],[3,4,5],[6,7,8],[10,11,12]]))
-    self.checkarray(V[2],DMatrix([[0,0],[0,0],[0,0],[9,0],[13,14]]))
+    self.checkarray(V[1],DMatrix(00,00,00,[[0,0,0],[1,2,0],[3,4,5],[6,7,8],[10,11,12]]).T)
+    self.checkarray(V[2],DMatrix(00,00,00,[[0,0],[0,0],[0,0],[9,0],[13,14]]).T)
     
   def test_blocksplit(self):
     a = msym("X",sp_triu(5))
@@ -1942,7 +1942,7 @@ class MXtests(casadiTestCase):
     v = [[fs[i].output(j) for j in range(3)] for i in range(3)]
     
     self.checkarray(v[0][0],DMatrix([0,1]))
-    self.checkarray(v[0][1],DMatrix([[0,0],[2,0]]))
+    self.checkarray(v[0][1],DMatrix(00,00,00,[[0,0],[2,0]]).T)
     self.checkarray(v[1][0],DMatrix([3,6]))
     self.checkarray(blockcat(v),f.input())
 
@@ -2207,8 +2207,8 @@ class MXtests(casadiTestCase):
     print outs
     
   def test_kron(self):
-    a = sparse(DMatrix([[1,0,6],[2,7,0]]))
-    b = sparse(DMatrix([[1,0,0],[2,3,7],[0,0,9],[1,12,13]]))
+    a = sparse(DMatrix(00,00,00,[[1,0,6],[2,7,0]]).T)
+    b = sparse(DMatrix(00,00,00,[[1,0,0],[2,3,7],[0,0,9],[1,12,13]]).T)
     
     A = msym("A",a.sparsity())
     B = msym("B",b.sparsity())

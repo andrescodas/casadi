@@ -117,7 +117,7 @@ namespace CasADi{
     Matrix(int dum1, int dum2, int dum3, int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row, const std::vector<T>& d=std::vector<T>());
 
     /// Dense matrix constructor with data given as vector of vectors
-    explicit Matrix(const std::vector< std::vector<T> >& m);
+    explicit Matrix(int dum1, int dum2, int dum3, const std::vector< std::vector<T> >& m);
     
     /// Sparse matrix with a given sparsity
     explicit Matrix(const CCSSparsity& sparsity, const T& val=0);

@@ -265,7 +265,7 @@ class Sparsitytests(casadiTestCase):
     
   def test_vecMX(self):
     self.message("flatten MXFunction")
-    q = DMatrix([[1,2,3,4,9],[5,6,7,8,8],[9,10,11,12,6],[1,2,3,4,5]])
+    q = DMatrix(00,00,00,[[1,2,3,4,9],[5,6,7,8,8],[9,10,11,12,6],[1,2,3,4,5]]).T
 
     X = msym("X",5,4)
 
@@ -284,7 +284,7 @@ class Sparsitytests(casadiTestCase):
     
   def test_vecSX(self):
     self.message("flatten SXFunction")
-    q = DMatrix([[1,2,3,4,9],[5,6,7,8,8],[9,10,11,12,6],[1,2,3,4,5]])
+    q = DMatrix(00,00,00,[[1,2,3,4,9],[5,6,7,8,8],[9,10,11,12,6],[1,2,3,4,5]]).T
 
     X = ssym("X",5,4)
 
