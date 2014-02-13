@@ -113,7 +113,7 @@ namespace CasADi{
 
   protected:
 
-    // Scale cols
+    // Scale columns
     void colScaling(double* x, int nrhs);
     
     // Scale rows

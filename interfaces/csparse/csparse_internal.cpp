@@ -46,16 +46,16 @@ namespace CasADi{
     // Call the init method of the base class
     LinearSolverInternal::init();
 
-    AT_.nzmax = input().size();  // maximum number of entries 
-    AT_.m = input().size1(); // number of cols
-    AT_.n = input().size2(); // number of rows
-    AT_.p = const_cast<int*>(&input().colind().front()); // row pointers (size n+1) or row indices (size nzmax)
-    AT_.i = const_cast<int*>(&input().row().front()); // col indices, size nzmax
-    AT_.x = &input().front(); // col indices, size nzmax
-    AT_.nz = -1; // of entries in triplet matrix, -1 for compressed-row 
+    A_.nzmax = input().size();  // maximum number of entries 
+    A_.m = input().size1(); // number of rows
+    A_.n = input().size2(); // number of columns
+    A_.p = const_cast<int*>(&input().colind().front()); // column pointers (size n+1) or col indices (size nzmax)
+    A_.i = const_cast<int*>(&input().row().front()); // row indices, size nzmax
+    A_.x = &input().front(); // numerical values, size nzmax
+    A_.nz = -1; // of entries in triplet matrix, -1 for compressed-col
 
     // Temporary
-    temp_.resize(AT_.n);
+    temp_.resize(A_.n);
   
     // Has the routine been called once
     called_once_ = false;
@@ -70,7 +70,7 @@ namespace CasADi{
       // ordering and symbolic analysis 
       int order = 0; // ordering?
       if(S_) cs_sfree(S_);
-      S_ = cs_sqr (order, &AT_, 0) ;              
+      S_ = cs_sqr (order, &A_, 0) ;              
     }
   
     prepared_ = false;
@@ -94,7 +94,7 @@ namespace CasADi{
     double tol = 1e-8;
   
     if(N_) cs_nfree(N_);
-    N_ = cs_lu(&AT_, S_, tol) ;                 // numeric LU factorization 
+    N_ = cs_lu(&A_, S_, tol) ;                 // numeric LU factorization 
     if(N_==0){
       DMatrix temp = input();
       makeSparse(temp);
@@ -129,16 +129,16 @@ namespace CasADi{
   
     for(int k=0; k<nrhs; ++k){
       if(transpose){
-        cs_pvec (S_->q, x, t, AT_.n) ;       // t = P2*b 
+        cs_pvec (S_->q, x, t, A_.n) ;       // t = P2*b 
         casadi_assert(N_->U!=0);
         cs_utsolve (N_->U, t) ;              // t = U'\t 
         cs_ltsolve (N_->L, t) ;              // t = L'\t 
-        cs_pvec (N_->pinv, t, x, AT_.n) ;    // x = P1*t 
+        cs_pvec (N_->pinv, t, x, A_.n) ;    // x = P1*t 
       } else {
-        cs_ipvec (N_->pinv, x, t, AT_.n) ;   // t = P1\b
+        cs_ipvec (N_->pinv, x, t, A_.n) ;   // t = P1\b
         cs_lsolve (N_->L, t) ;               // t = L\t 
         cs_usolve (N_->U, t) ;               // t = U\t 
-        cs_ipvec (S_->q, t, x, AT_.n) ;      // x = P2\t 
+        cs_ipvec (S_->q, t, x, A_.n) ;      // x = P2\t 
       }
       x += ncol();
     }
