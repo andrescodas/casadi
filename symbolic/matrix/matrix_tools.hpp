@@ -289,9 +289,9 @@ namespace CasADi{
    * Note that in SWIG, Q and R are returned by value. */
   template<class T>
 #ifndef SWIG
-  void qrQQQ(const Matrix<T>& A, Matrix<T>& Q, Matrix<T>& R);
+  void qr(const Matrix<T>& A, Matrix<T>& Q, Matrix<T>& R);
 #else // SWIG
-  void qrQQQ(const Matrix<T>& A, Matrix<T>& OUTPUT, Matrix<T>& OUTPUT);
+  void qr(const Matrix<T>& A, Matrix<T>& OUTPUT, Matrix<T>& OUTPUT);
 #endif
 
   /** \brief Computes the nullspace of a matrix A
@@ -1026,7 +1026,7 @@ namespace CasADi{
   }
 
   template<class T>
-  void qrQQQ(const Matrix<T>& A, Matrix<T>& Q, Matrix<T> &R){
+  void qr(const Matrix<T>& A, Matrix<T>& Q, Matrix<T> &R){
     // The following algorithm is taken from J. Demmel: Applied Numerical Linear Algebra (algorithm 3.1.)
     casadi_assert_message(A.size1()>=A.size2(), "qr: fewer rows than columns");
 
@@ -1200,7 +1200,7 @@ namespace CasADi{
       
         // Make a QR factorization
         Matrix<T> Q,R;
-        qrQQQ(trans(Aperm),Q,R);
+        qr(trans(Aperm),Q,R);
         Q = trans(Q);
         R = trans(R);
 
@@ -1614,7 +1614,7 @@ namespace CasADi{
   MTT_INST(T,norm_2)                            \
   MTT_INST(T,norm_inf)                          \
   MTT_INST(T,norm_F)                            \
-  MTT_INST(T,qrQQQ)                                \
+  MTT_INST(T,qr)                                \
   MTT_INST(T,nullspace)                         \
   MTT_INST(T,solve)                             \
   MTT_INST(T,pinv)                              \
