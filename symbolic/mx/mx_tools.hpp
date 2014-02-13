@@ -472,7 +472,7 @@ namespace CasADi{
 
   /** \brief Solve a system of equations: A*x = b 
   */
-  MX solve(const MX& A, const MX& b, linearSolverCreator lsolver, const Dictionary& dict = Dictionary());
+  MX solveQQQ(const MX& A, const MX& b, linearSolverCreator lsolver, const Dictionary& dict = Dictionary());
 
   /** \brief Computes the Moore-Penrose pseudo-inverse
   * 

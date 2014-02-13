@@ -1022,18 +1022,25 @@ namespace CasADi{
     return blockcat(blocks);
   }
 
-  MX solve(const MX& A, const MX& b, linearSolverCreator lsolver, const Dictionary& dict) {
-    LinearSolver mysolver = lsolver(A.sparsity(),1);
-    mysolver.setOption(dict);
-    mysolver.init();
-    return trans(mysolver.solve(A,trans(b),true));
+  MX solveQQQ(const MX& A, const MX& b, linearSolverCreator lsolver, const Dictionary& dict) {
+    if(false){ // BUG? Does not work - why?
+      LinearSolver mysolver = lsolver(A.sparsity(),1);
+      mysolver.setOption(dict);
+      mysolver.init();
+      return mysolver.solve(A,b,false);
+    } else {
+      LinearSolver mysolver = lsolver(A.sparsity().transpose(),1);
+      mysolver.setOption(dict);
+      mysolver.init();
+      return mysolver.solve(trans(A),b,true);
+    }
   }
   
   MX pinv(const MX& A, linearSolverCreator lsolver, const Dictionary& dict) {
     if (A.size1()>=A.size2()) {
-      return trans(solve(mul(trans(A),A),A,lsolver,dict));
+      return solveQQQ(mul(trans(A),A),trans(A),lsolver,dict);
     } else {
-      return solve(mul(A,trans(A)),trans(A),lsolver,dict);
+      return trans(solveQQQ(mul(A,trans(A)),A,lsolver,dict));
     }
   }
   
