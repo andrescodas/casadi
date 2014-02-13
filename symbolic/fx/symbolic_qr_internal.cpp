@@ -92,7 +92,10 @@ namespace CasADi{
 
     // Generate the QR factorization function
     vector<SXMatrix> QR(2);
-    qr(Aperm,QR[0],QR[1]);
+    qrQQQ(trans(Aperm),QR[0],QR[1]);
+    QR[0] = trans(QR[0]);
+    QR[1] = trans(QR[1]);
+
     SXFunction fact_fcn(A,QR);
 
     // Optionally generate c code and load as DLL

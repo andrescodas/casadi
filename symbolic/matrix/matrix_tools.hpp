@@ -289,9 +289,9 @@ namespace CasADi{
    * Note that in SWIG, Q and R are returned by value. */
   template<class T>
 #ifndef SWIG
-  void qr(const Matrix<T>& A, Matrix<T>& Q, Matrix<T>& R);
+  void qrQQQ(const Matrix<T>& A, Matrix<T>& Q, Matrix<T>& R);
 #else // SWIG
-  void qr(const Matrix<T>& A, Matrix<T>& OUTPUT, Matrix<T>& OUTPUT);
+  void qrQQQ(const Matrix<T>& A, Matrix<T>& OUTPUT, Matrix<T>& OUTPUT);
 #endif
 
   /** \brief Computes the nullspace of a matrix A
@@ -1026,31 +1026,24 @@ namespace CasADi{
   }
 
   template<class T>
-  void qr(const Matrix<T>& A, Matrix<T>& Q, Matrix<T> &R){
+  void qrQQQ(const Matrix<T>& A, Matrix<T>& Q, Matrix<T> &R){
     // The following algorithm is taken from J. Demmel: Applied Numerical Linear Algebra (algorithm 3.1.)
-    int m = A.size2();
-    int n = A.size1();
-    casadi_assert_message(m>=n, "qr: fewer cols than rows");
+    casadi_assert_message(A.size1()>=A.size2(), "qr: fewer rows than columns");
 
-    // Transpose of A
-    Matrix<T> AT = trans(A);
-
-    // Transposes of the output matrices
-    Matrix<T> QT, RT;
-
-    // compute Q and R row by row
-    for(int i=0; i<n; ++i){
-      // Initialize qi to be the i-th row of A
-      Matrix<T> ai = AT(ALL,i);
+    // compute Q and R column by column
+    Q = R = Matrix<T>();
+    for(int i=0; i<A.size2(); ++i){
+      // Initialize qi to be the i-th column of A
+      Matrix<T> ai = A(ALL,i);
       Matrix<T> qi = ai;
-      // The i-th row of R
-      Matrix<T> ri = Matrix<T>::sparse(n,1);
+      // The i-th column of R
+      Matrix<T> ri = Matrix<T>::sparse(A.size2(),1);
   
       // subtract the projection of qi in the previous directions from ai
       for(int j=0; j<i; ++j){
       
-        // Get the j-th row of Q
-        Matrix<T> qj = QT(ALL,j);
+        // Get the j-th column of Q
+        Matrix<T> qj = Q(ALL,j);
 
         ri(j,0) = mul(trans(qi),qj); // Modified Gram-Schmidt
         // ri[j] = inner_prod(qj,ai); // Classical Gram-Schmidt
@@ -1064,14 +1057,10 @@ namespace CasADi{
       ri(i,0) = norm_2(trans(qi));
       qi /= ri(i,0);
 
-      // Update RT and QT
-      QT.append(qi);
-      RT.append(ri);
+      // Update R and Q
+      Q.append(qi);
+      R.append(ri);
     }
-
-    // Save to output
-    Q = trans(QT);
-    R = trans(RT);
   }
   
   template<class T>
@@ -1211,7 +1200,9 @@ namespace CasADi{
       
         // Make a QR factorization
         Matrix<T> Q,R;
-        qr(Aperm,Q,R);
+        qrQQQ(trans(Aperm),Q,R);
+        Q = trans(Q);
+        R = trans(R);
 
         // Solve the factorized system (note that solve will now be fast since it is triangular)
         xperm = solve(R,mul(bperm,trans(Q)));
@@ -1623,7 +1614,7 @@ namespace CasADi{
   MTT_INST(T,norm_2)                            \
   MTT_INST(T,norm_inf)                          \
   MTT_INST(T,norm_F)                            \
-  MTT_INST(T,qr)                                \
+  MTT_INST(T,qrQQQ)                                \
   MTT_INST(T,nullspace)                         \
   MTT_INST(T,solve)                             \
   MTT_INST(T,pinv)                              \
