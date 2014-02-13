@@ -238,7 +238,7 @@ class LinearSolverTests(casadiTestCase):
     b = DMatrix([1,0.5])
     for Solver, options in lsolvers:
       print Solver.creator
-      C = solve(A,b,Solver,options)
+      C = solveQQQ(A.T,b.T,Solver,options).T
       
       self.checkarray(C,DMatrix([1.5,-0.5]))
       

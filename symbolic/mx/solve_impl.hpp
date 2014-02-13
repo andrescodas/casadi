@@ -42,10 +42,25 @@ namespace CasADi{
     if(part==0){
       stream << "(";
     } else if(part==1){
-      stream << "/";
+      stream << "'/";
     } else {
+      if(!Tr) stream << "'";
+      stream << ")'";
+    }
+  }
+
+  template<bool Tr>
+  void Solve<Tr>::print(std::ostream &stream, long& remaining_calls) const{
+    if(remaining_calls>0){
+      remaining_calls--;
+      stream << "(";
+      dep(1)->print(stream,remaining_calls);
       if(Tr) stream << "'";
+      stream << "\\";
+      dep(0)->print(stream,remaining_calls);
       stream << ")";
+    } else {
+      stream << "...";
     }
   }
 

@@ -916,7 +916,7 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
           rb /= Jb;
         } else {
           // Solve system of equations
-          rb = solve(Jb,rb);
+          rb = trans(solveQQQ(trans(Jb),trans(rb)));
         }
         
         // Substitute the already determined variables

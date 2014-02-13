@@ -324,7 +324,7 @@ namespace CasADi{
   
   */
   template<class T>
-  Matrix<T> solve(const Matrix<T>& A, const Matrix<T>& b);
+  Matrix<T> solveQQQ(const Matrix<T>& A, const Matrix<T>& b);
   
   /** \brief Computes the Moore-Penrose pseudo-inverse
   * 
@@ -337,7 +337,7 @@ namespace CasADi{
   
   /** \brief Solve a system of equations: A*x = b 
   */
-  Matrix<double> solve(const Matrix<double>& A, const Matrix<double>& b, linearSolverCreator lsolver, const Dictionary& dict = Dictionary());
+  Matrix<double> solveQQQ(const Matrix<double>& A, const Matrix<double>& b, linearSolverCreator lsolver, const Dictionary& dict = Dictionary());
   
   
   /** \brief Computes the Moore-Penrose pseudo-inverse
@@ -1105,7 +1105,10 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> solve(const Matrix<T>& A, const Matrix<T>& b){
+  Matrix<T> solveQQQ(const Matrix<T>& AT, const Matrix<T>& bT){
+    Matrix<T> A = trans(AT);
+    Matrix<T> b = trans(bT);
+
     // check dimensions
     casadi_assert_message(A.size2() == b.size2(),"solve Ax=b: dimension mismatch: b has " << b.size2() << " columns while A has " << A.size2() << ".");
     casadi_assert_message(A.size2() == A.size1(),"solve: A not square but " << A.dimString());
@@ -1127,7 +1130,7 @@ namespace CasADi{
             x(k,i) /= A(i,i);
         }
       }
-      return x;
+      return trans(x);
     } else if(isTril(A)){
       // backward substitution if upper triangular
       Matrix<T> x = b;
@@ -1145,13 +1148,13 @@ namespace CasADi{
             x(k,i) /= A(i,i);
         }
       }
-      return x;
+      return trans(x);
     } else if(hasNonStructuralZeros(A)){
     
       // If there are structurally nonzero entries that are known to be zero, remove these and rerun the algorithm
       Matrix<T> A_sparse = A;
       makeSparse(A_sparse);
-      return solve(A_sparse,b);
+      return trans(solveQQQ(trans(A_sparse),trans(b)));
 
     } else {
     
@@ -1189,7 +1192,7 @@ namespace CasADi{
       if(isTriu(Aperm)){
       
         // Forward substitution if lower triangular after sorting the equations
-        xperm = solve(Aperm,bperm);
+        xperm = trans(solveQQQ(trans(Aperm),trans(bperm)));
       
       } else if(A.size2()<=3){
       
@@ -1205,7 +1208,7 @@ namespace CasADi{
         R = trans(R);
 
         // Solve the factorized system (note that solve will now be fast since it is triangular)
-        xperm = solve(R,mul(bperm,trans(Q)));
+        xperm = trans(solveQQQ(trans(R),mul(Q,trans(bperm))));
       }
     
       // Permute back the solution
@@ -1216,16 +1219,16 @@ namespace CasADi{
           x(xperm.row(el),i) = xperm[el];
         }
       }
-      return x;
+      return trans(x);
     }
   }
   
   template<class T>
   Matrix<T> pinv(const Matrix<T>& A) {
     if (A.size1()>=A.size2()) {
-      return trans(solve(mul(trans(A),A),A));
+      return solveQQQ(mul(trans(A),A),trans(A));
     } else {
-      return solve(mul(A,trans(A)),trans(A));
+      return trans(solveQQQ(mul(A,trans(A)),A));
     }
   }
   
@@ -1616,7 +1619,7 @@ namespace CasADi{
   MTT_INST(T,norm_F)                            \
   MTT_INST(T,qr)                                \
   MTT_INST(T,nullspace)                         \
-  MTT_INST(T,solve)                             \
+  MTT_INST(T,solveQQQ)                             \
   MTT_INST(T,pinv)                              \
   MTT_INST(T,isZero)                            \
   MTT_INST(T,isOne)                             \

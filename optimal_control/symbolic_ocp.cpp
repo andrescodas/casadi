@@ -1041,7 +1041,7 @@ void SymbolicOCP::makeExplicit(){
       fb_exp = mul(-fb_res,inv(Jb));
     } else {
       // QR factorization
-      fb_exp = solve(Jb,-fb_res);
+      fb_exp = trans(solveQQQ(trans(Jb),-trans(fb_res)));
     }
 
     // Add to explicitly determined equations and variables
@@ -1144,7 +1144,7 @@ void SymbolicOCP::eliminateAlgebraic(){
         fb_exp = mul(-fb_res,inv(Jb));
       } else {
         // QR factorization
-        fb_exp = solve(Jb,-fb_res);
+        fb_exp = trans(solveQQQ(trans(Jb),-trans(fb_res)));
       }
 
       // Add to explicitly determined equations and variables

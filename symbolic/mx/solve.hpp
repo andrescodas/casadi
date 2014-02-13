@@ -52,6 +52,9 @@ namespace CasADi{
     /** \brief  Clone function */
     virtual Solve* clone() const{ return new Solve(*this);}
 
+    /** \brief  Print expression (make sure number of calls is not exceeded) */
+    virtual void print(std::ostream &stream, long& remaining_calls) const;
+
     /** \brief  Print a part of the expression */
     virtual void printPart(std::ostream &stream, int part) const;
 
