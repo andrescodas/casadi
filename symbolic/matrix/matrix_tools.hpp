@@ -1106,57 +1106,59 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> solveQQQ(const Matrix<T>& AT, const Matrix<T>& bT){
-    Matrix<T> A = trans(AT);
-    Matrix<T> b = trans(bT);
-
     // check dimensions
-    casadi_assert_message(A.size2() == b.size2(),"solve Ax=b: dimension mismatch: b has " << b.size2() << " columns while A has " << A.size2() << ".");
-    casadi_assert_message(A.size2() == A.size1(),"solve: A not square but " << A.dimString());
-  
-    if(isTriu(A)){
+    casadi_assert_message(AT.size1() == bT.size1(),"solve Ax=b: dimension mismatch: b has " << bT.size1() << " columns while A has " << AT.size1() << ".");
+    casadi_assert_message(AT.size1() == AT.size2(),"solve: A not square but " << AT.dimString());
+
+    if(isTril(AT)){
+
       // forward substitution if upper triangular
-      Matrix<T> x = b;
+      Matrix<T> A = trans(AT);
+      Matrix<T> x = bT;
       const std::vector<int> & Arow = A.row();
       const std::vector<int> & Acolind = A.colind();
       const std::vector<T> & Adata = A.data();
       for(int i=0; i<A.size2(); ++i){ // loop over cols
-        for(int k=0; k<b.size1(); ++k){ // for every right hand side
+        for(int k=0; k<bT.size2(); ++k){ // for every right hand side
           for(int kk=Acolind[i]; kk<Acolind[i+1] && Arow[kk]<i; ++kk){ 
             int j = Arow[kk];
-            if (x.hasNZ(k,j))
-              x(k,i) -= Adata[kk]*x(k,j);
+            if (x.hasNZ(j,k))
+              x(i,k) -= Adata[kk]*x(j,k);
           }
-          if (x.hasNZ(k,i))
-            x(k,i) /= A(i,i);
+          if (x.hasNZ(i,k))
+            x(i,k) /= A(i,i);
         }
       }
-      return trans(x);
-    } else if(isTril(A)){
+      return x;
+    } else if(isTriu(AT)){
+
       // backward substitution if upper triangular
-      Matrix<T> x = b;
+      Matrix<T> A = trans(AT);
+      Matrix<T> x = bT;
       const std::vector<int> & Arow = A.row();
       const std::vector<int> & Acolind = A.colind();
       const std::vector<T> & Adata = A.data();
       for(int i=A.size2()-1; i>=0; --i){ // loop over cols from the back
-        for(int k=0; k<b.size1(); ++k){ // for every right hand side
+        for(int k=0; k<bT.size2(); ++k){ // for every right hand side
           for(int kk=Acolind[i+1]-1; kk>=Acolind[i] && Arow[kk]>i; --kk){
             int j = Arow[kk]; 
-            if (x.hasNZ(k,j))
-              x(k,i) -= Adata[kk]*x(k,j);
+            if (x.hasNZ(j,k))
+              x(i,k) -= Adata[kk]*x(j,k);
           }
-          if (x.hasNZ(k,i))
-            x(k,i) /= A(i,i);
+          if (x.hasNZ(i,k))
+            x(i,k) /= A(i,i);
         }
       }
-      return trans(x);
-    } else if(hasNonStructuralZeros(A)){
-    
+      return x;
+    } else if(hasNonStructuralZeros(AT)){
       // If there are structurally nonzero entries that are known to be zero, remove these and rerun the algorithm
-      Matrix<T> A_sparse = A;
+      Matrix<T> A_sparse = AT;
       makeSparse(A_sparse);
-      return trans(solveQQQ(trans(A_sparse),trans(b)));
+      return solveQQQ(A_sparse,bT);
 
     } else {
+      Matrix<T> A = trans(AT);
+      Matrix<T> b = trans(bT);
     
       // Make a BLT transformation of A
       std::vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
