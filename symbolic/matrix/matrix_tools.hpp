@@ -328,8 +328,8 @@ namespace CasADi{
   
   /** \brief Computes the Moore-Penrose pseudo-inverse
   * 
-  * If the matrix A is fat (size1>size2), mul(A,pinv(A)) is unity.
-  * If the matrix A is slender (size2<size1), mul(pinv(A),A) is unity.
+  * If the matrix A is fat (size2>size1), mul(A,pinv(A)) is unity.
+  * If the matrix A is slender (size1<size2), mul(pinv(A),A) is unity.
   *
   */
   template<class T>
@@ -580,34 +580,34 @@ namespace CasADi{
   template<class T>
   bool isTril(const Matrix<T> &A){
     // TODO: Move implementation to CCSSparsity as it does not depend on the matrix entries 
-    // loop over cols
+    // loop over columns
     for(int i=0; i<A.size2(); ++i){
       if(A.colind(i) != A.colind(i+1)){ // if there are any elements of the col
-        // check row of the right-most element of the col
-        int row = A.row(A.colind(i+1)-1);
-
-        // not lower triangular if row>i
-        if(row>i) return false;
-      }
-    }
-    // all cols ok
-    return true;
-  }
-
-  template<class T>
-  bool isTriu(const Matrix<T> &A){
-    // TODO: Move implementation to CCSSparsity as it does not depend on the matrix entries 
-    // loop over cols
-    for(int i=0; i<A.size2(); ++i){
-      if(A.colind(i) != A.colind(i+1)){ // if there are any elements of the col
-        // check row of the left-most element of the col
+        // check row of the top-most element of the column
         int row = A.row(A.colind(i));
 
         // not lower triangular if row>i
         if(row<i) return false;
       }
     }
-    // all cols ok
+    // all columns ok
+    return true;
+  }
+
+  template<class T>
+  bool isTriu(const Matrix<T> &A){
+    // TODO: Move implementation to CCSSparsity as it does not depend on the matrix entries 
+    // loop over columns
+    for(int i=0; i<A.size2(); ++i){
+      if(A.colind(i) != A.colind(i+1)){ // if there are any elements of the column
+        // check row of the bottom-most element of the column
+        int row = A.row(A.colind(i+1)-1);
+
+        // not upper triangular if row>i
+        if(row>i) return false;
+      }
+    }
+    // all columns ok
     return true;
   }
 
@@ -1121,7 +1121,7 @@ namespace CasADi{
     casadi_assert_message(A.size2() == b.size2(),"solve Ax=b: dimension mismatch: b has " << b.size2() << " columns while A has " << A.size2() << ".");
     casadi_assert_message(A.size2() == A.size1(),"solve: A not square but " << A.dimString());
   
-    if(isTril(A)){
+    if(isTriu(A)){
       // forward substitution if upper triangular
       Matrix<T> x = b;
       const std::vector<int> & Arow = A.row();
@@ -1139,7 +1139,7 @@ namespace CasADi{
         }
       }
       return x;
-    } else if(isTriu(A)){
+    } else if(isTril(A)){
       // backward substitution if upper triangular
       Matrix<T> x = b;
       const std::vector<int> & Arow = A.row();
@@ -1197,7 +1197,7 @@ namespace CasADi{
       Matrix<T> xperm;
     
       // Solve permuted system
-      if(isTril(Aperm)){
+      if(isTriu(Aperm)){
       
         // Forward substitution if lower triangular after sorting the equations
         xperm = solve(Aperm,bperm);
