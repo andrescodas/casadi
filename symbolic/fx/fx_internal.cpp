@@ -1603,14 +1603,14 @@ namespace CasADi{
     for(int d=-1; d<nfwd; ++d){
       for(int i=0; i<getNumInputs(); ++i, ++ind){
         if(ret.input(ind).size()!=0 && ret.input(ind).sparsity()!=input(i).sparsity()){
-          casadi_error("Incorrect shape for " << ret << " input " << ind << " \"" << i_names.at(ind) << "\". Expected " << input(i).dimString() << " but got " << ret.input(ind).dimString());
+          casadi_error("Incorrect sparsity for " << ret << " input " << ind << " \"" << i_names.at(ind) << "\". Expected " << input(i).dimString() << " but got " << ret.input(ind).dimString());
         }
       }
     }
     for(int d=0; d<nadj; ++d){
       for(int i=0; i<getNumOutputs(); ++i, ++ind){
         if(ret.input(ind).size()!=0 && ret.input(ind).sparsity()!=output(i).sparsity()){
-          casadi_error("Incorrect shape for " << ret << " input " << ind << " \"" << i_names.at(ind) << "\". Expected " << output(i).dimString() << " but got " << ret.input(ind).dimString());
+          casadi_error("Incorrect sparsity for " << ret << " input " << ind << " \"" << i_names.at(ind) << "\". Expected " << output(i).dimString() << " but got " << ret.input(ind).dimString());
         }
       }
     }
@@ -1620,14 +1620,14 @@ namespace CasADi{
     for(int d=-1; d<nfwd; ++d){
       for(int i=0; i<getNumOutputs(); ++i, ++ind){
         if(ret.output(ind).size()!=0 && ret.output(ind).sparsity()!=output(i).sparsity()){
-          casadi_error("Incorrect shape for " << ret << " output " << ind << " \"" <<  o_names.at(ind) << "\". Expected " << output(i).dimString() << " but got " << ret.output(ind).dimString());
+          casadi_error("Incorrect sparsity for " << ret << " output " << ind << " \"" <<  o_names.at(ind) << "\". Expected " << output(i).dimString() << " but got " << ret.output(ind).dimString());
         }
       }
     }
     for(int d=0; d<nadj; ++d){
       for(int i=0; i<getNumInputs(); ++i, ++ind){
         if(ret.output(ind).size()!=0 && ret.output(ind).sparsity()!=input(i).sparsity()){
-          casadi_error("Incorrect shape for " << ret << " output " << ind << " \"" << o_names.at(ind) << "\". Expected " << input(i).dimString() << " but got " << ret.output(ind).dimString());
+          casadi_error("Incorrect sparsity for " << ret << " output " << ind << " \"" << o_names.at(ind) << "\". Expected " << input(i).dimString() << " but got " << ret.output(ind).dimString());
         }
       }
     }
