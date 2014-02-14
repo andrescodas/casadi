@@ -170,6 +170,12 @@ namespace CasADi{
     /// Is square?
     bool square() const;
 
+    /// Is lower triangular?
+    bool tril() const;
+
+    /// is upper triangular?
+    bool triu() const;
+
     /// Get the dimension as a string
     std::string dimString() const;
 

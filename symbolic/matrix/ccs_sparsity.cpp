@@ -241,6 +241,14 @@ namespace CasADi{
     return (*this)->square();
   }
 
+  bool CCSSparsity::tril() const{
+    return (*this)->tril();
+  }
+
+  bool CCSSparsity::triu() const{
+    return (*this)->triu();
+  }
+
   CCSSparsity CCSSparsity::sub(const vector<int>& jj, const vector<int>& ii, vector<int>& mapping) const{
     return (*this)->sub(jj,ii,mapping);
   }

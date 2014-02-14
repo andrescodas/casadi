@@ -3456,6 +3456,36 @@ namespace CasADi{
     return hash_sparsity(nrow_,ncol_,colind_,row_);
   }
 
+  bool CCSSparsityInternal::tril() const{
+    // loop over columns
+    for(int i=0; i<ncol_; ++i){
+      if(colind_[i] != colind_[i+1]){ // if there are any elements of the column
+        // check row of the top-most element of the column
+        int row = row_[colind_[i]];
+
+        // not lower triangular if row>i
+        if(row<i) return false;
+      }
+    }
+    // all columns ok
+    return true;
+  }
+
+  bool CCSSparsityInternal::triu() const{
+    // loop over columns
+    for(int i=0; i<ncol_; ++i){
+      if(colind_[i] != colind_[i+1]){ // if there are any elements of the column
+        // check row of the bottom-most element of the column
+        int row = row_[colind_[i+1]-1];
+
+        // not upper triangular if row>i
+        if(row>i) return false;
+      }
+    }
+    // all columns ok
+    return true;
+  }
+
   
 } // namespace CasADi
 

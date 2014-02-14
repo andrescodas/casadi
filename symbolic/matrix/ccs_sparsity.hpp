@@ -360,6 +360,12 @@ namespace CasADi{
     /// Is square?
     bool square() const;
 
+    /// Is lower triangular?
+    bool tril() const;
+
+    /// is upper triangular?
+    bool triu() const;
+
     /// Do the rows appear sequentially on each column (if strictly==true, then do not allow multiple entries)
     bool rowsSequential(bool strictly=true) const;
 

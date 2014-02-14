@@ -579,36 +579,12 @@ namespace CasADi{
 
   template<class T>
   bool isTril(const Matrix<T> &A){
-    // TODO: Move implementation to CCSSparsity as it does not depend on the matrix entries 
-    // loop over columns
-    for(int i=0; i<A.size2(); ++i){
-      if(A.colind(i) != A.colind(i+1)){ // if there are any elements of the col
-        // check row of the top-most element of the column
-        int row = A.row(A.colind(i));
-
-        // not lower triangular if row>i
-        if(row<i) return false;
-      }
-    }
-    // all columns ok
-    return true;
+    return A.sparsity().tril();
   }
 
   template<class T>
   bool isTriu(const Matrix<T> &A){
-    // TODO: Move implementation to CCSSparsity as it does not depend on the matrix entries 
-    // loop over columns
-    for(int i=0; i<A.size2(); ++i){
-      if(A.colind(i) != A.colind(i+1)){ // if there are any elements of the column
-        // check row of the bottom-most element of the column
-        int row = A.row(A.colind(i+1)-1);
-
-        // not upper triangular if row>i
-        if(row>i) return false;
-      }
-    }
-    // all columns ok
-    return true;
+    return A.sparsity().triu();
   }
 
   template<class T>
