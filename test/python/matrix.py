@@ -992,6 +992,7 @@ class Matrixtests(casadiTestCase):
         makeSparse(c_ref)
         
         c = f.getOutput()
+        makeSparse(c)
         
         print sA.dimString(), sB.dimString()
 

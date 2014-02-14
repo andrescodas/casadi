@@ -1105,21 +1105,21 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> solveQQQ(const Matrix<T>& AT, const Matrix<T>& bT){
+  Matrix<T> solveQQQ(const Matrix<T>& A, const Matrix<T>& b){
     // check dimensions
-    casadi_assert_message(AT.size1() == bT.size1(),"solve Ax=b: dimension mismatch: b has " << bT.size1() << " columns while A has " << AT.size1() << ".");
-    casadi_assert_message(AT.size1() == AT.size2(),"solve: A not square but " << AT.dimString());
+    casadi_assert_message(A.size1() == b.size1(),"solve Ax=b: dimension mismatch: b has " << b.size1() << " rows while A has " << A.size1() << ".");
+    casadi_assert_message(A.size1() == A.size2(),"solve: A not square but " << A.dimString());
 
-    if(isTril(AT)){
+    if(isTril(A)){
       // forward substitution if lower triangular
-      Matrix<T> x = bT;
-      const std::vector<int> & Arow = AT.row();
-      const std::vector<int> & Acolind = AT.colind();
-      const std::vector<T> & Adata = AT.data();
-      for(int i=0; i<AT.size2(); ++i){ // loop over columns forwards
-        for(int k=0; k<bT.size2(); ++k){ // for every right hand side
+      Matrix<T> x = b;
+      const std::vector<int> & Arow = A.row();
+      const std::vector<int> & Acolind = A.colind();
+      const std::vector<T> & Adata = A.data();
+      for(int i=0; i<A.size2(); ++i){ // loop over columns forwards
+        for(int k=0; k<b.size2(); ++k){ // for every right hand side
           if(!x.hasNZ(i,k)) continue;
-          x(i,k) /= AT(i,i);
+          x(i,k) /= A(i,i);
           for(int kk=Acolind[i+1]-1; kk>=Acolind[i] && Arow[kk]>i; --kk){
             int j = Arow[kk]; 
             x(j,k) -= Adata[kk]*x(i,k);
@@ -1127,16 +1127,16 @@ namespace CasADi{
         }
       }
       return x;
-    } else if(isTriu(AT)){
+    } else if(isTriu(A)){
       // backward substitution if upper triangular
-      Matrix<T> x = bT;
-      const std::vector<int> & Arow = AT.row();
-      const std::vector<int> & Acolind = AT.colind();
-      const std::vector<T> & Adata = AT.data();
-      for(int i=AT.size2()-1; i>=0; --i){ // loop over columns backwards
-        for(int k=0; k<bT.size2(); ++k){ // for every right hand side
+      Matrix<T> x = b;
+      const std::vector<int> & Arow = A.row();
+      const std::vector<int> & Acolind = A.colind();
+      const std::vector<T> & Adata = A.data();
+      for(int i=A.size2()-1; i>=0; --i){ // loop over columns backwards
+        for(int k=0; k<b.size2(); ++k){ // for every right hand side
           if(!x.hasNZ(i,k)) continue;
-          x(i,k) /= AT(i,i);
+          x(i,k) /= A(i,i);
           for(int kk=Acolind[i]; kk<Acolind[i+1] && Arow[kk]<i; ++kk){ 
             int j = Arow[kk];
             x(j,k) -= Adata[kk]*x(i,k);
@@ -1144,88 +1144,66 @@ namespace CasADi{
         }
       }
       return x;
-    } else if(hasNonStructuralZeros(AT)){
+    } else if(hasNonStructuralZeros(A)){
 
       // If there are structurally nonzero entries that are known to be zero, remove these and rerun the algorithm
-      Matrix<T> A_sparse = AT;
+      Matrix<T> A_sparse = A;
       makeSparse(A_sparse);
-      return solveQQQ(A_sparse,bT);
+      return solveQQQ(A_sparse,b);
 
     } else {
-      Matrix<T> A = trans(AT);
-      Matrix<T> b = trans(bT);
     
       // Make a BLT transformation of A
       std::vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
       A.sparsity().dulmageMendelsohn(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock);
 
-      // Get the inverted row permutation
-      std::vector<int> inv_rowperm(rowperm.size());
-      for(int k=0; k<rowperm.size(); ++k)
-        inv_rowperm[rowperm[k]] = k;
-    
       // Permute the right hand side
-      Matrix<T> bperm = Matrix<T>::sparse(b.size1(),0);
-      for(int i=0; i<b.size2(); ++i){
-        bperm.resize(b.size1(),i+1);
-        for(int el=b.colind(colperm[i]); el<b.colind(colperm[i]+1); ++el){
-          bperm(b.row(el),i) = b[el];
-        }
-      }
+      Matrix<T> bperm = b(rowperm,ALL);
 
       // Permute the linear system
-      Matrix<T> Aperm = Matrix<T>::sparse(A.size1(),0);
-      for(int i=0; i<A.size2(); ++i){
-        Aperm.resize(A.size1(),i+1);
-        for(int el=A.colind(colperm[i]); el<A.colind(colperm[i]+1); ++el){
-          Aperm(inv_rowperm[A.row(el)],i) = A[el];
-        }
-      }
-    
-      // Permuted solution
+      Matrix<T> Aperm = A(rowperm,colperm);
+
+      // Solution
       Matrix<T> xperm;
-    
+
       // Solve permuted system
-      if(isTriu(Aperm)){
+      if(isTril(Aperm)){
       
-        // Forward substitution if lower triangular after sorting the equations
-        xperm = trans(solveQQQ(trans(Aperm),trans(bperm)));
+        // Forward substitution if lower triangular
+        xperm = solveQQQ(Aperm,bperm);
       
       } else if(A.size2()<=3){
       
         // Form inverse by minor expansion and multiply if very small (up to 3-by-3)
-        xperm = mul(bperm,inv(Aperm));
+        xperm = mul(inv(Aperm),bperm);
 
       } else {
       
         // Make a QR factorization
         Matrix<T> Q,R;
-        qr(trans(Aperm),Q,R);
-        Q = trans(Q);
-        R = trans(R);
+        qr(Aperm,Q,R);
 
         // Solve the factorized system (note that solve will now be fast since it is triangular)
-        xperm = trans(solveQQQ(trans(R),mul(Q,trans(bperm))));
+        xperm = solveQQQ(R,mul(trans(Q),bperm));
       }
-    
-      // Permute back the solution
-      Matrix<T> x = Matrix<T>::sparse(xperm.size1(),0);
-      for(int i=0; i<xperm.size2(); ++i){
-        x.resize(xperm.size1(),i+1);
-        for(int el=xperm.colind(inv_rowperm[i]); el<xperm.colind(inv_rowperm[i]+1); ++el){
-          x(xperm.row(el),i) = xperm[el];
-        }
-      }
-      return trans(x);
+
+      // get the inverted column permutation
+      std::vector<int> inv_colperm(colperm.size());
+      for(int k=0; k<colperm.size(); ++k)
+        inv_colperm[colperm[k]] = k;
+
+      // Permute back the solution and return
+      Matrix<T> x = xperm(inv_colperm,ALL);
+      return x;
     }
   }
   
   template<class T>
   Matrix<T> pinv(const Matrix<T>& A) {
-    if (A.size1()>=A.size2()) {
-      return solveQQQ(mul(trans(A),A),trans(A));
-    } else {
+    if (A.size2()>=A.size1()) {
       return trans(solveQQQ(mul(A,trans(A)),A));
+    } else {
+      return solveQQQ(mul(trans(A),A),trans(A));
     }
   }
   
