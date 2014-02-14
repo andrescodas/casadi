@@ -1111,46 +1111,41 @@ namespace CasADi{
     casadi_assert_message(AT.size1() == AT.size2(),"solve: A not square but " << AT.dimString());
 
     if(isTril(AT)){
-
-      // forward substitution if upper triangular
-      Matrix<T> A = trans(AT);
+      // forward substitution if lower triangular
       Matrix<T> x = bT;
-      const std::vector<int> & Arow = A.row();
-      const std::vector<int> & Acolind = A.colind();
-      const std::vector<T> & Adata = A.data();
-      for(int i=0; i<A.size2(); ++i){ // loop over cols
+      const std::vector<int> & Arow = AT.row();
+      const std::vector<int> & Acolind = AT.colind();
+      const std::vector<T> & Adata = AT.data();
+      for(int i=0; i<AT.size2(); ++i){ // loop over columns forwards
         for(int k=0; k<bT.size2(); ++k){ // for every right hand side
-          for(int kk=Acolind[i]; kk<Acolind[i+1] && Arow[kk]<i; ++kk){ 
-            int j = Arow[kk];
-            if (x.hasNZ(j,k))
-              x(i,k) -= Adata[kk]*x(j,k);
+          if(!x.hasNZ(i,k)) continue;
+          x(i,k) /= AT(i,i);
+          for(int kk=Acolind[i+1]-1; kk>=Acolind[i] && Arow[kk]>i; --kk){
+            int j = Arow[kk]; 
+            x(j,k) -= Adata[kk]*x(i,k);
           }
-          if (x.hasNZ(i,k))
-            x(i,k) /= A(i,i);
         }
       }
       return x;
     } else if(isTriu(AT)){
-
       // backward substitution if upper triangular
-      Matrix<T> A = trans(AT);
       Matrix<T> x = bT;
-      const std::vector<int> & Arow = A.row();
-      const std::vector<int> & Acolind = A.colind();
-      const std::vector<T> & Adata = A.data();
-      for(int i=A.size2()-1; i>=0; --i){ // loop over cols from the back
+      const std::vector<int> & Arow = AT.row();
+      const std::vector<int> & Acolind = AT.colind();
+      const std::vector<T> & Adata = AT.data();
+      for(int i=AT.size2()-1; i>=0; --i){ // loop over columns backwards
         for(int k=0; k<bT.size2(); ++k){ // for every right hand side
-          for(int kk=Acolind[i+1]-1; kk>=Acolind[i] && Arow[kk]>i; --kk){
-            int j = Arow[kk]; 
-            if (x.hasNZ(j,k))
-              x(i,k) -= Adata[kk]*x(j,k);
+          if(!x.hasNZ(i,k)) continue;
+          x(i,k) /= AT(i,i);
+          for(int kk=Acolind[i]; kk<Acolind[i+1] && Arow[kk]<i; ++kk){ 
+            int j = Arow[kk];
+            x(j,k) -= Adata[kk]*x(i,k);
           }
-          if (x.hasNZ(i,k))
-            x(i,k) /= A(i,i);
         }
       }
       return x;
     } else if(hasNonStructuralZeros(AT)){
+
       // If there are structurally nonzero entries that are known to be zero, remove these and rerun the algorithm
       Matrix<T> A_sparse = AT;
       makeSparse(A_sparse);
