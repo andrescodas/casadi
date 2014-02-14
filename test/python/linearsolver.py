@@ -168,7 +168,7 @@ class LinearSolverTests(casadiTestCase):
     
     for Solver, options in lsolvers:
       print Solver.creator
-      C = solveQQQ(A.T,b.T,Solver,options).T
+      C = solve(A.T,b.T,Solver,options).T
       
       f = MXFunction([A,b],[C])
       f.init()
@@ -203,7 +203,7 @@ class LinearSolverTests(casadiTestCase):
       
       self.checkarray(mul(f.output(),A_),DMatrix.eye(4))
       
-      solveQQQ(mul(trans(A),A),A.T,Solver,options)
+      solve(mul(trans(A),A),A.T,Solver,options)
       pinv(A_,Solver,options)
       
       #self.checkarray(mul(pinv(A_,Solver,options),A_),DMatrix.eye(4))
@@ -238,7 +238,7 @@ class LinearSolverTests(casadiTestCase):
     b = DMatrix([1,0.5])
     for Solver, options in lsolvers:
       print Solver.creator
-      C = solveQQQ(A.T,b.T,Solver,options).T
+      C = solve(A.T,b.T,Solver,options).T
       
       self.checkarray(C,DMatrix([1.5,-0.5]))
       

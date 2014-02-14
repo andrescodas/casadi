@@ -75,7 +75,7 @@ class ControlTests(casadiTestCase):
           A_total = DMatrix.eye(n*n*K) - horzcat([AA[-n*n:,:],AA[:-n*n,:]])
           
           
-          Pf = solveQQQ(A_total.T,vec(horzcat([Vss[-n:,:],Vss[:-n,:]])).T,CSparse).T
+          Pf = solve(A_total.T,vec(horzcat([Vss[-n:,:],Vss[:-n,:]])).T,CSparse).T
           P = Pf.reshape((K*n,n))
           #P = (P+P.T)/2
           

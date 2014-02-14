@@ -84,7 +84,7 @@ namespace CasADi{
     Vss_shift.push_back(Vss.back());
     Vss_shift.insert(Vss_shift.end(),Vss.begin(),Vss.begin()+K_-1);
     
-    MX Pf = trans(solveQQQ(trans(A_total),trans(vec(horzcat(Vss_shift))),getOption("linear_solver")));
+    MX Pf = trans(solve(trans(A_total),trans(vec(horzcat(Vss_shift))),getOption("linear_solver")));
           
     MX P = reshape(Pf,K_*n_,n_);
     

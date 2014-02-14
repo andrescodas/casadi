@@ -129,7 +129,7 @@ namespace CasADi{
     }
 
     // Solve the factorized system
-    SXMatrix xperm = trans(CasADi::solveQQQ(trans(R),mul(Q,trans(bperm))));
+    SXMatrix xperm = trans(CasADi::solve(trans(R),mul(Q,trans(bperm))));
 
     // Permute back the solution
     SXMatrix x = SXMatrix::sparse(xperm.size1(),0);
@@ -173,7 +173,7 @@ namespace CasADi{
     }
 
     // Solve the factorized system
-    xperm = mul(trans(CasADi::solveQQQ(R,trans(bperm))),Q);
+    xperm = mul(trans(CasADi::solve(R,trans(bperm))),Q);
 
     // Permute back the solution
     x = SXMatrix::sparse(xperm.size1(),0);

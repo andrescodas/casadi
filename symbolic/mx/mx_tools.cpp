@@ -1022,7 +1022,7 @@ namespace CasADi{
     return blockcat(blocks);
   }
 
-  MX solveQQQ(const MX& A, const MX& b, linearSolverCreator lsolver, const Dictionary& dict) {
+  MX solve(const MX& A, const MX& b, linearSolverCreator lsolver, const Dictionary& dict) {
     if(false){ // BUG? Does not work - why?
       LinearSolver mysolver = lsolver(A.sparsity(),1);
       mysolver.setOption(dict);
@@ -1038,9 +1038,9 @@ namespace CasADi{
   
   MX pinv(const MX& A, linearSolverCreator lsolver, const Dictionary& dict) {
     if (A.size1()>=A.size2()) {
-      return solveQQQ(mul(trans(A),A),trans(A),lsolver,dict);
+      return solve(mul(trans(A),A),trans(A),lsolver,dict);
     } else {
-      return trans(solveQQQ(mul(A,trans(A)),A,lsolver,dict));
+      return trans(solve(mul(A,trans(A)),A,lsolver,dict));
     }
   }
   

@@ -36,7 +36,7 @@ namespace CasADi{
     return isRegular(ex.data());
   }
   
-  Matrix<double> solveQQQ(const Matrix<double>& A, const Matrix<double>& b, linearSolverCreator lsolver, const Dictionary& dict) {
+  Matrix<double> solve(const Matrix<double>& A, const Matrix<double>& b, linearSolverCreator lsolver, const Dictionary& dict) {
     LinearSolver mysolver = lsolver(A.sparsity(),b.size2());
     mysolver.setOption(dict);
     mysolver.init();
@@ -50,9 +50,9 @@ namespace CasADi{
 
   Matrix<double> pinv(const Matrix<double>& A, linearSolverCreator lsolver, const Dictionary& dict) {
     if (A.size1()>=A.size2()) {
-      return solveQQQ(mul(trans(A),A),trans(A),lsolver,dict);
+      return solve(mul(trans(A),A),trans(A),lsolver,dict);
     } else {
-      return trans(solveQQQ(mul(A,trans(A)),A,lsolver,dict));
+      return trans(solve(mul(A,trans(A)),A,lsolver,dict));
     }
   }
     

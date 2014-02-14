@@ -978,7 +978,7 @@ class Matrixtests(casadiTestCase):
 
         b = DMatrix(sB,[random.random() for i in range(sB.size())])
         B = ssym("B",b.sparsity())
-        C = solveQQQ(A.T,B.T).T
+        C = solve(A.T,B.T).T
         
         f = SXFunction([A,B],[C])
         f.init()

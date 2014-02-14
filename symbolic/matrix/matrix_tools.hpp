@@ -324,7 +324,7 @@ namespace CasADi{
   
   */
   template<class T>
-  Matrix<T> solveQQQ(const Matrix<T>& A, const Matrix<T>& b);
+  Matrix<T> solve(const Matrix<T>& A, const Matrix<T>& b);
   
   /** \brief Computes the Moore-Penrose pseudo-inverse
   * 
@@ -337,7 +337,7 @@ namespace CasADi{
   
   /** \brief Solve a system of equations: A*x = b 
   */
-  Matrix<double> solveQQQ(const Matrix<double>& A, const Matrix<double>& b, linearSolverCreator lsolver, const Dictionary& dict = Dictionary());
+  Matrix<double> solve(const Matrix<double>& A, const Matrix<double>& b, linearSolverCreator lsolver, const Dictionary& dict = Dictionary());
   
   
   /** \brief Computes the Moore-Penrose pseudo-inverse
@@ -1081,7 +1081,7 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> solveQQQ(const Matrix<T>& A, const Matrix<T>& b){
+  Matrix<T> solve(const Matrix<T>& A, const Matrix<T>& b){
     // check dimensions
     casadi_assert_message(A.size1() == b.size1(),"solve Ax=b: dimension mismatch: b has " << b.size1() << " rows while A has " << A.size1() << ".");
     casadi_assert_message(A.size1() == A.size2(),"solve: A not square but " << A.dimString());
@@ -1125,7 +1125,7 @@ namespace CasADi{
       // If there are structurally nonzero entries that are known to be zero, remove these and rerun the algorithm
       Matrix<T> A_sparse = A;
       makeSparse(A_sparse);
-      return solveQQQ(A_sparse,b);
+      return solve(A_sparse,b);
 
     } else {
     
@@ -1146,7 +1146,7 @@ namespace CasADi{
       if(isTril(Aperm)){
       
         // Forward substitution if lower triangular
-        xperm = solveQQQ(Aperm,bperm);
+        xperm = solve(Aperm,bperm);
       
       } else if(A.size2()<=3){
       
@@ -1160,7 +1160,7 @@ namespace CasADi{
         qr(Aperm,Q,R);
 
         // Solve the factorized system (note that solve will now be fast since it is triangular)
-        xperm = solveQQQ(R,mul(trans(Q),bperm));
+        xperm = solve(R,mul(trans(Q),bperm));
       }
 
       // get the inverted column permutation
@@ -1177,9 +1177,9 @@ namespace CasADi{
   template<class T>
   Matrix<T> pinv(const Matrix<T>& A) {
     if (A.size2()>=A.size1()) {
-      return trans(solveQQQ(mul(A,trans(A)),A));
+      return trans(solve(mul(A,trans(A)),A));
     } else {
-      return solveQQQ(mul(trans(A),A),trans(A));
+      return solve(mul(trans(A),A),trans(A));
     }
   }
   
@@ -1570,7 +1570,7 @@ namespace CasADi{
   MTT_INST(T,norm_F)                            \
   MTT_INST(T,qr)                                \
   MTT_INST(T,nullspace)                         \
-  MTT_INST(T,solveQQQ)                             \
+  MTT_INST(T,solve)                             \
   MTT_INST(T,pinv)                              \
   MTT_INST(T,isZero)                            \
   MTT_INST(T,isOne)                             \
