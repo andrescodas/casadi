@@ -380,7 +380,7 @@ namespace CasADi{
       stream << v_.value;
     } else {
       stream << "Const<" << v_.value << ">(";
-      stream << size2() << "x" << size1() << ": ";
+      stream << size1() << "x" << size2() << ": ";
       if(sparsity().dense()){
         stream << "dense";
       } else if(sparsity().size()==0){
