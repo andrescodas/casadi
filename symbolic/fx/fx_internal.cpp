@@ -485,13 +485,13 @@ namespace CasADi{
     for(int ind=0; ind<getNumOutputs(); ++ind) output(ind).setZero();
 
     // Construct sparsity pattern
-    CCSSparsity ret = sp_triplet(nz_in,nz_out, use_fwd ? jrow : jcol, use_fwd ? jcol : jrow);
+    CCSSparsity ret = sp_triplet(nz_out, nz_in, use_fwd ? jcol : jrow, use_fwd ? jrow : jcol);
     
     casadi_log("Formed Jacobian sparsity pattern (dimension " << ret.shape() << ", " << ret.size() << " nonzeros, " << 100*double(ret.size())/double(ret.size1())/double(ret.size2()) << " \% nonzeros).");
     casadi_log("FXInternal::getJacSparsity end ");
     
     // Return sparsity pattern
-    return ret.transpose();
+    return ret;
   }
 
   CCSSparsity FXInternal::getJacSparsityQQQHierarchicalSymm(int iind, int oind){
@@ -1062,32 +1062,32 @@ namespace CasADi{
       } else {
       
         // Get the compact sparsity pattern
-        CCSSparsity sp = jacSparsityQQQ(iind,oind,true,symmetric).transpose();
+        CCSSparsity sp = jacSparsityQQQ(iind,oind,true,symmetric);
 
         // Enlarge if sparse output 
-        if(output(oind).numel()!=sp.size2()){
-          casadi_assert(sp.size2()==output(oind).size());
+        if(output(oind).numel()!=sp.size1()){
+          casadi_assert(sp.size1()==output(oind).size());
         
-          // New col for each old col 
-          vector<int> col_map = output(oind).sparsity().getElements();
+          // New row for each old row 
+          vector<int> row_map = output(oind).sparsity().getElements();
     
-          // Insert cols 
-          sp.enlargeColumns(output(oind).numel(),col_map);
+          // Insert rows
+          sp.enlargeRows(output(oind).numel(),row_map);
         }
   
         // Enlarge if sparse input 
-        if(input(iind).numel()!=sp.size1()){
-          casadi_assert(sp.size1()==input(iind).size());
+        if(input(iind).numel()!=sp.size2()){
+          casadi_assert(sp.size2()==input(iind).size());
         
-          // New row for each old row
-          vector<int> row_map = input(iind).sparsity().getElements();
+          // New column for each old column
+          vector<int> col_map = input(iind).sparsity().getElements();
         
-          // Insert rows
-          sp.enlargeRows(input(iind).numel(),row_map);
+          // Insert columns
+          sp.enlargeColumns(input(iind).numel(),col_map);
         }
       
         // Save
-        jsp = sp.transpose();
+        jsp = sp;
       }
     }
   
@@ -1393,7 +1393,6 @@ namespace CasADi{
         CCSSparsity sp = jacSparsityQQQ(iind, oind, true, false);
         if (sp.isNull() || sp.size() == 0)
           continue; // Skip if zero
-        sp = sp.transpose();
 
         const int d1 = sp.size2();
         //const int d2 = sp.size1();
@@ -1404,16 +1403,16 @@ namespace CasADi{
         bvec_t *outputd = get_bvec_t(output(oind).data());
 
         // Carry out the sparse matrix-vector multiplication
-        for (int i = 0; i < d1; ++i) {
-          for (int el = colind[i]; el < colind[i + 1]; ++el) {
+        for (int cc = 0; cc < d1; ++cc) {
+          for (int el = colind[cc]; el < colind[cc + 1]; ++el) {
             // Get row
-            int j = row[el];
+            int rr = row[el];
             
             // Propagate dependencies
             if (fwd) {
-              outputd[i] |= inputd[j];
+              outputd[rr] |= inputd[cc];
             } else {
-              inputd[j] |= outputd[i];
+              inputd[cc] |= outputd[rr];
             }
           }
         }
