@@ -183,7 +183,7 @@ namespace CasADi{
     }
   }
 
-  CCSSparsity ParallelizerInternal::getJacSparsity(int iind, int oind, bool symmetric){
+  CCSSparsity ParallelizerInternal::getJacSparsityQQQ(int iind, int oind, bool symmetric){
     // Number of tasks
     int ntask = inind_.size()-1;
   
@@ -199,7 +199,7 @@ namespace CasADi{
       int oind_f = oind-outind_[task];
     
       // Get the local sparsity patterm
-      return funcs_.at(task).jacSparsity(iind_f,oind_f);
+      return funcs_.at(task).jacSparsityQQQ(iind_f,oind_f);
     
     } else {
       // All-zero jacobian

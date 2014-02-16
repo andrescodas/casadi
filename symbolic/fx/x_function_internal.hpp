@@ -508,7 +508,7 @@ namespace CasADi{
     casadi_assert_message(output(oind).scalar(),"Only gradients of scalar functions allowed. Use jacobian instead.");
 
     // Quick return if trivially empty
-    if(input(iind).size()==0 || output(oind).size()==0 || jacSparsity(iind,oind,true,false).size()==0){
+    if(input(iind).size()==0 || output(oind).size()==0 || jacSparsityQQQ(iind,oind,true,false).size()==0){
       return MatType::sparse(input(iind).shape());
     }
 
@@ -576,7 +576,7 @@ namespace CasADi{
     }
     
     // Create return object
-    MatType ret = MatType(jacSparsity(iind,oind,compact,symmetric));
+    MatType ret = MatType(jacSparsityQQQ(iind,oind,compact,symmetric).transpose());
     if(verbose()) std::cout << "XFunctionInternal::jac allocated return value" << std::endl;
   
     // Get a bidirectional partition
@@ -602,7 +602,7 @@ namespace CasADi{
     std::vector<std::vector<MatType> > fseed, aseed, fsens, asens;
   
     // Get the sparsity of the Jacobian block
-    const CCSSparsity& jsp = jacSparsity(iind,oind,true,symmetric);
+    CCSSparsity jsp = jacSparsityQQQ(iind,oind,true,symmetric).transpose();
     const std::vector<int>& jsp_colind = jsp.colind();
     const std::vector<int>& jsp_row = jsp.row();
   

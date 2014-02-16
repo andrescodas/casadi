@@ -85,7 +85,7 @@ namespace CasADi{
     casadi_assert_warning(getNumOutputs()<10000, "Function " << getOption("name") << " has a large number of outputs. Changing the problem formulation is strongly encouraged.");  
 
     // Resize the matrix that holds the sparsity of the Jacobian blocks
-    jac_sparsity_ = jac_sparsity_compact_ = Matrix<CCSSparsity>::sparse(getNumOutputs(),getNumInputs());
+    jac_sparsityQQQ_ = jac_sparsityQQQ_compact_ = Matrix<CCSSparsity>::sparse(getNumOutputs(),getNumInputs());
     jac_ = jac_compact_ = Matrix<WeakRef>::sparse(getNumOutputs(),getNumInputs());
   
     if(hasSetOption("user_data")){
@@ -356,7 +356,7 @@ namespace CasADi{
     for(int i=begin; i<end; ++i) r |= s[i];
   }
 
-  CCSSparsity FXInternal::getJacSparsityPlain(int iind, int oind){
+  CCSSparsity FXInternal::getJacSparsityQQQPlain(int iind, int oind){
     // Number of nonzero inputs
     int nz_in = input(iind).size();
     
@@ -491,10 +491,10 @@ namespace CasADi{
     casadi_log("FXInternal::getJacSparsity end ");
     
     // Return sparsity pattern
-    return ret;
+    return ret.transpose();
   }
 
-  CCSSparsity FXInternal::getJacSparsityHierarchicalSymm(int iind, int oind){
+  CCSSparsity FXInternal::getJacSparsityQQQHierarchicalSymm(int iind, int oind){
     casadi_assert(spCanEvaluate(true));
 
     // Number of nonzero inputs
@@ -717,10 +717,10 @@ namespace CasADi{
     casadi_log("Number of sweeps: " << nsweeps );
     casadi_log("Formed Jacobian sparsity pattern (dimension " << r.shape() << ", " << r.size() << " nonzeros, " << 100*double(r.size())/double(r.size2())/double(r.size1()) << " \% nonzeros).");
     
-    return r;
+    return r.transpose();
   }
 
-  CCSSparsity FXInternal::getJacSparsityHierarchical(int iind, int oind){
+  CCSSparsity FXInternal::getJacSparsityQQQHierarchical(int iind, int oind){
     // Number of nonzero inputs
     int nz_in = input(iind).size();
     
@@ -1014,55 +1014,55 @@ namespace CasADi{
     casadi_log("Number of sweeps: " << nsweeps );
     casadi_log("Formed Jacobian sparsity pattern (dimension " << r.shape() << ", " << r.size() << " nonzeros, " << 100*double(r.size())/double(r.size1())/double(r.size2()) << " \% nonzeros).");
     
-    return r;
+    return r.transpose();
   }
 
-  CCSSparsity FXInternal::getJacSparsity(int iind, int oind, bool symmetric){
+  CCSSparsity FXInternal::getJacSparsityQQQ(int iind, int oind, bool symmetric){
     // Check if we are able to propagate dependencies through the function
     if(spCanEvaluate(true) || spCanEvaluate(false)){
 
       if (input(iind).size()>3*bvec_size && output(oind).size()>3*bvec_size) {
         if (symmetric) {
-          return getJacSparsityHierarchicalSymm(iind, oind);
+          return getJacSparsityQQQHierarchicalSymm(iind, oind);
         } else {
-          return getJacSparsityHierarchical(iind, oind);
+          return getJacSparsityQQQHierarchical(iind, oind);
         }
       } else {
-        return getJacSparsityPlain(iind, oind);
+        return getJacSparsityQQQPlain(iind, oind);
       }
 
 
     } else {
       // Dense sparsity by default
-      return CCSSparsity(input(iind).size(),output(oind).size(),true);
+      return CCSSparsity(output(oind).size(),input(iind).size(),true);
     }
   }
 
-  void FXInternal::setJacSparsity(const CCSSparsity& sp, int iind, int oind, bool compact){
+  void FXInternal::setJacSparsityQQQ(const CCSSparsity& sp, int iind, int oind, bool compact){
     if(compact){
-      jac_sparsity_compact_.elem(oind,iind) = sp;
+      jac_sparsityQQQ_compact_.elem(oind,iind) = sp;
     } else {
-      jac_sparsity_.elem(oind,iind) = sp;
+      jac_sparsityQQQ_.elem(oind,iind) = sp;
     }
   }
 
-  CCSSparsity& FXInternal::jacSparsity(int iind, int oind, bool compact, bool symmetric){
+  CCSSparsity& FXInternal::jacSparsityQQQ(int iind, int oind, bool compact, bool symmetric){
     casadi_assert_message(isInit(),"Function not initialized.");
 
     // Get an owning reference to the block
-    CCSSparsity jsp = compact ? jac_sparsity_compact_.elem(oind,iind) : jac_sparsity_.elem(oind,iind);
+    CCSSparsity jsp = compact ? jac_sparsityQQQ_compact_.elem(oind,iind) : jac_sparsityQQQ_.elem(oind,iind);
 
     // Generate, if null
     if(jsp.isNull()){
       if(compact){
         
         // Use internal routine to determine sparsity
-        jsp = getJacSparsity(iind,oind,symmetric);
-
+        jsp = getJacSparsityQQQ(iind,oind,symmetric);
+  
       } else {
       
         // Get the compact sparsity pattern
-        CCSSparsity sp = jacSparsity(iind,oind,true,symmetric);
+        CCSSparsity sp = jacSparsityQQQ(iind,oind,true,symmetric).transpose();
 
         // Enlarge if sparse output 
         if(output(oind).numel()!=sp.size2()){
@@ -1087,17 +1087,17 @@ namespace CasADi{
         }
       
         // Save
-        jsp = sp;
+        jsp = sp.transpose();
       }
     }
   
     // If still null, not dependent
     if(jsp.isNull()){
-      jsp = CCSSparsity(input(iind).size(),output(oind).size());
+      jsp = CCSSparsity(output(oind).size(),input(iind).size());
     }
 
     // Return a reference to the block
-    CCSSparsity& jsp_ref = compact ? jac_sparsity_compact_.elem(oind,iind) : jac_sparsity_.elem(oind,iind);
+    CCSSparsity& jsp_ref = compact ? jac_sparsityQQQ_compact_.elem(oind,iind) : jac_sparsityQQQ_.elem(oind,iind);
     jsp_ref = jsp;
     return jsp_ref;
   }
@@ -1106,10 +1106,8 @@ namespace CasADi{
     log("FXInternal::getPartition begin");
   
     // Sparsity pattern with transpose
-    CCSSparsity &A = jacSparsity(iind,oind,compact,symmetric);
-    vector<int> mapping;
-    CCSSparsity AT = symmetric ? A : A.transpose(mapping);
-    mapping.clear();
+    CCSSparsity &AT = jacSparsityQQQ(iind,oind,compact,symmetric);
+    CCSSparsity A = symmetric ? AT : AT.transpose();
   
     // Which AD mode?
     bool test_ad_fwd=true, test_ad_adj=true;
@@ -1392,9 +1390,11 @@ namespace CasADi{
           continue;
         
         // Get the sparsity of the Jacobian block
-        CCSSparsity& sp = jacSparsity(iind, oind, true, false);
+        CCSSparsity sp = jacSparsityQQQ(iind, oind, true, false);
         if (sp.isNull() || sp.size() == 0)
           continue; // Skip if zero
+        sp = sp.transpose();
+
         const int d1 = sp.size2();
         //const int d2 = sp.size1();
         const vector<int>& colind = sp.colind();

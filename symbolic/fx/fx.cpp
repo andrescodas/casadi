@@ -192,12 +192,12 @@ namespace CasADi{
     return (*this)->getStat(name);
   }
 
-  CCSSparsity& FX::jacSparsity(int iind, int oind, bool compact, bool symmetric){
-    return (*this)->jacSparsity(iind,oind,compact, symmetric);
+  CCSSparsity& FX::jacSparsityQQQ(int iind, int oind, bool compact, bool symmetric){
+    return (*this)->jacSparsityQQQ(iind,oind,compact, symmetric);
   }
 
-  void FX::setJacSparsity(const CCSSparsity& sp, int iind, int oind, bool compact){
-    (*this)->setJacSparsity(sp,iind,oind,compact);
+  void FX::setJacSparsityQQQ(const CCSSparsity& sp, int iind, int oind, bool compact){
+    (*this)->setJacSparsityQQQ(sp,iind,oind,compact);
   }
 
   std::vector<MX> FX::symbolicInput() const{
