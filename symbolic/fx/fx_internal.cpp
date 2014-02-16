@@ -356,7 +356,7 @@ namespace CasADi{
     for(int i=begin; i<end; ++i) r |= s[i];
   }
 
-  CCSSparsity FXInternal::getJacSparsityPlain(int iind, int oind){
+  CCSSparsity FXInternal::getJacSparsityQQQPlain(int iind, int oind){
     // Number of nonzero inputs
     int nz_in = input(iind).size();
     
@@ -485,7 +485,7 @@ namespace CasADi{
     for(int ind=0; ind<getNumOutputs(); ++ind) output(ind).setZero();
 
     // Construct sparsity pattern
-    CCSSparsity ret = sp_triplet(nz_in,nz_out, use_fwd ? jrow : jcol, use_fwd ? jcol : jrow);
+    CCSSparsity ret = sp_triplet(nz_out, nz_in,use_fwd ? jcol : jrow, use_fwd ? jrow : jcol);
     
     casadi_log("Formed Jacobian sparsity pattern (dimension " << ret.shape() << ", " << ret.size() << " nonzeros, " << 100*double(ret.size())/double(ret.size1())/double(ret.size2()) << " \% nonzeros).");
     casadi_log("FXInternal::getJacSparsity end ");
@@ -494,7 +494,7 @@ namespace CasADi{
     return ret;
   }
 
-  CCSSparsity FXInternal::getJacSparsityHierarchicalSymm(int iind, int oind){
+  CCSSparsity FXInternal::getJacSparsityQQQHierarchicalSymm(int iind, int oind){
     casadi_assert(spCanEvaluate(true));
 
     // Number of nonzero inputs
@@ -709,7 +709,7 @@ namespace CasADi{
       }
 
       // Construct fine sparsity pattern
-      r = sp_triplet(fine.size()-1, fine.size()-1, jrow, jcol);
+      r = sp_triplet(fine.size()-1, fine.size()-1, jcol, jrow);
       coarse = fine;
       hasrun = true;
     }
@@ -720,7 +720,7 @@ namespace CasADi{
     return r;
   }
 
-  CCSSparsity FXInternal::getJacSparsityHierarchical(int iind, int oind){
+  CCSSparsity FXInternal::getJacSparsityQQQHierarchical(int iind, int oind){
     // Number of nonzero inputs
     int nz_in = input(iind).size();
     
@@ -1000,14 +1000,14 @@ namespace CasADi{
       // Swap results if adjoint mode was used
       if (use_fwd) {
         // Construct fine sparsity pattern
-        r = sp_triplet(fine_row.size()-1, fine_col.size()-1, jrow, jcol);
-        coarse_col = fine_col;
+        r = sp_triplet(fine_col.size()-1, fine_row.size()-1, jcol, jrow);
         coarse_row = fine_row;
+        coarse_col = fine_col;
       } else {
         // Construct fine sparsity pattern
-        r = sp_triplet(fine_col.size()-1, fine_row.size()-1, jcol, jrow);
-        coarse_col = fine_row;
+        r = sp_triplet(fine_row.size()-1, fine_col.size()-1, jrow, jcol);
         coarse_row = fine_col;
+        coarse_col = fine_row;
       }
       hasrun = true;
     }
@@ -1017,28 +1017,28 @@ namespace CasADi{
     return r;
   }
 
-  CCSSparsity FXInternal::getJacSparsity(int iind, int oind, bool symmetric){
+  CCSSparsity FXInternal::getJacSparsityQQQ(int iind, int oind, bool symmetric){
     // Check if we are able to propagate dependencies through the function
     if(spCanEvaluate(true) || spCanEvaluate(false)){
 
       if (input(iind).size()>3*bvec_size && output(oind).size()>3*bvec_size) {
         if (symmetric) {
-          return getJacSparsityHierarchicalSymm(iind, oind);
+          return getJacSparsityQQQHierarchicalSymm(iind, oind);
         } else {
-          return getJacSparsityHierarchical(iind, oind);
+          return getJacSparsityQQQHierarchical(iind, oind);
         }
       } else {
-        return getJacSparsityPlain(iind, oind);
+        return getJacSparsityQQQPlain(iind, oind);
       }
 
 
     } else {
       // Dense sparsity by default
-      return CCSSparsity(input(iind).size(),output(oind).size(),true);
+      return CCSSparsity(output(oind).size(),input(iind).size(),true);
     }
   }
 
-  void FXInternal::setJacSparsity(const CCSSparsity& sp, int iind, int oind, bool compact){
+  void FXInternal::setJacSparsityQQQ(const CCSSparsity& sp, int iind, int oind, bool compact){
     if(compact){
       jac_sparsity_compact_.elem(oind,iind) = sp;
     } else {
@@ -1046,7 +1046,7 @@ namespace CasADi{
     }
   }
 
-  CCSSparsity& FXInternal::jacSparsity(int iind, int oind, bool compact, bool symmetric){
+  CCSSparsity& FXInternal::jacSparsityQQQ(int iind, int oind, bool compact, bool symmetric){
     casadi_assert_message(isInit(),"Function not initialized.");
 
     // Get an owning reference to the block
@@ -1057,33 +1057,33 @@ namespace CasADi{
       if(compact){
         
         // Use internal routine to determine sparsity
-        jsp = getJacSparsity(iind,oind,symmetric);
+        jsp = getJacSparsityQQQ(iind,oind,symmetric);
 
       } else {
       
         // Get the compact sparsity pattern
-        CCSSparsity sp = jacSparsity(iind,oind,true,symmetric);
+        CCSSparsity sp = jacSparsityQQQ(iind,oind,true,symmetric);
 
         // Enlarge if sparse output 
-        if(output(oind).numel()!=sp.size2()){
-          casadi_assert(sp.size2()==output(oind).size());
+        if(output(oind).numel()!=sp.size1()){
+          casadi_assert(sp.size1()==output(oind).size());
         
-          // New col for each old col 
-          vector<int> col_map = output(oind).sparsity().getElements();
+          // New row for each old row 
+          vector<int> row_map = output(oind).sparsity().getElements();
     
-          // Insert cols 
-          sp.enlargeColumns(output(oind).numel(),col_map);
+          // Insert rows 
+          sp.enlargeRows(output(oind).numel(),row_map);
         }
   
         // Enlarge if sparse input 
-        if(input(iind).numel()!=sp.size1()){
-          casadi_assert(sp.size1()==input(iind).size());
+        if(input(iind).numel()!=sp.size2()){
+          casadi_assert(sp.size2()==input(iind).size());
         
-          // New row for each old row
-          vector<int> row_map = input(iind).sparsity().getElements();
+          // New column for each old column
+          vector<int> col_map = input(iind).sparsity().getElements();
         
-          // Insert rows
-          sp.enlargeRows(input(iind).numel(),row_map);
+          // Insert columns
+          sp.enlargeColumns(input(iind).numel(),col_map);
         }
       
         // Save
@@ -1093,7 +1093,7 @@ namespace CasADi{
   
     // If still null, not dependent
     if(jsp.isNull()){
-      jsp = CCSSparsity(input(iind).size(),output(oind).size());
+      jsp = CCSSparsity(output(oind).size(),input(iind).size());
     }
 
     // Return a reference to the block
@@ -1106,10 +1106,8 @@ namespace CasADi{
     log("FXInternal::getPartition begin");
   
     // Sparsity pattern with transpose
-    CCSSparsity &A = jacSparsity(iind,oind,compact,symmetric);
-    vector<int> mapping;
-    CCSSparsity AT = symmetric ? A : A.transpose(mapping);
-    mapping.clear();
+    CCSSparsity AT = jacSparsityQQQ(iind,oind,compact,symmetric);
+    CCSSparsity A = symmetric ? AT : AT.transpose();
   
     // Which AD mode?
     bool test_ad_fwd=true, test_ad_adj=true;
@@ -1392,7 +1390,7 @@ namespace CasADi{
           continue;
         
         // Get the sparsity of the Jacobian block
-        CCSSparsity& sp = jacSparsity(iind, oind, true, false);
+        CCSSparsity sp = jacSparsityQQQ(iind, oind, true, false).transpose();
         if (sp.isNull() || sp.size() == 0)
           continue; // Skip if zero
         const int d1 = sp.size2();
