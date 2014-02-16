@@ -231,22 +231,22 @@ namespace CasADi{
     GenericType getStat(const std::string & name) const;
     
     /// Generate the sparsity of a Jacobian block
-    virtual CCSSparsity getJacSparsityQQQ(int iind, int oind, bool symmetric);
+    virtual CCSSparsity getJacSparsity(int iind, int oind, bool symmetric);
     
     /// A flavour of getJacSparsity without any magic
-    CCSSparsity getJacSparsityQQQPlain(int iind, int oind);
+    CCSSparsity getJacSparsityPlain(int iind, int oind);
     
     /// A flavour of getJacSparsity that does hierachical block structure recognition
-    CCSSparsity getJacSparsityQQQHierarchical(int iind, int oind);
+    CCSSparsity getJacSparsityHierarchical(int iind, int oind);
     
     /// A flavour of getJacSparsity that does hierachical block structure recognition for symmetric jacobians
-    CCSSparsity getJacSparsityQQQHierarchicalSymm(int iind, int oind);
+    CCSSparsity getJacSparsityHierarchicalSymm(int iind, int oind);
     
     /// Generate the sparsity of a Jacobian block
-    void setJacSparsityQQQ(const CCSSparsity& sp, int iind, int oind, bool compact);
+    void setJacSparsity(const CCSSparsity& sp, int iind, int oind, bool compact);
     
     /// Get, if necessary generate, the sparsity of a Jacobian block
-    CCSSparsity& jacSparsityQQQ(int iind, int oind, bool compact, bool symmetric);
+    CCSSparsity& jacSparsity(int iind, int oind, bool compact, bool symmetric);
     
     /// Get a vector of symbolic variables with the same dimensions as the inputs
     virtual std::vector<MX> symbolicInput() const;

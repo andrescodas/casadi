@@ -892,7 +892,7 @@ namespace CasADi{
 
   CCSSparsity IntegratorInternal::spJacF(){
     // Start with the sparsity pattern of the ODE part
-    CCSSparsity ret = f_.jacSparsityQQQ(DAE_X,DAE_ODE).transpose();
+    CCSSparsity ret = f_.jacSparsity(DAE_X,DAE_ODE);
     
     // Add diagonal to get interdependencies
     ret = ret.patternUnion(sp_diag(nx_));
@@ -901,9 +901,9 @@ namespace CasADi{
     if(nz_==0) return ret;
 
     // Add contribution from algebraic variables and equations
-    CCSSparsity jac_ode_z = f_.jacSparsityQQQ(DAE_Z,DAE_ODE).transpose();
-    CCSSparsity jac_alg_x = f_.jacSparsityQQQ(DAE_X,DAE_ALG).transpose();
-    CCSSparsity jac_alg_z = f_.jacSparsityQQQ(DAE_Z,DAE_ALG).transpose();
+    CCSSparsity jac_ode_z = f_.jacSparsity(DAE_Z,DAE_ODE);
+    CCSSparsity jac_alg_x = f_.jacSparsity(DAE_X,DAE_ALG);
+    CCSSparsity jac_alg_z = f_.jacSparsity(DAE_Z,DAE_ALG);
     ret = vertcat(ret,jac_ode_z);
     ret.append(vertcat(jac_alg_x,jac_alg_z));
     return ret;
@@ -911,7 +911,7 @@ namespace CasADi{
 
   CCSSparsity IntegratorInternal::spJacG(){
     // Start with the sparsity pattern of the ODE part
-    CCSSparsity ret = g_.jacSparsityQQQ(RDAE_RX,RDAE_ODE).transpose();
+    CCSSparsity ret = g_.jacSparsity(RDAE_RX,RDAE_ODE);
     
     // Add diagonal to get interdependencies
     ret = ret.patternUnion(sp_diag(nrx_));
@@ -920,9 +920,9 @@ namespace CasADi{
     if(nrz_==0) return ret;
 
     // Add contribution from algebraic variables and equations
-    CCSSparsity jac_ode_z = g_.jacSparsityQQQ(RDAE_RZ,RDAE_ODE).transpose();
-    CCSSparsity jac_alg_x = g_.jacSparsityQQQ(RDAE_RX,RDAE_ALG).transpose();
-    CCSSparsity jac_alg_z = g_.jacSparsityQQQ(RDAE_RZ,RDAE_ALG).transpose();
+    CCSSparsity jac_ode_z = g_.jacSparsity(RDAE_RZ,RDAE_ODE);
+    CCSSparsity jac_alg_x = g_.jacSparsity(RDAE_RX,RDAE_ALG);
+    CCSSparsity jac_alg_z = g_.jacSparsity(RDAE_RZ,RDAE_ALG);
     ret = vertcat(ret,jac_ode_z);
     ret.append(vertcat(jac_alg_x,jac_alg_z));
     return ret;

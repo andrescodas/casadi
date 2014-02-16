@@ -756,7 +756,7 @@ class FXtests(casadiTestCase):
     
     f = MXFunction([x],[x])
     f.init()
-    f.setJacSparsityQQQ(sp_dense(4,4),0,0,True)
+    f.setJacSparsity(sp_dense(4,4),0,0,True)
     
     J = f.jacobian()
     J.init()

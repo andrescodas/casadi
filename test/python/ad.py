@@ -352,7 +352,7 @@ class ADtests(casadiTestCase):
             f=SXFunction(self.sxinputs[inputshape][inputtype],self.sxoutputs[outputshape][outputtype])
             f.init()
             J = self.jacobians[inputtype][outputtype](*n)
-            self.checkarray(DMatrix(f.jacSparsityQQQ().transpose(),1),array(J!=0,int),"jacsparsity")
+            self.checkarray(DMatrix(f.jacSparsity(),1),array(J!=0,int),"jacsparsity")
               
   def test_JacobianMX(self):
     n=array([1.2,2.3,7,4.6])
@@ -389,7 +389,7 @@ class ADtests(casadiTestCase):
               Jf.evaluate()
               J = self.jacobians[inputtype][outputtype](*n)
               self.checkarray(array(Jf.getOutput()),J,"jacobian")
-              self.checkarray(array(DMatrix(f.jacSparsityQQQ().transpose(),1)),array(J!=0,int),"jacsparsity")
+              self.checkarray(array(DMatrix(f.jacSparsity(),1)),array(J!=0,int),"jacsparsity")
               
      
               
@@ -767,7 +767,7 @@ class ADtests(casadiTestCase):
           Jf.evaluate()
           self.checkarray(Jf.getOutput(),J_)
           self.checkarray(DMatrix(Jf.output().sparsity(),1),DMatrix(J_.sparsity(),1),str(out)+str(mode))
-          self.checkarray(DMatrix(f.jacSparsityQQQ().transpose(),1),DMatrix(J_.sparsity(),1))
+          self.checkarray(DMatrix(f.jacSparsity(),1),DMatrix(J_.sparsity(),1))
                 
       # Scalarized
       if out.empty(): continue
