@@ -41,7 +41,8 @@ namespace CasADi{
 
     // Calculate the Dulmage-Mendelsohn decomposition
     std::vector<int> coarse_rowblock, coarse_colblock;
-    sparsity.dulmageMendelsohn(rowperm_, colperm_, rowblock_, colblock_, coarse_rowblock, coarse_colblock);
+    //    sparsity.dulmageMendelsohn(rowperm_, colperm_, rowblock_, colblock_, coarse_rowblock, coarse_colblock);
+    sparsity.transpose().dulmageMendelsohn(colperm_, rowperm_, colblock_, rowblock_, coarse_colblock, coarse_rowblock);
 
     // Allocate inputs
     setNumInputs(LINSOL_NUM_IN);
@@ -236,10 +237,10 @@ namespace CasADi{
         copy(B_ptr,B_ptr+n,tmp_ptr);
 
         // Add A_hat contribution to tmp
-        for(int i=0; i<n; ++i){
-          for(int k=A_colind[i]; k<A_colind[i+1]; ++k){
-            int j = A_row[k];
-            tmp_ptr[transpose ? i : j] |= A_ptr[k];
+        for(int cc=0; cc<n; ++cc){
+          for(int k=A_colind[cc]; k<A_colind[cc+1]; ++k){
+            int rr = A_row[k];
+            tmp_ptr[transpose ? cc : rr] |= A_ptr[k];
           }
         }
 
@@ -262,10 +263,10 @@ namespace CasADi{
         }
 
         // Propagate to A_ptr
-        for(int i=0; i<n; ++i){
-          for(int k=A_colind[i]; k<A_colind[i+1]; ++k){
-            int j = A_row[k];
-            A_ptr[k] |= tmp_ptr[transpose ? i : j];
+        for(int cc=0; cc<n; ++cc){
+          for(int k=A_colind[cc]; k<A_colind[cc+1]; ++k){
+            int rr = A_row[k];
+            A_ptr[k] |= tmp_ptr[transpose ? cc : rr];
           }
         }
       }
@@ -276,63 +277,72 @@ namespace CasADi{
     }
   }
 
-  void LinearSolverInternal::spSolve(DMatrix& X, DMatrix& B, bool transpose) const{
+  void LinearSolverInternal::spSolve(DMatrix& X, const DMatrix& B, bool transpose) const{
     bvec_t* X_bvec = reinterpret_cast<bvec_t*>(X.ptr());
-    bvec_t* B_bvec = reinterpret_cast<bvec_t*>(B.ptr());
+    const bvec_t* B_bvec = reinterpret_cast<const bvec_t*>(B.ptr());
     spSolve(X_bvec,B_bvec,transpose);
   }
 
-  void LinearSolverInternal::spSolve(bvec_t* X, bvec_t* B, bool transpose) const{
+  void LinearSolverInternal::spSolve(bvec_t* X, const bvec_t* B, bool transpose) const{
+
     const CCSSparsity& A_sp = input(LINSOL_A).sparsity();
     const std::vector<int>& A_colind = A_sp.colind();
     const std::vector<int>& A_row = A_sp.row();
+    int nb = rowblock_.size()-1; // number of blocks
 
-    if(transpose){
-      int nb = rowblock_.size()-1; // number of blocks
-      for(int b=0; b<nb; ++b){ // loop over the blocks
+    if(!transpose){
+      for(int b=0; b<nb; ++b){ // loop over the blocks forward
+
+        // Get dependencies from all right-hand-sides in the block ...
+        bvec_t block_dep = 0;
+        for(int el=rowblock_[b]; el<rowblock_[b+1]; ++el){
+          int rr = rowperm_[el];
+          block_dep |= B[rr];
+        }
+
+        // ... as well as all other variables in the block
+        for(int el=colblock_[b]; el<colblock_[b+1]; ++el){
+          int cc = colperm_[el];
+          block_dep |= X[cc];
+        }
+        
+        // Propagate ...
+        for(int el=colblock_[b]; el<colblock_[b+1]; ++el){
+          int cc = colperm_[el];
+          
+          // ... to all variables in the block ...
+          X[cc] |= block_dep;
+
+          // ... as well as to other variables which depends on variables in the block
+          for(int k=A_colind[cc]; k<A_colind[cc+1]; ++k){
+            int rr=A_row[k];
+            X[rr] |= block_dep;
+          }
+        }
+      }
+
+    } else { // transpose
+      for(int b=nb-1; b>=0; --b){ // loop over the blocks backward
 
         // Get dependencies ...
         bvec_t block_dep = 0;
         for(int el=colblock_[b]; el<colblock_[b+1]; ++el){
-          // ... from all right-hand-sides in the block ...
-          int i = colperm_[el];
-          block_dep |= B[i];
+          int cc = colperm_[el];
 
-          // ... as well as from all dependent variables
-          for(int k=A_colind[i]; k<A_colind[i+1]; ++k){
-            int j=A_row[k];
-            block_dep |= X[j];
+          // .. from all right-hand-sides in the block ...
+          block_dep |= B[cc];
+
+          // ... as well as from all depending variables ...
+          for(int k=A_colind[cc]; k<A_colind[cc+1]; ++k){
+            int rr=A_row[k];
+            block_dep |= X[rr];
           }
         }
 
         // Propagate to all variables in the block
         for(int el=rowblock_[b]; el<rowblock_[b+1]; ++el){
-          int j = rowperm_[el];
-          X[j] = block_dep;
-        }
-      }
-    } else {
-      int nb = rowblock_.size()-1; // number of blocks
-      for(int b=nb-1; b>=0; --b){ // loop over the blocks
-            
-        // Get dependencies from all right-hand-sides
-        bvec_t block_dep = 0;
-        for(int el=rowblock_[b]; el<rowblock_[b+1]; ++el){
-          int j = rowperm_[el];
-          block_dep |= B[j];
-        }
-
-        // Propagate ...
-        for(int el=colblock_[b]; el<colblock_[b+1]; ++el){
-          // ... to all variables in the block
-          int i = colperm_[el];
-          X[i] = block_dep;
-
-          // ... as well as to all other right-hand-sides
-          for(int k=A_colind[i]; k<A_colind[i+1]; ++k){
-            int j=A_row[k];
-            B[j] |= block_dep;
-          }
+          int rr = rowperm_[el];
+          X[rr] |= block_dep;
         }
       }
     }

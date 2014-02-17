@@ -86,8 +86,8 @@ enum LinsolOutput{
 
     //@{
     /// Propagate sparsity through a linear solve
-    void spSolve(bvec_t* X, bvec_t* B, bool transpose=false) const;
-    void spSolve(DMatrix& X, DMatrix& B, bool transpose=false) const;
+    void spSolve(bvec_t* X, const bvec_t* B, bool transpose=false) const;
+    void spSolve(DMatrix& X, const DMatrix& B, bool transpose=false) const;
     //@}
 
 #endif // SWIG
