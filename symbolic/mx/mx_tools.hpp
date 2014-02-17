@@ -414,7 +414,7 @@ namespace CasADi{
 
       Uses CasADi::MXFunction::jac
   */
-  MX jacobianQQQ(const MX &ex, const MX &arg);
+  MX jacobian(const MX &ex, const MX &arg);
   MX gradient(const MX &ex, const MX &arg);
   MX tangent(const MX &ex, const MX &arg);
   //@}

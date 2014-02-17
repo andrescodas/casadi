@@ -251,12 +251,12 @@ class FXtests(casadiTestCase):
   
     x = ssym("x")
     
-    self.assertEqual(jacobianQQQ(5,x).size(),0)
+    self.assertEqual(jacobian(5,x).size(),0)
     
     
     def test(sp):
       x = ssym("x",1,sp.size1())
-      sp2 = jacobianQQQ(mul(x,DMatrix(sp,1)),x).sparsity().transpose()
+      sp2 = jacobian(mul(x,DMatrix(sp,1)),x).sparsity().transpose()
       self.checkarray(sp.row(),sp2.row());
       self.checkarray(sp.colind(),sp2.colind());   
 

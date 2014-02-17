@@ -289,7 +289,7 @@ bool isSymbolicSparse(const SXMatrix& ex);
 
 Uses CasADi::SXFunction::jac
  */
-SXMatrix jacobianQQQ(const SXMatrix &ex, const SXMatrix &arg);
+SXMatrix jacobian(const SXMatrix &ex, const SXMatrix &arg);
 SXMatrix gradient(const SXMatrix &ex, const SXMatrix &arg);
 SXMatrix tangent(const SXMatrix &ex, const SXMatrix &arg);
 SXMatrix hessian(const SXMatrix &ex, const SXMatrix &arg);

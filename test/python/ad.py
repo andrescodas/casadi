@@ -330,7 +330,7 @@ class ADtests(casadiTestCase):
             Jf=SXFunction(
               self.sxinputs[inputshape][inputtype],
               [
-                  jacobianQQQ(
+                  jacobian(
                     SXMatrix(self.sxoutputs[outputshape][outputtype][0]),
                     SXMatrix(self.sxinputs[inputshape][inputtype][0])
                   ).T

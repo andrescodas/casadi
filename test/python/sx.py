@@ -92,12 +92,12 @@ class SXtests(casadiTestCase):
       x0=1;
       p=3 # increase to 20 to showcase ticket #56
       y=x**p;
-      dx=jacobianQQQ(y,x).T;
+      dx=jacobian(y,x).T;
       dxr=p;
       self.evaluationCheck([dx],dxr,[x],x0,name="jacobian");
       dxr=1
       for i in list(range(p)):
-        y=jacobianQQQ(y,x).T
+        y=jacobian(y,x).T
         dxr=dxr*(p-i)
       
       
@@ -110,14 +110,14 @@ class SXtests(casadiTestCase):
       x0=1;
       p0=3 # increase to 20 to showcase ticket #56
       y=x**p;
-      dx=jacobianQQQ(y,x).T;
+      dx=jacobian(y,x).T;
       #print dx
       dxr=p0;
       self.evaluationCheck([dx],dxr,[x,p],[x0,p0],name="jacobian");
 
       dxr=1
       for i in list(range(p0)):
-        y=jacobianQQQ(y,x).T
+        y=jacobian(y,x).T
         dxr=dxr*(p0-i)
       
       self.evaluationCheck([y],dxr,[x,p],[x0,p0],name="jacobian");
@@ -1090,11 +1090,11 @@ class SXtests(casadiTestCase):
   def test_jacobian_empty(self):
     x = ssym("x",1,3)
 
-    s = jacobianQQQ(DMatrix.sparse(0,0),x).shapeQQQ
+    s = jacobian(DMatrix.sparse(0,0),x).shapeQQQ
     self.assertEqual(s[0],0)
     self.assertEqual(s[1],3)
 
-    s = jacobianQQQ(x,ssym("x",4,0)).shapeQQQ
+    s = jacobian(x,ssym("x",4,0)).shapeQQQ
     self.assertEqual(s[0],3)
     self.assertEqual(s[1],0)
     

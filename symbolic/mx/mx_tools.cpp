@@ -919,7 +919,7 @@ namespace CasADi{
     }
   }
 
-  MX jacobianQQQ(const MX& ex, const MX &arg) {
+  MX jacobian(const MX& ex, const MX &arg) {
     MXFunction temp(arg,ex); // make a runtime
     temp.init();
     return temp.jac();
