@@ -800,10 +800,10 @@ namespace CasADi{
     }
     
     // Generate an expression for the Jacobian
-    SXMatrix J = CasADi::jacobian(res,arg);
+    SXMatrix J = CasADi::jacobianQQQ(res,arg);
    
     // Generate a function for the full Jacobian
-    vector<SXMatrix> ret_res(1,J);
+    vector<SXMatrix> ret_res(1,trans(J));
     ret_res.insert(ret_res.end(),outputv_.begin(),outputv_.end());
     SXFunction ret(inputv_,ret_res);
     return ret;

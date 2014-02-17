@@ -425,10 +425,10 @@ SXMatrix tangent(const SXMatrix& ex, const SXMatrix &arg) {
   return temp.tang();
 }
   
-SXMatrix jacobian(const SXMatrix& ex, const SXMatrix &arg) {
+SXMatrix jacobianQQQ(const SXMatrix& ex, const SXMatrix &arg) {
   SXFunction temp(arg,ex); // make a runtime
   temp.init();
-  return trans(temp.jac());
+  return temp.jac();
 }
 
 void hessian(const SXMatrix& ex, const SXMatrix &arg, SXMatrix &H, SXMatrix &g) {
@@ -728,7 +728,7 @@ SXMatrix taylor(const SXMatrix& ex,const SXMatrix& x, const SXMatrix& a, int ord
   SXMatrix dx = (x-a);
   SXMatrix dxa = (x-a);
   for (int i=1;i<=order;i++) {
-    ff = jacobian(ff,x);
+    ff = trans(jacobianQQQ(ff,x));
     nf*=i;
     result+=1/nf * substitute(ff,x,a) * dxa;
     dxa*=dx;
@@ -746,7 +746,7 @@ SXMatrix mtaylor_recursive(const SXMatrix& ex,const SXMatrix& x, const SXMatrix&
   for (int i=0;i<x.size();i++) {
     if (order_contributions[i]<=order) {
       result += mtaylor_recursive(
-                  jacobian(ex,x.at(i)),
+                  trans(jacobianQQQ(ex,x.at(i))),
                   x,a,
                   order-order_contributions[i],
                   order_contributions,

@@ -1558,7 +1558,7 @@ class MXtests(casadiTestCase):
     
     X = msym("X")
 
-    Y = jacobian(X**2,X)
+    Y = jacobianQQQ(X**2,X).T
     
     f = MXFunction([X],[Y])
     f.init()
@@ -1771,11 +1771,11 @@ class MXtests(casadiTestCase):
   def test_jacobian_empty(self):
     x = msym("x",1,3)
 
-    s = jacobian(DMatrix.sparse(0,0),x).shape
+    s = jacobianQQQ(DMatrix.sparse(0,0),x).shapeQQQ
     self.assertEqual(s[0],0)
     self.assertEqual(s[1],3)
 
-    s = jacobian(x,msym("x",4,0)).shape
+    s = jacobianQQQ(x,msym("x",4,0)).shapeQQQ
     self.assertEqual(s[0],3)
     self.assertEqual(s[1],0)
     
