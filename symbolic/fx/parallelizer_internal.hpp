@@ -75,7 +75,7 @@ namespace CasADi{
     virtual FX getDerivative(int nfwd, int nadj);
     
     /// Generate a function that calculates a Jacobian function
-    virtual FX getJacobianQQQ(int iind, int oind, bool compact, bool symmetric);
+    virtual FX getJacobian(int iind, int oind, bool compact, bool symmetric);
 
     /// Initialize
     virtual void init();

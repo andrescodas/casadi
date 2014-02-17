@@ -56,13 +56,13 @@ namespace CasADi {
     
     // Pass the inputs to J
     for(int i=0; i<getNumInputs(); ++i){
-      if(i!=iin_) jacQQQ_.setInput(input(i),i);
+      if(i!=iin_) jac_.setInput(input(i),i);
     }
 
     // Aliases
     DMatrix &u = output(iout_);
-    DMatrix &JQQQ = jacQQQ_.output(0);
-    DMatrix &F = jacQQQ_.output(1+iout_);
+    DMatrix &J = jac_.output(0);
+    DMatrix &F = jac_.output(1+iout_);
   
     // Perform the Newton iterations
     int iter=0;
@@ -91,25 +91,25 @@ namespace CasADi {
       }
     
       // Use u to evaluate J
-      jacQQQ_.setInput(u,iin_);
+      jac_.setInput(u,iin_);
       for(int i=0; i<getNumInputs(); ++i)
-        if(i!=iin_) jacQQQ_.setInput(input(i),i);
+        if(i!=iin_) jac_.setInput(input(i),i);
       
       if (CasadiOptions::profiling) {
         time_start = getRealTime(); // Start timer
       }
     
-      jacQQQ_.evaluate();
+      jac_.evaluate();
       
       // Write out profiling information
       if (CasadiOptions::profiling) {
         time_stop = getRealTime(); // Stop timer
-        CasadiOptions::profilingLog  << double(time_stop-time_start)*1e6 << " ns | " << double(time_stop-time_zero)*1e3 << " ms | " << this << ":" << getOption("name") << ":0|" << jacQQQ_.get() << ":" << jacQQQ_.getOption("name") << "|evaluate jacobian" << std::endl;
+        CasadiOptions::profilingLog  << double(time_stop-time_start)*1e6 << " ns | " << double(time_stop-time_zero)*1e3 << " ms | " << this << ":" << getOption("name") << ":0|" << jac_.get() << ":" << jac_.getOption("name") << "|evaluate jacobian" << std::endl;
       }
     
       if (monitored("F")) std::cout << "  F = " << F << std::endl;
       if (monitored("normF")) std::cout << "  F (min, max, 1-norm, 2-norm) = " << (*std::min_element(F.data().begin(),F.data().end())) << ", " << (*std::max_element(F.data().begin(),F.data().end())) << ", " << sumAll(fabs(F)) << ", " << sqrt(sumAll(F*F)) << std::endl;
-      if (monitored("J")) std::cout << "  J = " << JQQQ << std::endl;
+      if (monitored("J")) std::cout << "  J = " << J << std::endl;
 
       if ( numeric_limits<double>::infinity() != abstol_ ) {
         double maxF = std::max((*std::max_element(F.data().begin(),F.data().end())),-(*std::min_element(F.data().begin(),F.data().end())));
@@ -120,12 +120,12 @@ namespace CasADi {
       } 
     
       // Prepare the linear solver with J
-      linsolQQQ_.setInput(JQQQ,LINSOL_A);
+      linsol_.setInput(J,LINSOL_A);
       
       if (CasadiOptions::profiling) {
         time_start = getRealTime(); // Start timer
       }
-      linsolQQQ_.prepare();
+      linsol_.prepare();
       // Write out profiling information
       if (CasadiOptions::profiling) {
         time_stop = getRealTime(); // Stop timer
@@ -136,7 +136,7 @@ namespace CasADi {
         time_start = getRealTime(); // Start timer
       }
       // Solve against F
-      linsolQQQ_.solve(&F.front(),1,false);
+      linsol_.solve(&F.front(),1,false);
       if (CasadiOptions::profiling) {
         time_stop = getRealTime(); // Stop timer
         CasadiOptions::profilingLog  << double(time_stop-time_start)*1e6 << " ns | " << double(time_stop-time_zero)*1e3 << " ms | " << this << ":" << getOption("name") << ":2||solve linear system" << std::endl;
@@ -162,7 +162,7 @@ namespace CasADi {
 
       // Get auxiliary outputs
       for(int i=0; i<getNumOutputs(); ++i){
-        if(i!=iout_) jacQQQ_.getOutput(output(i),1+i);
+        if(i!=iout_) jac_.getOutput(output(i),1+i);
       }
     }
   
@@ -183,7 +183,7 @@ namespace CasADi {
     ImplicitFunctionInternal::init();
 
     casadi_assert_message(f_.getNumInputs()>0,"NewtonImplicitInternal: the supplied f must have at least one input.");  
-    casadi_assert_message(!linsolQQQ_.isNull(),"NewtonImplicitInternal::init: linear_solver must be supplied");
+    casadi_assert_message(!linsol_.isNull(),"NewtonImplicitInternal::init: linear_solver must be supplied");
   
     if (hasSetOption("max_iter"))
       max_iter_ = getOption("max_iter");

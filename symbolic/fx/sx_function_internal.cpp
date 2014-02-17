@@ -786,7 +786,7 @@ namespace CasADi{
     }
   }
 
-  FX SXFunctionInternal::getFullJacobianQQQ(){
+  FX SXFunctionInternal::getFullJacobian(){
     // Get all the inputs
     SXMatrix arg = SXMatrix::sparse(1,0); 
     for(vector<SXMatrix>::const_iterator i=inputv_.begin(); i!=inputv_.end(); ++i){

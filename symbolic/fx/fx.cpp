@@ -139,13 +139,13 @@ namespace CasADi{
     return (*this)->getNumOutputElements();
   }
 
-  FX FX::jacobianQQQ(int iind, int oind, bool compact, bool symmetric){
+  FX FX::jacobian(int iind, int oind, bool compact, bool symmetric){
     assertInit();
-    return (*this)->jacobianQQQ(iind,oind,compact,symmetric);
+    return (*this)->jacobian(iind,oind,compact,symmetric);
   }
 
-  void FX::setJacobianQQQ(const FX& jac, int iind, int oind, bool compact){
-    (*this)->setJacobianQQQ(jac,iind,oind,compact);
+  void FX::setJacobian(const FX& jac, int iind, int oind, bool compact){
+    (*this)->setJacobian(jac,iind,oind,compact);
   }
 
   FX FX::gradient(int iind, int oind){
@@ -163,13 +163,13 @@ namespace CasADi{
     return (*this)->hessian(iind,oind);  
   }
 
-  FX FX::fullJacobianQQQ(){
+  FX FX::fullJacobian(){
     assertInit();
-    return (*this)->fullJacobianQQQ();
+    return (*this)->fullJacobian();
   }
 
-  void FX::setFullJacobianQQQ(const FX& jac){
-    (*this)->full_jacobianQQQ_ = jac;
+  void FX::setFullJacobian(const FX& jac){
+    (*this)->full_jacobian_ = jac;
   }
 
   bool FX::checkNode() const{

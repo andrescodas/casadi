@@ -707,7 +707,7 @@ class Integrationtests(casadiTestCase):
     f = MXFunction([var],[qend[0]])
     f.init()
 
-    J=f.jacobianQQQ(0)
+    J=f.jacobian(0)
     J.init()
     J.setInput([1,0])
     J.evaluate()
@@ -749,7 +749,7 @@ class Integrationtests(casadiTestCase):
   def test_jac1(self):
     self.message('CVodes integration: jacobian to q0')
     num=self.num
-    J=self.qe.jacobianQQQ(0)
+    J=self.qe.jacobian(0)
     J.init()
     J.setInput([num['q0']],0)
     J.setInput([num['p']],1)
@@ -762,7 +762,7 @@ class Integrationtests(casadiTestCase):
   def test_jac2(self):
     self.message('CVodes integration: jacobian to p')
     num=self.num
-    J=self.qe.jacobianQQQ(1)
+    J=self.qe.jacobian(1)
     J.init()
     J.setInput([num['q0']],0)
     J.setInput([num['p']],1)
@@ -807,7 +807,7 @@ class Integrationtests(casadiTestCase):
     qe.init()
 
     #J=self.qe.jacobian(2)
-    J=qe.jacobianQQQ(0)
+    J=qe.jacobian(0)
     J.init()
     J.setInput(A,0)
     J.setInput(p0,1)
@@ -834,7 +834,7 @@ class Integrationtests(casadiTestCase):
     qe.init()
 
     #J=self.qe.jacobian(2)
-    J=qe.jacobianQQQ(0)
+    J=qe.jacobian(0)
     J.init()
     J.setInput(A,0)
     J.setInput(p0,1)
@@ -845,9 +845,9 @@ class Integrationtests(casadiTestCase):
   def test_hess3(self):
     self.message('CVodes integration: hessian to p: Jacobian of integrator.jacobian')
     num=self.num
-    J=self.integrator.jacobianQQQ("p","xf")
+    J=self.integrator.jacobian("p","xf")
     J.init()
-    H=J.jacobianQQQ("p")
+    H=J.jacobian("p")
     H.init()
     H.setInput([num['q0']],"x0")
     H.setInput([num['p']],"p")
@@ -861,7 +861,7 @@ class Integrationtests(casadiTestCase):
   def test_hess4(self):
     self.message('CVodes integration: hessian to p: Jacobian of integrator.jacobian indirect')
     num=self.num
-    J=self.integrator.jacobianQQQ("p","xf")
+    J=self.integrator.jacobian("p","xf")
     J.init()
     
     q0=msym("q0")
@@ -869,7 +869,7 @@ class Integrationtests(casadiTestCase):
     Ji = MXFunction([q0,p],J.call(integratorIn(x0=q0,p=p)))
     #Ji.setOption("ad_mode","reverse")
     Ji.init()
-    H=Ji.jacobianQQQ(1)
+    H=Ji.jacobian(1)
     H.init()
     H.setInput([num['q0']],0)
     H.setInput([num['p']],1)
@@ -895,7 +895,7 @@ class Integrationtests(casadiTestCase):
     JT.evaluate()
     print JT.getOutput()
 
-    H  = JT.jacobianQQQ(1)
+    H  = JT.jacobian(1)
     H.init()
     H.setInput([num['q0']],0)
     H.setInput([num['p']],1)
@@ -946,7 +946,7 @@ class Integrationtests(casadiTestCase):
     q0   = msym("q0",1,3)
     par  = msym("p",1,9)
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
-    qe=integrator.jacobianQQQ("p","xf")
+    qe=integrator.jacobian("p","xf")
     qe.init()
     qe = qe.call(integratorIn(x0=q0,p=par))[0]
 
@@ -988,14 +988,14 @@ class Integrationtests(casadiTestCase):
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
     qe=MXFunction([q0,par],[qend])
     qe.init()
-    qendJ=integrator.jacobianQQQ("x0","xf")
+    qendJ=integrator.jacobian("x0","xf")
     qendJ.init()
     qendJ = qendJ.call(integratorIn(x0=q0,p=par))[0]
 
     qeJ=MXFunction([q0,par],[qendJ.T])
     qeJ.init()
 
-    qendJ2=integrator.jacobianQQQ("x0","xf")
+    qendJ2=integrator.jacobian("x0","xf")
     qendJ2.init()
     qendJ2 = qendJ2.call(integratorIn(x0=q0,p=par))[0]
 
@@ -1017,7 +1017,7 @@ class Integrationtests(casadiTestCase):
     qeJ2.evaluate()
     
     return # this should return identical zero
-    H=qeJ.jacobianQQQ(0,0)
+    H=qeJ.jacobian(0,0)
     H.setOption("ad_mode","reverse")
     H.init()
     H.setInput(A,0)
@@ -1055,7 +1055,7 @@ class Integrationtests(casadiTestCase):
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
     qe=MXFunction([q0,par],[qend])
     qe.init()
-    qendJ=integrator.jacobianQQQ("x0","xf")
+    qendJ=integrator.jacobian("x0","xf")
     qendJ.init()
     qendJ =qendJ.call(integratorIn(x0=q0,p=par))[0]
     qeJ=MXFunction([q0,par],[qendJ.T])
@@ -1107,7 +1107,7 @@ class Integrationtests(casadiTestCase):
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
     qe=MXFunction([q0,par],[qend])
     qe.init()
-    qendJ=integrator.jacobianQQQ("x0","xf")
+    qendJ=integrator.jacobian("x0","xf")
     qendJ.init()
     qendJ = qendJ.call(integratorIn(x0=q0,p=par))[0].T
     qeJ=MXFunction([q0,par],[qendJ])
@@ -1132,7 +1132,7 @@ class Integrationtests(casadiTestCase):
     
     #qe.setOption("ad_mode","reverse")
     #qe.init()
-    Jf=qe.jacobianQQQ(0,0)
+    Jf=qe.jacobian(0,0)
     Jf.init()
     Jf.setInput(A,0)
     Jf.setInput(p0,1)
@@ -1141,7 +1141,7 @@ class Integrationtests(casadiTestCase):
     
     #qe.setOption("ad_mode","forward")
     #qe.init();
-    Jf=qe.jacobianQQQ(0,0)
+    Jf=qe.jacobian(0,0)
     Jf.init()
     Jf.setInput(A,0)
     Jf.setInput(p0,1)
@@ -1161,7 +1161,7 @@ class Integrationtests(casadiTestCase):
     
     #qe.setOption("ad_mode","reverse")
     #qe.init()
-    Jf=qe.jacobianQQQ(1,0)
+    Jf=qe.jacobian(1,0)
     Jf.init()
     Jf.setInput(A,0)
     Jf.setInput(p0,1)
@@ -1170,14 +1170,14 @@ class Integrationtests(casadiTestCase):
     
     #qe.setOption("ad_mode","forward")
     #qe.init()
-    Jf=qe.jacobianQQQ(1,0)
+    Jf=qe.jacobian(1,0)
     Jf.init()
     Jf.setInput(A,0)
     Jf.setInput(p0,1)
     Jf.evaluate()
     self.checkarray(Jf.getOutput().T,Jr,"Jacobian of Nonlin ODE")
     
-    qendJ=integrator.jacobianQQQ("p","xf")
+    qendJ=integrator.jacobian("p","xf")
     qendJ.init()
     qendJ = qendJ.call(integratorIn(x0=q0,p=par))[0].T
     qeJ=MXFunction([q0,par],[qendJ])
@@ -1196,7 +1196,7 @@ class Integrationtests(casadiTestCase):
     #qeJf.setOption("ad_mode","reverse")
     qeJf.init()
     
-    H=qeJf.jacobianQQQ(0,0)
+    H=qeJf.jacobian(0,0)
     H.init()
     H.setInput(A,0)
     H.setInput(p0,1)
@@ -1235,7 +1235,7 @@ class Integrationtests(casadiTestCase):
     JT = MXFunction([q0,p],[qe.jac(1,0)])
     JT.init()
 
-    H  = JT.jacobianQQQ(1)
+    H  = JT.jacobian(1)
     H.init()
     H.setInput(x0_,0)
     H.setInput(flatten(A_),1)

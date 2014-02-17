@@ -42,14 +42,14 @@ namespace CasADi{
     return (*this)->f_;
   }
 
-  FX& ImplicitFunction::getJacQQQ(){
+  FX& ImplicitFunction::getJac(){
     casadi_assert(checkNode());
-    return (*this)->jacQQQ_;
+    return (*this)->jac_;
   }
 
-  LinearSolver& ImplicitFunction::getLinsolQQQ(){
+  LinearSolver& ImplicitFunction::getLinsol(){
     casadi_assert(checkNode());
-    return (*this)->linsolQQQ_;
+    return (*this)->linsol_;
   }
 
 } // namespace CasADi

@@ -62,7 +62,7 @@ namespace CasADi{
     virtual FX getGradF();
   
     /// Get or generate a function to calculate the Jacobian of the constraint function
-    virtual FX getJacGQQQ();
+    virtual FX getJacG();
 
     /// Get or generate a function to calculate the gradient of the Lagrangian function
     virtual FX getGradLag();
@@ -77,7 +77,7 @@ namespace CasADi{
     FX& gradF();
 
     /// Access the Jacobian of the constraint function
-    FX& jacGQQQ();
+    FX& jjacG();
 
     /// Access the Hessian of the Lagrangian function
     FX& hessLag();
@@ -110,7 +110,7 @@ namespace CasADi{
     FX gradF_;
     
     // Jacobian of the constraints
-    FX jacGQQQ_;
+    FX jjacG_;
     
     // Hessian of the Lagrangian
     FX hessLag_;

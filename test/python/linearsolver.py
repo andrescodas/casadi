@@ -90,13 +90,13 @@ class LinearSolverTests(casadiTestCase):
         solver.setOption("ad_mode","forward")
         solver.init()
         
-        Jf = solver.jacobianQQQ()
+        Jf = solver.jacobian()
         Jf.init()
 
         solver.setOption("ad_mode","reverse")
         solver.init()
         
-        Jb = solver.jacobianQQQ()
+        Jb = solver.jacobian()
         Jb.init()
         
         Jf.setInput(A.T)

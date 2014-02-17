@@ -207,7 +207,7 @@ namespace CasADi{
     }
   }
 
-  FX ParallelizerInternal::getJacobianQQQ(int iind, int oind, bool compact, bool symmetric){
+  FX ParallelizerInternal::getJacobian(int iind, int oind, bool compact, bool symmetric){
     // Number of tasks
     int ntask = inind_.size()-1;
   
@@ -223,7 +223,7 @@ namespace CasADi{
       int oind_f = oind-outind_[task];
     
       // Get the local jacobian
-      return funcs_.at(task).jacobianQQQ(iind_f,oind_f, compact, symmetric);
+      return funcs_.at(task).jacobian(iind_f,oind_f, compact, symmetric);
     } else {
       // All-zero jacobian
       return FX();

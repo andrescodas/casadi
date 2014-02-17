@@ -161,7 +161,7 @@ class SXFunctionInternal : public XFunctionInternal<SXFunction,SXFunctionInterna
   virtual void spInit(bool fwd);
   
   /** \brief Return Jacobian of all input elements with respect to all output elements */
-  virtual FX getFullJacobianQQQ();
+  virtual FX getFullJacobian();
 
   /// With just-in-time compilation using OpenCL
   bool just_in_time_opencl_;

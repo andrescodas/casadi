@@ -102,20 +102,20 @@ class MXtests(casadiTestCase):
     self.pool.append(lambda x: x[0]**(0.3),lambda x : x**(0.3),"^0.3")
     self.pool.append(lambda x: floor(x[0]),floor,"floor")
     self.pool.append(lambda x: ceil(x[0]),ceil,"ceil")
-    self.JpoolQQQ=FunctionPool()
-    self.JpoolQQQ.append(lambda x: sqrt(x[0]),lambda x:diag(1/(2.0*sqrt(x))),"sqrt")
-    self.JpoolQQQ.append(lambda x: sin(x[0]),lambda x:diag(cos(x)),"sin")
-    self.JpoolQQQ.append(lambda x: cos(x[0]),lambda x:diag(-sin(x)),"cos")
-    self.JpoolQQQ.append(lambda x: tan(x[0]),lambda x:diag(1.0/cos(x)**2),"tan")
-    self.JpoolQQQ.append(lambda x: arctan(x[0]),lambda x:diag( 1.0/(x**2+1)),"arctan")
-    self.JpoolQQQ.append(lambda x: arcsin(x[0]),lambda x:diag( 1.0/sqrt(1-x**2)),"arcsin")
-    self.JpoolQQQ.append(lambda x: arccos(x[0]),lambda x: diag(-1.0/sqrt(1-x**2)),"arccos")
-    self.JpoolQQQ.append(lambda x: exp(x[0]),lambda x: diag(exp(x)),"exp")
-    self.JpoolQQQ.append(lambda x: log(x[0]),lambda x: diag(1.0/x),"log")
-    self.JpoolQQQ.append(lambda x: x[0]**0,lambda x :diag(zeros(x.shape)),"x^0")
-    self.JpoolQQQ.append(lambda x: x[0]**1,lambda x : diag(ones(x.shape)),"^1")
-    self.JpoolQQQ.append(lambda x: x[0]**(-2),lambda x : diag(-2.0/x**3),"^-2")
-    self.JpoolQQQ.append(lambda x: x[0]**(0.3),lambda x :diag( 0.3/x**0.7),"^0.3")
+    self.Jpool=FunctionPool()
+    self.Jpool.append(lambda x: sqrt(x[0]),lambda x:diag(1/(2.0*sqrt(x))),"sqrt")
+    self.Jpool.append(lambda x: sin(x[0]),lambda x:diag(cos(x)),"sin")
+    self.Jpool.append(lambda x: cos(x[0]),lambda x:diag(-sin(x)),"cos")
+    self.Jpool.append(lambda x: tan(x[0]),lambda x:diag(1.0/cos(x)**2),"tan")
+    self.Jpool.append(lambda x: arctan(x[0]),lambda x:diag( 1.0/(x**2+1)),"arctan")
+    self.Jpool.append(lambda x: arcsin(x[0]),lambda x:diag( 1.0/sqrt(1-x**2)),"arcsin")
+    self.Jpool.append(lambda x: arccos(x[0]),lambda x: diag(-1.0/sqrt(1-x**2)),"arccos")
+    self.Jpool.append(lambda x: exp(x[0]),lambda x: diag(exp(x)),"exp")
+    self.Jpool.append(lambda x: log(x[0]),lambda x: diag(1.0/x),"log")
+    self.Jpool.append(lambda x: x[0]**0,lambda x :diag(zeros(x.shape)),"x^0")
+    self.Jpool.append(lambda x: x[0]**1,lambda x : diag(ones(x.shape)),"^1")
+    self.Jpool.append(lambda x: x[0]**(-2),lambda x : diag(-2.0/x**3),"^-2")
+    self.Jpool.append(lambda x: x[0]**(0.3),lambda x :diag( 0.3/x**0.7),"^0.3")
     self.matrixpool=FunctionPool()
     #self.matrixpool.append(lambda x: norm_2(x[0]),linalg.norm,"norm_2")
     #self.matrixpool.append(lambda x: norm_1(x[0]),lambda x: sum(sum(abs(x))),"norm_1")
@@ -561,7 +561,7 @@ class MXtests(casadiTestCase):
       
   def test_MXJacobian(self):
     self.message("MX(1,1) unary operation, jacobian")
-    self.JpoolQQQ=FunctionPool()
+    self.Jpool=FunctionPool()
     self.message("SXMatrix(1,1) unary operation, jacobian")
     x=msym("x")
     x0=array([[0.738]])
@@ -569,20 +569,20 @@ class MXtests(casadiTestCase):
     def fmod(f,x):
       #f.setOption("ad_mode","forward")
       f.init()
-      J=f.jacobianQQQ()
+      J=f.jacobian()
       J.init()
       return J
       
-    self.numpyEvaluationCheckPool(self.JpoolQQQ,[x],x0,name="MX unary operations, jacobian",fmod=fmod)
+    self.numpyEvaluationCheckPool(self.Jpool,[x],x0,name="MX unary operations, jacobian",fmod=fmod)
     
     def fmod(f,x):
       #f.setOption("ad_mode","reverse")
       f.init()
-      J=f.jacobianQQQ()
+      J=f.jacobian()
       J.init()
       return J
       
-    self.numpyEvaluationCheckPool(self.JpoolQQQ,[x],x0,name="MX unary operations, jacobian",fmod=fmod)
+    self.numpyEvaluationCheckPool(self.Jpool,[x],x0,name="MX unary operations, jacobian",fmod=fmod)
     
   def test_MXJacobians(self):
       self.message("MX(3,1) unary operation, jacobian")
@@ -593,20 +593,20 @@ class MXtests(casadiTestCase):
       def fmod(f,x):
         #f.setOption("ad_mode","forward")
         f.init()
-        J=f.jacobianQQQ()
+        J=f.jacobian()
         J.init()
         return J
         
-      self.numpyEvaluationCheckPool(self.JpoolQQQ,[x],x0,name="MX unary operations, jacobian",fmod=fmod)
+      self.numpyEvaluationCheckPool(self.Jpool,[x],x0,name="MX unary operations, jacobian",fmod=fmod)
       
       def fmod(f,x):
         #f.setOption("ad_mode","reverse")
         f.init()
-        J=f.jacobianQQQ()
+        J=f.jacobian()
         J.init()
         return J
         
-      self.numpyEvaluationCheckPool(self.JpoolQQQ,[x],x0,name="MX unary operations, jacobian",fmod=fmod)
+      self.numpyEvaluationCheckPool(self.Jpool,[x],x0,name="MX unary operations, jacobian",fmod=fmod)
 
   def test_MXbinary(self):
       self.message("MX binary operations")
@@ -928,7 +928,7 @@ class MXtests(casadiTestCase):
     for mode in ["forward", "reverse"]:
       #f.setOption("ad_mode",mode)
       f.init()
-      J = f.jacobianQQQ()
+      J = f.jacobian()
       J.init()
       J.setInput(x_,0)
       J.setInput(A_,1)
@@ -1000,7 +1000,7 @@ class MXtests(casadiTestCase):
     for mode in ["forward", "reverse"]:
       #f.setOption("ad_mode","forward")
       f.init()
-      J = f.jacobianQQQ()
+      J = f.jacobian()
       J.init()
       J.setInput(x_,0)
       J.input(1).set(A_)
@@ -1076,7 +1076,7 @@ class MXtests(casadiTestCase):
     for mode in ["forward", "reverse"]:
       #f.setOption("ad_mode","forward")
       f.init()
-      J = f.jacobianQQQ()
+      J = f.jacobian()
       J.init()
       J.setInput(x_,0)
       J.input(1).set(A_)
@@ -1095,7 +1095,7 @@ class MXtests(casadiTestCase):
     y=x**3
     f=SXFunction([x],[y])
     f.init()
-    J=f.jacobianQQQ()
+    J=f.jacobian()
     J.init()
     
     X=msym("X")
@@ -1207,7 +1207,7 @@ class MXtests(casadiTestCase):
     def grad(y,x):
       f = MXFunction(ins,[x])
       f.init()
-      J = f.jacobianQQQ([i for i in range(len(ins)) if ins[i] is y][0])
+      J = f.jacobian([i for i in range(len(ins)) if ins[i] is y][0])
       J.init()
       if x.shape[0]==1 and x.shape[1]==1:
         return (J.call(ins)[0]).reshape(y.shape)
@@ -1543,7 +1543,7 @@ class MXtests(casadiTestCase):
         gfcn = MXFunction([U],[G])
       gfcn.setOption("ad_mode","reverse")
       gfcn.init()
-      J = gfcn.jacobianQQQ()
+      J = gfcn.jacobian()
       J.init()
       J.setInput(1)
       J.evaluate()

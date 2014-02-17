@@ -80,10 +80,10 @@ namespace CasADi{
     FX f_;
        
     /// Jacobian of f with respect to z
-    FX jacQQQ_;
+    FX jac_;
     
     /// Linear solver
-    LinearSolver linsolQQQ_;
+    LinearSolver linsol_;
 
     /// Factorization up-to-date?
     bool fact_up_to_date_;

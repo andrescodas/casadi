@@ -78,10 +78,10 @@ namespace CasADi{
     FX& getF();
 
     /// Access Jacobian
-    FX& getJacQQQ();
+    FX& getJac();
 
     /// Access linear solver
-    LinearSolver& getLinsolQQQ();
+    LinearSolver& getLinsol();
   };
 
 } // namespace CasADi

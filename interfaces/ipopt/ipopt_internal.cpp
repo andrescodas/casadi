@@ -162,7 +162,7 @@ namespace CasADi{
 
     // Get/generate required functions
     gradF();
-    jacGQQQ();
+    jjacG();
     if(exact_hessian_){
       hessLag();
     }
@@ -527,13 +527,13 @@ namespace CasADi{
       }
       
       // Get function
-      FX& jacGQQQ = this->jacGQQQ();
+      FX& jjacG = this->jjacG();
     
       double time1 = clock();
       if (values == NULL) {
         int nz=0;
-        const vector<int>& colind = jacGQQQ.output().colind();
-        const vector<int>& row = jacGQQQ.output().row();
+        const vector<int>& colind = jjacG.output().colind();
+        const vector<int>& row = jjacG.output().row();
         for(int cc=0; cc<colind.size()-1; ++cc)
           for(int el=colind[cc]; el<colind[cc+1]; ++el){
             int rr = row[el];
@@ -543,21 +543,21 @@ namespace CasADi{
           }
       } else {
         // Pass the argument to the function
-        jacGQQQ.setInput(x,NL_X);
-        jacGQQQ.setInput(input(NLP_SOLVER_P),NL_P);
+        jjacG.setInput(x,NL_X);
+        jjacG.setInput(input(NLP_SOLVER_P),NL_P);
       
         // Evaluate the function
-        jacGQQQ.evaluate();
+        jjacG.evaluate();
 
         // Get the output
-        jacGQQQ.getOutput(values);
+        jjacG.getOutput(values);
       
         if(monitored("eval_jac_g")){
-          cout << "x = " << jacGQQQ.input(NL_X).data() << endl;
+          cout << "x = " << jjacG.input(NL_X).data() << endl;
           cout << "J = " << endl;
-          jacGQQQ.output().printSparse();
+          jjacG.output().printSparse();
         }
-        if (regularity_check_ && !isRegular(jacGQQQ.output().data())) casadi_error("IpoptInternal::jac_g: NaN or Inf detected.");
+        if (regularity_check_ && !isRegular(jjacG.output().data())) casadi_error("IpoptInternal::jac_g: NaN or Inf detected.");
       }
     
       double time2 = clock();
@@ -747,7 +747,7 @@ namespace CasADi{
       if(nlp_.output(NL_G).size()==0)
         nnz_jac_g = 0;
       else
-        nnz_jac_g = jacGQQQ().output().size();
+        nnz_jac_g = jjacG().output().size();
 
       // Get Hessian sparsity pattern
       if(exact_hessian_)

@@ -576,7 +576,7 @@ namespace CasADi{
     }
   }
 
-  FX MXFunctionInternal::getNumericJacobianQQQ(int iind, int oind, bool compact, bool symmetric){
+  FX MXFunctionInternal::getNumericJacobian(int iind, int oind, bool compact, bool symmetric){
     // Create expressions for the Jacobian
     vector<MX> ret_out;
     ret_out.reserve(1+outputv_.size());

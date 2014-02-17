@@ -538,7 +538,7 @@ class Sparsitytests(casadiTestCase):
     g.setOption("verbose",True)
     g.init()
 
-    J = g.jacobianQQQ()
+    J = g.jacobian()
     J.setOption("verbose",True)
     J.init()
     
@@ -553,7 +553,7 @@ class Sparsitytests(casadiTestCase):
     g.setOption("verbose",True)
     g.init()
 
-    J = g.jacobianQQQ()
+    J = g.jacobian()
     J.setOption("verbose",True)
     J.init()
     

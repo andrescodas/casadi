@@ -195,34 +195,34 @@ namespace CasADi{
     return gradF;
   }
 
-  FX& NLPSolverInternal::jacGQQQ(){
-    if(jacGQQQ_.isNull()){
-      jacGQQQ_ = getJacGQQQ();
+  FX& NLPSolverInternal::jjacG(){
+    if(jjacG_.isNull()){
+      jjacG_ = getJacG();
     }
-    return jacGQQQ_;
+    return jjacG_;
   }
 
-  FX NLPSolverInternal::getJacGQQQ(){
-    FX jacGQQQ;
+  FX NLPSolverInternal::getJacG(){
+    FX jjacG;
     
     // Return null if no constraints
-    if(ng_==0) return jacGQQQ;
+    if(ng_==0) return jjacG;
     
     if(hasSetOption("jac_g")){
-      jacGQQQ = getOption("jac_g");
+      jjacG = getOption("jac_g");
     } else {
       log("Generating constraint Jacobian");
-      jacGQQQ = nlp_.jacobianQQQ(NL_X,NL_G);
+      jjacG = nlp_.jacobian(NL_X,NL_G);
       log("Jacobian function generated");
     }
-    jacGQQQ.setOption("name","jac_g");
-    jacGQQQ.init(false);
-    casadi_assert_message(jacGQQQ.getNumInputs()==JACG_NUM_IN, "Wrong number of inputs to the Jacobian function. Note: The Jacobian signature was changed in #544");
-    casadi_assert_message(jacGQQQ.getNumOutputs()==JACG_NUM_OUT, "Wrong number of outputs to the Jacobian function. Note: The Jacobian signature was changed in #544");
-    jacGQQQ.setInputScheme(SCHEME_JacGInput);
-    jacGQQQ.setOutputScheme(SCHEME_JacGOutput);
+    jjacG.setOption("name","jac_g");
+    jjacG.init(false);
+    casadi_assert_message(jjacG.getNumInputs()==JACG_NUM_IN, "Wrong number of inputs to the Jacobian function. Note: The Jacobian signature was changed in #544");
+    casadi_assert_message(jjacG.getNumOutputs()==JACG_NUM_OUT, "Wrong number of outputs to the Jacobian function. Note: The Jacobian signature was changed in #544");
+    jjacG.setInputScheme(SCHEME_JacGInput);
+    jjacG.setOutputScheme(SCHEME_JacGOutput);
     log("Jacobian function initialized");
-    return jacGQQQ;
+    return jjacG;
   }
 
   FX& NLPSolverInternal::gradLag(){
@@ -261,7 +261,7 @@ namespace CasADi{
     } else {
       FX& gradLag = this->gradLag();
       log("Generating Hessian of the Lagrangian");
-      hessLag = gradLag.jacobianQQQ(NL_X,NL_NUM_OUT+NL_X,false,true);
+      hessLag = gradLag.jacobian(NL_X,NL_NUM_OUT+NL_X,false,true);
       log("Hessian function generated");
     }
     hessLag.setOption("name","hess_lag");
