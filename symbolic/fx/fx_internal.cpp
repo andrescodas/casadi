@@ -85,7 +85,7 @@ namespace CasADi{
     casadi_assert_warning(getNumOutputs()<10000, "Function " << getOption("name") << " has a large number of outputs. Changing the problem formulation is strongly encouraged.");  
 
     // Resize the matrix that holds the sparsity of the Jacobian blocks
-    jac_sparsityQQQ_ = jac_sparsityQQQ_compact_ = Matrix<CCSSparsity>::sparse(getNumOutputs(),getNumInputs());
+    jac_sparsity_ = jac_sparsity_compact_ = Matrix<CCSSparsity>::sparse(getNumOutputs(),getNumInputs());
     jac_ = jac_compact_ = Matrix<WeakRef>::sparse(getNumOutputs(),getNumInputs());
   
     if(hasSetOption("user_data")){
@@ -356,7 +356,7 @@ namespace CasADi{
     for(int i=begin; i<end; ++i) r |= s[i];
   }
 
-  CCSSparsity FXInternal::getJacSparsityQQQPlain(int iind, int oind){
+  CCSSparsity FXInternal::getJacSparsityPlain(int iind, int oind){
     // Number of nonzero inputs
     int nz_in = input(iind).size();
     
@@ -494,7 +494,7 @@ namespace CasADi{
     return ret;
   }
 
-  CCSSparsity FXInternal::getJacSparsityQQQHierarchicalSymm(int iind, int oind){
+  CCSSparsity FXInternal::getJacSparsityHierarchicalSymm(int iind, int oind){
     casadi_assert(spCanEvaluate(true));
 
     // Number of nonzero inputs
@@ -720,7 +720,7 @@ namespace CasADi{
     return r.transpose();
   }
 
-  CCSSparsity FXInternal::getJacSparsityQQQHierarchical(int iind, int oind){
+  CCSSparsity FXInternal::getJacSparsityHierarchical(int iind, int oind){
     // Number of nonzero inputs
     int nz_in = input(iind).size();
     
@@ -1017,18 +1017,18 @@ namespace CasADi{
     return r.transpose();
   }
 
-  CCSSparsity FXInternal::getJacSparsityQQQ(int iind, int oind, bool symmetric){
+  CCSSparsity FXInternal::getJacSparsity(int iind, int oind, bool symmetric){
     // Check if we are able to propagate dependencies through the function
     if(spCanEvaluate(true) || spCanEvaluate(false)){
 
       if (input(iind).size()>3*bvec_size && output(oind).size()>3*bvec_size) {
         if (symmetric) {
-          return getJacSparsityQQQHierarchicalSymm(iind, oind);
+          return getJacSparsityHierarchicalSymm(iind, oind);
         } else {
-          return getJacSparsityQQQHierarchical(iind, oind);
+          return getJacSparsityHierarchical(iind, oind);
         }
       } else {
-        return getJacSparsityQQQPlain(iind, oind);
+        return getJacSparsityPlain(iind, oind);
       }
 
 
@@ -1038,31 +1038,31 @@ namespace CasADi{
     }
   }
 
-  void FXInternal::setJacSparsityQQQ(const CCSSparsity& sp, int iind, int oind, bool compact){
+  void FXInternal::setJacSparsity(const CCSSparsity& sp, int iind, int oind, bool compact){
     if(compact){
-      jac_sparsityQQQ_compact_.elem(oind,iind) = sp;
+      jac_sparsity_compact_.elem(oind,iind) = sp;
     } else {
-      jac_sparsityQQQ_.elem(oind,iind) = sp;
+      jac_sparsity_.elem(oind,iind) = sp;
     }
   }
 
-  CCSSparsity& FXInternal::jacSparsityQQQ(int iind, int oind, bool compact, bool symmetric){
+  CCSSparsity& FXInternal::jacSparsity(int iind, int oind, bool compact, bool symmetric){
     casadi_assert_message(isInit(),"Function not initialized.");
 
     // Get an owning reference to the block
-    CCSSparsity jsp = compact ? jac_sparsityQQQ_compact_.elem(oind,iind) : jac_sparsityQQQ_.elem(oind,iind);
+    CCSSparsity jsp = compact ? jac_sparsity_compact_.elem(oind,iind) : jac_sparsity_.elem(oind,iind);
 
     // Generate, if null
     if(jsp.isNull()){
       if(compact){
         
         // Use internal routine to determine sparsity
-        jsp = getJacSparsityQQQ(iind,oind,symmetric);
+        jsp = getJacSparsity(iind,oind,symmetric);
   
       } else {
       
         // Get the compact sparsity pattern
-        CCSSparsity sp = jacSparsityQQQ(iind,oind,true,symmetric);
+        CCSSparsity sp = jacSparsity(iind,oind,true,symmetric);
 
         // Enlarge if sparse output 
         if(output(oind).numel()!=sp.size1()){
@@ -1097,7 +1097,7 @@ namespace CasADi{
     }
 
     // Return a reference to the block
-    CCSSparsity& jsp_ref = compact ? jac_sparsityQQQ_compact_.elem(oind,iind) : jac_sparsityQQQ_.elem(oind,iind);
+    CCSSparsity& jsp_ref = compact ? jac_sparsity_compact_.elem(oind,iind) : jac_sparsity_.elem(oind,iind);
     jsp_ref = jsp;
     return jsp_ref;
   }
@@ -1106,7 +1106,7 @@ namespace CasADi{
     log("FXInternal::getPartition begin");
   
     // Sparsity pattern with transpose
-    CCSSparsity &AT = jacSparsityQQQ(iind,oind,compact,symmetric);
+    CCSSparsity &AT = jacSparsity(iind,oind,compact,symmetric);
     CCSSparsity A = symmetric ? AT : AT.transpose();
   
     // Which AD mode?
@@ -1390,7 +1390,7 @@ namespace CasADi{
           continue;
         
         // Get the sparsity of the Jacobian block
-        CCSSparsity sp = jacSparsityQQQ(iind, oind, true, false);
+        CCSSparsity sp = jacSparsity(iind, oind, true, false);
         if (sp.isNull() || sp.size() == 0)
           continue; // Skip if zero
 

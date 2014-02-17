@@ -288,7 +288,7 @@ namespace CasADi{
     } else {
       FX& gradLag = this->gradLag();
       log("Generating Hessian of the Lagrangian sparsity pattern");
-      spHessLag = gradLag.jacSparsityQQQ(NL_X,NL_NUM_OUT+NL_X,false,true);
+      spHessLag = gradLag.jacSparsity(NL_X,NL_NUM_OUT+NL_X,false,true);
       log("Hessian sparsity pattern generated");
     }
     return spHessLag;
