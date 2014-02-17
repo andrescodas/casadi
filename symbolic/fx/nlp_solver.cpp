@@ -60,8 +60,8 @@ namespace CasADi{
     return (*this)->gradF();
   }
   
-  FX NLPSolver::jacG(){ 
-    return (*this)->jacG();
+  FX NLPSolver::jacGQQQ(){ 
+    return (*this)->jacGQQQ();
   }
 
   FX NLPSolver::hessLag(){  

@@ -81,7 +81,7 @@ namespace CasADi{
     
     // Get/generate required functions
     gradF();
-    jacG();
+    jacGQQQ();
     if(exact_hessian_){
       hessLag();
     }
@@ -89,10 +89,10 @@ namespace CasADi{
     // Allocate a QP solver
     CCSSparsity H_sparsity = exact_hessian_ ? hessLag().output().sparsity() : sp_dense(nx_,nx_);
     H_sparsity = H_sparsity + DMatrix::eye(nx_).sparsity();
-    CCSSparsity A_sparsity = jacG().isNull() ? CCSSparsity(nx_,0,false) : jacG().output().sparsity();
+    CCSSparsity AQQQ_sparsity = jacGQQQ().isNull() ? CCSSparsity(0,nx_,false) : jacGQQQ().output().sparsity();
 
     QPSolverCreator qp_solver_creator = getOption("qp_solver");
-    qp_solver_ = qp_solver_creator(qpStruct("h",H_sparsity,"a",A_sparsity));
+    qp_solver_ = qp_solver_creator(qpStruct("h",H_sparsity,"a",AQQQ_sparsity.transpose()));
 
     // Set options if provided
     if(hasSetOption("qp_solver_options")){
@@ -122,7 +122,7 @@ namespace CasADi{
     Bk_ = DMatrix(H_sparsity);
   
     // Jacobian
-    Jk_ = DMatrix(A_sparsity);
+    JkQQQ_ = DMatrix(AQQQ_sparsity);
 
     // Bounds of the QP
     qp_LBA_.resize(ng_);
@@ -187,7 +187,7 @@ namespace CasADi{
       cout << endl;
       cout << "Number of variables:                       " << setw(9) << nx_ << endl;
       cout << "Number of constraints:                     " << setw(9) << ng_ << endl;
-      cout << "Number of nonzeros in constraint Jacobian: " << setw(9) << A_sparsity.size() << endl;
+      cout << "Number of nonzeros in constraint Jacobian: " << setw(9) << AQQQ_sparsity.size() << endl;
       cout << "Number of nonzeros in Lagrangian Hessian:  " << setw(9) << H_sparsity.size() << endl;
       cout << endl;
     }
@@ -229,7 +229,7 @@ namespace CasADi{
     double time1 = clock();
 
     // Initial constraint Jacobian
-    eval_jac_g(x_,gk_,Jk_);
+    eval_jac_gQQQ(x_,gk_,JkQQQ_);
   
     // Initial objective gradient
     eval_grad_f(x_,fk_,gf_);
@@ -244,7 +244,7 @@ namespace CasADi{
 
     // Evaluate the initial gradient of the Lagrangian
     copy(gf_.begin(),gf_.end(),gLag_.begin());
-    if(ng_>0) DMatrix::mul_no_alloc_nn(Jk_,mu_,gLag_);
+    if(ng_>0) DMatrix::mul_no_alloc_tn(JkQQQ_,mu_,gLag_);
     // gLag += mu_x_;
     transform(gLag_.begin(),gLag_.end(),mu_x_.begin(),gLag_.begin(),plus<double>());
 
@@ -357,7 +357,7 @@ namespace CasADi{
       transform(ubg.begin(),ubg.end(),gk_.begin(),qp_UBA_.begin(),minus<double>());
 
       // Solve the QP
-      solve_QP(Bk_,gf_,qp_LBX_,qp_UBX_,Jk_,qp_LBA_,qp_UBA_,dx_,qp_DUAL_X_,qp_DUAL_A_);
+      solve_QP(Bk_,gf_,qp_LBX_,qp_UBX_,JkQQQ_,qp_LBA_,qp_UBA_,dx_,qp_DUAL_X_,qp_DUAL_A_);
       log("QP solved");
 
       // Detecting indefiniteness
@@ -459,14 +459,14 @@ namespace CasADi{
       if(!exact_hessian_){
         // Evaluate the gradient of the Lagrangian with the old x but new mu (for BFGS)
         copy(gf_.begin(),gf_.end(),gLag_old_.begin());
-        if(ng_>0) DMatrix::mul_no_alloc_nn(Jk_,mu_,gLag_old_);
+        if(ng_>0) DMatrix::mul_no_alloc_tn(JkQQQ_,mu_,gLag_old_);
         // gLag_old += mu_x_;
         transform(gLag_old_.begin(),gLag_old_.end(),mu_x_.begin(),gLag_old_.begin(),plus<double>());
       }
 
       // Evaluate the constraint Jacobian
       log("Evaluating jac_g");
-      eval_jac_g(x_,gk_,Jk_);
+      eval_jac_gQQQ(x_,gk_,JkQQQ_);
     
       // Evaluate the gradient of the objective function
       log("Evaluating grad_f");
@@ -474,7 +474,7 @@ namespace CasADi{
     
       // Evaluate the gradient of the Lagrangian with the new x and new mu
       copy(gf_.begin(),gf_.end(),gLag_.begin());
-      if(ng_>0) DMatrix::mul_no_alloc_nn(Jk_,mu_,gLag_);
+      if(ng_>0) DMatrix::mul_no_alloc_tn(JkQQQ_,mu_,gLag_);
       // gLag += mu_x_;
       transform(gLag_.begin(),gLag_.end(),mu_x_.begin(),gLag_.begin(),plus<double>());
 
@@ -744,7 +744,7 @@ namespace CasADi{
     }
   }
 
-  void SQPInternal::eval_jac_g(const std::vector<double>& x, std::vector<double>& g, Matrix<double>& J){
+  void SQPInternal::eval_jac_gQQQ(const std::vector<double>& x, std::vector<double>& g, Matrix<double>& J){
     try{
       double time1 = clock();
       
@@ -752,18 +752,18 @@ namespace CasADi{
       if(ng_==0) return;
     
       // Get function
-      FX& jacG = this->jacG();
+      FX& jacGQQQ = this->jacGQQQ();
 
       // Pass the argument to the function
-      jacG.setInput(x,NL_X);
-      jacG.setInput(input(NLP_SOLVER_P),NL_P);
+      jacGQQQ.setInput(x,NL_X);
+      jacGQQQ.setInput(input(NLP_SOLVER_P),NL_P);
       
       // Evaluate the function
-      jacG.evaluate();
+      jacGQQQ.evaluate();
       
       // Get the output
-      jacG.output(1+NL_G).get(g,DENSE);
-      jacG.output().get(J);
+      jacGQQQ.output(1+NL_G).get(g,DENSE);
+      jacGQQQ.output().get(J);
 
       if (monitored("eval_jac_g")) {
         cout << "x = " << x << endl;
@@ -871,7 +871,7 @@ namespace CasADi{
 
     // Pass linear bounds
     if(ng_>0){
-      qp_solver_.setInput(A, QP_SOLVER_A);
+      qp_solver_.setInput(trans(A), QP_SOLVER_A);
       qp_solver_.setInput(lbA, QP_SOLVER_LBA);
       qp_solver_.setInput(ubA, QP_SOLVER_UBA);
     }

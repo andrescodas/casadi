@@ -90,13 +90,13 @@ class LinearSolverTests(casadiTestCase):
         solver.setOption("ad_mode","forward")
         solver.init()
         
-        Jf = solver.jacobian()
+        Jf = solver.jacobianQQQ()
         Jf.init()
 
         solver.setOption("ad_mode","reverse")
         solver.init()
         
-        Jb = solver.jacobian()
+        Jb = solver.jacobianQQQ()
         Jb.init()
         
         Jf.setInput(A.T)
@@ -105,7 +105,7 @@ class LinearSolverTests(casadiTestCase):
         Jf.evaluate()
         Jb.evaluate()
 
-        self.checkarray(Jf.output(),Jb.output())
+        self.checkarray(Jf.output().T,Jb.output().T)
         self.checkarray(Jf.output(1),Jb.output(1))
         
         d = solver.derivative(1,0)

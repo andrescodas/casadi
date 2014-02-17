@@ -162,7 +162,7 @@ namespace CasADi{
 
     // Get/generate required functions
     gradF();
-    jacG();
+    jacGQQQ();
     if(exact_hessian_){
       hessLag();
     }
@@ -473,7 +473,7 @@ namespace CasADi{
     }
   }
 
-  bool IpoptInternal::eval_h(const double* x, bool new_x, double obj_factor, const double* lambda,bool new_lambda, int nele_hess, int* iCol,int* jRow, double* values){
+  bool IpoptInternal::eval_h(const double* x, bool new_x, double obj_factor, const double* lambda,bool new_lambda, int nele_hess, int* iRow,int* jCol, double* values){
     try{
       log("eval_h started");
       double time1 = clock();
@@ -481,11 +481,11 @@ namespace CasADi{
         int nz=0;
         vector<int> colind,row;
         hessLag_.output().sparsity().getSparsityCCS(colind,row);
-        for(int r=0; r<colind.size()-1; ++r)
-          for(int el=colind[r]; el<colind[r+1]; ++el){
-            if(row[el]<=r){
-              iCol[nz] = r;
-              jRow[nz] = row[el];
+        for(int cc=0; cc<colind.size()-1; ++cc)
+          for(int el=colind[cc]; el<colind[cc+1]; ++el){
+            if(row[el]<=cc){
+              iRow[nz] = cc;
+              jCol[nz] = row[el];
               nz++;
             }
           }
@@ -516,7 +516,7 @@ namespace CasADi{
     }
   }
 
-  bool IpoptInternal::eval_jac_g(int n, const double* x, bool new_x,int m, int nele_jac, int* iCol, int *jRow,double* values){
+  bool IpoptInternal::eval_jac_g(int n, const double* x, bool new_x,int m, int nele_jac, int* iRow, int *jCol,double* values){
     try{
       log("eval_jac_g started");
     
@@ -527,36 +527,37 @@ namespace CasADi{
       }
       
       // Get function
-      FX& jacG = this->jacG();
+      FX& jacGQQQ = this->jacGQQQ();
     
       double time1 = clock();
       if (values == NULL) {
         int nz=0;
-        vector<int> colind,row;
-        jacG.output().sparsity().getSparsityCCS(colind,row);
-        for(int r=0; r<colind.size()-1; ++r)
-          for(int el=colind[r]; el<colind[r+1]; ++el){
-            iCol[nz] = r;
-            jRow[nz] = row[el];
+        const vector<int>& colind = jacGQQQ.output().colind();
+        const vector<int>& row = jacGQQQ.output().row();
+        for(int cc=0; cc<colind.size()-1; ++cc)
+          for(int el=colind[cc]; el<colind[cc+1]; ++el){
+            int rr = row[el];
+            iRow[nz] = rr;
+            jCol[nz] = cc;
             nz++;
           }
       } else {
         // Pass the argument to the function
-        jacG.setInput(x,NL_X);
-        jacG.setInput(input(NLP_SOLVER_P),NL_P);
+        jacGQQQ.setInput(x,NL_X);
+        jacGQQQ.setInput(input(NLP_SOLVER_P),NL_P);
       
         // Evaluate the function
-        jacG.evaluate();
+        jacGQQQ.evaluate();
 
         // Get the output
-        jacG.getOutput(values);
+        jacGQQQ.getOutput(values);
       
         if(monitored("eval_jac_g")){
-          cout << "x = " << jacG.input(NL_X).data() << endl;
+          cout << "x = " << jacGQQQ.input(NL_X).data() << endl;
           cout << "J = " << endl;
-          jacG.output().printSparse();
+          jacGQQQ.output().printSparse();
         }
-        if (regularity_check_ && !isRegular(jacG.output().data())) casadi_error("IpoptInternal::jac_g: NaN or Inf detected.");
+        if (regularity_check_ && !isRegular(jacGQQQ.output().data())) casadi_error("IpoptInternal::jac_g: NaN or Inf detected.");
       }
     
       double time2 = clock();
@@ -746,7 +747,7 @@ namespace CasADi{
       if(nlp_.output(NL_G).size()==0)
         nnz_jac_g = 0;
       else
-        nnz_jac_g = jacG().output().size();
+        nnz_jac_g = jacGQQQ().output().size();
 
       // Get Hessian sparsity pattern
       if(exact_hessian_)

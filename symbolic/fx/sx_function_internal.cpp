@@ -786,7 +786,7 @@ namespace CasADi{
     }
   }
 
-  FX SXFunctionInternal::getFullJacobian(){
+  FX SXFunctionInternal::getFullJacobianQQQ(){
     // Get all the inputs
     SXMatrix arg = SXMatrix::sparse(1,0); 
     for(vector<SXMatrix>::const_iterator i=inputv_.begin(); i!=inputv_.end(); ++i){
@@ -803,7 +803,7 @@ namespace CasADi{
     SXMatrix J = CasADi::jacobian(res,arg);
    
     // Generate a function for the full Jacobian
-    vector<SXMatrix> ret_res(1,trans(J));
+    vector<SXMatrix> ret_res(1,J);
     ret_res.insert(ret_res.end(),outputv_.begin(),outputv_.end());
     SXFunction ret(inputv_,ret_res);
     return ret;

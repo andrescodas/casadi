@@ -225,7 +225,7 @@ namespace CasADi{
     *  \copydoc scheme_HessLagInput
     *  \copydoc scheme_HessLagOutput
     */
-    FX jacG();
+    FX jacGQQQ();
 
     /** \brief Access the Hessian of the Lagrangian function
     *  \copydoc scheme_JacGInput

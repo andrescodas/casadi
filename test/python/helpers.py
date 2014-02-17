@@ -331,12 +331,12 @@ class casadiTestCase(unittest.TestCase):
       for i in range(trial.getNumInputs()):
         if (allow_empty and (trial.input(i).empty() or solution.input(i).empty() )): continue
         for j in range(trial.getNumOutputs()):
-          trialjac = trial.jacobian(i,j)
+          trialjac = trial.jacobianQQQ(i,j)
           trialjac.init()
           self.assertEqual(trialjac.getNumInputs(),trial.getNumInputs())
           self.assertEqual(trialjac.getNumOutputs(),trial.getNumOutputs()+1)
           for k in range(trial.getNumInputs()): trialjac.setInput(trial_inputs[k],k)
-          solutionjac = solution.jacobian(i,j)
+          solutionjac = solution.jacobianQQQ(i,j)
           solutionjac.init()
           self.assertEqual(solutionjac.getNumInputs(),solution.getNumInputs())
           self.assertEqual(solutionjac.getNumOutputs(),solution.getNumOutputs()+1)

@@ -100,19 +100,19 @@ bool IpoptUserClass::eval_g(Index n, const Number* x, bool new_x, Index m, Numbe
 
 // return the structure or values of the jacobian
 bool IpoptUserClass::eval_jac_g(Index n, const Number* x, bool new_x,
-                           Index m, Index nele_jac, Index* iCol, Index *jRow,
+                           Index m, Index nele_jac, Index* iRow, Index *jCol,
                            Number* values)
 {
-  return solver->eval_jac_g(n,x,new_x,m,nele_jac,iCol,jRow,values);
+  return solver->eval_jac_g(n,x,new_x,m,nele_jac,iRow,jCol,values);
 }
 
 
 bool IpoptUserClass::eval_h(Index n, const Number* x, bool new_x,
                        Number obj_factor, Index m, const Number* lambda,
-                       bool new_lambda, Index nele_hess, Index* iCol,
-                       Index* jRow, Number* values)
+                       bool new_lambda, Index nele_hess, Index* iRow,
+                       Index* jCol, Number* values)
 {  
-  return solver->eval_h(x,new_x,obj_factor,lambda,new_lambda,nele_hess,iCol,jRow,values);
+  return solver->eval_h(x,new_x,obj_factor,lambda,new_lambda,nele_hess,iRow,jCol,values);
 }
 
 

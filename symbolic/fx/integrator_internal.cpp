@@ -844,13 +844,13 @@ namespace CasADi{
     return MXFunction(ret_in,ret_out);
   }
 
-  FX IntegratorInternal::getJacobian(int iind, int oind, bool compact, bool symmetric){
+  FX IntegratorInternal::getJacobianQQQ(int iind, int oind, bool compact, bool symmetric){
     vector<MX> arg = symbolicInput();
     vector<MX> res = shared_from_this<FX>().call(arg);
     MXFunction f(arg,res);
     f.setOption("ad_mode","forward");
     f.init();
-    return f.jacobian(iind,oind,compact,symmetric);
+    return f.jacobianQQQ(iind,oind,compact,symmetric);
   }
 
   void IntegratorInternal::reset(){

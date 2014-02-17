@@ -31,7 +31,7 @@
 using namespace std;
 namespace CasADi{
 
-  ImplicitFunctionInternal::ImplicitFunctionInternal(const FX& f, const FX& jac, const LinearSolver& linsol) : f_(f), jac_(jac), linsol_(linsol){
+  ImplicitFunctionInternal::ImplicitFunctionInternal(const FX& f, const FX& jac, const LinearSolver& linsol) : f_(f), jacQQQ_(jac), linsolQQQ_(linsol){
     addOption("linear_solver",            OT_LINEARSOLVER, GenericType(), "User-defined linear solver class. Needed for sensitivities.");
     addOption("linear_solver_options",    OT_DICTIONARY,   GenericType(), "Options to be passed to the linear solver.");
     addOption("constraints",              OT_INTEGERVECTOR,GenericType(),"Constrain the unknowns. 0 (default): no constraint on ui, 1: ui >= 0.0, -1: ui <= 0.0, 2: ui > 0.0, -2: ui < 0.0.");
@@ -45,8 +45,8 @@ namespace CasADi{
   void ImplicitFunctionInternal::deepCopyMembers(std::map<SharedObjectNode*,SharedObject>& already_copied){
     FXInternal::deepCopyMembers(already_copied);
     f_ = deepcopy(f_,already_copied);
-    jac_ = deepcopy(jac_,already_copied);
-    linsol_ = deepcopy(linsol_,already_copied);
+    jacQQQ_ = deepcopy(jacQQQ_,already_copied);
+    linsolQQQ_ = deepcopy(linsolQQQ_,already_copied);
   }
 
   void ImplicitFunctionInternal::init(){
@@ -86,33 +86,33 @@ namespace CasADi{
     FXInternal::init();
   
     // Generate Jacobian if not provided
-    if(jac_.isNull()) jac_ = f_.jacobian(iin_,iout_);
-    jac_.init(false);
+    if(jacQQQ_.isNull()) jacQQQ_ = f_.jacobianQQQ(iin_,iout_);
+    jacQQQ_.init(false);
   
     // Check for structural singularity in the Jacobian
-    casadi_assert_message(!isSingular(jac_.output().sparsity()),"ImplicitFunctionInternal::init: singularity - the jacobian is structurally rank-deficient. sprank(J)=" << sprank(jac_.output()) << " (instead of "<< jac_.output().size2() << ")");
+    casadi_assert_message(!isSingular(jacQQQ_.output().sparsity()),"ImplicitFunctionInternal::init: singularity - the jacobian is structurally rank-deficient. sprank(J)=" << sprank(jacQQQ_.output()) << " (instead of "<< jacQQQ_.output().size1() << ")");
   
     // Get the linear solver creator function
-    if(linsol_.isNull()){
+    if(linsolQQQ_.isNull()){
       if(hasSetOption("linear_solver")){
         linearSolverCreator linear_solver_creator = getOption("linear_solver");
         
         // Allocate an NLP solver
-        linsol_ = linear_solver_creator(jac_.output().sparsity(),1);
+        linsolQQQ_ = linear_solver_creator(jacQQQ_.output().sparsity(),1);
         
         // Pass options
         if(hasSetOption("linear_solver_options")){
           const Dictionary& linear_solver_options = getOption("linear_solver_options");
-          linsol_.setOption(linear_solver_options);
+          linsolQQQ_.setOption(linear_solver_options);
         }
         
         // Initialize
-        linsol_.init();
+        linsolQQQ_.init();
       }
     } else {
       // Initialize the linear solver, if provided
-      linsol_.init(false);
-      casadi_assert(linsol_.input().sparsity()==jac_.output().sparsity());
+      linsolQQQ_.init(false);
+      casadi_assert(linsolQQQ_.input().sparsity()==jacQQQ_.output().sparsity());
     }
     
     // No factorization yet;
@@ -175,7 +175,7 @@ namespace CasADi{
     v[iin_] = z;
     
     // Get an expression for the Jacobian
-    MX J = jac_.call(v).front();
+    MX J = jacQQQ_.call(v).front();
 
     // Directional derivatives of f
     FX f_der = f_.derivative(nfwd,nadj);
@@ -206,7 +206,7 @@ namespace CasADi{
       }
 
       // Solve for all right-hand-sides at once
-      rhs = horzsplit(J->getSolve(horzcat(rhs),false,linsol_),col_offset);
+      rhs = horzsplit(J->getSolve(horzcat(rhs),true,linsolQQQ_),col_offset);
       for(int d=0; d<rhs.size(); ++d){
         v[rhs_loc[d]] = trans(rhs[d]);
       }
@@ -239,7 +239,7 @@ namespace CasADi{
       }
         
       // Solve for all the forward derivatives at once
-      rhs = horzsplit(J->getSolve(horzcat(rhs),true,linsol_),col_offset);
+      rhs = horzsplit(J->getSolve(horzcat(rhs),false,linsolQQQ_),col_offset);
       for(int d=0; d<nfwd; ++d){
         if(fsens[d][iout_]!=0){
           *fsens[d][iout_] = -trans(rhs[d]);
@@ -279,7 +279,7 @@ namespace CasADi{
       
       // "Solve" in order to propagate to z
       output(iout_).setZeroBV();
-      linsol_.spSolve(output(iout_),f_.output(iout_),true);
+      linsolQQQ_.spSolve(output(iout_),f_.output(iout_),false);
       
       // Propagate to auxiliary outputs
       if(getNumOutputs()>1){
@@ -313,7 +313,7 @@ namespace CasADi{
 
       // "Solve" in order to get seed
       f_.output(iout_).setZeroBV();
-      linsol_.spSolve(f_.output(iout_),input(iin_),false);
+      linsolQQQ_.spSolve(f_.output(iout_),input(iin_),true);
       
       // Propagate dependencies through the function
       f_.spEvaluate(false);

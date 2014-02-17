@@ -254,7 +254,7 @@ class NLPtests(casadiTestCase):
     print G.output()
     print G
 
-    J = F.jacobian(0,0)
+    J = F.jacobianQQQ(0,0)
     J.init()
     J.setInput(x0_val)
     J.evaluate()

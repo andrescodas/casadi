@@ -538,11 +538,11 @@ class Sparsitytests(casadiTestCase):
     g.setOption("verbose",True)
     g.init()
 
-    J = g.jacobian()
+    J = g.jacobianQQQ()
     J.setOption("verbose",True)
     J.init()
     
-    self.assertTrue(J.output()[:,:X.size()].sparsity()==sp_diag(100))
+    self.assertTrue(J.output().T[:,:X.size()].sparsity()==sp_diag(100))
 
     X = ssym("X",1,100)
     P = ssym("P",1,1000)
@@ -553,11 +553,11 @@ class Sparsitytests(casadiTestCase):
     g.setOption("verbose",True)
     g.init()
 
-    J = g.jacobian()
+    J = g.jacobianQQQ()
     J.setOption("verbose",True)
     J.init()
     
-    self.assertTrue(J.output()[:X.size(),:].sparsity()==sp_diag(100))
+    self.assertTrue(J.output().T[:X.size(),:].sparsity()==sp_diag(100))
     
   def test_sp_colrow(self):
     n = 3

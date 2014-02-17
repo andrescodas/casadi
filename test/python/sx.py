@@ -53,22 +53,22 @@ class SXtests(casadiTestCase):
     self.pool.append(lambda x: x[0]**(0.3),lambda x : x**(0.3),"^0.3")
     self.pool.append(lambda x: floor(x[0]),floor,"floor")
     self.pool.append(lambda x: ceil(x[0]),ceil,"ceil")
-    self.Jpool=FunctionPool()
-    self.Jpool.append(lambda x: sqrt(x[0]),lambda x:diag(1/(2.0*sqrt(x))),"sqrt")
-    self.Jpool.append(lambda x: sin(x[0]),lambda x:diag(cos(x)),"sin")
-    self.Jpool.append(lambda x: fabs(x[0]),lambda x:diag(sign(x)),"fabs")
-    self.Jpool.append(lambda x: sign(x[0]),lambda x:diag(x*0),"fabs")
-    self.Jpool.append(lambda x: cos(x[0]),lambda x:diag(-sin(x)),"cos")
-    self.Jpool.append(lambda x: tan(x[0]),lambda x:diag(1.0/cos(x)**2),"tan")
-    self.Jpool.append(lambda x: arctan(x[0]),lambda x:diag( 1.0/(x**2+1)),"arctan")
-    self.Jpool.append(lambda x: arcsin(x[0]),lambda x:diag( 1.0/sqrt(1-x**2)),"arcsin")
-    self.Jpool.append(lambda x: arccos(x[0]),lambda x: diag(-1.0/sqrt(1-x**2)),"arccos")
-    self.Jpool.append(lambda x: exp(x[0]),lambda x: diag(exp(x)),"exp")
-    self.Jpool.append(lambda x: log(x[0]),lambda x: diag(1.0/x),"log")
-    self.Jpool.append(lambda x: x[0]**0,lambda x :diag(zeros(x.shape)),"x^0")
-    self.Jpool.append(lambda x: x[0]**1,lambda x : diag(ones(x.shape)),"^1")
-    self.Jpool.append(lambda x: x[0]**(-2),lambda x : diag(-2.0/x**3),"^-2")
-    self.Jpool.append(lambda x: x[0]**(0.3),lambda x :diag( 0.3/x**0.7),"^0.3")
+    self.JpoolQQQ=FunctionPool()
+    self.JpoolQQQ.append(lambda x: sqrt(x[0]),lambda x:diag(1/(2.0*sqrt(x))),"sqrt")
+    self.JpoolQQQ.append(lambda x: sin(x[0]),lambda x:diag(cos(x)),"sin")
+    self.JpoolQQQ.append(lambda x: fabs(x[0]),lambda x:diag(sign(x)),"fabs")
+    self.JpoolQQQ.append(lambda x: sign(x[0]),lambda x:diag(x*0),"fabs")
+    self.JpoolQQQ.append(lambda x: cos(x[0]),lambda x:diag(-sin(x)),"cos")
+    self.JpoolQQQ.append(lambda x: tan(x[0]),lambda x:diag(1.0/cos(x)**2),"tan")
+    self.JpoolQQQ.append(lambda x: arctan(x[0]),lambda x:diag( 1.0/(x**2+1)),"arctan")
+    self.JpoolQQQ.append(lambda x: arcsin(x[0]),lambda x:diag( 1.0/sqrt(1-x**2)),"arcsin")
+    self.JpoolQQQ.append(lambda x: arccos(x[0]),lambda x: diag(-1.0/sqrt(1-x**2)),"arccos")
+    self.JpoolQQQ.append(lambda x: exp(x[0]),lambda x: diag(exp(x)),"exp")
+    self.JpoolQQQ.append(lambda x: log(x[0]),lambda x: diag(1.0/x),"log")
+    self.JpoolQQQ.append(lambda x: x[0]**0,lambda x :diag(zeros(x.shape)),"x^0")
+    self.JpoolQQQ.append(lambda x: x[0]**1,lambda x : diag(ones(x.shape)),"^1")
+    self.JpoolQQQ.append(lambda x: x[0]**(-2),lambda x : diag(-2.0/x**3),"^-2")
+    self.JpoolQQQ.append(lambda x: x[0]**(0.3),lambda x :diag( 0.3/x**0.7),"^0.3")
     self.matrixpool=FunctionPool()
     self.matrixpool.append(lambda x: norm_2(x[0]),linalg.norm,"norm_2")
     self.matrixbinarypool=FunctionPool()
@@ -128,29 +128,29 @@ class SXtests(casadiTestCase):
       x0=array([[0.738]])
 
       def fmod(f,x):
-        J=f.jacobian()
+        J=f.jacobianQQQ()
         J.init()
         return J
       
-      self.numpyEvaluationCheckPool(self.Jpool,[x],x0,name="SXMatrix unary operations, jacobian",fmod=fmod)
+      self.numpyEvaluationCheckPool(self.JpoolQQQ,[x],x0,name="SXMatrix unary operations, jacobian",fmod=fmod)
 
       def fmod(f,x):
         #f.setOption("ad_mode","forward")
         f.init();
-        J=f.jacobian()
+        J=f.jacobianQQQ()
         J.init()
         return J
         
-      self.numpyEvaluationCheckPool(self.Jpool,[x],x0,name="MX unary operations, jacobian",fmod=fmod)
+      self.numpyEvaluationCheckPool(self.JpoolQQQ,[x],x0,name="MX unary operations, jacobian",fmod=fmod)
       
       def fmod(f,x):
         #f.setOption("ad_mode","reverse")
         f.init();
-        J=f.jacobian()
+        J=f.jacobianQQQ()
         J.init()
         return J
         
-      self.numpyEvaluationCheckPool(self.Jpool,[x],x0,name="MX unary operations, jacobian",fmod=fmod)
+      self.numpyEvaluationCheckPool(self.JpoolQQQ,[x],x0,name="MX unary operations, jacobian",fmod=fmod)
       
   def test_SXMatrixJac(self):
       self.message("SXMatrix(1,1) unary operation, jac")
@@ -158,12 +158,12 @@ class SXtests(casadiTestCase):
       x0=array([[0.738]])
 
       def fmod(f,x):
-        j=f.jac().T
+        j=f.jac()
         J=SXFunction(x,[j])
         J.init()
         return J
       
-      self.numpyEvaluationCheckPool(self.Jpool,[x],x0,name="SXMatrix unary operations, jac",fmod=fmod)
+      self.numpyEvaluationCheckPool(self.JpoolQQQ,[x],x0,name="SXMatrix unary operations, jac",fmod=fmod)
       
   def test_SXMatrixJacobians(self):
       self.message("SXMatrix(3,1) unary operation, jacobian")
@@ -171,11 +171,11 @@ class SXtests(casadiTestCase):
       x0=array([0.738,0.9,0.3])
 
       def fmod(f,x):
-        J=f.jacobian()
+        J=f.jacobianQQQ()
         J.init()
         return J
       
-      self.numpyEvaluationCheckPool(self.Jpool,[x],x0,name="SXMatrix unary operations, jacobian",fmod=fmod)
+      self.numpyEvaluationCheckPool(self.JpoolQQQ,[x],x0,name="SXMatrix unary operations, jacobian",fmod=fmod)
       
   def test_SXMatrixJacobians2(self):
       self.message("SXMatrix(1,3) unary operation, jacobian")
@@ -184,11 +184,11 @@ class SXtests(casadiTestCase):
       x0=array([0.738,0.9,0.3])
 
       def fmod(f,x):
-        J=f.jacobian()
+        J=f.jacobianQQQ()
         J.init()
         return J
       
-      self.numpyEvaluationCheckPool(self.Jpool,[x],x0,name="SXMatrix unary operations, jacobian",fmod=fmod)
+      self.numpyEvaluationCheckPool(self.JpoolQQQ,[x],x0,name="SXMatrix unary operations, jacobian",fmod=fmod)
 
   def test_SXMatrix(self):
       self.message("SXMatrix unary operations")
@@ -319,12 +319,12 @@ class SXtests(casadiTestCase):
     for i in range(3):
       self.assertAlmostEqual(z[i], zr[i],10,'SXfunction output in correct')
     self.message("SXFunction jacobian evaluation")
-    J=f.jacobian()
+    J=f.jacobianQQQ()
     J.init()
     J.setInput(L)
     J.evaluate()
     Jr=matrix([[1,1],[3,2],[4,27]])
-    self.checkarray(J.getOutput(0),Jr,"SXfunction jacobian evaluates incorrectly")
+    self.checkarray(J.getOutput(0).T,Jr,"SXfunction jacobian evaluates incorrectly")
           
   def test_SX2(self):
     self.message("SXFunction evalution 2")
@@ -1249,7 +1249,7 @@ class SXtests(casadiTestCase):
     f.evaluate()
     self.checkarray(f.output(),DMatrix([2]))
     
-    J = f.jacobian()
+    J = f.jacobianQQQ()
     J.init()
     
     J.setInput(2,0)
@@ -1277,7 +1277,7 @@ class SXtests(casadiTestCase):
     J.evaluate()
     self.checkarray(J.output(),DMatrix([1]))
 
-    J = f.jacobian(1)
+    J = f.jacobianQQQ(1)
     J.init()
     
     J.setInput(2,0)

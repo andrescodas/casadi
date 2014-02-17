@@ -707,12 +707,12 @@ class Integrationtests(casadiTestCase):
     f = MXFunction([var],[qend[0]])
     f.init()
 
-    J=f.jacobian(0)
+    J=f.jacobianQQQ(0)
     J.init()
     J.setInput([1,0])
     J.evaluate()
-    print "jac=",J.getOutput()[0]-exp(1)
-    self.assertAlmostEqual(J.getOutput()[0],exp(1),5,"Evaluation output mismatch")
+    print "jac=",J.getOutput().T[0]-exp(1)
+    self.assertAlmostEqual(J.getOutput().T[0],exp(1),5,"Evaluation output mismatch")
     
   def test_eval(self):
     self.message('CVodes integration: evaluation')
@@ -749,7 +749,7 @@ class Integrationtests(casadiTestCase):
   def test_jac1(self):
     self.message('CVodes integration: jacobian to q0')
     num=self.num
-    J=self.qe.jacobian(0)
+    J=self.qe.jacobianQQQ(0)
     J.init()
     J.setInput([num['q0']],0)
     J.setInput([num['p']],1)
@@ -757,12 +757,12 @@ class Integrationtests(casadiTestCase):
     tend=num['tend']
     q0=num['q0']
     p=num['p']
-    self.assertAlmostEqual(J.getOutput()[0],exp(tend**3/(3*p)),9,"Evaluation output mismatch")
+    self.assertAlmostEqual(J.getOutput().T[0],exp(tend**3/(3*p)),9,"Evaluation output mismatch")
     
   def test_jac2(self):
     self.message('CVodes integration: jacobian to p')
     num=self.num
-    J=self.qe.jacobian(1)
+    J=self.qe.jacobianQQQ(1)
     J.init()
     J.setInput([num['q0']],0)
     J.setInput([num['p']],1)
@@ -770,7 +770,7 @@ class Integrationtests(casadiTestCase):
     tend=num['tend']
     q0=num['q0']
     p=num['p']
-    self.assertAlmostEqual(J.getOutput()[0],-(q0*tend**3*exp(tend**3/(3*p)))/(3*p**2),9,"Evaluation output mismatch")
+    self.assertAlmostEqual(J.getOutput().T[0],-(q0*tend**3*exp(tend**3/(3*p)))/(3*p**2),9,"Evaluation output mismatch")
     
   def test_bug_repeat(self):
     num={'tend':2.3,'q0':[0,7.1,7.1],'p':2}
@@ -807,12 +807,12 @@ class Integrationtests(casadiTestCase):
     qe.init()
 
     #J=self.qe.jacobian(2)
-    J=qe.jacobian(0)
+    J=qe.jacobianQQQ(0)
     J.init()
     J.setInput(A,0)
     J.setInput(p0,1)
     J.evaluate()
-    outA=J.output().toArray()
+    outA=J.output().T.toArray()
     f=SXFunction(daeIn(x=q,p=p,t=t),daeOut(ode=horzcat([dh ,q[0],(1+1e-9)*dh])))
     f.init()
     
@@ -834,20 +834,20 @@ class Integrationtests(casadiTestCase):
     qe.init()
 
     #J=self.qe.jacobian(2)
-    J=qe.jacobian(0)
+    J=qe.jacobianQQQ(0)
     J.init()
     J.setInput(A,0)
     J.setInput(p0,1)
     J.evaluate()
-    outB=J.output().toArray()
+    outB=J.output().T.toArray()
     print outA-outB
     
   def test_hess3(self):
     self.message('CVodes integration: hessian to p: Jacobian of integrator.jacobian')
     num=self.num
-    J=self.integrator.jacobian("p","xf")
+    J=self.integrator.jacobianQQQ("p","xf")
     J.init()
-    H=J.jacobian("p")
+    H=J.jacobianQQQ("p")
     H.init()
     H.setInput([num['q0']],"x0")
     H.setInput([num['p']],"p")
@@ -861,7 +861,7 @@ class Integrationtests(casadiTestCase):
   def test_hess4(self):
     self.message('CVodes integration: hessian to p: Jacobian of integrator.jacobian indirect')
     num=self.num
-    J=self.integrator.jacobian("p","xf")
+    J=self.integrator.jacobianQQQ("p","xf")
     J.init()
     
     q0=msym("q0")
@@ -869,7 +869,7 @@ class Integrationtests(casadiTestCase):
     Ji = MXFunction([q0,p],J.call(integratorIn(x0=q0,p=p)))
     #Ji.setOption("ad_mode","reverse")
     Ji.init()
-    H=Ji.jacobian(1)
+    H=Ji.jacobianQQQ(1)
     H.init()
     H.setInput([num['q0']],0)
     H.setInput([num['p']],1)
@@ -895,7 +895,7 @@ class Integrationtests(casadiTestCase):
     JT.evaluate()
     print JT.getOutput()
 
-    H  = JT.jacobian(1)
+    H  = JT.jacobianQQQ(1)
     H.init()
     H.setInput([num['q0']],0)
     H.setInput([num['p']],1)
@@ -903,7 +903,7 @@ class Integrationtests(casadiTestCase):
     tend=num['tend']
     q0=num['q0']
     p=num['p']
-    self.assertAlmostEqual(H.getOutput()[0],(q0*tend**6*exp(tend**3/(3*p)))/(9*p**4)+(2*q0*tend**3*exp(tend**3/(3*p)))/(3*p**3),9,"Evaluation output mismatch")
+    self.assertAlmostEqual(H.getOutput().T[0],(q0*tend**6*exp(tend**3/(3*p)))/(9*p**4)+(2*q0*tend**3*exp(tend**3/(3*p)))/(3*p**3),9,"Evaluation output mismatch")
     
   def test_hess6(self):
     self.message('CVodes integration: hessian to p in an MX tree')
@@ -946,7 +946,7 @@ class Integrationtests(casadiTestCase):
     q0   = msym("q0",1,3)
     par  = msym("p",1,9)
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
-    qe=integrator.jacobian("p","xf")
+    qe=integrator.jacobianQQQ("p","xf")
     qe.init()
     qe = qe.call(integratorIn(x0=q0,p=par))[0]
 
@@ -988,18 +988,18 @@ class Integrationtests(casadiTestCase):
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
     qe=MXFunction([q0,par],[qend])
     qe.init()
-    qendJ=integrator.jacobian("x0","xf")
+    qendJ=integrator.jacobianQQQ("x0","xf")
     qendJ.init()
     qendJ = qendJ.call(integratorIn(x0=q0,p=par))[0]
 
-    qeJ=MXFunction([q0,par],[qendJ])
+    qeJ=MXFunction([q0,par],[qendJ.T])
     qeJ.init()
 
-    qendJ2=integrator.jacobian("x0","xf")
+    qendJ2=integrator.jacobianQQQ("x0","xf")
     qendJ2.init()
     qendJ2 = qendJ2.call(integratorIn(x0=q0,p=par))[0]
 
-    qeJ2=MXFunction([q0,par],[qendJ2])
+    qeJ2=MXFunction([q0,par],[qendJ2.T])
     qeJ2.init()
     
     qe.setInput(A,0)
@@ -1017,13 +1017,13 @@ class Integrationtests(casadiTestCase):
     qeJ2.evaluate()
     
     return # this should return identical zero
-    H=qeJ.jacobian(0,0)
+    H=qeJ.jacobianQQQ(0,0)
     H.setOption("ad_mode","reverse")
     H.init()
     H.setInput(A,0)
     H.setInput(B.ravel(),1)
     H.evaluate()
-    print array(H.getOutput())
+    print array(H.getOutput().T)
     
     
   def test_mathieu_system(self):
@@ -1055,10 +1055,10 @@ class Integrationtests(casadiTestCase):
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
     qe=MXFunction([q0,par],[qend])
     qe.init()
-    qendJ=integrator.jacobian("x0","xf")
+    qendJ=integrator.jacobianQQQ("x0","xf")
     qendJ.init()
     qendJ =qendJ.call(integratorIn(x0=q0,p=par))[0]
-    qeJ=MXFunction([q0,par],[qendJ])
+    qeJ=MXFunction([q0,par],[qendJ.T])
     qeJ.init()
 
     qe.setInput(A,0)
@@ -1107,9 +1107,9 @@ class Integrationtests(casadiTestCase):
     qend, = integratorOut(integrator.call(integratorIn(x0=q0,p=par)),"xf")
     qe=MXFunction([q0,par],[qend])
     qe.init()
-    qendJ=integrator.jacobian("x0","xf")
+    qendJ=integrator.jacobianQQQ("x0","xf")
     qendJ.init()
-    qendJ = qendJ.call(integratorIn(x0=q0,p=par))[0]
+    qendJ = qendJ.call(integratorIn(x0=q0,p=par))[0].T
     qeJ=MXFunction([q0,par],[qendJ])
     qeJ.init()
 
@@ -1132,21 +1132,21 @@ class Integrationtests(casadiTestCase):
     
     #qe.setOption("ad_mode","reverse")
     #qe.init()
-    Jf=qe.jacobian(0,0)
+    Jf=qe.jacobianQQQ(0,0)
     Jf.init()
     Jf.setInput(A,0)
     Jf.setInput(p0,1)
     Jf.evaluate()
-    self.checkarray(Jf.getOutput(),Jr,"Jacobian of Nonlin ODE")
+    self.checkarray(Jf.getOutput().T,Jr,"Jacobian of Nonlin ODE")
     
     #qe.setOption("ad_mode","forward")
     #qe.init();
-    Jf=qe.jacobian(0,0)
+    Jf=qe.jacobianQQQ(0,0)
     Jf.init()
     Jf.setInput(A,0)
     Jf.setInput(p0,1)
     Jf.evaluate()
-    self.checkarray(Jf.getOutput(),Jr,"Jacobian of Nonlin ODE")
+    self.checkarray(Jf.getOutput().T,Jr,"Jacobian of Nonlin ODE")
     
     # Joel: This is no longer supported: might be a good idea to support again, though
     #qeJ=integrator.jac("x0","xf")
@@ -1161,25 +1161,25 @@ class Integrationtests(casadiTestCase):
     
     #qe.setOption("ad_mode","reverse")
     #qe.init()
-    Jf=qe.jacobian(1,0)
+    Jf=qe.jacobianQQQ(1,0)
     Jf.init()
     Jf.setInput(A,0)
     Jf.setInput(p0,1)
     Jf.evaluate()
-    self.checkarray(Jf.getOutput(),Jr,"Jacobian of Nonlin ODE")
+    self.checkarray(Jf.getOutput().T,Jr,"Jacobian of Nonlin ODE")
     
     #qe.setOption("ad_mode","forward")
     #qe.init()
-    Jf=qe.jacobian(1,0)
+    Jf=qe.jacobianQQQ(1,0)
     Jf.init()
     Jf.setInput(A,0)
     Jf.setInput(p0,1)
     Jf.evaluate()
-    self.checkarray(Jf.getOutput(),Jr,"Jacobian of Nonlin ODE")
+    self.checkarray(Jf.getOutput().T,Jr,"Jacobian of Nonlin ODE")
     
-    qendJ=integrator.jacobian("p","xf")
+    qendJ=integrator.jacobianQQQ("p","xf")
     qendJ.init()
-    qendJ = qendJ.call(integratorIn(x0=q0,p=par))[0]
+    qendJ = qendJ.call(integratorIn(x0=q0,p=par))[0].T
     qeJ=MXFunction([q0,par],[qendJ])
     qeJ.init()
 
@@ -1196,7 +1196,7 @@ class Integrationtests(casadiTestCase):
     #qeJf.setOption("ad_mode","reverse")
     qeJf.init()
     
-    H=qeJf.jacobian(0,0)
+    H=qeJf.jacobianQQQ(0,0)
     H.init()
     H.setInput(A,0)
     H.setInput(p0,1)
@@ -1235,7 +1235,7 @@ class Integrationtests(casadiTestCase):
     JT = MXFunction([q0,p],[qe.jac(1,0)])
     JT.init()
 
-    H  = JT.jacobian(1)
+    H  = JT.jacobianQQQ(1)
     H.init()
     H.setInput(x0_,0)
     H.setInput(flatten(A_),1)

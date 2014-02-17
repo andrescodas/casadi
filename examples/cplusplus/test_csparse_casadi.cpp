@@ -101,13 +101,13 @@ int main(int argc, char *argv[])
   cout << "solution (fd) = " << (F.output("X")-x_unpreturbed)/t << endl;
 
   // Jacobian
-  FX J = F.jacobian("B","X");  
+  FX J = F.jacobianQQQ("B","X");  
   J.init();
   J.setInput(val,"A");
   J.setInput(rhs,"B");
   J.evaluate();
   cout << "solution (dx/db) = " << J.output() << endl;
   DMatrix J_analytic = inv(J.input("A"));
-  if(!tr) J_analytic = trans(J_analytic);
+  if(tr) J_analytic = trans(J_analytic);
   cout << "analytic solution (dx/db) = " << J_analytic << endl;
 }

@@ -103,7 +103,7 @@ public:
   DMatrix Bk_;
   
   // Current Jacobian
-  DMatrix Jk_;
+  DMatrix JkQQQ_;
 
   // Bounds of the QP
   std::vector<double> qp_LBA_, qp_UBA_, qp_LBX_, qp_UBX_;
@@ -137,7 +137,7 @@ public:
   virtual void eval_g(const std::vector<double>& x, std::vector<double>& g);
 
   // Evaluate the Jacobian of the constraints
-  virtual void eval_jac_g(const std::vector<double>& x, std::vector<double>& g, Matrix<double>& J);
+  virtual void eval_jac_gQQQ(const std::vector<double>& x, std::vector<double>& g, Matrix<double>& J);
 
   // Evaluate the Hessian of the Lagrangian
   virtual void eval_h(const std::vector<double>& x, const std::vector<double>& lambda, double sigma, Matrix<double>& H);

@@ -219,7 +219,7 @@ class FXtests(casadiTestCase):
     f = SXFunction([x,y],[x**2,y,x*y[0]])
     f.init()
 
-    g = f.jacobian(0,0)
+    g = f.jacobianQQQ(0,0)
 
     self.assertEqual(g.getNumInputs(),f.getNumInputs())
     self.assertEqual(g.getNumOutputs(),f.getNumOutputs()+1)
@@ -748,7 +748,7 @@ class FXtests(casadiTestCase):
     f = MXFunction([x],[x])
     f.init()
     
-    J = f.jacobian()
+    J = f.jacobianQQQ()
     J.init()
     J.evaluate()
     
@@ -758,7 +758,7 @@ class FXtests(casadiTestCase):
     f.init()
     f.setJacSparsity(sp_dense(4,4),0,0,True)
     
-    J = f.jacobian()
+    J = f.jacobianQQQ()
     J.init()
     J.evaluate()
     
@@ -787,14 +787,14 @@ class FXtests(casadiTestCase):
     # Form Jacobians: sin(x0+3*y)*x1
     x = ssym("x")
     y = ssym("y")
-    J = SXFunction([x,y],[vertcat((cos(x+3*y),3*cos(x+3*y))),sin(x+3*y)])
+    J = SXFunction([x,y],[horzcat((cos(x+3*y),3*cos(x+3*y))),sin(x+3*y)])
     J.setOption("name","my_J")
     J.init()
     
     Fun = CustomFunction(fun, [sp_dense(1,1),sp_dense(1,1)], [sp_dense(1,1)] )
     Fun.setOption("name","Fun")
     Fun.init()
-    Fun.setFullJacobian(J)
+    Fun.setFullJacobianQQQ(J)
 
     Fun.setInput(0.2,0)
     Fun.setInput(0.7,1)
@@ -826,7 +826,7 @@ class FXtests(casadiTestCase):
     Pf.setOption("name","P")
     Pf.init()
 
-    P_P = Pf.jacobian(1)
+    P_P = Pf.jacobianQQQ(1)
     P_P.init()
 
     
@@ -852,7 +852,7 @@ class FXtests(casadiTestCase):
     foo_jac = CustomFunction(dummy_jac, [x.sparsity()], [sp_sparse(1,1),sp_dense(1,1)] )
     foo_jac.setOption("name","foo_jac")
     foo_jac.init()
-    foo.setFullJacobian(foo_jac)
+    foo.setFullJacobianQQQ(foo_jac)
 
     y = x**2
 
@@ -873,7 +873,7 @@ class FXtests(casadiTestCase):
     self.assertFalse("derivative" in str(J))
 
 
-    J = f.jacobian()
+    J = f.jacobianQQQ()
     J.init()
 
     J.setInput([0.1])

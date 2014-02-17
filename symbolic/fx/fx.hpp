@@ -154,15 +154,15 @@ namespace CasADi{
      * The generated Jacobian has one more output than the calling function corresponding to the Jacobian and the same number of inputs.
      * 
      */
-    FX jacobian(int iind=0, int oind=0, bool compact=false, bool symmetric=false);
-    FX jacobian(const std::string& iind,  int oind=0, bool compact=false, bool symmetric=false) { return jacobian(inputSchemeEntry(iind),oind,compact,symmetric); }
-    FX jacobian(int iind, const std::string& oind, bool compact=false, bool symmetric=false) { return jacobian(iind,outputSchemeEntry(oind),compact,symmetric); }
-    FX jacobian(const std::string& iind, const std::string& oind, bool compact=false, bool symmetric=false) { return jacobian(inputSchemeEntry(iind),outputSchemeEntry(oind),compact,symmetric); }
+    FX jacobianQQQ(int iind=0, int oind=0, bool compact=false, bool symmetric=false);
+    FX jacobianQQQ(const std::string& iind,  int oind=0, bool compact=false, bool symmetric=false) { return jacobianQQQ(inputSchemeEntry(iind),oind,compact,symmetric); }
+    FX jacobianQQQ(int iind, const std::string& oind, bool compact=false, bool symmetric=false) { return jacobianQQQ(iind,outputSchemeEntry(oind),compact,symmetric); }
+    FX jacobianQQQ(const std::string& iind, const std::string& oind, bool compact=false, bool symmetric=false) { return jacobianQQQ(inputSchemeEntry(iind),outputSchemeEntry(oind),compact,symmetric); }
     //@}
 
     /** Set the Jacobian function of output oind with respect to input iind
      NOTE: Does _not_ take ownership, only weak references to the Jacobians are kept internally */
-    void setJacobian(const FX& jac, int iind=0, int oind=0, bool compact=false);
+    void setJacobianQQQ(const FX& jac, int iind=0, int oind=0, bool compact=false);
     
     //@{
     /** \brief Generate a gradient function of output oind with respect to input iind
@@ -211,11 +211,11 @@ namespace CasADi{
 
     /** \brief Generate a Jacobian function of all the inputs elements with respect to all the output elements).
      */
-    FX fullJacobian();
+    FX fullJacobianQQQ();
 
     /** Set the Jacobian of all the input nonzeros with respect to all output nonzeros
      NOTE: Does _not_ take ownership, only weak references to the Jacobian are kept internally */
-    void setFullJacobian(const FX& jac);
+    void setFullJacobianQQQ(const FX& jac);
 
 #ifndef SWIG
     /** \brief  Create a function call (single input) */

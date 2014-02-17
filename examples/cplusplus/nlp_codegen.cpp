@@ -91,12 +91,12 @@ int main(){
   grad_f.init();
 
   // Jacobian of the constraints
-  FX jac_g = nlp.jacobian("x","g");
+  FX jac_g = nlp.jacobianQQQ("x","g");
   jac_g.init();
 
   // Hessian of the lagrangian
   FX grad_lag = nlp.derivative(0,1);
-  FX hess_lag = grad_lag.jacobian(NL_X,NL_NUM_OUT+NL_X,false,true);
+  FX hess_lag = grad_lag.jacobianQQQ(NL_X,NL_NUM_OUT+NL_X,false,true);
   hess_lag.init();
 
   // Codegen and compile

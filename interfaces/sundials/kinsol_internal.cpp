@@ -54,7 +54,7 @@ namespace CasADi{
   }
 
   KinsolInternal* KinsolInternal::clone() const{
-    KinsolInternal* node = new KinsolInternal(f_,jac_,linsol_);
+    KinsolInternal* node = new KinsolInternal(f_,jacQQQ_,linsolQQQ_);
     node->setOption(dictionary());
     return node;
   }
@@ -202,10 +202,10 @@ namespace CasADi{
       // Add a preconditioner
       if(bool(getOption("use_preconditioner"))){
         // Make sure that a Jacobian has been provided
-        casadi_assert_message(!jac_.isNull(),"No Jacobian has been provided");
+        casadi_assert_message(!jacQQQ_.isNull(),"No Jacobian has been provided");
 
         // Make sure that a linear solver has been providided
-        casadi_assert_message(!linsol_.isNull(), "No linear solver has been provided.");
+        casadi_assert_message(!linsolQQQ_.isNull(), "No linear solver has been provided.");
 
         // Pass to IDA
         flag = KINSpilsSetPreconditioner(mem_, psetup_wrapper, psolve_wrapper);
@@ -214,10 +214,10 @@ namespace CasADi{
     
     } else if(getOption("linear_solver_type")=="user_defined") {
       // Make sure that a Jacobian has been provided
-      casadi_assert(!jac_.isNull());
+      casadi_assert(!jacQQQ_.isNull());
 
       // Make sure that a linear solver has been providided
-      casadi_assert(!linsol_.isNull());
+      casadi_assert(!linsolQQQ_.isNull());
 
       // Set fields in the IDA memory
       KINMem kin_mem = KINMem(mem_);
@@ -358,31 +358,31 @@ namespace CasADi{
     time1_ = clock();
 
     // Pass inputs to the jacobian function
-    jac_.setInput(NV_DATA_S(u),iin_);
+    jacQQQ_.setInput(NV_DATA_S(u),iin_);
     for(int i=0; i<getNumInputs(); ++i)
-      if(i!=iin_) jac_.setInput(input(i),i);
+      if(i!=iin_) jacQQQ_.setInput(input(i),i);
 
     // Evaluate
-    jac_.evaluate();
+    jacQQQ_.evaluate();
 
     if(monitored("eval_djac")){
-      cout << "djac = " << jac_.output() << endl;
+      cout << "djac = " << jacQQQ_.output() << endl;
     }
   
     // Get sparsity and non-zero elements
-    const vector<int>& colind = jac_.output().colind();
-    const vector<int>& row = jac_.output().row();
-    const vector<double>& val = jac_.output().data();
+    const vector<int>& colind = jacQQQ_.output().colind();
+    const vector<int>& row = jacQQQ_.output().row();
+    const vector<double>& val = jacQQQ_.output().data();
 
-    // Loop over cols
-    for(int i=0; i<colind.size()-1; ++i){
+    // Loop over columns
+    for(int cc=0; cc<colind.size()-1; ++cc){
       // Loop over non-zero entries
-      for(int el=colind[i]; el<colind[i+1]; ++el){
+      for(int el=colind[cc]; el<colind[cc+1]; ++el){
         // Get row
-        int j = row[el];
+        int rr = row[el];
       
         // Set the element
-        DENSE_ELEM(J,i,j) = val[el];
+        DENSE_ELEM(J,rr,cc) = val[el];
       }
     }
   
@@ -413,28 +413,28 @@ namespace CasADi{
     time1_ = clock();
 
     // Pass inputs to the jacobian function
-    jac_.setInput(NV_DATA_S(u),iin_);
+    jacQQQ_.setInput(NV_DATA_S(u),iin_);
     for(int i=0; i<getNumInputs(); ++i)
-      if(i!=iin_) jac_.setInput(input(i),i);
+      if(i!=iin_) jacQQQ_.setInput(input(i),i);
 
     // Evaluate
-    jac_.evaluate();
+    jacQQQ_.evaluate();
   
     // Get sparsity and non-zero elements
-    const vector<int>& colind = jac_.output().colind();
-    const vector<int>& row = jac_.output().row();
-    const vector<double>& val = jac_.output().data();
+    const vector<int>& colind = jacQQQ_.output().colind();
+    const vector<int>& row = jacQQQ_.output().row();
+    const vector<double>& val = jacQQQ_.output().data();
 
     // Loop over cols
-    for(int i=0; i<colind.size()-1; ++i){
+    for(int cc=0; cc<colind.size()-1; ++cc){
       // Loop over non-zero entries
-      for(int el=colind[i]; el<colind[i+1]; ++el){
+      for(int el=colind[cc]; el<colind[cc+1]; ++el){
         // Get row
-        int j = row[el];
+        int rr = row[el];
       
         // Set the element
-        if(i-j>=-mupper && i-j<=mlower)
-          BAND_ELEM(J,i,j) = val[el];
+        if(rr-cc>=-mupper && rr-cc<=mlower)
+          BAND_ELEM(J,rr,cc) = val[el];
       }
     }
   
@@ -497,15 +497,15 @@ namespace CasADi{
     time1_ = clock();
 
     // Pass inputs
-    jac_.setInput(NV_DATA_S(u),iin_);
+    jacQQQ_.setInput(NV_DATA_S(u),iin_);
     for(int i=0; i<getNumInputs(); ++i)
-      if(i!=iin_) jac_.setInput(input(i),i);
+      if(i!=iin_) jacQQQ_.setInput(input(i),i);
 
     // Evaluate jacobian
-    jac_.evaluate();
+    jacQQQ_.evaluate();
 
     // Get a reference to the nonzeros of Jacobian
-    const vector<double>& Jdata = jac_.output().data();
+    const vector<double>& Jdata = jacQQQ_.output().data();
   
     // Make sure that all entries of the linear system are valid
     for(int k=0; k<Jdata.size(); ++k){
@@ -519,28 +519,28 @@ namespace CasADi{
         if(verbose()){
           
           // Print inputs
-          ss << "Input vector is " << jac_.input().data() << endl;
+          ss << "Input vector is " << jacQQQ_.input().data() << endl;
                 
-          // Get the col
-          int Jcol = jac_.output().sparsity().getCol().at(k);
+          // Get the column
+          int Jcol = jacQQQ_.output().sparsity().getCol().at(k);
 
           // Get the row
-          int Jrow = jac_.output().sparsity().row(k);
+          int Jrow = jacQQQ_.output().sparsity().row(k);
                 
           // Which equation
-          ss << "This corresponds to the derivative of equation " << Jcol << " with respect to the variable " << Jrow << "." << endl;
+          ss << "This corresponds to the derivative of equation " << Jrow << " with respect to the variable " << Jcol << "." << endl;
                 
-          // Print the expression for f[Jcol] if f is an SXFunction instance
+          // Print the expression for f[Jrow] if f is an SXFunction instance
           SXFunction f_sx = shared_cast<SXFunction>(f_);
           if(!f_sx.isNull()){
-            ss << "Variable " << Jrow << " = " << f_sx.inputExpr(0).at(Jrow) << endl;
-            ss << "Equation " << Jcol << " = " << f_sx.outputExpr(0).at(Jcol) << endl;
+            ss << "Variable " << Jcol << " = " << f_sx.inputExpr(0).at(Jcol) << endl;
+            ss << "Equation " << Jrow << " = " << f_sx.outputExpr(0).at(Jrow) << endl;
           }
                 
           // Print the expression for J[k] if J is an SXFunction instance
-          SXFunction jac_sx = shared_cast<SXFunction>(jac_);
+          SXFunction jac_sx = shared_cast<SXFunction>(jacQQQ_);
           if(!jac_sx.isNull()){
-            ss << "J[" << Jcol << "," << Jrow << "] = " << jac_sx.outputExpr(0).at(k) << endl;
+            ss << "J[" << Jrow << "," << Jcol << "] = " << jac_sx.outputExpr(0).at(k) << endl;
           }
         }
 
@@ -553,10 +553,10 @@ namespace CasADi{
     t_lsetup_jac_ += double(time2_-time1_)/CLOCKS_PER_SEC;
 
     // Pass non-zero elements, scaled by -gamma, to the linear solver
-    linsol_.setInput(jac_.output(),LINSOL_A);
+    linsolQQQ_.setInput(jacQQQ_.output(),LINSOL_A);
 
     // Prepare the solution of the linear system (e.g. factorize) -- only if the linear solver inherits from LinearSolver
-    linsol_.prepare();
+    linsolQQQ_.prepare();
 
     // Log time duration
     time1_ = clock();
@@ -580,7 +580,7 @@ namespace CasADi{
     time1_ = clock();
 
     // Solve the factorized system 
-    linsol_.solve(NV_DATA_S(v),1,true);
+    linsolQQQ_.solve(NV_DATA_S(v),1,false);
   
     // Log time duration
     time2_ = clock();

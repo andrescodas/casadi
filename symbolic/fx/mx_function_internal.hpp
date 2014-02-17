@@ -74,7 +74,7 @@ namespace CasADi{
     void generateLiftingFunctions(MXFunction& vdef_fcn, MXFunction& vinit_fcn);
 
     /** \brief Generate a function that calculates a Jacobian function by operator overloading */
-    virtual FX getNumericJacobian(int iind, int oind, bool compact, bool symmetric);
+    virtual FX getNumericJacobianQQQ(int iind, int oind, bool compact, bool symmetric);
     
     /** \brief  An elemenent of the algorithm, namely an MX node */
     typedef MXAlgEl AlgEl;

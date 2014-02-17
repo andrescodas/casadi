@@ -86,7 +86,7 @@ namespace CasADi{
     virtual FX getTangent(int iind, int oind);
 
     /** \brief Return Jacobian function  */
-    virtual FX getJacobian(int iind, int oind, bool compact, bool symmetric);
+    virtual FX getJacobianQQQ(int iind, int oind, bool compact, bool symmetric);
 
     /** \brief Generate a function that calculates nfdir forward derivatives and nadir adjoint derivatives */
     virtual FX getDerivative(int nfdir, int nadir);
@@ -890,11 +890,11 @@ namespace CasADi{
   }
 
   template<typename PublicType, typename DerivedType, typename MatType, typename NodeType>
-  FX XFunctionInternal<PublicType,DerivedType,MatType,NodeType>::getJacobian(int iind, int oind, bool compact, bool symmetric){
+  FX XFunctionInternal<PublicType,DerivedType,MatType,NodeType>::getJacobianQQQ(int iind, int oind, bool compact, bool symmetric){
     // Return function expression
     std::vector<MatType> ret_out;
     ret_out.reserve(1+outputv_.size());
-    ret_out.push_back(trans(jac(iind,oind,compact,symmetric)));
+    ret_out.push_back(jac(iind,oind,compact,symmetric));
     ret_out.insert(ret_out.end(),outputv_.begin(),outputv_.end());
   
     // Return function

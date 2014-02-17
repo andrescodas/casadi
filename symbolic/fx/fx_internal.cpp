@@ -73,7 +73,7 @@ namespace CasADi{
         }
       }
     }
-    full_jacobian_ = getcopy(full_jacobian_,already_copied);
+    full_jacobianQQQ_ = getcopy(full_jacobianQQQ_,already_copied);
   }
 
   void FXInternal::init(){
@@ -86,7 +86,7 @@ namespace CasADi{
 
     // Resize the matrix that holds the sparsity of the Jacobian blocks
     jac_sparsity_ = jac_sparsity_compact_ = Matrix<CCSSparsity>::sparse(getNumOutputs(),getNumInputs());
-    jac_ = jac_compact_ = Matrix<WeakRef>::sparse(getNumOutputs(),getNumInputs());
+    jacQQQ_ = jacQQQ_compact_ = Matrix<WeakRef>::sparse(getNumOutputs(),getNumInputs());
   
     if(hasSetOption("user_data")){
       user_data_ = getOption("user_data").toVoidPointer();
@@ -273,7 +273,7 @@ namespace CasADi{
   
     // Return the Jacobian of the gradient, exploiting symmetry (the gradient has output index 0)
     log("FXInternal::getHessian generating Jacobian of gradient");
-    return g.jacobian(iind,0,false,true);
+    return g.jacobianQQQ(iind,0,false,true);
   }
   
   void FXInternal::log(const string& msg) const{
@@ -1426,10 +1426,10 @@ namespace CasADi{
     }
   }
 
-  FX FXInternal::jacobian(int iind, int oind, bool compact, bool symmetric){
+  FX FXInternal::jacobianQQQ(int iind, int oind, bool compact, bool symmetric){
 
     // Return value
-    WeakRef cached = compact ? jac_compact_.elem(oind,iind) : jac_.elem(oind,iind);
+    WeakRef cached = compact ? jacQQQ_compact_.elem(oind,iind) : jacQQQ_.elem(oind,iind);
     
     // Check if cached
     if(cached.alive()){
@@ -1438,7 +1438,7 @@ namespace CasADi{
 
     } else {
       // Generate a Jacobian
-      FX ret = getJacobian(iind,oind,compact,symmetric);
+      FX ret = getJacobianQQQ(iind,oind,compact,symmetric);
       
       // Give it a suitable name
       stringstream ss;
@@ -1459,21 +1459,21 @@ namespace CasADi{
       ret.setOutputScheme(ionames);
       
       // Save in cache
-      compact ? jac_compact_.elem(oind,iind) : jac_.elem(oind,iind) = ret;
+      compact ? jacQQQ_compact_.elem(oind,iind) : jacQQQ_.elem(oind,iind) = ret;
       return ret;
     }
   }
 
-  void FXInternal::setJacobian(const FX& jac, int iind, int oind, bool compact){
+  void FXInternal::setJacobianQQQ(const FX& jac, int iind, int oind, bool compact){
     if(compact){
-      jac_compact_.elem(oind,iind) = jac;
+      jacQQQ_compact_.elem(oind,iind) = jac;
     } else {
-      jac_.elem(oind,iind) = jac;
+      jacQQQ_.elem(oind,iind) = jac;
     }
   }
 
-  FX FXInternal::getJacobian(int iind, int oind, bool compact, bool symmetric){
-    return getNumericJacobian(iind,oind,compact,symmetric);
+  FX FXInternal::getJacobianQQQ(int iind, int oind, bool compact, bool symmetric){
+    return getNumericJacobianQQQ(iind,oind,compact,symmetric);
   }
 
   FX FXInternal::derivative(int nfwd, int nadj){
@@ -1654,7 +1654,7 @@ namespace CasADi{
   }
 
   FX FXInternal::getDerivative(int nfwd, int nadj){
-    if(full_jacobian_.alive()){
+    if(full_jacobianQQQ_.alive()){
       return getDerivativeViaJac(nfwd,nadj);
     }
 
@@ -1663,7 +1663,7 @@ namespace CasADi{
 
   FX FXInternal::getDerivativeViaJac(int nfwd, int nadj){
     // Get, possibly generate, a full Jacobian function
-    FX jfcn = fullJacobian();
+    FX jfcn = fullJacobianQQQ();
 
     // Number of inputs and outputs
     const int n_in = getNumInputs();
@@ -1672,7 +1672,7 @@ namespace CasADi{
     // Get an expression for the full Jacobian
     vector<MX> arg = symbolicInput();
     vector<MX> res = jfcn.call(arg);
-    MX J = res.front();
+    MX J = trans(res.front());
     res.erase(res.begin());
 
     // Make room for the derivatives
@@ -1832,23 +1832,23 @@ namespace CasADi{
     evalSX(arg,res,fseed,fsens,aseed,asens);
   }
 
-  FX FXInternal::getNumericJacobian(int iind, int oind, bool compact, bool symmetric){
+  FX FXInternal::getNumericJacobianQQQ(int iind, int oind, bool compact, bool symmetric){
     FX f = wrapMXFunction();
     f.init();
-    return f->getNumericJacobian(iind,oind,compact,symmetric);
+    return f->getNumericJacobianQQQ(iind,oind,compact,symmetric);
   }
 
-  FX FXInternal::fullJacobian(){
-    if(full_jacobian_.alive()){
+  FX FXInternal::fullJacobianQQQ(){
+    if(full_jacobianQQQ_.alive()){
       // Return cached Jacobian
-      return shared_cast<FX>(full_jacobian_.shared());
+      return shared_cast<FX>(full_jacobianQQQ_.shared());
     } else {
       // Generate a new Jacobian
       FX ret;
       if(getNumInputs()==1 && getNumOutputs()==1){
-        ret = jacobian(0,0,true,false);
+        ret = jacobianQQQ(0,0,true,false);
       } else {
-        ret = getFullJacobian();
+        ret = getFullJacobianQQQ();
 
         // Give it a suitable name
         stringstream ss;
@@ -1873,12 +1873,12 @@ namespace CasADi{
       }
 
       // Return and cache it for reuse
-      full_jacobian_ = ret;
+      full_jacobianQQQ_ = ret;
       return ret;
     }
   }
 
-  FX FXInternal::getFullJacobian(){
+  FX FXInternal::getFullJacobianQQQ(){
     // Symbolic inputs and outputs of the full Jacobian function under construction
     vector<MX> jac_argv = symbolicInput(), jac_resv;
 
@@ -1938,7 +1938,7 @@ namespace CasADi{
     f.init();
 
     // Form an expression for the full Jacobian
-    MX J = trans(f.jac());
+    MX J = f.jac();
     
     // Append to list of outputs
     resv.insert(resv.begin(),J);

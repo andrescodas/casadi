@@ -138,16 +138,16 @@ namespace CasADi{
 
     //@{
     /** \brief Return Jacobian function */
-    FX jacobian(int iind, int oind, bool compact, bool symmetric);
-    void setJacobian(const FX& jac, int iind, int oind, bool compact);
-    virtual FX getJacobian(int iind, int oind, bool compact, bool symmetric);
-    virtual FX getNumericJacobian(int iind, int oind, bool compact, bool symmetric);
+    FX jacobianQQQ(int iind, int oind, bool compact, bool symmetric);
+    void setJacobianQQQ(const FX& jac, int iind, int oind, bool compact);
+    virtual FX getJacobianQQQ(int iind, int oind, bool compact, bool symmetric);
+    virtual FX getNumericJacobianQQQ(int iind, int oind, bool compact, bool symmetric);
     //@}
     
     //@{
     /** \brief Return Jacobian of all input elements with respect to all output elements */
-    FX fullJacobian();
-    virtual FX getFullJacobian();
+    FX fullJacobianQQQ();
+    virtual FX getFullJacobianQQQ();
     //@}
 
     //@{
@@ -328,13 +328,13 @@ namespace CasADi{
     std::vector<std::vector<WeakRef> > derivative_fcn_;
 
     /// Cache for full Jacobian
-    WeakRef full_jacobian_;
+    WeakRef full_jacobianQQQ_;
 
     /// Cache for sparsities of the Jacobian blocks
     Matrix<CCSSparsity> jac_sparsity_, jac_sparsity_compact_;
 
     /// Cache for Jacobians
-    Matrix<WeakRef> jac_, jac_compact_;
+    Matrix<WeakRef> jacQQQ_, jacQQQ_compact_;
 
     /// User-set field
     void* user_data_;
