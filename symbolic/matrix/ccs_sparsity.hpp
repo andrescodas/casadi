@@ -354,6 +354,9 @@ namespace CasADi{
     /// Is dense?
     bool dense() const;
     
+    /// Is vector (i.e. size2()==1)
+    bool vector() const{ return size2()==1; }
+
     /// Is diagonal?
     bool diagonal() const;
     

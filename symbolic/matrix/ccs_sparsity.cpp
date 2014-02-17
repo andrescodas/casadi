@@ -34,7 +34,7 @@ namespace CasADi{
   class EmptySparsity : public CCSSparsity{  
   public:
     EmptySparsity(){
-      vector<int> colind(1,0), row;
+      std::vector<int> colind(1,0), row;
       assignNode(new CCSSparsityInternal(0,0,colind,row));
     }
   };
@@ -42,7 +42,7 @@ namespace CasADi{
   class ScalarSparsity : public CCSSparsity{  
   public:
     ScalarSparsity(){
-      vector<int> colind(2),row(1,0);
+      std::vector<int> colind(2),row(1,0);
       colind[0] = 0;
       colind[1] = 1;
       assignNode(new CCSSparsityInternal(1,1,colind,row));
@@ -52,7 +52,7 @@ namespace CasADi{
   class ScalarSparseSparsity : public CCSSparsity{  
   public:
     ScalarSparseSparsity(){
-      vector<int> colind(2,0), row;
+      std::vector<int> colind(2,0), row;
       assignNode(new CCSSparsityInternal(1,1,colind,row));
     }
   };
@@ -68,7 +68,7 @@ namespace CasADi{
   }
 
   CCSSparsity::CCSSparsity(int nrow, int ncol, bool dense){
-    vector<int> row, colind(ncol+1,0);
+    std::vector<int> row, colind(ncol+1,0);
     if(dense){
       row.resize(ncol*nrow);
       colind.resize(ncol+1);
@@ -82,7 +82,7 @@ namespace CasADi{
     assignCached(nrow, ncol, colind, row);
   }
 
-  CCSSparsity::CCSSparsity(int nrow, int ncol, const vector<int>& colind, const vector<int>& row){
+  CCSSparsity::CCSSparsity(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row){
     assignCached(nrow, ncol, colind, row);
   }
 
@@ -103,12 +103,12 @@ namespace CasADi{
     return dynamic_cast<const CCSSparsityInternal*>(get())!=0;
   }
 
-  int CCSSparsity::size2() const{
-    return (*this)->ncol_;
-  }
-    
   int CCSSparsity::size1() const{
     return (*this)->nrow_;
+  }
+
+  int CCSSparsity::size2() const{
+    return (*this)->ncol_;
   }
     
   int CCSSparsity::numel() const{
@@ -131,20 +131,20 @@ namespace CasADi{
     return (*this)->shape();
   }
     
-  const vector<int>& CCSSparsity::row() const{
+  const std::vector<int>& CCSSparsity::row() const{
     return (*this)->row_;
   }
     
-  const vector<int>& CCSSparsity::colind() const{
+  const std::vector<int>& CCSSparsity::colind() const{
     return (*this)->colind_;
   }
     
-  vector<int>& CCSSparsity::rowRef(){
+  std::vector<int>& CCSSparsity::rowRef(){
     makeUnique();
     return (*this)->row_;
   }
     
-  vector<int>& CCSSparsity::colindRef(){
+  std::vector<int>& CCSSparsity::colindRef(){
     makeUnique();
     return (*this)->colind_;
   }
@@ -178,8 +178,8 @@ namespace CasADi{
   
     // Quick return if we are adding an element to the end
     if(colind(i)==size() || (colind(i+1)==size() && row().back()<j)){
-      vector<int>& rowv = rowRef();
-      vector<int>& colindv = colindRef();
+      std::vector<int>& rowv = rowRef();
+      std::vector<int>& colindv = colindRef();
       rowv.push_back(j);
       for(int ii=i; ii<size2(); ++ii){
         colindv[ii+1]++;
@@ -221,7 +221,7 @@ namespace CasADi{
     return (*this)->reshape(nrow,ncol);
   }
 
-  vector<int> CCSSparsity::getNZ(const vector<int>& jj, const vector<int>& ii) const{
+  std::vector<int> CCSSparsity::getNZ(const std::vector<int>& jj, const std::vector<int>& ii) const{
     return (*this)->getNZ(jj,ii);
   }
 
@@ -249,11 +249,11 @@ namespace CasADi{
     return (*this)->triu();
   }
 
-  CCSSparsity CCSSparsity::sub(const vector<int>& jj, const vector<int>& ii, vector<int>& mapping) const{
+  CCSSparsity CCSSparsity::sub(const std::vector<int>& jj, const std::vector<int>& ii, std::vector<int>& mapping) const{
     return (*this)->sub(jj,ii,mapping);
   }
 
-  vector<int> CCSSparsity::erase(const vector<int>& jj, const vector<int>& ii){
+  std::vector<int> CCSSparsity::erase(const std::vector<int>& jj, const std::vector<int>& ii){
     makeUnique();
     return (*this)->erase(jj,ii);
   }
@@ -274,7 +274,7 @@ namespace CasADi{
     return (*this)->getCol();
   }
 
-  void CCSSparsity::getSparsityCCS(vector<int>& colind, vector<int>& row) const{
+  void CCSSparsity::getSparsityCCS(std::vector<int>& colind, std::vector<int>& row) const{
     colind = this->colind();
     row = this->row();
   }
@@ -284,12 +284,12 @@ namespace CasADi{
   }
     
 
-  void CCSSparsity::getSparsity(vector<int>& row, vector<int>& col) const{
+  void CCSSparsity::getSparsity(std::vector<int>& row, std::vector<int>& col) const{
     row = this->row();
     col = this->getCol();
   }
 
-  CCSSparsity CCSSparsity::transpose(vector<int>& mapping, bool invert_mapping) const{
+  CCSSparsity CCSSparsity::transpose(std::vector<int>& mapping, bool invert_mapping) const{
     return (*this)->transpose(mapping,invert_mapping);
   }
 
@@ -297,7 +297,7 @@ namespace CasADi{
     return (*this)->transpose();
   }
 
-  CCSSparsity CCSSparsity::patternCombine(const CCSSparsity& y, bool f0x_is_zero, bool fx0_is_zero, vector<unsigned char>& mapping) const{
+  CCSSparsity CCSSparsity::patternCombine(const CCSSparsity& y, bool f0x_is_zero, bool fx0_is_zero, std::vector<unsigned char>& mapping) const{
     return (*this)->patternCombine(y, f0x_is_zero, fx0_is_zero, mapping);
   }
 
@@ -305,7 +305,7 @@ namespace CasADi{
     return (*this)->patternCombine(y, f0x_is_zero, fx0_is_zero);
   }
 
-  CCSSparsity CCSSparsity::patternUnion(const CCSSparsity& y, vector<unsigned char>& mapping) const{
+  CCSSparsity CCSSparsity::patternUnion(const CCSSparsity& y, std::vector<unsigned char>& mapping) const{
     return (*this)->patternCombine(y, false, false, mapping);
   }
 
@@ -313,7 +313,7 @@ namespace CasADi{
     return (*this)->patternCombine(y, false, false);
   }
 
-  CCSSparsity CCSSparsity::patternIntersection(const CCSSparsity& y, vector<unsigned char>& mapping) const{
+  CCSSparsity CCSSparsity::patternIntersection(const CCSSparsity& y, std::vector<unsigned char>& mapping) const{
     return (*this)->patternCombine(y, true, true, mapping);
   }
 
@@ -325,7 +325,7 @@ namespace CasADi{
     return (*this)->patternProduct(y);
   }
 
-  CCSSparsity CCSSparsity::patternProduct(const CCSSparsity& y_trans, vector< vector< pair<int,int> > >& mapping) const{
+  CCSSparsity CCSSparsity::patternProduct(const CCSSparsity& y_trans, std::vector< std::vector< pair<int,int> > >& mapping) const{
     return (*this)->patternProduct(y_trans,mapping);
   }
 
@@ -381,7 +381,7 @@ namespace CasADi{
     return ret;
   }
 
-  void CCSSparsity::enlarge(int nrow, int ncol, const vector<int>& jj, const vector<int>& ii){
+  void CCSSparsity::enlarge(int nrow, int ncol, const std::vector<int>& jj, const std::vector<int>& ii){
     enlargeColumns(ncol,ii);
     enlargeRows(nrow,jj);
   }
@@ -404,13 +404,13 @@ namespace CasADi{
     CCSSparsity ret(m,n);
   
     // Set rows
-    vector<int> &c = ret.rowRef();
+    std::vector<int> &c = ret.rowRef();
     c.resize(min(n,m));
     for(int i=0; i<c.size(); ++i)
       c[i] = i;
   
     // Set col indices
-    vector<int> &r = ret.colindRef();
+    std::vector<int> &r = ret.colindRef();
     for(int i=0; i<n && i<m; ++i)
       r[i] = i;
   
@@ -424,7 +424,7 @@ namespace CasADi{
     return (*this)->makeDense(mapping);
   }
 
-  std::string CCSSparsity::dimString()         const { 
+  std::string CCSSparsity::dimString() const { 
     return (*this)->dimString();
   }
 
