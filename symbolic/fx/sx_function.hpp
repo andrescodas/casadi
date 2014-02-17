@@ -108,10 +108,10 @@ namespace CasADi{
      *
      * \see CasADi::Jacobian for an AD approach
      */
-    SXMatrix jacQQQ(int iind=0, int oind=0, bool compact=false, bool symmetric=false);
-    SXMatrix jacQQQ(const std::string& iname, int oind=0, bool compact=false, bool symmetric=false) { return jacQQQ(inputSchemeEntry(iname),oind,compact,symmetric); } 
-    SXMatrix jacQQQ(int iind, const std::string& oname, bool compact=false, bool symmetric=false) { return jacQQQ(iind,outputSchemeEntry(oname),compact,symmetric); } 
-    SXMatrix jacQQQ(const std::string& iname, const std::string& oname, bool compact=false, bool symmetric=false) { return jacQQQ(inputSchemeEntry(iname),outputSchemeEntry(oname),compact,symmetric); } 
+    SXMatrix jac(int iind=0, int oind=0, bool compact=false, bool symmetric=false);
+    SXMatrix jac(const std::string& iname, int oind=0, bool compact=false, bool symmetric=false) { return jac(inputSchemeEntry(iname),oind,compact,symmetric); } 
+    SXMatrix jac(int iind, const std::string& oname, bool compact=false, bool symmetric=false) { return jac(iind,outputSchemeEntry(oname),compact,symmetric); } 
+    SXMatrix jac(const std::string& iname, const std::string& oname, bool compact=false, bool symmetric=false) { return jac(inputSchemeEntry(iname),outputSchemeEntry(oname),compact,symmetric); } 
     //@}
    
     //@{

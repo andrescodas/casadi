@@ -387,11 +387,11 @@ namespace CasADi{
     lgrad.init();
   
     // Jacobian of the constraints
-    MX jac = trans(lgrad.jacQQQ(mod_x_,mod_g_));
+    MX jac = trans(lgrad.jac(mod_x_,mod_g_));
     log("Formed Jacobian of the constraints.");
 
     // Hessian of the Lagrangian
-    MX hes = lgrad.jacQQQ(mod_x_,mod_gl_,false,!gauss_newton_);
+    MX hes = lgrad.jac(mod_x_,mod_gl_,false,!gauss_newton_);
     if(gauss_newton_){
       log("Formed square root of Gauss-Newton Hessian.");
     } else {

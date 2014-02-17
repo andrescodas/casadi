@@ -834,7 +834,7 @@ void SymbolicOCP::scaleEquations(){
   xz.append(v[PF]);
   xz.append(v[U]);
   SXFunction fcn = SXFunction(xz,ode);
-  SXFunction J(v,trans(fcn.jacQQQ()));
+  SXFunction J(v,trans(fcn.jac()));
 
   // Evaluate the Jacobian in the starting point
   J.init();
@@ -999,7 +999,7 @@ void SymbolicOCP::makeExplicit(){
   f.init();
 
   // Get the Jacobian
-  SXMatrix J = trans(f.jacQQQ());
+  SXMatrix J = trans(f.jac());
   
   // Block variables and equations
   vector<Variable> xb, xdb, xab;
@@ -1091,7 +1091,7 @@ void SymbolicOCP::eliminateAlgebraic(){
   f.init();
 
   // Get the Jacobian
-  SXMatrix J = trans(f.jacQQQ());
+  SXMatrix J = trans(f.jac());
   
   // Block variables and equations
   vector<Variable> zb;

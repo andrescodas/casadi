@@ -162,7 +162,7 @@ namespace CasADi{
     if(verbose()){
       cout << "SXFunctionInternal::hess: calculating Jacobian " << endl;
     }
-    SXMatrix ret = gfcn.jacQQQ(0,0,false,true);
+    SXMatrix ret = gfcn.jac(0,0,false,true);
     if(verbose()){
       cout << "SXFunctionInternal::hess: calculating Jacobian done" << endl;
     }

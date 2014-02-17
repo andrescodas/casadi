@@ -922,7 +922,7 @@ namespace CasADi{
   MX jacobian(const MX& ex, const MX &arg) {
     MXFunction temp(arg,ex); // make a runtime
     temp.init();
-    return trans(temp.jacQQQ());
+    return trans(temp.jac());
   }
 
   MX gradient(const MX& ex, const MX &arg) {

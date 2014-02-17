@@ -120,8 +120,8 @@ int MXFunction::countNodes() const{
   return algorithm().size();
 }
 
-MX MXFunction::jacQQQ(int iind, int oind, bool compact, bool symmetric){
-  return (*this)->jacQQQ(iind,oind,compact,symmetric);
+MX MXFunction::jac(int iind, int oind, bool compact, bool symmetric){
+  return (*this)->jac(iind,oind,compact,symmetric);
 }
 
 MX MXFunction::grad(int iind, int oind){

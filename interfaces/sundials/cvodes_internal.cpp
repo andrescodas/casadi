@@ -1793,7 +1793,7 @@ namespace CasADi{
     // Get the Jacobian in the Newton iteration
     typename FunctionType::MatType c_x = FunctionType::MatType::sym("c_x");
     typename FunctionType::MatType c_xdot = FunctionType::MatType::sym("c_xdot");
-    typename FunctionType::MatType jac = c_x*f.jacQQQ(DAE_X,DAE_ODE) + c_xdot*FunctionType::MatType::eye(nx_);
+    typename FunctionType::MatType jac = c_x*f.jac(DAE_X,DAE_ODE) + c_xdot*FunctionType::MatType::eye(nx_);
   
     // Jacobian function
     std::vector<typename FunctionType::MatType> jac_in = f.inputExpr();
@@ -1812,7 +1812,7 @@ namespace CasADi{
     // Get the Jacobian in the Newton iteration
     typename FunctionType::MatType c_x = FunctionType::MatType::sym("c_x");
     typename FunctionType::MatType c_xdot = FunctionType::MatType::sym("c_xdot");
-    typename FunctionType::MatType jac = c_x*g.jacQQQ(RDAE_RX,RDAE_ODE) + c_xdot*FunctionType::MatType::eye(nrx_);
+    typename FunctionType::MatType jac = c_x*g.jac(RDAE_RX,RDAE_ODE) + c_xdot*FunctionType::MatType::eye(nrx_);
     
     // Jacobian function
     std::vector<typename FunctionType::MatType> jac_in = g.inputExpr();

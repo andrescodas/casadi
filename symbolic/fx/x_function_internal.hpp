@@ -77,7 +77,7 @@ namespace CasADi{
     MatType tang(int iind=0, int oind=0);
   
     /** \brief  Construct a complete Jacobian by compression */
-    MatType jacQQQ(int iind=0, int oind=0, bool compact=false, bool symmetric=false, bool always_inline=true, bool never_inline=false);
+    MatType jac(int iind=0, int oind=0, bool compact=false, bool symmetric=false, bool always_inline=true, bool never_inline=false);
 
     /** \brief Return gradient function  */
     virtual FX getGradient(int iind, int oind);
@@ -563,7 +563,7 @@ namespace CasADi{
   }
 
   template<typename PublicType, typename DerivedType, typename MatType, typename NodeType>
-  MatType XFunctionInternal<PublicType,DerivedType,MatType,NodeType>::jacQQQ(int iind, int oind, bool compact, bool symmetric, bool always_inline, bool never_inline){
+  MatType XFunctionInternal<PublicType,DerivedType,MatType,NodeType>::jac(int iind, int oind, bool compact, bool symmetric, bool always_inline, bool never_inline){
     using namespace std;
     if(verbose()) std::cout << "XFunctionInternal::jac begin" << std::endl;
     
@@ -894,7 +894,7 @@ namespace CasADi{
     // Return function expression
     std::vector<MatType> ret_out;
     ret_out.reserve(1+outputv_.size());
-    ret_out.push_back(trans(jacQQQ(iind,oind,compact,symmetric)));
+    ret_out.push_back(trans(jac(iind,oind,compact,symmetric)));
     ret_out.insert(ret_out.end(),outputv_.begin(),outputv_.end());
   
     // Return function

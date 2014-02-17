@@ -158,7 +158,7 @@ class SXtests(casadiTestCase):
       x0=array([[0.738]])
 
       def fmod(f,x):
-        j=f.jacQQQ().T
+        j=f.jac().T
         J=SXFunction(x,[j])
         J.init()
         return J
