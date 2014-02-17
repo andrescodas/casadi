@@ -28,8 +28,8 @@
 
 namespace CasADi{
 
-/// Internal class
-class QPSolverInternal : public FXInternal{
+  /// Internal class
+  class QPSolverInternal : public FXInternal{
   public:
 
     // Constructor
@@ -66,7 +66,7 @@ class QPSolverInternal : public FXInternal{
     
     /// The number of constraints (counting both equality and inequality) == A.size2()
     int nc_; 
-};
+  };
 
 
 } // namespace CasADi
