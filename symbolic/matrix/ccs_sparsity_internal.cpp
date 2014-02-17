@@ -2024,6 +2024,10 @@ namespace CasADi{
     return ncol_ == nrow_;
   }
 
+  bool CCSSparsityInternal::symmetric() const{
+    return isTranspose(*this);
+  }
+
   int CCSSparsityInternal::sizeL() const{
     int nnz = 0;
     for(int r=0; r<ncol_; ++r){

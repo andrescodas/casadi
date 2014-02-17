@@ -241,6 +241,10 @@ namespace CasADi{
     return (*this)->square();
   }
 
+  bool CCSSparsity::symmetric() const{
+    return (*this)->symmetric();
+  }
+
   bool CCSSparsity::tril() const{
     return (*this)->tril();
   }

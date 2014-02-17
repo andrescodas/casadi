@@ -170,6 +170,9 @@ namespace CasADi{
     /// Is square?
     bool square() const;
 
+    /// Is symmetric?
+    bool symmetric() const;
+
     /// Is lower triangular?
     bool tril() const;
 
