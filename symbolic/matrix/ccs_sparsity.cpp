@@ -503,13 +503,8 @@ namespace CasADi{
     (*this)->spyMatlab(mfile);
   }
 
-  void CCSSparsity::spy(std::ostream &stream) const {
-    for (int i=0;i<size2();++i) {
-      for (int j=0;j<size1();++j) {
-        stream << (getNZ(j,i)==-1? "." : "*");
-      }
-      stream << std::endl;
-    }
+  void CCSSparsity::spy(std::ostream &stream) const{
+    (*this)->spy(stream);
   }
 
   bool CCSSparsity::isTranspose(const CCSSparsity& y) const{

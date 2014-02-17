@@ -3410,6 +3410,30 @@ namespace CasADi{
     return true;
   }
 
+  void CCSSparsityInternal::spy(std::ostream &stream) const {
+
+    // Index counter for each column
+    std::vector<int> cind = colind_;
+  
+    // Loop over rows
+    for(int rr=0; rr<nrow_; ++rr){
+      
+      // Loop over columns
+      for(int cc=0; cc<ncol_; ++cc){
+        // Check if nonzero
+        if(cind[cc]<colind_[cc+1] && row_[cind[cc]]==rr){
+          stream << "*";
+          cind[cc]++;
+        } else {
+          stream << ".";
+        }
+      }
+      
+      // End of row
+      stream << endl;
+    }
+  }
+
   void CCSSparsityInternal::spyMatlab(const std::string& mfile_name) const{
     // Create the .m file
     ofstream mfile;

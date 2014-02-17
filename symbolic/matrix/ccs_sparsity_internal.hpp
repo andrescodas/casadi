@@ -289,9 +289,13 @@ namespace CasADi{
 
     /// Permute rows and/or columns
     CCSSparsity pmult(const std::vector<int>& p, bool permute_rows=true, bool permute_cols=true, bool invert_permutation=false) const;
+
+    /** \brief Print a textual representation of sparsity */
+    void spy(std::ostream &stream) const;
     
     /// Generate a script for Matlab or Octave which visualizes the sparsity using the spy command
     void spyMatlab(const std::string& mfile) const;
+
  private: 
     /// Time complexity: O(ii.size()*jj.size())
     CCSSparsity sub1(const std::vector<int>& jj, const std::vector<int>& ii, std::vector<int>& mapping) const;
