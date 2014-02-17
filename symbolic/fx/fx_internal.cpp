@@ -1938,7 +1938,7 @@ namespace CasADi{
     f.init();
 
     // Form an expression for the full Jacobian
-    MX J = f.jac();
+    MX J = trans(f.jacQQQ());
     
     // Append to list of outputs
     resv.insert(resv.begin(),J);

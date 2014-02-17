@@ -133,10 +133,10 @@ public:
   
   //@{
   /** \brief Jacobian via source code transformation */
-  MX jac(int iind=0, int oind=0, bool compact=false, bool symmetric=false);
-  MX jac(const std::string & iname, int oind=0, bool compact=false, bool symmetric=false) { return jac(inputSchemeEntry(iname),oind,compact,symmetric); }
-  MX jac(int iind, const std::string & oname, bool compact=false, bool symmetric=false) { return jac(iind,outputSchemeEntry(oname),compact,symmetric); }
-  MX jac(const std::string & iname, const std::string & oname, bool compact=false, bool symmetric=false) { return jac(inputSchemeEntry(iname),outputSchemeEntry(oname),compact,symmetric); }
+  MX jacQQQ(int iind=0, int oind=0, bool compact=false, bool symmetric=false);
+  MX jacQQQ(const std::string & iname, int oind=0, bool compact=false, bool symmetric=false) { return jacQQQ(inputSchemeEntry(iname),oind,compact,symmetric); }
+  MX jacQQQ(int iind, const std::string & oname, bool compact=false, bool symmetric=false) { return jacQQQ(iind,outputSchemeEntry(oname),compact,symmetric); }
+  MX jacQQQ(const std::string & iname, const std::string & oname, bool compact=false, bool symmetric=false) { return jacQQQ(inputSchemeEntry(iname),outputSchemeEntry(oname),compact,symmetric); }
   //@}
   
   //@{

@@ -104,8 +104,8 @@ bool SXFunction::checkNode() const{
   return dynamic_cast<const SXFunctionInternal*>(get())!=0;
 }
 
-SXMatrix SXFunction::jac(int iind, int oind, bool compact, bool symmetric){
-  return (*this)->jac(iind,oind,compact,symmetric);
+SXMatrix SXFunction::jacQQQ(int iind, int oind, bool compact, bool symmetric){
+  return (*this)->jacQQQ(iind,oind,compact,symmetric);
 }
 
 SXMatrix SXFunction::grad(int iind, int oind){

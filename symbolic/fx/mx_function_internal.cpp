@@ -580,7 +580,7 @@ namespace CasADi{
     // Create expressions for the Jacobian
     vector<MX> ret_out;
     ret_out.reserve(1+outputv_.size());
-    ret_out.push_back(jac(iind,oind,compact,symmetric,false,true));
+    ret_out.push_back(trans(jacQQQ(iind,oind,compact,symmetric,false,true)));
     ret_out.insert(ret_out.end(),outputv_.begin(),outputv_.end());
   
     MXFunction ret(inputv_,ret_out);

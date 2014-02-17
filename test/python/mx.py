@@ -1125,21 +1125,21 @@ class MXtests(casadiTestCase):
     V =  msym("V")
     f =  MXFunction([X,V],[X,MX.eye(3)])
     f.init()
-    self.assertTrue(isinstance(f.jac(0,0),MX))
-    self.assertEqual(f.jac(0,0).size(),10)
-    self.assertEqual(f.jac(0,0).size2(),10)
-    self.assertEqual(f.jac(0,0).size1(),10)
+    self.assertTrue(isinstance(f.jacQQQ(0,0),MX))
+    self.assertEqual(f.jacQQQ(0,0).size(),10)
+    self.assertEqual(f.jacQQQ(0,0).size1(),10)
+    self.assertEqual(f.jacQQQ(0,0).size2(),10)
     
-    g = MXFunction([],[f.jac(0,0)]);g.init();g.evaluate()
+    g = MXFunction([],[f.jacQQQ(0,0).T]);g.init();g.evaluate()
     self.checkarray(g.getOutput(),eye(10),"unit matrix")
     
-    g = MXFunction([],[f.jac(0,1)]);g.init();g.evaluate()
+    g = MXFunction([],[f.jacQQQ(0,1).T]);g.init();g.evaluate()
     self.checkarray(g.getOutput(),zeros((9,10)),"zero matrix")
     
-    g = MXFunction([],[f.jac(1,0)]);g.init();g.evaluate()
+    g = MXFunction([],[f.jacQQQ(1,0).T]);g.init();g.evaluate()
     self.checkarray(g.getOutput(),zeros((10,1)),"zero matrix")
     
-    g = MXFunction([],[f.jac(1,1)]);g.init();g.evaluate()
+    g = MXFunction([],[f.jacQQQ(1,1).T]);g.init();g.evaluate()
     self.checkarray(g.getOutput(),zeros((9,1)),"zero matrix")
     
   def test_MXd_substractionl(self):
@@ -1149,19 +1149,19 @@ class MXtests(casadiTestCase):
     f =  MXFunction([X,V],[X-V])
     f.init()
     
-    g = MXFunction([],[f.jac(0,0)]);g.init();g.evaluate()
+    g = MXFunction([],[f.jacQQQ(0,0).T]);g.init();g.evaluate()
     self.checkarray(g.getOutput(),ones((1,1)),"one")
 
-    g = MXFunction([],[f.jac(1,0)]);g.init();g.evaluate()
+    g = MXFunction([],[f.jacQQQ(1,0).T]);g.init();g.evaluate()
     self.checkarray(g.getOutput(),-ones((1,1)),"one")
     
     f =  MXFunction([X,V],[V-X])
     f.init()
     
-    g = MXFunction([],[f.jac(0,0)]);g.init();g.evaluate()
+    g = MXFunction([],[f.jacQQQ(0,0).T]);g.init();g.evaluate()
     self.checkarray(g.getOutput(),-ones((1,1)),"one")
 
-    g = MXFunction([],[f.jac(1,0)]);g.init();g.evaluate()
+    g = MXFunction([],[f.jacQQQ(1,0).T]);g.init();g.evaluate()
     self.checkarray(g.getOutput(),ones((1,1)),"one")
     
   def test_MXd_mapping(self):
@@ -1170,10 +1170,10 @@ class MXtests(casadiTestCase):
     Y = msym("Y",1,2)
     f = MXFunction([X,Y],[horzcat([X,Y])])
     f.init()
-    J = f.jac(0,0)
+    J = f.jacQQQ(0,0).T
     JJ = DMatrix(J.sparsity(),1)
     self.checkarray(JJ,vstack((eye(3),zeros((2,3)))),"diag")
-    J = f.jac(1,0)
+    J = f.jacQQQ(1,0).T
     JJ = DMatrix(J.sparsity(),1)
     self.checkarray(JJ,vstack((zeros((3,2)),eye(2))),"diag")
     
@@ -1595,7 +1595,7 @@ class MXtests(casadiTestCase):
 
     self.checkarray(IMatrix([0,1,9,4,16,25]),ff.getOutput())
     
-    J = MXFunction([X],[f.jac()])
+    J = MXFunction([X],[f.jacQQQ().T])
     J.init()
     J.setInput(range(10))
     J.evaluate()
@@ -1609,7 +1609,7 @@ class MXtests(casadiTestCase):
     f.setOption("ad_mode","reverse")
     f.init()
     
-    J = MXFunction([X],[f.jac()])
+    J = MXFunction([X],[f.jacQQQ().T])
     J.init()
     J.setInput(range(10))
     J.evaluate()
@@ -1641,7 +1641,7 @@ class MXtests(casadiTestCase):
 
     self.checkarray(IMatrix([16,4]),ff.getOutput())
     
-    J = MXFunction([X],[f.jac()])
+    J = MXFunction([X],[f.jacQQQ().T])
     J.init()
     J.setInput(range(10))
     J.evaluate()
@@ -1656,7 +1656,7 @@ class MXtests(casadiTestCase):
     f.setOption("ad_mode","reverse")
     f.init()
     
-    J = MXFunction([X],[f.jac()])
+    J = MXFunction([X],[f.jacQQQ().T])
     J.init()
     J.setInput(range(10))
     J.evaluate()

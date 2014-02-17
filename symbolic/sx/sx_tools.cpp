@@ -428,7 +428,7 @@ SXMatrix tangent(const SXMatrix& ex, const SXMatrix &arg) {
 SXMatrix jacobian(const SXMatrix& ex, const SXMatrix &arg) {
   SXFunction temp(arg,ex); // make a runtime
   temp.init();
-  return temp.jac();
+  return trans(temp.jacQQQ());
 }
 
 void hessian(const SXMatrix& ex, const SXMatrix &arg, SXMatrix &H, SXMatrix &g) {
@@ -436,7 +436,7 @@ void hessian(const SXMatrix& ex, const SXMatrix &arg, SXMatrix &H, SXMatrix &g) 
 
   SXFunction temp(arg,g); // make a runtime
   temp.init();
-  H = temp.jac(0,0,false,true);
+  H = temp.jacQQQ(0,0,false,true);
 }
 
 SXMatrix hessian(const SXMatrix& ex, const SXMatrix &arg) {
@@ -904,7 +904,7 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
       fcnb.init();
             
       // Write the equation in matrix form
-      SXMatrix Jb = fcnb.jac();
+      SXMatrix Jb = fcnb.jacQQQ();
       SXMatrix rb = -fcnb.eval(SXMatrix::zeros(1,xb_lin.size()));
       
       // Simple solve if there are no nonlinear variables
@@ -916,7 +916,7 @@ void makeSemiExplicit(const SXMatrix& f, const SXMatrix& x, SXMatrix& fe, SXMatr
           rb /= Jb;
         } else {
           // Solve system of equations
-          rb = trans(solve(trans(Jb),trans(rb)));
+          rb = trans(solve(Jb,trans(rb)));
         }
         
         // Substitute the already determined variables
@@ -1239,7 +1239,7 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
     bool success = false;
     for (int i=0;i<1000;++i) {
       ret.append(f.eval(casadi_limits<SX>::zero)/mult);
-      SXMatrix j = f.jac();
+      SXMatrix j = trans(f.jacQQQ());
       if (j.size()==0) {
         success = true;
         break;

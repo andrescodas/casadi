@@ -888,7 +888,7 @@ class Integrationtests(casadiTestCase):
     qe = MXFunction([q0,p],self.integrator.call(integratorIn(x0=q0,p=p)))
     qe.init()
 
-    JT = MXFunction([q0,p],[qe.jac(1,0)[0].T])
+    JT = MXFunction([q0,p],[qe.jacQQQ(1,0)[0]])
     JT.init()
     JT.setInput([num['q0']],0)
     JT.setInput([num['p']],1)
@@ -1232,7 +1232,7 @@ class Integrationtests(casadiTestCase):
     qe = MXFunction([q0,p],I.call(integratorIn(x0=q0,p=p)))
     qe.init()
 
-    JT = MXFunction([q0,p],[qe.jac(1,0).T])
+    JT = MXFunction([q0,p],[qe.jacQQQ(1,0)])
     JT.init()
 
     H  = JT.jacobian(1)
