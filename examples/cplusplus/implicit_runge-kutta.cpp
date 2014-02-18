@@ -45,14 +45,14 @@ int main(){
   int np = 1;
 
   // Declare variables
-  SXMatrix x  = ssym("x",1,nx);  // state
-  SXMatrix p  = ssym("u",1,np);  // control
+  SXMatrix x  = ssym("x",nx);  // state
+  SXMatrix p  = ssym("u",np);  // control
 
   // ODE right hand side function
   SXMatrix ode;
-  ode.appendColumns( (1 - x[1]*x[1])*x[0] - x[1] + p );
-  ode.appendColumns( x[0]                            );
-  ode.appendColumns( x[0]*x[0] + x[1]*x[1] + p*p     );
+  ode.append( (1 - x[1]*x[1])*x[0] - x[1] + p );
+  ode.append( x[0]                            );
+  ode.append( x[0]*x[0] + x[1]*x[1] + p*p     );
   SXFunction f(daeIn("x",x,"p",p),daeOut("ode",ode));
   f.init();
 
@@ -96,9 +96,9 @@ int main(){
   }
 
   // Total number of variables for one finite element
-  MX X0 = msym("X0",1,nx);
-  MX P  = msym("P",1,np);
-  MX V = msym("V",1,d*nx);
+  MX X0 = msym("X0",nx);
+  MX P  = msym("P",np);
+  MX V = msym("V",d*nx);
   
   // Get the state at each collocation point
   vector<MX> X(1,X0);
@@ -117,7 +117,7 @@ int main(){
     
     // Append collocation equations
     MX f_j = daeOut(f.call(daeIn("x",X[j],"p",P)),"ode").front();
-    V_eq.appendColumns(h*f_j - xp_j);
+    V_eq.append(h*f_j - xp_j);
   }
 
   // Root-finding function, implicitly defines V as a function of X0 and P

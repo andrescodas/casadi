@@ -120,7 +120,7 @@ int main(){
   integrator.init();
 
   // control for all segments
-  MX U = msym("U",1,nu); 
+  MX U = msym("U",nu); 
 
   // Integrate over all intervals
   MX X=X0;
@@ -143,7 +143,7 @@ int main(){
   MX F = inner_prod(U,U);
 
   // Terminal constraints
-  MX G = horzcat(X[0],X[1]);
+  MX G = vertcat(X[0],X[1]);
   
   // Create the NLP
   MXFunction nlp(nlpIn("x",U),nlpOut("f",F,"g",G));

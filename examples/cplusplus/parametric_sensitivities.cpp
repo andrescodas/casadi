@@ -56,16 +56,16 @@ int main(){
   SXMatrix f = x[0]*x[0] + x[1]*x[1] + x[2]*x[2];
   
   // Constraints
-  SXMatrix g = horzcat(
+  SXMatrix g = vertcat(
        6*x[0] + 3*x[1] + 2*x[2] - p[0],
     p[1]*x[0] +   x[1] -   x[2] -    1
   );
   
   // Augment the parameters to the list of variables
-  x = horzcat(x,p);
+  x = vertcat(x,p);
   
   // Fix the parameters by additional equations
-  g = horzcat(g,p);
+  g = vertcat(g,p);
   
   // Infinity
   double inf = numeric_limits<double>::infinity();

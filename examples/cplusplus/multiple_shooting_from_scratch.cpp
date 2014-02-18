@@ -55,13 +55,13 @@ int main(){
   // Declare variables
   SXMatrix u = ssym("u"); // control
   SXMatrix r = ssym("r"), s = ssym("s"); // states
-  SXMatrix x = horzcat(r,s);
+  SXMatrix x = vertcat(r,s);
 
   // Number of differential states
-  int nx = x.size2();
+  int nx = x.size1();
   
   // Number of controls
-  int nu = u.size2();
+  int nu = u.size1();
 
   // Bounds and initial guess for the control
   double u_min[] =  { -0.75 };
@@ -84,7 +84,7 @@ int main(){
   int ns = 50;
 
   // ODE right hand side and quadrature
-  SXMatrix ode = horzcat((1 - s*s)*r - s + u, r);
+  SXMatrix ode = vertcat((1 - s*s)*r - s + u, r);
   SXMatrix quad = r*r + s*s + u*u;
   SXFunction rhs(daeIn("x",x,"p",u),daeOut("ode",ode,"quad",quad));
 
@@ -98,7 +98,7 @@ int main(){
   int NV = nx*(ns+1) + nu*ns;
   
   // Declare variable vector for the NLP
-  MX V = msym("V",1,NV);
+  MX V = msym("V",NV);
 
   // NLP variable bounds and initial guess
   vector<double> v_min,v_max,v_init;
@@ -163,7 +163,7 @@ int main(){
   }
   
   // NLP 
-  MXFunction nlp(nlpIn("x",V),nlpOut("f",J,"g",horzcat(g)));
+  MXFunction nlp(nlpIn("x",V),nlpOut("f",J,"g",vertcat(g)));
   
   // Create an NLP solver instance
   IpoptSolver nlp_solver(nlp);

@@ -54,16 +54,16 @@ int main(){
   SXMatrix L = ssym("cost");
   
   // All states
-  SXMatrix states = SXMatrix::zeros(1,3);
-  states(0,0) = x;
-  states(0,1) = y;
-  states(0,2) = L;
+  SXMatrix states = SXMatrix::zeros(3);
+  states(0) = x;
+  states(1) = y;
+  states(2) = L;
 
   //ODE right hand side
-  SXMatrix f = SXMatrix::zeros(1,3);
-  f(0,0) = (1 - y*y)*x - y + u;
-  f(0,1) = x;
-  f(0,2) = x*x + y*y + u*u;
+  SXMatrix f = SXMatrix::zeros(3);
+  f(0) = (1 - y*y)*x - y + u;
+  f(1) = x;
+  f(2) = x*x + y*y + u*u;
   
   // DAE residual
   SXFunction res(daeIn("x",states, "p",u),daeOut("ode",f));
@@ -92,7 +92,7 @@ int main(){
   int nu = 1;
   
   // Mayer objective function
-  Matrix<SX> xf = ssym("xf",1,nx);
+  Matrix<SX> xf = ssym("xf",nx,1);
   SXFunction mterm(xf, xf[nx-1]);
 
   // Create a multiple shooting discretization
@@ -138,12 +138,12 @@ int main(){
 
   // Initial condition
   ms.input("lbx")(0,0) = ms.input("ubx")(0,0) = 0;
-  ms.input("lbx")(0,1) = ms.input("ubx")(0,1) = 1;
-  ms.input("lbx")(0,2) = ms.input("ubx")(0,2) = 0;
+  ms.input("lbx")(1,0) = ms.input("ubx")(1,0) = 1;
+  ms.input("lbx")(2,0) = ms.input("ubx")(2,0) = 0;
 
   // Final condition
-  ms.input("lbx")(ns,0) = ms.input("ubx")(ns,0) = 0; 
-  ms.input("lbx")(ns,1) = ms.input("ubx")(ns,1) = 0; 
+  ms.input("lbx")(0,ns) = ms.input("ubx")(0,ns) = 0; 
+  ms.input("lbx")(1,ns) = ms.input("ubx")(1,ns) = 0; 
   
   // Solve the problem
   ms.solve();

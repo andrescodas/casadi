@@ -85,7 +85,7 @@ int main(){
   integrator_options["tf"]=ocp.tf/num_nodes;
 
   // Mayer objective function
-  SXMatrix xf = ssym("xf",1,x.size());
+  SXMatrix xf = ssym("xf",x.size(),1);
   SXFunction mterm(xf, xf[0]);
   
   // DAE residual function
@@ -116,24 +116,24 @@ int main(){
 
   // Initial condition
   for(int i=0; i<x.size(); ++i){
-    ocp_solver.input("x_init")(0,i) = ocp_solver.input("lbx")(0,i) = ocp_solver.input("ubx")(0,i) = x0[i];
+    ocp_solver.input("x_init")(i,0) = ocp_solver.input("lbx")(i,0) = ocp_solver.input("ubx")(i,0) = x0[i];
   }
 
   // State bounds
   for(int k=1; k<=num_nodes; ++k){
     for(int i=0; i<x.size(); ++i){
-      ocp_solver.input("x_init")(k,i) = x0[i];
-      ocp_solver.input("lbx")(k,i) = xmin[i];
-      ocp_solver.input("ubx")(k,i) = xmax[i];
+      ocp_solver.input("x_init")(i,k) = x0[i];
+      ocp_solver.input("lbx")(i,k) = xmin[i];
+      ocp_solver.input("ubx")(i,k) = xmax[i];
     }
   }
 
   // Control bounds
   for(int k=0; k<num_nodes; ++k){
     for(int i=0; i<u.size(); ++i){
-      ocp_solver.input("u_init")(k,i) = u0[i];
-      ocp_solver.input("lbu")(k,i) = umin[i];
-      ocp_solver.input("ubu")(k,i) = umax[i];
+      ocp_solver.input("u_init")(i,k) = u0[i];
+      ocp_solver.input("lbu")(i,k) = umin[i];
+      ocp_solver.input("ubu")(i,k) = umax[i];
     }
   }
 

@@ -53,12 +53,12 @@ FX create_integrator(int nj, int nu){
 
   // State vector
   SXMatrix x, x0;
-  x.appendColumns(s);
-  x.appendColumns(v);
-  x.appendColumns(m);
-  x0.appendColumns(s0);
-  x0.appendColumns(v0);
-  x0.appendColumns(m0);
+  x.append(s);
+  x.append(v);
+  x.append(m);
+  x0.append(s0);
+  x0.append(v0);
+  x0.append(m0);
 
   // Integrator
   vector<SXMatrix> input(2);
@@ -82,7 +82,7 @@ int main(){
   FX integrator = create_integrator(nj,nu);
 
   // PART 2: CONSTRUCT THE NLP
-  MX U = msym("U",1,nu); // control for all segments
+  MX U = msym("U",nu); // control for all segments
  
   // Initial position
   vector<double> X0(3);
@@ -106,7 +106,7 @@ int main(){
   MX F = inner_prod(U,U);
 
   // Terminal constraints
-  MX G = horzcat(X[0],X[1]);
+  MX G = vertcat(X[0],X[1]);
   
   // Create the NLP
   MXFunction nlp(nlpIn("x",U),nlpOut("f",F,"g",G));

@@ -62,7 +62,7 @@ int main(){
   MX eq = trajectoryVal;
   
   // Objective residual
-  MX objRes = horzcat(objResv);
+  MX objRes = vertcat(objResv);
   
   // Objective value
   MX obj = inner_prod(objRes,objRes);

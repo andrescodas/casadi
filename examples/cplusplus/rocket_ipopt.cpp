@@ -39,7 +39,7 @@ int main(){
   int nj = 100; // Number of integration steps per control segment
 
   // optimization variable
-  SXMatrix u = ssym("u",1,nu); // control
+  SXMatrix u = ssym("u",nu); // control
 
   SXMatrix s_0 = 0; // initial position
   SXMatrix v_0 = 0; // initial speed
@@ -50,9 +50,9 @@ int main(){
   SXMatrix beta = 0.1; // fuel consumption rate
 
   // Trajectory
-  SXMatrix s_traj = SXMatrix::zeros(1,nu);
-  SXMatrix v_traj = SXMatrix::zeros(1,nu);
-  SXMatrix m_traj = SXMatrix::zeros(1,nu);
+  SXMatrix s_traj = SXMatrix::zeros(nu);
+  SXMatrix v_traj = SXMatrix::zeros(nu);
+  SXMatrix m_traj = SXMatrix::zeros(nu);
 
   // Integrate over the interval with Euler forward
   SXMatrix s = s_0, v = v_0, m = m_0;
@@ -72,9 +72,9 @@ int main(){
     
   // Terminal constraints
   SXMatrix g;
-  g.appendColumns(s);
-  g.appendColumns(v);
-  g.appendColumns(v_traj);
+  g.append(s);
+  g.append(v);
+  g.append(v_traj);
   
   // Create the NLP
   SXFunction nlp(nlpIn("x",u),nlpOut("f",f,"g",g));
