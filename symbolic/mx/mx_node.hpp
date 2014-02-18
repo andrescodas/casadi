@@ -193,10 +193,17 @@ namespace CasADi{
     virtual MX getOutput(int oind) const;
 
     /// Get the sparsity
-    const CCSSparsity& sparsity() const;
+    const CCSSparsity& sparsity() const{ return sparsity_;}
 
     /// Get the sparsity of output oind
     virtual const CCSSparsity& sparsity(int oind) const;
+
+    /// Get shape
+    int numel() const{ return sparsity().numel(); }
+    int size() const{ return sparsity().size(); }
+    int size1() const{ return sparsity().size1(); }
+    int size2() const{ return sparsity().size2(); }
+    std::pair<int,int> shape() const{ return sparsity().shape();}
     
     /** \brief Is the node nonlinear */
     virtual bool isNonLinear(){return false;}
@@ -227,18 +234,6 @@ namespace CasADi{
     
     /// Assign nonzeros (mapping matrix), output indices sequential
     virtual void assign(const MX& d, const std::vector<int>& inz, bool add=false);
-
-    /// Number of elements
-    int numel() const;
-    
-    /// Get size
-    int size() const;
-    
-    /// Get size
-    int size2() const;
-    
-    /// Get size
-    int size1() const;
 
     /// Convert scalar to matrix
     inline static MX toMatrix(const MX& x, const CCSSparsity& sp){

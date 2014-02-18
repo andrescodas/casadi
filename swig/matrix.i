@@ -81,8 +81,8 @@ def dot(self,*args):
     def shapeQQQ(self):
         return (self.size1(),self.size2())
         
-    def reshape(self,arg):
-        return _casadi_global.reshape(self,arg)
+    def reshapeQQQ(self,arg):
+        return _casadi_global.reshapeQQQ(self,arg)
         
     @property
     def T(self):

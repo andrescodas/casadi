@@ -169,34 +169,12 @@ namespace CasADi{
     return ret;
   }
 
-  CCSSparsity reshape(const CCSSparsity& a, int n, int m){
-    casadi_assert_message(a.numel() == n*m,
-                          "reshape: number of elements must remain the same." << endl <<
-                          "Input argument has shape " << a.size2() << " x " << a.size1() << " =  " << a.numel() << ", while you request a reshape to " <<
-                          n << " x " << m << " =  " << n*m
-                          );
-
-    // our strategy is: (row,colind) -> (row,col) -> modulus calculus -> (row_new, col_new) -> sp_NZ
-    std::vector<int> col = a.getCol();
-    const std::vector<int> &row = a.row();
-
-    std::vector<int> col_new(a.size());
-    std::vector<int> row_new(a.size());
-  
-    //  int i=0;int j=0; int z =0;
-    for(int k=0; k<a.size(); ++k){
-      int i = col[k];
-      int j = row[k];
-      int z = j+i*a.size1();
-      col_new[k] = z/m;
-      row_new[k] = z%m;
-    }
-  
-    return  sp_triplet(m,n,row_new,col_new);
+  CCSSparsity reshapeQQQ(const CCSSparsity& a, int nrow, int ncol){
+    return a.reshape(nrow,ncol);
   }
 
   CCSSparsity flatten(const CCSSparsity& a){
-    return reshape(trans(a),a.numel(),1);
+    return reshapeQQQ(trans(a),1,a.numel());
   }
 
   CCSSparsity trans(const CCSSparsity& a) {

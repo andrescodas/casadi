@@ -206,20 +206,18 @@ namespace CasADi{
       return x->getTranspose();
   }
 
-  MX reshape(const MX &x, const std::vector<int> sz){
-    if(sz.size() != 2)
-      throw CasadiException("MX::reshape: not two dimensions");
-    return reshape(x,sz[0],sz[1]);
+  MX reshapeQQQ(const MX &x, std::pair<int,int> rc){
+    return reshapeQQQ(x,rc.first,rc.second);
   }
 
-  MX reshape(const MX &x, int n, int m){
-    if(n==x.size2() && m==x.size1())
+  MX reshapeQQQ(const MX &x, int nrow, int ncol){
+    if(nrow==x.size1() && ncol==x.size2())
       return x;
     else
-      return reshape(x,x.sparsity().reshape(m,n));
+      return reshapeQQQ(x,x.sparsity().reshape(nrow,ncol));
   }
 
-  MX reshape(const MX &x, const CCSSparsity& sp){
+  MX reshapeQQQ(const MX &x, const CCSSparsity& sp){
     // quick return if already the right shape
     if(sp==x.sparsity())
       return x;
@@ -235,7 +233,7 @@ namespace CasADi{
     if(x.size1()==1){
       return x;
     } else {
-      return reshape(trans(x),x.numel(),1);
+      return reshapeQQQ(trans(x),1,x.numel());
     }
   }
 
@@ -243,7 +241,7 @@ namespace CasADi{
     if(x.size1()==1){
       return x;
     } else {
-      return reshape(x,x.numel(),1);
+      return reshapeQQQ(x,1,x.numel());
     }
   }
 
@@ -401,7 +399,7 @@ namespace CasADi{
   
     // Make the arguments dependent on the parent
     for (int k=0;k<deps.size();k++) {
-      deps[k] = reshape(P(0,range(index[k],index[k+1])),deps[k].sparsity());
+      deps[k] = reshapeQQQ(P(0,range(index[k],index[k+1])),deps[k].sparsity());
     }
   
     return P;
@@ -421,7 +419,7 @@ namespace CasADi{
   
     // Make the arguments dependent on the parent
     for (int k=0;k<deps.size();k++) {
-      ret[k] =  reshape(P(0,range(index[k],index[k+1])),deps[k]);
+      ret[k] =  reshapeQQQ(P(0,range(index[k],index[k+1])),deps[k]);
     }
   
     return std::pair< MX, std::vector<MX> > (P,ret);

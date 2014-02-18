@@ -98,13 +98,13 @@ namespace CasADi{
   Matrix<T> inv(const Matrix<T>& a);
 
   template<class T>
-  Matrix<T> reshape(const Matrix<T>& a, int n, int m);
+  Matrix<T> reshapeQQQ(const Matrix<T>& a, int nrow, int ncol);
 
   template<class T>
-  Matrix<T> reshape(const Matrix<T>& a, const std::vector<int> sz);
+  Matrix<T> reshapeQQQ(const Matrix<T>& a, std::pair<int,int> rc);
 
   template<class T>
-  Matrix<T> reshape(const Matrix<T>& a, const CCSSparsity& sp);
+  Matrix<T> reshapeQQQ(const Matrix<T>& a, const CCSSparsity& sp);
 
   template<class T>
   T trace(const Matrix<T>& a);
@@ -718,19 +718,18 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> reshape(const Matrix<T>& a, int n, int m){
-    CCSSparsity sp = a.sparsity().reshape(m,n);
+  Matrix<T> reshapeQQQ(const Matrix<T>& a, int nrow, int ncol){
+    CCSSparsity sp = a.sparsity().reshape(nrow,ncol);
     return Matrix<T>(sp,a.data());
   }
 
   template<class T>
-  Matrix<T> reshape(const Matrix<T>& a, const std::vector<int> sz){
-    casadi_assert_message(sz.size() == 2, "reshape: must be two dimensional");
-    return reshape(a,sz[0],sz[1]);
+  Matrix<T> reshapeQQQ(const Matrix<T>& a, std::pair<int,int> rc){
+    return reshapeQQQ(a,rc.first,rc.second);
   }
 
   template<class T>
-  Matrix<T> reshape(const Matrix<T>& x, const CCSSparsity& sp){
+  Matrix<T> reshapeQQQ(const Matrix<T>& x, const CCSSparsity& sp){
     // quick return if already the right shape
     if(sp==x.sparsity())
       return x;
@@ -753,13 +752,13 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> flatten(const Matrix<T>& a){
-    Matrix<T> ret = reshape(trans(a),a.numel(),1);
+    Matrix<T> ret = reshapeQQQ(trans(a),1,a.numel());
     return ret;
   }
 
   template<class T>
   Matrix<T> vec(const Matrix<T>& a){
-    Matrix<T> ret = reshape(a,a.numel(),1);
+    Matrix<T> ret = reshapeQQQ(a,1,a.numel());
     return ret;
   }
 
@@ -1550,7 +1549,7 @@ namespace CasADi{
   MTT_INST(T,cofactor)                          \
   MTT_INST(T,adj)                               \
   MTT_INST(T,inv)                               \
-  MTT_INST(T,reshape)                           \
+  MTT_INST(T,reshapeQQQ)                           \
   MTT_INST(T,flatten)                               \
   MTT_INST(T,vec)                           \
   MTT_INST(T,flattenNZ)                             \

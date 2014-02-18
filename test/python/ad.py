@@ -58,8 +58,8 @@ class ADtests(casadiTestCase):
             "dense":  [SXMatrix([x,y,z,w]).T],
             "sparse": [inp.T]
        }, "matrix": {
-          "dense": [c.reshape(SXMatrix([x,y,z,w]),2,2)],
-          "sparse": [c.reshape(inp,3,2)]
+          "dense": [c.reshapeQQQ(SXMatrix([x,y,z,w]),2,2)],
+          "sparse": [c.reshapeQQQ(inp,2,3)]
         }
     }
 
@@ -74,7 +74,7 @@ class ADtests(casadiTestCase):
         },
         "matrix": {
             "dense": [msym("xyzw",2,2)],
-            "sparse": [msym("xyzw",c.reshape(inp,3,2).sparsity())]
+            "sparse": [msym("xyzw",c.reshapeQQQ(inp,2,3).sparsity())]
         }
     }
     
@@ -106,8 +106,8 @@ class ADtests(casadiTestCase):
         "sparse": temp2
        },
        "matrix": {
-          "dense": lambda xyz: [c.reshape(horzcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]]),(2,2))],
-          "sparse": lambda xyz: [c.reshape(temp1(xyz)[0],(3,2))]
+          "dense": lambda xyz: [c.reshapeQQQ(horzcat([xyz[0],xyz[0]+2*xyz[1]**2,xyz[0]+2*xyz[1]**3+3*xyz[2]**4,xyz[3]]),(2,2))],
+          "sparse": lambda xyz: [c.reshapeQQQ(temp1(xyz)[0],(2,3))]
        }
     }
 
@@ -120,8 +120,8 @@ class ADtests(casadiTestCase):
           "dense":  [SXMatrix([x,x+2*y**2,x+2*y**3+3*z**4,w]).T],
           "sparse": [out.T]
       }, "matrix" : {
-          "dense":  [c.reshape(SXMatrix([x,x+2*y**2,x+2*y**3+3*z**4,w]),2,2)],
-          "sparse": [c.reshape(out,3,2)]
+          "dense":  [c.reshapeQQQ(SXMatrix([x,x+2*y**2,x+2*y**3+3*z**4,w]),2,2)],
+          "sparse": [c.reshapeQQQ(out,2,3)]
       }
     }
     
@@ -533,8 +533,8 @@ class ADtests(casadiTestCase):
           (in1,v1,x**2,2*c.diag(x)),
           (in1,v1,(x**2).attachAssert(True),2*c.diag(x)),
           (in1,v1,(x**2).T,2*c.diag(x)),
-          (in1,v1,c.reshape(x,(1,2)),DMatrix.eye(2)),
-          (in1,v1,c.reshape(x**2,(1,2)),2*c.diag(x)),
+          (in1,v1,c.reshapeQQQ(x,(2,1)),DMatrix.eye(2)),
+          (in1,v1,c.reshapeQQQ(x**2,(2,1)),2*c.diag(x)),
           (in1,v1,x+y[0],DMatrix.eye(2)),
           (in1,v1,x+x,2*DMatrix.eye(2)),
           (in1,v1,x**2+x,2*c.diag(x)+DMatrix.eye(2)),

@@ -1712,7 +1712,7 @@ namespace CasADi{
         // Split up the left hand sides
         d = horzsplit(d_all,offset);
         for(int i=0; i<n_out; ++i){
-          res.push_back(reshape(d[i],res[i].size2(),res[i].size1()));
+          res.push_back(reshapeQQQ(d[i],res[i].shape()));
         }
       }
     }
@@ -1749,7 +1749,7 @@ namespace CasADi{
         // Split up the left hand sides
         d = horzsplit(d_all,offset);
         for(int i=0; i<n_in; ++i){
-          res.push_back(reshape(d[i],arg[i].size2(),arg[i].size1()));
+          res.push_back(reshapeQQQ(d[i],arg[i].shape()));
         }
       }
     }
@@ -1913,7 +1913,7 @@ namespace CasADi{
       // Split up and fix shape
       argv = horzsplit(arg,col_offset);
       for(int i=0; i<getNumInputs(); ++i){
-        argv[i] = reshape(argv[i],input(i).sparsity());
+        argv[i] = reshapeQQQ(argv[i],input(i).sparsity());
       }
       
       // Evaluate symbolically
@@ -1928,7 +1928,7 @@ namespace CasADi{
       // Concatenate the outputs
       vector<MX> tmp = resv;
       for(vector<MX>::iterator i=tmp.begin(); i!=tmp.end(); ++i){
-        *i = reshape(*i,i->numel(),1);
+        *i = reshapeQQQ(*i,1,i->numel());
       }
       res = horzcat(tmp);
     }
@@ -1956,7 +1956,7 @@ namespace CasADi{
       // The inputs of J_simo in terms of jac_argv
       vector<MX> tmp = jac_argv;
       for(vector<MX>::iterator i=tmp.begin(); i!=tmp.end(); ++i){
-        *i = reshape(*i,i->numel(),1);
+        *i = reshapeQQQ(*i,1,i->numel());
       }
       MX J_simo_arg = horzcat(tmp);
 

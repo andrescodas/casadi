@@ -86,7 +86,7 @@ namespace CasADi{
     
     MX Pf = trans(solve(trans(A_total),trans(vec(horzcat(Vss_shift))),getOption("linear_solver")));
           
-    MX P = reshape(Pf,K_*n_,n_);
+    MX P = reshapeQQQ(Pf,n_,K_*n_);
     
     std::vector<MX> v_in;
     v_in.push_back(As);

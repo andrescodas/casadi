@@ -115,7 +115,7 @@ namespace CasADi{
   std::vector<int> getNZDense(const CCSSparsity& sp);
   
   
-  CCSSparsity reshape(const CCSSparsity& a, int n, int m);
+  CCSSparsity reshapeQQQ(const CCSSparsity& a, int nrow, int ncol);
   
   CCSSparsity flatten(const CCSSparsity& a);
   

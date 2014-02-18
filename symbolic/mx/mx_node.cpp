@@ -178,26 +178,6 @@ namespace CasADi{
     dep_ = dep;
   }
 
-  int MXNode::numel() const{
-    return sparsity_.numel();
-  }
-
-  int MXNode::size() const{
-    return sparsity_.size();
-  }
-
-  int MXNode::size2() const{
-    return sparsity_.size2();
-  }
-
-  int MXNode::size1() const{
-    return sparsity_.size1();
-  }
-
-  const CCSSparsity& MXNode::sparsity() const{
-    return sparsity_;
-  }
-
   const CCSSparsity& MXNode::sparsity(int oind) const{
     casadi_assert_message(oind==0, "Index out of bounds");
     return sparsity_;

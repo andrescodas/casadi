@@ -172,14 +172,14 @@ namespace CasADi{
 
 #ifndef SWIG
   //! \brief Returns a reshaped version of the MX
-  MX reshape(const MX &x, int n, int m);
+  MX reshapeQQQ(const MX &x, int nrow, int ncol);
 #endif // SWIG
 
   //! \brief Returns a reshaped version of the MX, dimensions as a vector
-  MX reshape(const MX &x, const std::vector<int> sz);
+  MX reshapeQQQ(const MX &x, std::pair<int,int> rc);
 
   //! \brief Reshape the MX
-  MX reshape(const MX &x, const CCSSparsity& sp);
+  MX reshapeQQQ(const MX &x, const CCSSparsity& sp);
 
   /** \brief Returns a vectorized version of the MX
       Vectorizing is an expensive operation, unlike vec

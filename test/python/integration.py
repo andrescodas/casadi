@@ -934,7 +934,7 @@ class Integrationtests(casadiTestCase):
     q=ssym("q",1,3)
     p=ssym("p",1,9)
     f_in = daeIn(t=t, x=q, p=p)
-    f_out = daeOut(ode=mul(q,c.reshape(p,3,3)))
+    f_out = daeOut(ode=mul(q,c.reshapeQQQ(p,3,3)))
     f=SXFunction(f_in,f_out)
     f.init()
     integrator = CVodesIntegrator(f)
@@ -969,7 +969,7 @@ class Integrationtests(casadiTestCase):
     q=ssym("q",1,3)
     p=ssym("p",1,9)
 
-    f=SXFunction(daeIn(t=t,x=q,p=p),daeOut(ode=mul(q,c.reshape(p,3,3))))
+    f=SXFunction(daeIn(t=t,x=q,p=p),daeOut(ode=mul(q,c.reshapeQQQ(p,3,3))))
     f.init()
 
     integrator = CVodesIntegrator(f)

@@ -186,7 +186,7 @@ class Sparsitytests(casadiTestCase):
       a.getNZ(i[1],i[0])
       
     A=self.tomatrix(a).toArray()
-    B=self.tomatrix(casadi.reshape(a,2,10)).toArray()
+    B=self.tomatrix(casadi.reshapeQQQ(a,10,2)).toArray()
     B_=numpy.reshape(A,(2,10))
     
     self.checkarray(B,B_,"reshape")
