@@ -41,8 +41,8 @@ class xcollection():
     
   def cat(self):
     if not hasattr(self,"catted"):
-      catter = flattencat if self._keepZeros else flattenNZcat
-      self.catted = self._postcatmodifier(catter([self._modifier(n) for n in self._tree.traverse()]))
+      catter = flattencatQQQ if self._keepZeros else flattenNZcatQQQ
+      self.catted = self._postcatmodifier(catter([self._modifier(n) for n in self._tree.traverse()]).T)
     return self.catted 
       
   def enumerate(self):

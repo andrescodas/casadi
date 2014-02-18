@@ -105,24 +105,24 @@ namespace CasADi{
     return vertcat(ab);
   }
 
-  MX flattencat(const vector<MX>& comp) {
-        MX (&f)(const MX&) = flatten;
-    return horzcat(applymap(f,comp));
+  MX flattencatQQQ(const vector<MX>& comp) {
+        MX (&f)(const MX&) = flattenQQQ;
+    return vertcat(applymap(f,comp));
   }
 
-  MX flattenNZcat(const vector<MX>& comp) {
-    MX (&f)(const MX&) = flattenNZ;
-    return horzcat(applymap(flattenNZ,comp));
+  MX flattenNZcatQQQ(const vector<MX>& comp) {
+    MX (&f)(const MX&) = flattenNZQQQ;
+    return vertcat(applymap(flattenNZQQQ,comp));
   }
   
-  MX veccat(const vector<MX>& comp) {
-        MX (&f)(const MX&) = vec;
-    return horzcat(applymap(f,comp));
+  MX veccatQQQ(const vector<MX>& comp) {
+        MX (&f)(const MX&) = vecQQQ;
+    return vertcat(applymap(f,comp));
   }
 
-  MX vecNZcat(const vector<MX>& comp) {
-    MX (&f)(const MX&) = vecNZ;
-    return horzcat(applymap(vecNZ,comp));
+  MX vecNZcatQQQ(const vector<MX>& comp) {
+    MX (&f)(const MX&) = vecNZQQQ;
+    return vertcat(applymap(vecNZQQQ,comp));
   }
 
   MX norm_2(const MX &x){
@@ -229,35 +229,35 @@ namespace CasADi{
     return x->getReshape(sp);
   }
 
-  MX flatten(const MX &x) {
-    if(x.size1()==1){
+  MX flattenQQQ(const MX &x) {
+    if(x.size2()==1){
       return x;
     } else {
-      return reshape(trans(x),1,x.numel());
+      return reshape(trans(x),x.numel(),1);
     }
   }
 
-  MX vec(const MX& x) {
-    if(x.size1()==1){
+  MX vecQQQ(const MX& x) {
+    if(x.size2()==1){
       return x;
     } else {
-      return reshape(x,1,x.numel());
+      return reshape(x,x.numel(),1);
     }
   }
 
-  MX flattenNZ(const MX& x) {
+  MX flattenNZQQQ(const MX& x) {
     if(x.dense()){
-      return flatten(x);
+      return flattenQQQ(x);
     } else {
-      return trans(x)->getGetNonzeros(sp_dense(1,x.size()),range(x.size()));
+      return trans(x)->getGetNonzeros(sp_dense(x.size(),1),range(x.size()));
     }
   }
   
-  MX vecNZ(const MX& x) {
+  MX vecNZQQQ(const MX& x) {
     if(x.dense()){
-      return vec(x);
+      return vecQQQ(x);
     } else {
-      return x->getGetNonzeros(sp_dense(1,x.size()),range(x.size()));
+      return x->getGetNonzeros(sp_dense(x.size(),1),range(x.size()));
     }
   }
 

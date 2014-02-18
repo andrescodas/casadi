@@ -520,7 +520,7 @@ class SDPtests(casadiTestCase):
       g = []
       g.append(sum([-Fi[i]*x[i] for i in range(3)]) + G - P)
 
-      nlp = SXFunction(nlpIn(x=V),nlpOut(f=mul(x,c.T),g=flattencat(g)))
+      nlp = SXFunction(nlpIn(x=V),nlpOut(f=mul(x,c.T),g=flattencatQQQ(g).T))
 
       sol = IpoptSolver(nlp)
       sol.init()

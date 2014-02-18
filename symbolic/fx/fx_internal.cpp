@@ -1702,7 +1702,7 @@ namespace CasADi{
           arg.push_back(msym(ss.str(),arg[i].sparsity()));
 
           // Add to the right-hand-side under construction
-          d.push_back(vec(arg.back()));
+          d.push_back(trans(vecQQQ(arg.back())));
         }
         MX d_all = horzcat(d);
         
@@ -1739,7 +1739,7 @@ namespace CasADi{
           arg.push_back(msym(ss.str(),res[i].sparsity()));
 
           // Add to the right-hand-side under construction
-          d.push_back(vec(arg.back()));
+          d.push_back(trans(vecQQQ(arg.back())));
         }
         MX d_all = horzcat(d);
         

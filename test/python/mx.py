@@ -396,12 +396,12 @@ class MXtests(casadiTestCase):
 
     U = msym("u",u.shapeQQQ)
 
-    f = MXFunction([U],[flatten(U)])
+    f = MXFunction([U],[flattenQQQ(U).T])
     f.init()
     f.setInput(u)
     f.evaluate()
     
-    self.checkarray(flatten(u),f.getOutput(),"flatten")
+    self.checkarray(flattenQQQ(u).T,f.getOutput(),"flatten")
     
   def test_MXflattenNZ(self):
 
@@ -414,12 +414,12 @@ class MXtests(casadiTestCase):
     
     U = msym("u",u.sparsity())
 
-    f = MXFunction([U],[flattenNZ(U)])
+    f = MXFunction([U],[flattenNZQQQ(U).T])
     f.init()
     f.setInput(u)
     f.evaluate()
     
-    self.checkarray(flattenNZ(u),f.getOutput(),"flatten")
+    self.checkarray(flattenNZQQQ(u).T,f.getOutput(),"flatten")
 
   def test_MXreshape(self):
     self.message("reshape(MX)")
@@ -443,8 +443,8 @@ class MXtests(casadiTestCase):
     checkMXoperations(self,lambda x: x,lambda x: x,'horzcat')
     checkMXoperations(self,lambda x: trans(x),lambda x: x.T,'trans(horzcat)')
     checkMXoperations(self,lambda x: trans(trans(x)),lambda x: x,'trans(trans(horzcat))')
-    checkMXoperations(self,lambda x: flatten(trans(x)),lambda x: reshape(x,(prod(x.shape),1)),'flatten(trans(horzcat))')
-    checkMXoperations(self,lambda x: trans(flatten(x)),lambda x: reshape(x.T,(prod(x.shape),1)).T,'flatten(trans(horzcat))')
+    checkMXoperations(self,lambda x: flattenQQQ(trans(x)).T,lambda x: reshape(x,(prod(x.shape),1)),'flatten(trans(horzcat))')
+    checkMXoperations(self,lambda x: flattenQQQ(x),lambda x: reshape(x.T,(prod(x.shape),1)).T,'flatten(trans(horzcat))')
     checkMXoperations(self,lambda x: c.reshape(x,(6,4)),lambda x: reshape(x,(4,6)),'reshape(horzcat)')
     checkMXoperations(self,lambda x: c.reshape(trans(x),(6,4)),lambda x: reshape(x.T,(4,6)),'reshape(trans(horzcat))') 
     checkMXoperations(self,lambda x: trans(c.reshape(x,(6,4))),lambda x: reshape(x,(4,6)).T,'trans(reshape(horzcat))') 
@@ -454,8 +454,8 @@ class MXtests(casadiTestCase):
     checkMXoperations2(self,lambda x: x,lambda x: x,'vertcat')
     checkMXoperations2(self,lambda x: trans(x),lambda x: x.T,'trans(vertcat)')
     checkMXoperations2(self,lambda x: trans(trans(x)),lambda x: x,'trans(trans(vertcat))')
-    checkMXoperations2(self,lambda x: flatten(trans(x)),lambda x: reshape(x,(prod(x.shape),1)),'flatten(trans(vertcat))')
-    checkMXoperations2(self,lambda x: trans(flatten(x)),lambda x: reshape(x.T,(prod(x.shape),1)).T,'flatten(trans(vertcat))')
+    checkMXoperations2(self,lambda x: flattenQQQ(trans(x)).T,lambda x: reshape(x,(prod(x.shape),1)),'flatten(trans(vertcat))')
+    checkMXoperations2(self,lambda x: flattenQQQ(x),lambda x: reshape(x.T,(prod(x.shape),1)).T,'flatten(trans(vertcat))')
     checkMXoperations2(self,lambda x: c.reshape(x,(6,4)),lambda x: reshape(x,(4,6)),'reshape(vertcat)')
     checkMXoperations2(self,lambda x: c.reshape(trans(x),(6,4)),lambda x: reshape(x.T,(4,6)),'reshape(trans(vertcat))') 
     checkMXoperations2(self,lambda x: trans(c.reshape(x,(6,4))),lambda x: reshape(x,(4,6)).T,'trans(reshape(vertcat))') 
@@ -465,8 +465,8 @@ class MXtests(casadiTestCase):
     checkMXoperations3(self,lambda x: x,lambda x: x,'snippet')
     checkMXoperations3(self,lambda x: trans(x),lambda x: x.T,'trans(snippet)')
     checkMXoperations3(self,lambda x: trans(trans(x)),lambda x: x,'trans(trans(snippet))')
-    checkMXoperations3(self,lambda x: flatten(trans(x)),lambda x: reshape(x,(prod(x.shape),1)),'flatten(trans(snippet))')
-    checkMXoperations3(self,lambda x: trans(flatten(x)),lambda x: reshape(x.T,(prod(x.shape),1)).T,'flatten(trans(snippet))')
+    checkMXoperations3(self,lambda x: flattenQQQ(trans(x)).T,lambda x: reshape(x,(prod(x.shape),1)),'flatten(trans(snippet))')
+    checkMXoperations3(self,lambda x: flattenQQQ(x),lambda x: reshape(x.T,(prod(x.shape),1)).T,'flatten(trans(snippet))')
     checkMXoperations3(self,lambda x: c.reshape(x,(6,4)),lambda x: reshape(x,(4,6)),'reshape(snippet)')
     checkMXoperations3(self,lambda x: c.reshape(trans(x),(6,4)),lambda x: reshape(x.T,(4,6)),'reshape(trans(snippet))') 
     checkMXoperations3(self,lambda x: trans(c.reshape(x,(6,4))),lambda x: reshape(x,(4,6)).T,'trans(reshape(snippet))') 
@@ -1575,11 +1575,11 @@ class MXtests(casadiTestCase):
     i = IMatrix(sp_triu(3),range(6))
 
     i.printDense()
-    print flattenNZ(i)
+    print flattenNZQQQ(i).T
 
     T = X[i]
 
-    f = MXFunction([X],[flattenNZ(T)**2])
+    f = MXFunction([X],[flattenNZQQQ(T).T**2])
     f.init()
     f.setInput(range(10))
     f.evaluate()
@@ -1605,7 +1605,7 @@ class MXtests(casadiTestCase):
     
     self.checkarray(i,J.getOutput())
     
-    f = MXFunction([X],[flattenNZ(T)**2])
+    f = MXFunction([X],[flattenNZQQQ(T).T**2])
     f.setOption("ad_mode","reverse")
     f.init()
     
@@ -1676,8 +1676,8 @@ class MXtests(casadiTestCase):
     
   def test_veccats(self):
     x= msym("x",1,2)
-    self.assertTrue(hash(flatten(x))==hash(x))
-    self.assertTrue(hash(flattenNZ(x))==hash(x))
+    self.assertTrue(hash(flattenQQQ(x).T)==hash(x))
+    self.assertTrue(hash(flattenNZQQQ(x).T)==hash(x))
     
   def test_constmxmul(self):
     0.1*MX.ones(1,2)

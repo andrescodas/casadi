@@ -308,7 +308,7 @@ class Variables(object):
       s = self.getSize(obj)
       
       i = IMatrix(self.getSparsity(obj),range(s))
-      ivec = flattenNZ(i)
+      ivec = flattenNZQQQ(i).T
       i[ivec] = IMatrix(range(offset,s+offset))
       
       
@@ -413,7 +413,7 @@ class Variables(object):
                   l.append(v)
             else:
                 l.append(self._d[k])
-        return flattencat(vec(l))
+        return flattencatQQQ(vec(l)).T
         
     def flattenNZcat(self):
         """
@@ -433,7 +433,7 @@ class Variables(object):
                   l.append(v)
             else:
                 l.append(self._d[k])
-        return flattenNZcat(vec(l))
+        return flattenNZcatQQQ(vec(l)).T
 
     def flattenNZcat_(self):
         """
@@ -536,10 +536,10 @@ class Numbers(object):
           if isinstance(obj,Variables):
               l.append(self._numbers[k].flattencat())
           elif isinstance(obj,list):
-              l.append(flattenNZcat(self._d_[k]))
+              l.append(flattenNZcatQQQ(self._d_[k]).T)
           else:
               l.append(self._d_[k])
-      return flattenNZcat(vec(l))
+      return flattenNZcatQQQ(vec(l)).T
       
   def flattencat(self):
       """
@@ -554,7 +554,7 @@ class Numbers(object):
               l+=self._d_[k]
           else:
               l.append(self._d_[k])
-      return flattencat(vec(l))
+      return flattencatQQQ(vec(l)).T
       
   def setAll(self,value):
     for k in self._variables._order:

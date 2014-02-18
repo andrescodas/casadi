@@ -206,7 +206,7 @@ class Sparsitytests(casadiTestCase):
       a.getNZ(i[1],i[0])
       
     A=self.tomatrix(a).toArray()
-    B=self.tomatrix(flatten(a)).toArray()
+    B=self.tomatrix(flattenQQQ(a).T).toArray()
     B_=numpy.reshape(A,(20,1))
     
     self.checkarray(B,B_,"reshape")
@@ -273,10 +273,10 @@ class Sparsitytests(casadiTestCase):
     F.init()
     F.setInput(q,0)
     F.evaluate()
-    F_ = flatten(F.getOutput(0))
+    F_ = flattenQQQ(F.getOutput(0))
 
-    G = flatten(F)
-    G.setInput(flatten(q),0)
+    G = flattenQQQ(F)
+    G.setInput(flattenQQQ(q),0)
     G.evaluate()
     G_ = G.getOutput()
 
@@ -292,10 +292,10 @@ class Sparsitytests(casadiTestCase):
     F.init()
     F.setInput(q,0)
     F.evaluate()
-    F_ = flatten(F.getOutput(0))
+    F_ = flattenQQQ(F.getOutput(0))
 
-    G = flatten(F)
-    G.setInput(flatten(q),0)
+    G = flattenQQQ(F)
+    G.setInput(flattenQQQ(q),0)
     G.evaluate()
     G_ = G.getOutput()
 
