@@ -359,10 +359,10 @@ namespace CasADi{
     (*this)->reserve(nnz,ncol);
   }
 
-  void CCSSparsity::append(const CCSSparsity& sp){
+  void CCSSparsity::appendColumns(const CCSSparsity& sp){
     casadi_assert(this!=&sp); // NOTE: this case needs to be handled
     makeUnique();
-    (*this)->append(sp);
+    (*this)->appendColumns(sp);
   }
 
   CCSSparsity::CachingMap& CCSSparsity::getCache(){

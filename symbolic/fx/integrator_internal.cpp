@@ -700,42 +700,42 @@ namespace CasADi{
       ss << "x0";
       if(dir>=0) ss << "_" << dir;
       dd[INTEGRATOR_X0] = msym(ss.str(),x0().sparsity());
-      x0_aug.append(dd[INTEGRATOR_X0]);
+      x0_aug.appendColumns(dd[INTEGRATOR_X0]);
 
       // Parameter
       ss.clear();
       ss << "p";
       if(dir>=0) ss << "_" << dir;
       dd[INTEGRATOR_P] = msym(ss.str(),p().sparsity());
-      p_aug.append(dd[INTEGRATOR_P]);
+      p_aug.appendColumns(dd[INTEGRATOR_P]);
 
       // Initial guess for algebraic variable
       ss.clear();
       ss << "r0";
       if(dir>=0) ss << "_" << dir;
       dd[INTEGRATOR_Z0] = msym(ss.str(),z0().sparsity());
-      z0_aug.append(dd[INTEGRATOR_Z0]);
+      z0_aug.appendColumns(dd[INTEGRATOR_Z0]);
     
       // Backward state
       ss.clear();
       ss << "rx0";
       if(dir>=0) ss << "_" << dir;
       dd[INTEGRATOR_RX0] = msym(ss.str(),rx0().sparsity());
-      rx0_aug.append(dd[INTEGRATOR_RX0]);
+      rx0_aug.appendColumns(dd[INTEGRATOR_RX0]);
 
       // Backward parameter
       ss.clear();
       ss << "rp";
       if(dir>=0) ss << "_" << dir;
       dd[INTEGRATOR_RP] = msym(ss.str(),rp().sparsity());
-      rp_aug.append(dd[INTEGRATOR_RP]);
+      rp_aug.appendColumns(dd[INTEGRATOR_RP]);
 
       // Initial guess for backward algebraic variable
       ss.clear();
       ss << "rz0";
       if(dir>=0) ss << "_" << dir;
       dd[INTEGRATOR_RZ0] = msym(ss.str(),rz0().sparsity());
-      rz0_aug.append(dd[INTEGRATOR_RZ0]);
+      rz0_aug.appendColumns(dd[INTEGRATOR_RZ0]);
     
       // Add to input vector
       ret_in.insert(ret_in.end(),dd.begin(),dd.end());
@@ -749,37 +749,37 @@ namespace CasADi{
       ss.clear();
       ss << "xf" << "_" << dir;
       dd[INTEGRATOR_XF] = msym(ss.str(),xf().sparsity());
-      rx0_aug.append(dd[INTEGRATOR_XF]);
+      rx0_aug.appendColumns(dd[INTEGRATOR_XF]);
 
       // Quadratures become backward parameters
       ss.clear();
       ss << "qf" << "_" << dir;
       dd[INTEGRATOR_QF] = msym(ss.str(),qf().sparsity());
-      rp_aug.append(dd[INTEGRATOR_QF]);
+      rp_aug.appendColumns(dd[INTEGRATOR_QF]);
 
       // Algebraic variables become backward algebraic variables
       ss.clear();
       ss << "zf" << "_" << dir;
       dd[INTEGRATOR_ZF] = msym(ss.str(),zf().sparsity());
-      rz0_aug.append(dd[INTEGRATOR_ZF]);
+      rz0_aug.appendColumns(dd[INTEGRATOR_ZF]);
 
       // Backward differential states becomes forward differential states
       ss.clear();
       ss << "rxf" << "_" << dir;
       dd[INTEGRATOR_RXF] = msym(ss.str(),rxf().sparsity());
-      x0_aug.append(dd[INTEGRATOR_RXF]);
+      x0_aug.appendColumns(dd[INTEGRATOR_RXF]);
     
       // Backward quadratures becomes (forward) parameters
       ss.clear();
       ss << "rqf" << "_" << dir;
       dd[INTEGRATOR_RQF] = msym(ss.str(),rqf().sparsity());
-      p_aug.append(dd[INTEGRATOR_RQF]);
+      p_aug.appendColumns(dd[INTEGRATOR_RQF]);
 
       // Backward differential states becomes forward differential states
       ss.clear();
       ss << "rzf" << "_" << dir;
       dd[INTEGRATOR_RZF] = msym(ss.str(),rzf().sparsity());
-      z0_aug.append(dd[INTEGRATOR_RZF]);
+      z0_aug.appendColumns(dd[INTEGRATOR_RZF]);
     
       // Add to input vector
       ret_in.insert(ret_in.end(),dd.begin(),dd.end());
@@ -905,7 +905,7 @@ namespace CasADi{
     CCSSparsity jac_alg_x = f_.jacSparsity(DAE_X,DAE_ALG).transpose();
     CCSSparsity jac_alg_z = f_.jacSparsity(DAE_Z,DAE_ALG).transpose();
     ret = vertcat(ret,jac_ode_z);
-    ret.append(vertcat(jac_alg_x,jac_alg_z));
+    ret.appendColumns(vertcat(jac_alg_x,jac_alg_z));
     return ret;
   }
 
@@ -924,7 +924,7 @@ namespace CasADi{
     CCSSparsity jac_alg_x = g_.jacSparsity(RDAE_RX,RDAE_ALG).transpose();
     CCSSparsity jac_alg_z = g_.jacSparsity(RDAE_RZ,RDAE_ALG).transpose();
     ret = vertcat(ret,jac_ode_z);
-    ret.append(vertcat(jac_alg_x,jac_alg_z));
+    ret.appendColumns(vertcat(jac_alg_x,jac_alg_z));
     return ret;
   }
 

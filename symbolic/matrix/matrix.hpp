@@ -350,8 +350,8 @@ namespace CasADi{
     void setNZ(const Matrix<int>& k, const Matrix<T>& m);
     //@}
 
-    /// Append a matrix to the end
-    void append(const Matrix<T>& y);
+    /// Append a matrix horizontally
+    void appendColumns(const Matrix<T>& y);
 
     //@{
     /// Indexing for interfaced languages

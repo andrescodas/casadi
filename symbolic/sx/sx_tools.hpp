@@ -229,11 +229,11 @@ SXMatrix blockmatrix(SXMatrix array[n][m]){
     
 /** \brief  append components to the col */
     for(int j=0; j<m; ++j){
-      col.append(array[i][j]);
+      col.appendColumns(array[i][j]);
     }
     
 /** \brief  append col to matrix */
-    ret.append(trans(col));
+    ret.appendColumns(trans(col));
   }
 
   return ret;
@@ -248,7 +248,7 @@ SXMatrix blockmatrix(SXMatrix array[n]){
 /** \brief  loop over cols */
   for(int i=0; i<n; ++i){
 /** \brief  append components */
-    ret.append(array[i]);
+    ret.appendColumns(array[i]);
   }
 
   return ret;

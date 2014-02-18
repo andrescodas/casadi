@@ -1812,7 +1812,7 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::append(const Matrix<T>& y){
+  void Matrix<T>::appendColumns(const Matrix<T>& y){
 
     // Quick return if expr is empty
     if(size2()==0 && size1()==0){
@@ -1824,7 +1824,7 @@ namespace CasADi{
     if(y.size2()==0 && y.size1()==0) return;
   
     // Append the sparsity pattern
-    sparsityRef().append(y.sparsity());
+    sparsityRef().appendColumns(y.sparsity());
   
     // Add the non-zeros
     data().insert(end(),y.begin(),y.end());

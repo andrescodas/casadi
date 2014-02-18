@@ -72,9 +72,9 @@ int main(){
     
   // Terminal constraints
   SXMatrix g;
-  g.append(s);
-  g.append(v);
-  g.append(v_traj);
+  g.appendColumns(s);
+  g.appendColumns(v);
+  g.appendColumns(v_traj);
   
   // Create the NLP
   SXFunction nlp(nlpIn("x",u),nlpOut("f",f,"g",g));

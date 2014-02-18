@@ -1238,7 +1238,7 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
     int mult = 1;
     bool success = false;
     for (int i=0;i<1000;++i) {
-      ret.append(f.eval(casadi_limits<SX>::zero)/mult);
+      ret.appendColumns(f.eval(casadi_limits<SX>::zero)/mult);
       SXMatrix j = trans(f.jac());
       if (j.size()==0) {
         success = true;
@@ -1273,8 +1273,8 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
       SXMatrix bm = -b;
       SXMatrix a2 = 2*a;
       SXMatrix ret;
-      ret.append((bm-ds)/a2);
-      ret.append((bm+ds)/a2);
+      ret.appendColumns((bm-ds)/a2);
+      ret.appendColumns((bm+ds)/a2);
       return ret;
     } else if (p.size2()==4) {
       // www.cs.iastate.edu/~cs577/handouts/polyroots.pdf
@@ -1294,9 +1294,9 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
       SXMatrix phi = acos(-b/2/sqrt(-a3*a3*a3));
       
       SXMatrix ret;
-      ret.append(cos(phi/3));
-      ret.append(cos((phi+2*M_PI)/3));
-      ret.append(cos((phi+4*M_PI)/3));
+      ret.appendColumns(cos(phi/3));
+      ret.appendColumns(cos((phi+2*M_PI)/3));
+      ret.appendColumns(cos((phi+4*M_PI)/3));
       ret*= 2*sqrt(-a3);
       
       ret-= p_/3;
@@ -1313,10 +1313,10 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
       SXMatrix g = d + (bb*b / 8) - b*c/2;
       SXMatrix h = e - (3*bb*bb/256) + (bb * c/16) - ( b*d/4);
       SXMatrix poly;
-      poly.append(1);
-      poly.append(f/2);
-      poly.append((f*f -4*h)/16);
-      poly.append(-g*g/64);
+      poly.appendColumns(1);
+      poly.appendColumns(f/2);
+      poly.appendColumns((f*f -4*h)/16);
+      poly.appendColumns(-g*g/64);
       SXMatrix y = poly_roots(poly);
       
       SXMatrix r0 = y(0,0);
@@ -1330,15 +1330,15 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
       SXMatrix s = b/4;
       
       SXMatrix ret;
-      ret.append(p + q + r -s);
-      ret.append(p - q - r -s);
-      ret.append(-p + q - r -s );
-      ret.append(-p - q + r -s);
+      ret.appendColumns(p + q + r -s);
+      ret.appendColumns(p - q - r -s);
+      ret.appendColumns(-p + q - r -s );
+      ret.appendColumns(-p - q + r -s);
 
       return ret;
     } else if (p(0,p.size()-1).at(0).isEqual(0)) {
       SXMatrix ret = poly_roots(p(0,range(p.size()-1)));
-      ret.append(0);
+      ret.appendColumns(0);
       return ret;
     } else {
       casadi_error("poly_root(): can only solve cases for first or second order polynomial. Got order " << p.size2()-1 << ".");
@@ -1363,7 +1363,7 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
     for (int k=0;k<nb;++k) {
       std::vector<int> r = range(index.at(k),index.at(k+1));
       // det(lambda*I-m) = 0
-      ret.append(poly_roots(poly_coeff(det(SXMatrix::eye(r.size())*l-m_perm(r,r)),l)));
+      ret.appendColumns(poly_roots(poly_coeff(det(SXMatrix::eye(r.size())*l-m_perm(r,r)),l)));
     }
 		
     return ret;

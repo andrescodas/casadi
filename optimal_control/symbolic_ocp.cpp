@@ -222,7 +222,7 @@ void SymbolicOCP::parseFMI(const std::string& filename, const Dictionary& option
       // Add binding equation
       var.setBinding(bexpr);
       y.push_back(var); // legacy
-      dep.append(bexpr); // legacy
+      dep.appendColumns(bexpr); // legacy
     }
     
     // Resort the dependant parameters
@@ -244,9 +244,9 @@ void SymbolicOCP::parseFMI(const std::string& filename, const Dictionary& option
       bool has_der = false;
       SX de_new = readExpr(dnode[0],has_der,eliminate_dependent);
       if(has_der){
-        ode.append(de_new);
+        ode.appendColumns(de_new);
       } else {
-        alg.append(de_new);
+        alg.appendColumns(de_new);
       }
     }
   }
@@ -265,7 +265,7 @@ void SymbolicOCP::parseFMI(const std::string& filename, const Dictionary& option
       // Add the differential equations
       for(int i=0; i<inode.size(); ++i){
         bool has_der = false;
-        initial.append(readExpr(inode[i],has_der,eliminate_dependent));
+        initial.appendColumns(readExpr(inode[i],has_der,eliminate_dependent));
       }
     }
   }
@@ -334,7 +334,7 @@ void SymbolicOCP::parseFMI(const std::string& filename, const Dictionary& option
             bool has_der = false;
             SX v = readExpr(var,has_der,eliminate_dependent);
             casadi_assert(!has_der);
-            mterm.append(v);
+            mterm.appendColumns(v);
           }
         } catch(exception& ex){
           if(verbose){
@@ -353,7 +353,7 @@ void SymbolicOCP::parseFMI(const std::string& filename, const Dictionary& option
             // Read expression
             bool has_der = false;
             SX v = readExpr(var,has_der,eliminate_dependent);
-            lterm.append(v);
+            lterm.appendColumns(v);
           }
         } catch(exception& ex){
           throw CasadiException(std::string("addIntegrandObjectiveFunction failed: ") + ex.what());
@@ -372,21 +372,21 @@ void SymbolicOCP::parseFMI(const std::string& filename, const Dictionary& option
           if(constr_i.checkName("opt:ConstraintLeq")){
             SX ex = readExpr(constr_i[0],has_der,eliminate_dependent);
             SX ub = readExpr(constr_i[1],has_der,eliminate_dependent);
-            point.append(ex-ub);
-            point_min.append(-numeric_limits<double>::infinity());
-            point_max.append(0.);
+            point.appendColumns(ex-ub);
+            point_min.appendColumns(-numeric_limits<double>::infinity());
+            point_max.appendColumns(0.);
           } else if(constr_i.checkName("opt:ConstraintGeq")){
             SX ex = readExpr(constr_i[0],has_der,eliminate_dependent);
             SX lb = readExpr(constr_i[1],has_der,eliminate_dependent);
-            point.append(ex-lb);
-            point_min.append(0.);
-            point_max.append(numeric_limits<double>::infinity());
+            point.appendColumns(ex-lb);
+            point_min.appendColumns(0.);
+            point_max.appendColumns(numeric_limits<double>::infinity());
           } else if(constr_i.checkName("opt:ConstraintEq")){
             SX ex = readExpr(constr_i[0],has_der,eliminate_dependent);
             SX eq = readExpr(constr_i[1],has_der,eliminate_dependent);
-            point.append(ex-eq);
-            point_min.append(0.);
-            point_max.append(0.);
+            point.appendColumns(ex-eq);
+            point_min.appendColumns(0.);
+            point_max.appendColumns(0.);
           } else {
             cerr << "unknown constraint type" << constr_i.getName() << endl;
             throw CasadiException("SymbolicOCP::addConstraints");
@@ -401,21 +401,21 @@ void SymbolicOCP::parseFMI(const std::string& filename, const Dictionary& option
           if(constr_i.checkName("opt:ConstraintLeq")){
             SX ex = readExpr(constr_i[0],has_der,eliminate_dependent);
             SX ub = readExpr(constr_i[1],has_der,eliminate_dependent);
-            path.append(ex-ub);
-            path_min.append(-numeric_limits<double>::infinity());
-            path_max.append(0.);
+            path.appendColumns(ex-ub);
+            path_min.appendColumns(-numeric_limits<double>::infinity());
+            path_max.appendColumns(0.);
           } else if(constr_i.checkName("opt:ConstraintGeq")){
             SX ex = readExpr(constr_i[0],has_der,eliminate_dependent);
             SX lb = readExpr(constr_i[1],has_der,eliminate_dependent);
-            path.append(ex-lb);
-            path_min.append(0.);
-            path_max.append(numeric_limits<double>::infinity());
+            path.appendColumns(ex-lb);
+            path_min.appendColumns(0.);
+            path_max.appendColumns(numeric_limits<double>::infinity());
           } else if(constr_i.checkName("opt:ConstraintEq")){
             SX ex = readExpr(constr_i[0],has_der,eliminate_dependent);
             SX eq = readExpr(constr_i[1],has_der,eliminate_dependent);
-            path.append(ex-eq);
-            path_min.append(0.);
-            path_max.append(0.);
+            path.appendColumns(ex-eq);
+            path_min.appendColumns(0.);
+            path_max.appendColumns(0.);
           } else {
             cerr << "unknown constraint type" << constr_i.getName() << endl;
             throw CasadiException("SymbolicOCP::addConstraints");
@@ -731,10 +731,10 @@ void SymbolicOCP::eliminateLagrangeTerms(){
     q.push_back(qv);
 
     // Add the Lagrange term to the list of quadratures
-    quad.append(*it);
+    quad.appendColumns(*it);
     
     // Add to the list of Mayer terms
-    mterm.append(qv.var());
+    mterm.appendColumns(qv.var());
   }
   
   // Remove the Lagrange terms
@@ -748,7 +748,7 @@ void SymbolicOCP::eliminateQuadratureStates(){
   q.clear();
   
   // Move the equations to the list of ODEs
-  ode.append(quad);
+  ode.appendColumns(quad);
   quad.clear();
 }
 
@@ -766,13 +766,13 @@ void SymbolicOCP::scaleVariables(){
   
   // Collect all the variables
   Matrix<SX> v;
-  v.append(t);
-  v.append(_x);
-  v.append(_xdot);
-  v.append(_z);
-  v.append(_pi);
-  v.append(_pf);
-  v.append(_u);
+  v.appendColumns(t);
+  v.appendColumns(_x);
+  v.appendColumns(_xdot);
+  v.appendColumns(_z);
+  v.appendColumns(_pi);
+  v.appendColumns(_pf);
+  v.appendColumns(_u);
   
   // Nominal values
   Matrix<SX> t_n = 1.;
@@ -784,13 +784,13 @@ void SymbolicOCP::scaleVariables(){
   
   // Get all the old variables in expressed in the nominal ones
   Matrix<SX> v_old;
-  v_old.append(t*t_n);
-  v_old.append(_x*x_n);
-  v_old.append(_xdot*x_n);
-  v_old.append(_z*z_n);
-  v_old.append(_pi*pi_n);
-  v_old.append(_pf*pf_n);
-  v_old.append(_u*u_n);
+  v_old.appendColumns(t*t_n);
+  v_old.appendColumns(_x*x_n);
+  v_old.appendColumns(_xdot*x_n);
+  v_old.appendColumns(_z*z_n);
+  v_old.appendColumns(_pi*pi_n);
+  v_old.appendColumns(_pf*pf_n);
+  v_old.appendColumns(_u*u_n);
   
   // Temporary variable
   Matrix<SX> temp;
@@ -828,11 +828,11 @@ void SymbolicOCP::scaleEquations(){
 
   // Create the jacobian of the implicit equations with respect to [x,z,p,u] 
   Matrix<SX> xz;
-  xz.append(v[X]);
-  xz.append(v[Z]);
-  xz.append(v[PI]);
-  xz.append(v[PF]);
-  xz.append(v[U]);
+  xz.appendColumns(v[X]);
+  xz.appendColumns(v[Z]);
+  xz.appendColumns(v[PI]);
+  xz.appendColumns(v[PF]);
+  xz.appendColumns(v[U]);
   SXFunction fcn = SXFunction(xz,ode);
   SXFunction J(v,trans(fcn.jac()));
 
@@ -1183,7 +1183,7 @@ void SymbolicOCP::makeAlgebraic(const Variable& v){
       
       // Add to list of algebraic variables and to the list of algebraic equations
       z.push_back(v);
-      alg.append(ode.at(k));
+      alg.appendColumns(ode.at(k));
       
       // Remove from list of differential variables and the list of differential equations
       x.erase(x.begin()+k);

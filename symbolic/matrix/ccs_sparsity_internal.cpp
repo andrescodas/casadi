@@ -2504,9 +2504,9 @@ namespace CasADi{
     colind_.reserve(ncol+1);
   }
 
-  void CCSSparsityInternal::append(const CCSSparsity& sp){
+  void CCSSparsityInternal::appendColumns(const CCSSparsity& sp){
     // Assert dimensions
-    casadi_assert_message(nrow_==sp.size1(),"CCSSparsityInternal::append: Dimension mismatch. You attempt to append a shape " << sp.dimString() << " to a shape " << dimString() << ". The number of rows must match.");
+    casadi_assert_message(nrow_==sp.size1(),"CCSSparsityInternal::appendColumns: Dimension mismatch. You attempt to append a shape " << sp.dimString() << " to a shape " << dimString() << ". The number of rows must match.");
   
     // Get current number of non-zeros
     int sz = size();

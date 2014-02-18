@@ -1103,7 +1103,7 @@ class SXtests(casadiTestCase):
     self.assertEqual(s[0],0)
     self.assertEqual(s[1],1)
     x = ssym("x")
-    x.append(SXMatrix([]))
+    x.appendColumns(SXMatrix([]))
     
   def test_mul_sparsity(self):
 

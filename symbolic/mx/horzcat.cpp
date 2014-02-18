@@ -39,7 +39,7 @@ namespace CasADi{
     casadi_assert(!x.empty());
     CCSSparsity sp = x.front().sparsity();
     for(vector<MX>::const_iterator i=x.begin()+1; i!=x.end(); ++i){
-      sp.append(i->sparsity());
+      sp.appendColumns(i->sparsity());
     }
 
     setSparsity(sp);

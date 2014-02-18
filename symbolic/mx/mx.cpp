@@ -829,7 +829,7 @@ namespace CasADi{
   MX MX::__mrdivide__(const MX& b) const { if (b.scalar()) return *this/b; throw CasadiException("mrdivide: Not implemented");}
   MX MX::__mpower__(const MX& b) const   { return pow(*this,b); throw CasadiException("mpower: Not implemented");}
 
-  void MX::append(const MX& y){
+  void MX::appendColumns(const MX& y){
     *this = horzcat(*this,y);
   }
 

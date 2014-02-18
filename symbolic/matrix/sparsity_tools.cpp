@@ -482,28 +482,28 @@ namespace CasADi{
   CCSSparsity horzcat(const std::vector<CCSSparsity> & sp) {
     CCSSparsity ret = sp[0];
     for(int i=1; i<sp.size(); ++i) {
-      ret.append(sp[i]);
+      ret.appendColumns(sp[i]);
     }
     return ret;
   }
   
   CCSSparsity horzcat(const CCSSparsity & a, const CCSSparsity & b) {
     CCSSparsity ret = a;
-    ret.append(b);
+    ret.appendColumns(b);
     return ret;
   }
 
   CCSSparsity vertcat(const std::vector<CCSSparsity> & sp) {
     CCSSparsity ret = trans(sp[0]);
     for(int i=1; i<sp.size(); ++i) {
-      ret.append(trans(sp[i]));
+      ret.appendColumns(trans(sp[i]));
     }
     return trans(ret);
   }
   
   CCSSparsity vertcat(const CCSSparsity & a, const CCSSparsity & b) {
     CCSSparsity ret = trans(a);
-    ret.append(trans(b));
+    ret.appendColumns(trans(b));
     return trans(ret);
   }
   

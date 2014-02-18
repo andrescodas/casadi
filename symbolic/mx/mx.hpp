@@ -387,8 +387,8 @@ namespace CasADi{
     void setNZ(const Slice& k, const MX& m){ setNZ(k.getAll(size()),m);}
     void setNZ(const Matrix<int>& k, const MX& m);
 
-    /** \brief Append a matrix to the end. */
-    void append(const MX& y);
+    /** \brief Append a matrix horizontally */
+    void appendColumns(const MX& y);
   
     // all binary operations
     MX __add__(const MX& y) const;

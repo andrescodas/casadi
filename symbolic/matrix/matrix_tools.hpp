@@ -791,7 +791,7 @@ namespace CasADi{
   Matrix<T> horzcat(const std::vector<Matrix<T> > &v){
     Matrix<T> ret;
     for(int i=0; i<v.size(); ++i)
-      ret.append(v[i]);
+      ret.appendColumns(v[i]);
     return ret;
   }
 
@@ -845,7 +845,7 @@ namespace CasADi{
   Matrix<T> vertcat(const std::vector<Matrix<T> > &v){
     Matrix<T> ret;
     for(int i=0; i<v.size(); ++i)
-      ret.append(trans(v[i]));
+      ret.appendColumns(trans(v[i]));
     return trans(ret);  
   }
 
@@ -883,7 +883,7 @@ namespace CasADi{
   template<class T>
   Matrix<T> horzcat(const Matrix<T> &x, const Matrix<T> &y){
     Matrix<T> xy = x;
-    xy.append(y);
+    xy.appendColumns(y);
     return xy;
   }
 
@@ -1034,8 +1034,8 @@ namespace CasADi{
       qi /= ri(i,0);
 
       // Update R and Q
-      Q.append(qi);
-      R.append(ri);
+      Q.appendColumns(qi);
+      R.appendColumns(ri);
     }
   }
   

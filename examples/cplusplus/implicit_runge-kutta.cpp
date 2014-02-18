@@ -50,9 +50,9 @@ int main(){
 
   // ODE right hand side function
   SXMatrix ode;
-  ode.append( (1 - x[1]*x[1])*x[0] - x[1] + p );
-  ode.append( x[0]                            );
-  ode.append( x[0]*x[0] + x[1]*x[1] + p*p     );
+  ode.appendColumns( (1 - x[1]*x[1])*x[0] - x[1] + p );
+  ode.appendColumns( x[0]                            );
+  ode.appendColumns( x[0]*x[0] + x[1]*x[1] + p*p     );
   SXFunction f(daeIn("x",x,"p",p),daeOut("ode",ode));
   f.init();
 
@@ -117,7 +117,7 @@ int main(){
     
     // Append collocation equations
     MX f_j = daeOut(f.call(daeIn("x",X[j],"p",P)),"ode").front();
-    V_eq.append(h*f_j - xp_j);
+    V_eq.appendColumns(h*f_j - xp_j);
   }
 
   // Root-finding function, implicitly defines V as a function of X0 and P

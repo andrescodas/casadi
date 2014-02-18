@@ -851,14 +851,14 @@ class Matrixtests(casadiTestCase):
       
   def test_append_empty(self):
     a = DMatrix.sparse(0,0)
-    a.append(DMatrix.sparse(2,0))
+    a.appendColumns(DMatrix.sparse(2,0))
     
     self.assertEqual(a.size2(),0)
     self.assertEqual(a.size1(),2)
 
     a = DMatrix.sparse(0,0)
-    a.append(DMatrix.sparse(0,2))
-    a.append(DMatrix.sparse(0,3))
+    a.appendColumns(DMatrix.sparse(0,2))
+    a.appendColumns(DMatrix.sparse(0,3))
     
     self.assertEqual(a.size2(),5)
     self.assertEqual(a.size1(),0)

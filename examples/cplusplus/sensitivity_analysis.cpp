@@ -46,9 +46,9 @@ void simpleODE(FX& ffcn, double& tf, vector<double>& x0, double& u0){
   // Differential states
   SXMatrix s = ssym("s"), v = ssym("v"), m = ssym("m");
   SXMatrix x;
-  x.append(s);
-  x.append(v);
-  x.append(m); 
+  x.appendColumns(s);
+  x.appendColumns(v);
+  x.appendColumns(m); 
   
   // Constants
   double alpha = 0.05; // friction
@@ -56,9 +56,9 @@ void simpleODE(FX& ffcn, double& tf, vector<double>& x0, double& u0){
   
   // Differential equation
   SXMatrix ode;
-  ode.append(v);
-  ode.append((u-alpha*v*v)/m);
-  ode.append(-beta*u*u); 
+  ode.appendColumns(v);
+  ode.appendColumns((u-alpha*v*v)/m);
+  ode.appendColumns(-beta*u*u); 
       
   // Quadrature
   SXMatrix quad = pow(v,3) + pow((3-sin(t))-u,2);

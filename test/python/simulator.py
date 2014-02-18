@@ -140,7 +140,7 @@ class Simulatortests(casadiTestCase):
       tf = tc[i+1]
       t0 = tc[i]
       xf = lambda t,t0: exp((t**3-t0**3)/3/p*U[i])
-      result.append(result[-1]*xf(tf,t0))
+      result.appendColumns(result[-1]*xf(tf,t0))
     
     solution = SXFunction(controlsimulatorIn(x0=q, p=p,u=U),[result])
     solution.init()
