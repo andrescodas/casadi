@@ -977,7 +977,7 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> norm_2QQQ(const Matrix<T>& x){
-    if(x.vectorQQQ()){
+    if(x.vector()){
       return norm_F(x);
     } else {
       casadi_error("2-norms currently only supported for vectors. Did you intend to calculate a Frobenius norms (norm_F)?");

@@ -231,7 +231,7 @@ namespace CasADi{
 
     //@{
     /// Check type of matrix
-    bool vectorQQQ() const; // is the matrix a vector
+    bool vector() const; // is the matrix a vector
     //@}
 
 
@@ -544,7 +544,7 @@ namespace CasADi{
 #endif
     static std::string className(); // name of the class
     void printScalar(std::ostream &stream=std::cout) const; // print scalar
-    void printVectorQQQ(std::ostream &stream=std::cout) const; // print vector-style
+    void printVector(std::ostream &stream=std::cout) const; // print vector-style
     void printMatrix(std::ostream &stream=std::cout) const; // print matrix-style
     void printSparse(std::ostream &stream=std::cout) const; // print sparse matrix style
     void printDense(std::ostream &stream=std::cout) const; // Print dense matrix-stype

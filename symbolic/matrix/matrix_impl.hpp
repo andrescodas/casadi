@@ -415,7 +415,7 @@ namespace CasADi{
   }
 
   template<class T>
-  bool Matrix<T>::vectorQQQ() const{
+  bool Matrix<T>::vector() const{
     return sparsity().vector();
   }
 
@@ -484,8 +484,8 @@ namespace CasADi{
   }
   
   template<class T>
-  void Matrix<T>::printVectorQQQ(std::ostream &stream) const {
-    casadi_assert_message(vectorQQQ(),"Not a vector");
+  void Matrix<T>::printVector(std::ostream &stream) const {
+    casadi_assert_message(vector(),"Not a vector");
   
     std::streamsize precision = stream.precision();
     std::streamsize width = stream.width();
@@ -604,8 +604,8 @@ namespace CasADi{
     if(dense()){
       if (size()==1){
         printScalar(stream);
-      } else if (vectorQQQ()){
-        printVectorQQQ(stream);
+      } else if (vector()){
+        printVector(stream);
       } else {
         printDense(stream);
       }
@@ -621,8 +621,8 @@ namespace CasADi{
       stream << "[]";
     } else if (numel()==1 && size()==1){
       printScalar(stream);
-    } else if (vectorQQQ()){
-      printVectorQQQ(stream);
+    } else if (vector()){
+      printVector(stream);
     } else {
       printMatrix(stream);
     }
