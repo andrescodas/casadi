@@ -52,8 +52,8 @@ namespace CasADi{
     MX t = msym("t",f_.input(DAE_T).sparsity());
     
     // Intermediate variables (does not enter in F_, only in G_)
-    MX v = msym("v",1,3*nx_);
-    vector<MX> x = horzsplit(v,nx_);
+    MX v = msym("v",x0.size1(),x0.size2()*3);
+    vector<MX> x = horzsplit(v,x0.size2());
     casadi_assert(x.size()==3);
     
     // Definitions of x
@@ -119,8 +119,8 @@ namespace CasADi{
       MX rx0 = msym("x0",g_.input(RDAE_RX).sparsity());
       MX rp = msym("p",g_.input(RDAE_RP).sparsity());
 
-      // Intermediate variables (does not enter in G_)
-      MX rv = msym("rv",1,3*nrx_);
+      // Intermediate variables (do not enter in G_)
+      MX rv = msym("rv",rx0.size1(),3*rx0.size2());
       vector<MX> rx_def(3);
 
       // Arguments when calling g
