@@ -721,7 +721,7 @@ SXMatrix taylor(const SXMatrix& ex,const SXMatrix& x, const SXMatrix& a, int ord
   casadi_assert(x.scalar() && a.scalar());
   if (ex.size()!=ex.numel())
    throw CasadiException("taylor: not implemented for sparse matrices");
-  SXMatrix ff = trans(flattenQQQ(ex));
+  SXMatrix ff = trans(flatten(ex));
   
   SXMatrix result = substitute(ff,x,a);
   double nf=1; 
@@ -765,7 +765,7 @@ SXMatrix mtaylor(const SXMatrix& ex,const SXMatrix& x, const SXMatrix& a,int ord
     "mtaylor: number of non-zero elements in x (" <<  x.size() << ") must match size of order_contributions (" << order_contributions.size() << ")"
   );
 
-  return trans(reshape(mtaylor_recursive(trans(flattenQQQ(ex)),x,a,order,order_contributions),ex.size2(),ex.size1()));
+  return trans(reshape(mtaylor_recursive(trans(flatten(ex)),x,a,order,order_contributions),ex.size2(),ex.size1()));
 }
 
 int countNodes(const SXMatrix& A){

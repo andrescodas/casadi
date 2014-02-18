@@ -173,7 +173,7 @@ namespace CasADi{
     return a.reshape(nrow,ncol);
   }
 
-  CCSSparsity flattenQQQ(const CCSSparsity& a){
+  CCSSparsity flatten(const CCSSparsity& a){
     return reshape(trans(a),a.numel(),1);
   }
 

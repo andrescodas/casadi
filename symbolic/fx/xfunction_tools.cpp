@@ -29,7 +29,7 @@
 
 namespace CasADi{
     
-SXFunction flattenQQQ(const SXFunction &a) {
+SXFunction flatten(const SXFunction &a) {
   // Pass null if input is null
   if (a.isNull()) return SXFunction();
   
@@ -39,9 +39,9 @@ SXFunction flattenQQQ(const SXFunction &a) {
   
   // Apply flatten to them
   for (int i=0;i<symbolicInputSX.size();++i)
-    symbolicInputSX[i] = flattenQQQ(symbolicInputSX[i]);
+    symbolicInputSX[i] = flatten(symbolicInputSX[i]);
   for (int i=0;i<symbolicOutputSX.size();++i)
-    symbolicOutputSX[i] = flattenQQQ(symbolicOutputSX[i]);
+    symbolicOutputSX[i] = flatten(symbolicOutputSX[i]);
     
   // Make a new function with the flattenced input/outputs
   SXFunction ret(symbolicInputSX,symbolicOutputSX);
@@ -52,7 +52,7 @@ SXFunction flattenQQQ(const SXFunction &a) {
 }
 
 
-MXFunction flattenQQQ(const FX &a_) {
+MXFunction flatten(const FX &a_) {
   FX a = a_;
 
   // Pass null if input is null
@@ -69,7 +69,7 @@ MXFunction flattenQQQ(const FX &a_) {
   for (int i=0;i<symbolicInputMX.size();++i) {
     std::stringstream s;
     s << "X_flat_" << i;
-    symbolicInputMX_vec[i] = msym(s.str(),flattenQQQ(symbolicInputMX[i].sparsity()));
+    symbolicInputMX_vec[i] = msym(s.str(),flatten(symbolicInputMX[i].sparsity()));
     symbolicInputMX_vec_reshape[i] = trans(reshape(symbolicInputMX_vec[i],trans(symbolicInputMX[i].sparsity())));
   }
   
@@ -78,7 +78,7 @@ MXFunction flattenQQQ(const FX &a_) {
   
   // Apply the flatten-transformation to the outputs
   for (int i=0;i<symbolicOutputMX.size();++i)
-    symbolicOutputMX[i] = flattenQQQ(symbolicOutputMX[i]);
+    symbolicOutputMX[i] = flatten(symbolicOutputMX[i]);
     
   // Make a new function with the flattenced input/outputs
   MXFunction ret(symbolicInputMX_vec,symbolicOutputMX);

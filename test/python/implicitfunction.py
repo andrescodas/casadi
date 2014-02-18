@@ -117,7 +117,7 @@ class NLPtests(casadiTestCase):
       y=ssym("y",s)
       y0 = DMatrix(sp_diag(N),0.1)
 
-      f=SXFunction([flattenNZQQQ(y).T,flattenNZQQQ(x).T],[flattenNZQQQ((mul((x+y0).T,(x+y0))-mul((y+y0).T,(y+y0)))[s]).T])
+      f=SXFunction([flattenNZ(y).T,flattenNZ(x).T],[flattenNZ((mul((x+y0).T,(x+y0))-mul((y+y0).T,(y+y0)))[s]).T])
       f.init()
       solver=Solver(f)
       solver.setOption(options)
@@ -126,7 +126,7 @@ class NLPtests(casadiTestCase):
       solver.init()
       
       X = msym("X",x.sparsity())
-      [R] = solver.call([MX(),flattenNZQQQ(X).T])
+      [R] = solver.call([MX(),flattenNZ(X).T])
       
       trial = MXFunction([X],[R])
       trial.init()
@@ -134,14 +134,14 @@ class NLPtests(casadiTestCase):
       trial.evaluate()
 
       f.setInput(trial.output(),0)
-      f.setInput(flattenNZQQQ(trial.input()).T,1)
+      f.setInput(flattenNZ(trial.input()).T,1)
       f.evaluate()
 
-      f.setInput(flattenNZQQQ(trial.input()).T,0)
-      f.setInput(flattenNZQQQ(trial.input()).T,1)
+      f.setInput(flattenNZ(trial.input()).T,0)
+      f.setInput(flattenNZ(trial.input()).T,1)
       f.evaluate()
       
-      refsol = MXFunction([X],[flattenNZQQQ(X).T])
+      refsol = MXFunction([X],[flattenNZ(X).T])
       refsol.init()
       refsol.setInput(trial.input())
 

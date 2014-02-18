@@ -101,16 +101,16 @@ namespace CasADi{
 #endif // SWIG
 
   /** \brief  concatenate vertically while vectorizing all arguments with flatten */
-  MX flattencatQQQ(const std::vector<MX>& comp);
+  MX flattencat(const std::vector<MX>& comp);
   
   /** \brief  concatenate vertically while vecing all arguments with vec */
-  MX veccatQQQ(const std::vector<MX>& comp);
+  MX veccat(const std::vector<MX>& comp);
 
   /** \brief  concatenate vertically while vectorizing all arguments with flattenNZ */
-  MX flattenNZcatQQQ(const std::vector<MX>& comp);
+  MX flattenNZcat(const std::vector<MX>& comp);
   
   /** \brief  concatenate vertically while vecing all arguments with vecNZ */
-  MX vecNZcatQQQ(const std::vector<MX>& comp);
+  MX vecNZcat(const std::vector<MX>& comp);
 
 #ifndef SWIG
   /** \brief  concatenate vertically, two matrices */
@@ -196,7 +196,7 @@ namespace CasADi{
       d
     
   */
-  MX flattenQQQ(const MX &x);
+  MX flatten(const MX &x);
 
   /** \brief Returns a flattened version of the MX
       Flattening is a cheap (non-copying) operation
@@ -213,15 +213,15 @@ namespace CasADi{
       d
     
   */
-  MX vecQQQ(const MX &x);
+  MX vec(const MX &x);
 
   /** \brief Returns a flattened version of the MX, preserving only nonzeros
    */
-  MX flattenNZQQQ(const MX &x);
+  MX flattenNZ(const MX &x);
   
   /** \brief Returns a flattened version of the MX, prseverving only nonzeros
   */
-  MX vecNZQQQ(const MX &x);
+  MX vecNZ(const MX &x);
 
   /** \brief  Unite two matrices no overlapping sparsity */
   MX unite(const MX& A, const MX& B);

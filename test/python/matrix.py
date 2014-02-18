@@ -117,7 +117,7 @@ class Matrixtests(casadiTestCase):
     B[0,0] = 4
     B[1,0] = 5
     B[2,0] = 6
-    C = flattencatQQQ([A,B]).T
+    C = flattencat([A,B]).T
     
     self.checkarray(C.shapeQQQ,(1,9),"flattencat shape")
     self.assertEqual(C.size(),A.size()+B.size(),"flattencat size")
@@ -215,7 +215,7 @@ class Matrixtests(casadiTestCase):
     B[0,0] = 4
     B[1,0] = 5
     B[2,0] = 6
-    C = flattenNZcatQQQ([A,B]).T
+    C = flattenNZcat([A,B]).T
     
     self.checkarray(C.shapeQQQ,(1,6),"flattenNZcat shape")
     self.assertEqual(C.size(),A.size()+B.size(),"flattenNZcat size")

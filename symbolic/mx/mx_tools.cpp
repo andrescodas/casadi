@@ -105,24 +105,24 @@ namespace CasADi{
     return vertcat(ab);
   }
 
-  MX flattencatQQQ(const vector<MX>& comp) {
-        MX (&f)(const MX&) = flattenQQQ;
+  MX flattencat(const vector<MX>& comp) {
+        MX (&f)(const MX&) = flatten;
     return vertcat(applymap(f,comp));
   }
 
-  MX flattenNZcatQQQ(const vector<MX>& comp) {
-    MX (&f)(const MX&) = flattenNZQQQ;
-    return vertcat(applymap(flattenNZQQQ,comp));
+  MX flattenNZcat(const vector<MX>& comp) {
+    MX (&f)(const MX&) = flattenNZ;
+    return vertcat(applymap(flattenNZ,comp));
   }
   
-  MX veccatQQQ(const vector<MX>& comp) {
-        MX (&f)(const MX&) = vecQQQ;
+  MX veccat(const vector<MX>& comp) {
+        MX (&f)(const MX&) = vec;
     return vertcat(applymap(f,comp));
   }
 
-  MX vecNZcatQQQ(const vector<MX>& comp) {
-    MX (&f)(const MX&) = vecNZQQQ;
-    return vertcat(applymap(vecNZQQQ,comp));
+  MX vecNZcat(const vector<MX>& comp) {
+    MX (&f)(const MX&) = vecNZ;
+    return vertcat(applymap(vecNZ,comp));
   }
 
   MX norm_2(const MX &x){
@@ -229,7 +229,7 @@ namespace CasADi{
     return x->getReshape(sp);
   }
 
-  MX flattenQQQ(const MX &x) {
+  MX flatten(const MX &x) {
     if(x.size2()==1){
       return x;
     } else {
@@ -237,7 +237,7 @@ namespace CasADi{
     }
   }
 
-  MX vecQQQ(const MX& x) {
+  MX vec(const MX& x) {
     if(x.size2()==1){
       return x;
     } else {
@@ -245,17 +245,17 @@ namespace CasADi{
     }
   }
 
-  MX flattenNZQQQ(const MX& x) {
+  MX flattenNZ(const MX& x) {
     if(x.dense()){
-      return flattenQQQ(x);
+      return flatten(x);
     } else {
       return trans(x)->getGetNonzeros(sp_dense(x.size(),1),range(x.size()));
     }
   }
   
-  MX vecNZQQQ(const MX& x) {
+  MX vecNZ(const MX& x) {
     if(x.dense()){
-      return vecQQQ(x);
+      return vec(x);
     } else {
       return x->getGetNonzeros(sp_dense(x.size(),1),range(x.size()));
     }

@@ -174,14 +174,14 @@ class ADtests(casadiTestCase):
               fe.init()
               fe.setInput(n)
               fe.evaluate()
-              self.checkarray(c.vecQQQ(fe.getOutput()).T,mul(c.vecQQQ(seed).T,J),"AD") 
+              self.checkarray(c.vec(fe.getOutput()).T,mul(c.vec(seed).T,J),"AD") 
 
             for sens,seed in zip(adjsens,aseeds):
               fe = SXFunction([y],[sens])
               fe.init()
               fe.setInput(n)
               fe.evaluate()
-              self.checkarray(c.vecQQQ(fe.getOutput()).T,mul(c.vecQQQ(seed).T,J.T),"AD") 
+              self.checkarray(c.vec(fe.getOutput()).T,mul(c.vec(seed).T,J.T),"AD") 
               
   def test_MXevalMX(self):
     n=array([1.2,2.3,7,1.4])
@@ -220,14 +220,14 @@ class ADtests(casadiTestCase):
               fe.init()
               fe.setInput(n)
               fe.evaluate()
-              self.checkarray(c.vecQQQ(fe.getOutput()).T,mul(c.vecQQQ(seed).T,J),"AD") 
+              self.checkarray(c.vec(fe.getOutput()).T,mul(c.vec(seed).T,J),"AD") 
 
             for sens,seed in zip(adjsens,aseeds):
               fe = MXFunction([y],[sens])
               fe.init()
               fe.setInput(n)
               fe.evaluate()
-              self.checkarray(c.vecQQQ(fe.getOutput()).T,mul(c.vecQQQ(seed).T,J.T),"AD") 
+              self.checkarray(c.vec(fe.getOutput()).T,mul(c.vec(seed).T,J.T),"AD") 
 
   @known_bug()  # Not implemented
   def test_MXevalSX(self):
@@ -267,14 +267,14 @@ class ADtests(casadiTestCase):
               fe.init()
               fe.setInput(n)
               fe.evaluate()
-              self.checkarray(c.vecQQQ(fe.getOutput()).T,mul(c.vecQQQ(seed).T,J),"AD") 
+              self.checkarray(c.vec(fe.getOutput()).T,mul(c.vec(seed).T,J),"AD") 
 
             for sens,seed in zip(adjsens,aseeds):
               fe = SXFunction([y],[sens])
               fe.init()
               fe.setInput(n)
               fe.evaluate()
-              self.checkarray(c.vecQQQ(fe.getOutput()).T,mul(c.vecQQQ(seed).T,J.T),"AD")
+              self.checkarray(c.vec(fe.getOutput()).T,mul(c.vec(seed).T,J.T),"AD")
 
   def test_MXevalSX_reduced(self):
     n=array([1.2,2.3,7,1.4])

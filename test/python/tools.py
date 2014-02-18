@@ -953,14 +953,14 @@ class Toolstests(casadiTestCase):
     a = struct_ssym([entry("a",shape=(5,3)),entry("b",shape=(4,3))])
     b = a()
     
-    b["a",vecQQQ] = DMatrix(range(15)).T
+    b["a",vec] = DMatrix(range(15)).T
     self.checkarray(b.cat,DMatrix(range(15)+[0]*12))
     
-    self.checkarray(b["a",vecQQQ],DMatrix(range(15)).T)
+    self.checkarray(b["a",vec],DMatrix(range(15)).T)
     
-    b["a",flattenQQQ] = DMatrix(range(15)).T
+    b["a",flatten] = DMatrix(range(15)).T
 
-    self.checkarray(b["a",flattenQQQ],DMatrix(range(15)).T)
+    self.checkarray(b["a",flatten],DMatrix(range(15)).T)
     
   def test_pickling(self):
     import pickle

@@ -126,7 +126,7 @@ namespace CasADi{
     
   */
   template<class T>
-  Matrix<T> flattenQQQ(const Matrix<T>& a);
+  Matrix<T> flatten(const Matrix<T>& a);
 
   /** \brief  make a vector
       Flattens the Matrix<T> such that the shape becomes (expr.numel(),1).
@@ -145,17 +145,17 @@ namespace CasADi{
     
   */
   template<class T>
-  Matrix<T> vecQQQ(const Matrix<T>& a);
+  Matrix<T> vec(const Matrix<T>& a);
 
   /** \brief Returns a flattened version of the Matrix, preserving only nonzeros
    */
   template<class T>
-  Matrix<T> flattenNZQQQ(const Matrix<T>& a);
+  Matrix<T> flattenNZ(const Matrix<T>& a);
 
   /** \brief Returns a flattened version of the Matrix, preserving only nonzeros
    */
   template<class T>
-  Matrix<T> vecNZQQQ(const Matrix<T>& a);
+  Matrix<T> vecNZ(const Matrix<T>& a);
 
   /** \brief Construct a matrix from a list of list of blocks.
    */
@@ -248,20 +248,20 @@ namespace CasADi{
 
   template<class T>
   /** \brief  concatenate vertically while vectorizing all arguments with flatten */
-  Matrix<T> flattencatQQQ(const std::vector< Matrix<T> >& comp);
+  Matrix<T> flattencat(const std::vector< Matrix<T> >& comp);
   
 
   template<class T>
   /** \brief  concatenate vertically while vectorizing all arguments with vec */
-  Matrix<T> veccatQQQ(const std::vector< Matrix<T> >& comp);
+  Matrix<T> veccat(const std::vector< Matrix<T> >& comp);
 
   template<class T>
   /** \brief  concatenate vertically while vectorizing all arguments with flattenNZ */
-  Matrix<T> flattenNZcatQQQ(const std::vector< Matrix<T> >& comp);
+  Matrix<T> flattenNZcat(const std::vector< Matrix<T> >& comp);
   
   template<class T>
   /** \brief  concatenate vertically while vectorizing all arguments with vecNZ */
-  Matrix<T> vecNZcatQQQ(const std::vector< Matrix<T> >& comp);
+  Matrix<T> vecNZcat(const std::vector< Matrix<T> >& comp);
 
   /** \brief Inner product of two matrices
       Equals
@@ -751,25 +751,25 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> flattenQQQ(const Matrix<T>& a){
+  Matrix<T> flatten(const Matrix<T>& a){
     Matrix<T> ret = reshape(trans(a),a.numel(),1);
     return ret;
   }
 
   template<class T>
-  Matrix<T> vecQQQ(const Matrix<T>& a){
+  Matrix<T> vec(const Matrix<T>& a){
     Matrix<T> ret = reshape(a,a.numel(),1);
     return ret;
   }
 
 
   template<class T>
-  Matrix<T> flattenNZQQQ(const Matrix<T>& a){
-    return trans(Matrix<T>(flattenQQQ(a).data()));
+  Matrix<T> flattenNZ(const Matrix<T>& a){
+    return trans(Matrix<T>(flatten(a).data()));
   }
   
   template<class T>
-  Matrix<T> vecNZQQQ(const Matrix<T>& a){
+  Matrix<T> vecNZ(const Matrix<T>& a){
     return trans(Matrix<T>(a.data()));
   }
 
@@ -892,26 +892,26 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> flattencatQQQ(const std::vector< Matrix<T> >& comp) {
-    Matrix<T> (&f)(const Matrix<T>&) = flattenQQQ;
+  Matrix<T> flattencat(const std::vector< Matrix<T> >& comp) {
+    Matrix<T> (&f)(const Matrix<T>&) = flatten;
     return vertcat(applymap(f,comp));
   }
   
   template<class T>
-  Matrix<T> veccatQQQ(const std::vector< Matrix<T> >& comp) {
-    Matrix<T> (&f)(const Matrix<T>&) = vecQQQ;
+  Matrix<T> veccat(const std::vector< Matrix<T> >& comp) {
+    Matrix<T> (&f)(const Matrix<T>&) = vec;
     return vertcat(applymap(f,comp));
   }
 
   template<class T>
-  Matrix<T> flattenNZcatQQQ(const std::vector< Matrix<T> >& comp) {
-    Matrix<T> (&f)(const Matrix<T>&) = flattenNZQQQ;
+  Matrix<T> flattenNZcat(const std::vector< Matrix<T> >& comp) {
+    Matrix<T> (&f)(const Matrix<T>&) = flattenNZ;
     return vertcat(applymap(f,comp));
   }
   
   template<class T>
-  Matrix<T> vecNZcatQQQ(const std::vector< Matrix<T> >& comp) {
-    Matrix<T> (&f)(const Matrix<T>&) = vecNZQQQ;
+  Matrix<T> vecNZcat(const std::vector< Matrix<T> >& comp) {
+    Matrix<T> (&f)(const Matrix<T>&) = vecNZ;
     return vertcat(applymap(f,comp));
   }
 
@@ -1550,10 +1550,10 @@ namespace CasADi{
   MTT_INST(T,adj)                               \
   MTT_INST(T,inv)                               \
   MTT_INST(T,reshape)                           \
-  MTT_INST(T,flattenQQQ)                               \
-  MTT_INST(T,vecQQQ)                           \
-  MTT_INST(T,flattenNZQQQ)                             \
-  MTT_INST(T,vecNZQQQ)                         \
+  MTT_INST(T,flatten)                               \
+  MTT_INST(T,vec)                           \
+  MTT_INST(T,flattenNZ)                             \
+  MTT_INST(T,vecNZ)                         \
   MTT_INST(T,blockcat)                          \
   MTT_INST(T,blocksplit)                        \
   MTT_INST(T,vertcat)                           \
@@ -1592,10 +1592,10 @@ namespace CasADi{
   MTT_INST(T,blkdiag)                           \
   MTT_INST(T,polyval)                           \
   MTT_INST(T,addMultiple)                       \
-  MTT_INST(T,flattencatQQQ)                            \
-  MTT_INST(T,flattenNZcatQQQ)                          \
-  MTT_INST(T,veccatQQQ)                        \
-  MTT_INST(T,vecNZcatQQQ)                      \
+  MTT_INST(T,flattencat)                            \
+  MTT_INST(T,flattenNZcat)                          \
+  MTT_INST(T,veccat)                        \
+  MTT_INST(T,vecNZcat)                      \
   MTT_INST(T,project)                           \
   MTT_INST(T,sprank)                            \
   MTT_INST(T,kron) 

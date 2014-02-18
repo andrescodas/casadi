@@ -117,7 +117,7 @@ namespace CasADi{
   
   CCSSparsity reshape(const CCSSparsity& a, int nrow, int ncol);
   
-  CCSSparsity flattenQQQ(const CCSSparsity& a);
+  CCSSparsity flatten(const CCSSparsity& a);
   
   /** \ brief Return the transpose of the sparsity pattern
    */

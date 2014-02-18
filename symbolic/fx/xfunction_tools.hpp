@@ -33,8 +33,8 @@ namespace CasADi{
 /** \brief Make a vector-valued function out of a matrix-valued one.
 *  In spirit, this function is like applying flatten() to all inputs outputs
 */
-SXFunction flattenQQQ (const SXFunction &a);
-MXFunction flattenQQQ (const FX &a);
+SXFunction flatten (const SXFunction &a);
+MXFunction flatten (const FX &a);
 /// @}  
                 
 } // namespace CasADi
