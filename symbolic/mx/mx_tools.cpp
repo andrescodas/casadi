@@ -125,7 +125,7 @@ namespace CasADi{
     return horzcat(applymap(vecNZ,comp));
   }
 
-  MX norm_2(const MX &x){
+  MX norm_2QQQ(const MX &x){
     return x->getNorm2();
   }
 

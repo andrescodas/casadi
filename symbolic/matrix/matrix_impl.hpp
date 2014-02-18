@@ -415,8 +415,8 @@ namespace CasADi{
   }
 
   template<class T>
-  bool Matrix<T>::vector() const{
-    return size1()==1;
+  bool Matrix<T>::vectorQQQ() const{
+    return sparsity().vector();
   }
 
   template<class T>
@@ -484,8 +484,8 @@ namespace CasADi{
   }
   
   template<class T>
-  void Matrix<T>::printVector(std::ostream &stream) const {
-    casadi_assert_message(vector(),"Not a vector");
+  void Matrix<T>::printVectorQQQ(std::ostream &stream) const {
+    casadi_assert_message(vectorQQQ(),"Not a vector");
   
     std::streamsize precision = stream.precision();
     std::streamsize width = stream.width();
@@ -499,18 +499,23 @@ namespace CasADi{
       stream.unsetf(std::ios::scientific);
     }
   
+    // Access data structures
+    const std::vector<int>& r = row();
+      
+    // Nonzero
+    int el=0;
+
+    // Loop over rows
     stream << "[";
-  
-    // Loop over cols
-    for(int i=0; i<size2(); ++i){
+    for(int rr=0; rr<size1(); ++rr){
       // Add delimitor
-      if(i!=0) stream << ",";
-    
+      if(rr!=0) stream << ",";
+      
       // Check if nonzero
-      if(colind(i)==colind(i+1)){
-        stream << "00";
+      if(el<r.size() && rr==r[el]){
+        stream << at(el++);
       } else {
-        stream << data()[colind(i)];
+        stream << "00";
       }
     }
     stream << "]"; 
@@ -522,7 +527,9 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::printMatrix(std::ostream &stream) const{
-
+    // Print as a single line
+    bool oneliner=this->size1()<=1;
+  
     std::streamsize precision = stream.precision();
     std::streamsize width = stream.width();
     std::ios_base::fmtflags flags = stream.flags();
@@ -537,13 +544,15 @@ namespace CasADi{
 
     // Index counter for each column
     std::vector<int> cind = colind();
-  
+    
+    // Beginning of matrix
+    stream << "[";
+
     // Loop over rows
     for(int rr=0; rr<size1(); ++rr){
-      if(rr==0)
-        stream << "[[";
-      else
-        stream << " [";
+      // Beginning of row
+      if(!oneliner) stream << std::endl;
+      stream << "[";
       
       // Loop over columns
       for(int cc=0; cc<size2(); ++cc){
@@ -558,12 +567,13 @@ namespace CasADi{
         }
       }
     
-      // New col
-      if(rr==size2()-1)
-        stream << "]]" << std::endl;
-      else
-        stream << "]" << std::endl;
-    }  
+      // End of row
+      stream << "]";
+    }
+    
+    // End of matrix
+    if(!oneliner) stream << std::endl;
+    stream << "]";
     
     stream.precision(precision);
     stream.width(width);
@@ -594,8 +604,8 @@ namespace CasADi{
     if(dense()){
       if (size()==1){
         printScalar(stream);
-      } else if (size1()==1){
-        printVector(stream);
+      } else if (vectorQQQ()){
+        printVectorQQQ(stream);
       } else {
         printDense(stream);
       }
@@ -611,10 +621,9 @@ namespace CasADi{
       stream << "[]";
     } else if (numel()==1 && size()==1){
       printScalar(stream);
-    } else if (size1()==1){
-      printVector(stream);
+    } else if (vectorQQQ()){
+      printVectorQQQ(stream);
     } else {
-      stream << std::endl;
       printMatrix(stream);
     }
     stream << ")";

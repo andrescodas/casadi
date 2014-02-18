@@ -392,7 +392,7 @@ namespace CasADi{
 
   /** \brief  2-norm  */
   template<class T>
-  Matrix<T> norm_2(const Matrix<T> &x);
+  Matrix<T> norm_2QQQ(const Matrix<T> &x);
 
   /** \brief 1-norm  */
   template<class T>
@@ -924,7 +924,6 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> outer_prod(const Matrix<T> &x, const Matrix<T> &y){
-    casadi_assert_message(x.vector() && y.vector(), "outer_prod: arguments must be vectors");
     return mul(x,trans(y));  
   }
 
@@ -977,8 +976,8 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> norm_2(const Matrix<T>& x){
-    if(x.vector()){
+  Matrix<T> norm_2QQQ(const Matrix<T>& x){
+    if(x.vectorQQQ()){
       return norm_F(x);
     } else {
       casadi_error("2-norms currently only supported for vectors. Did you intend to calculate a Frobenius norms (norm_F)?");
@@ -1030,7 +1029,7 @@ namespace CasADi{
       }
 
       // Normalize qi
-      ri(i,0) = norm_2(trans(qi));
+      ri(i,0) = norm_2QQQ(qi);
       qi /= ri(i,0);
 
       // Update R and Q
@@ -1565,7 +1564,7 @@ namespace CasADi{
   MTT_INST(T,inner_prod)                        \
   MTT_INST(T,outer_prod)                        \
   MTT_INST(T,norm_1)                            \
-  MTT_INST(T,norm_2)                            \
+  MTT_INST(T,norm_2QQQ)                            \
   MTT_INST(T,norm_inf)                          \
   MTT_INST(T,norm_F)                            \
   MTT_INST(T,qr)                                \
