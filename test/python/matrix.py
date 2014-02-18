@@ -416,7 +416,7 @@ class Matrixtests(casadiTestCase):
   def test_issue298(self):
     self.message("Issue #298")
     a = DMatrix.sparse(1,4)
-    b = c.reshapeQQQ(a,2,2)
+    b = c.reshape(a,2,2)
     self.assertEqual(type(a),type(b))
 
     a = IMatrix.sparse(1,4)

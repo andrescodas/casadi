@@ -76,7 +76,7 @@ class ControlTests(casadiTestCase):
           
           
           Pf = solve(A_total.T,vec(horzcat([Vss[-n:,:],Vss[:-n,:]])).T,CSparse).T
-          P = Pf.reshapeQQQ((n,K*n))
+          P = Pf.reshape((n,K*n))
           #P = (P+P.T)/2
           
           refsol = MXFunction([As,Vs],[P])

@@ -424,7 +424,7 @@ class MXtests(casadiTestCase):
   def test_MXreshape(self):
     self.message("reshape(MX)")
     x = msym("x",3,2)
-    z=c.reshapeQQQ(x,(6,1))
+    z=c.reshape(x,(6,1))
     self.assertEqual(z.size2(),1,"Flatten returns MX of wrong dimension")
     self.assertEqual(z.size1(),6,"Flatten returns MX of wrong dimension")
     f = MXFunction([x],[z])
@@ -445,9 +445,9 @@ class MXtests(casadiTestCase):
     checkMXoperations(self,lambda x: trans(trans(x)),lambda x: x,'trans(trans(horzcat))')
     checkMXoperations(self,lambda x: flatten(trans(x)),lambda x: reshape(x,(prod(x.shape),1)),'flatten(trans(horzcat))')
     checkMXoperations(self,lambda x: trans(flatten(x)),lambda x: reshape(x.T,(prod(x.shape),1)).T,'flatten(trans(horzcat))')
-    checkMXoperations(self,lambda x: c.reshapeQQQ(x,(6,4)),lambda x: reshape(x,(4,6)),'reshape(horzcat)')
-    checkMXoperations(self,lambda x: c.reshapeQQQ(trans(x),(6,4)),lambda x: reshape(x.T,(4,6)),'reshape(trans(horzcat))') 
-    checkMXoperations(self,lambda x: trans(c.reshapeQQQ(x,(6,4))),lambda x: reshape(x,(4,6)).T,'trans(reshape(horzcat))') 
+    checkMXoperations(self,lambda x: c.reshape(x,(6,4)),lambda x: reshape(x,(4,6)),'reshape(horzcat)')
+    checkMXoperations(self,lambda x: c.reshape(trans(x),(6,4)),lambda x: reshape(x.T,(4,6)),'reshape(trans(horzcat))') 
+    checkMXoperations(self,lambda x: trans(c.reshape(x,(6,4))),lambda x: reshape(x,(4,6)).T,'trans(reshape(horzcat))') 
 
   def test_MXcompose2(self):
     self.message("compositions of vec, trans, reshape with vertcat")
@@ -456,9 +456,9 @@ class MXtests(casadiTestCase):
     checkMXoperations2(self,lambda x: trans(trans(x)),lambda x: x,'trans(trans(vertcat))')
     checkMXoperations2(self,lambda x: flatten(trans(x)),lambda x: reshape(x,(prod(x.shape),1)),'flatten(trans(vertcat))')
     checkMXoperations2(self,lambda x: trans(flatten(x)),lambda x: reshape(x.T,(prod(x.shape),1)).T,'flatten(trans(vertcat))')
-    checkMXoperations2(self,lambda x: c.reshapeQQQ(x,(6,4)),lambda x: reshape(x,(4,6)),'reshape(vertcat)')
-    checkMXoperations2(self,lambda x: c.reshapeQQQ(trans(x),(6,4)),lambda x: reshape(x.T,(4,6)),'reshape(trans(vertcat))') 
-    checkMXoperations2(self,lambda x: trans(c.reshapeQQQ(x,(6,4))),lambda x: reshape(x,(4,6)).T,'trans(reshape(vertcat))') 
+    checkMXoperations2(self,lambda x: c.reshape(x,(6,4)),lambda x: reshape(x,(4,6)),'reshape(vertcat)')
+    checkMXoperations2(self,lambda x: c.reshape(trans(x),(6,4)),lambda x: reshape(x.T,(4,6)),'reshape(trans(vertcat))') 
+    checkMXoperations2(self,lambda x: trans(c.reshape(x,(6,4))),lambda x: reshape(x,(4,6)).T,'trans(reshape(vertcat))') 
 
   def test_MXcompose3(self):
     self.message("compositions of vec, trans, reshape with horzcat")
@@ -467,9 +467,9 @@ class MXtests(casadiTestCase):
     checkMXoperations3(self,lambda x: trans(trans(x)),lambda x: x,'trans(trans(snippet))')
     checkMXoperations3(self,lambda x: flatten(trans(x)),lambda x: reshape(x,(prod(x.shape),1)),'flatten(trans(snippet))')
     checkMXoperations3(self,lambda x: trans(flatten(x)),lambda x: reshape(x.T,(prod(x.shape),1)).T,'flatten(trans(snippet))')
-    checkMXoperations3(self,lambda x: c.reshapeQQQ(x,(6,4)),lambda x: reshape(x,(4,6)),'reshape(snippet)')
-    checkMXoperations3(self,lambda x: c.reshapeQQQ(trans(x),(6,4)),lambda x: reshape(x.T,(4,6)),'reshape(trans(snippet))') 
-    checkMXoperations3(self,lambda x: trans(c.reshapeQQQ(x,(6,4))),lambda x: reshape(x,(4,6)).T,'trans(reshape(snippet))') 
+    checkMXoperations3(self,lambda x: c.reshape(x,(6,4)),lambda x: reshape(x,(4,6)),'reshape(snippet)')
+    checkMXoperations3(self,lambda x: c.reshape(trans(x),(6,4)),lambda x: reshape(x.T,(4,6)),'reshape(trans(snippet))') 
+    checkMXoperations3(self,lambda x: trans(c.reshape(x,(6,4))),lambda x: reshape(x,(4,6)).T,'trans(reshape(snippet))') 
 
   def test_MXcompose4(self):
     self.message("compositions of vertcat + horzcat")
@@ -1210,7 +1210,7 @@ class MXtests(casadiTestCase):
       J = f.jacobian([i for i in range(len(ins)) if ins[i] is y][0])
       J.init()
       if x.shape[0]==1 and x.shape[1]==1:
-        return (J.call(ins)[0]).reshapeQQQ(y.shapeQQQ)
+        return (J.call(ins)[0]).reshape(y.shapeQQQ)
       return J.call(ins)[0]
 
     def eye(n):

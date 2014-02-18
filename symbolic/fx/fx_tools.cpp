@@ -138,7 +138,7 @@ FX parameterizeTime(FX dae) {
      dae_in[DAE_T]    = t0 + (tf-t0)*tau;
    }
    
-   dae_in[DAE_P]    = reshapeQQQ(P[range(2,2+dae.input(DAE_P).size())],dae.input(DAE_P).sparsity());
+   dae_in[DAE_P]    = reshape(P[range(2,2+dae.input(DAE_P).size())],dae.input(DAE_P).sparsity());
    dae_in[DAE_X]    = dae_input[DAE_X];
 
    std::vector<MX> ret_in(DAE_NUM_IN);
@@ -179,7 +179,7 @@ FX parameterizeTimeOutput(FX f) {
      f_in[DAE_T]    = t0 + (tf-t0)*tau;
    }
    
-   f_in[DAE_P]    = reshapeQQQ(P[range(2,2+f.input(DAE_P).size())],f.input(DAE_P).sparsity());
+   f_in[DAE_P]    = reshape(P[range(2,2+f.input(DAE_P).size())],f.input(DAE_P).sparsity());
    f_in[DAE_X]    = f_input[DAE_X];
 
    std::vector<MX> ret_in(DAE_NUM_IN);

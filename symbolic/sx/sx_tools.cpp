@@ -733,7 +733,7 @@ SXMatrix taylor(const SXMatrix& ex,const SXMatrix& x, const SXMatrix& a, int ord
     result+=1/nf * substitute(ff,x,a) * dxa;
     dxa*=dx;
   }
-  return trans(reshapeQQQ(result,ex.size2(),ex.size1()));
+  return trans(reshape(result,ex.size2(),ex.size1()));
 }
 
 SXMatrix mtaylor(const SXMatrix& ex,const SXMatrix& x, const SXMatrix& around,int order) {
@@ -765,7 +765,7 @@ SXMatrix mtaylor(const SXMatrix& ex,const SXMatrix& x, const SXMatrix& a,int ord
     "mtaylor: number of non-zero elements in x (" <<  x.size() << ") must match size of order_contributions (" << order_contributions.size() << ")"
   );
 
-  return trans(reshapeQQQ(mtaylor_recursive(flatten(ex),x,a,order,order_contributions),ex.size2(),ex.size1()));
+  return trans(reshape(mtaylor_recursive(flatten(ex),x,a,order,order_contributions),ex.size2(),ex.size1()));
 }
 
 int countNodes(const SXMatrix& A){

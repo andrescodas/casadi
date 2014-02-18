@@ -169,12 +169,12 @@ namespace CasADi{
     return ret;
   }
 
-  CCSSparsity reshapeQQQ(const CCSSparsity& a, int nrow, int ncol){
+  CCSSparsity reshape(const CCSSparsity& a, int nrow, int ncol){
     return a.reshape(nrow,ncol);
   }
 
   CCSSparsity flatten(const CCSSparsity& a){
-    return reshapeQQQ(trans(a),1,a.numel());
+    return reshape(trans(a),1,a.numel());
   }
 
   CCSSparsity trans(const CCSSparsity& a) {

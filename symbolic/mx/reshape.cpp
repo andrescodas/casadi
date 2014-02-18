@@ -90,13 +90,13 @@ namespace CasADi{
     if(input[0]==output[0]) return;
 
     if(!output_given){
-      *output[0] = reshapeQQQ(*input[0],shape());
+      *output[0] = reshape(*input[0],shape());
     }
 
     // Forward sensitivities
     int nfwd = fwdSens.size();
     for(int d = 0; d<nfwd; ++d){
-      *fwdSens[d][0] = reshapeQQQ(*fwdSeed[d][0],shape());
+      *fwdSens[d][0] = reshape(*fwdSeed[d][0],shape());
     }
     
     // Adjoint sensitivities
@@ -104,7 +104,7 @@ namespace CasADi{
     for(int d=0; d<nadj; ++d){
       MX& aseed = *adjSeed[d][0];
       MX& asens = *adjSens[d][0];
-      asens += reshapeQQQ(aseed,dep().shape());
+      asens += reshape(aseed,dep().shape());
       aseed = MX();
     }
   }
@@ -117,7 +117,7 @@ namespace CasADi{
   }
 
   MX Reshape::getReshape(const CCSSparsity& sp) const{ 
-    return reshapeQQQ(dep(0),sp);
+    return reshape(dep(0),sp);
   }
 
 } // namespace CasADi
