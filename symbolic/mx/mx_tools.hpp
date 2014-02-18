@@ -124,7 +124,7 @@ namespace CasADi{
   MX norm_F(const MX &x);
 
   /** \brief  2-norm  */
-  MX norm_2QQQ(const MX &x);
+  MX norm_2(const MX &x);
 
   /** \brief 1-norm  */
   MX norm_1(const MX &x);

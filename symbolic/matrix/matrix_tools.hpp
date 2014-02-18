@@ -392,7 +392,7 @@ namespace CasADi{
 
   /** \brief  2-norm  */
   template<class T>
-  Matrix<T> norm_2QQQ(const Matrix<T> &x);
+  Matrix<T> norm_2(const Matrix<T> &x);
 
   /** \brief 1-norm  */
   template<class T>
@@ -976,7 +976,7 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> norm_2QQQ(const Matrix<T>& x){
+  Matrix<T> norm_2(const Matrix<T>& x){
     if(x.vector()){
       return norm_F(x);
     } else {
@@ -1029,7 +1029,7 @@ namespace CasADi{
       }
 
       // Normalize qi
-      ri(i,0) = norm_2QQQ(qi);
+      ri(i,0) = norm_2(qi);
       qi /= ri(i,0);
 
       // Update R and Q
@@ -1564,7 +1564,7 @@ namespace CasADi{
   MTT_INST(T,inner_prod)                        \
   MTT_INST(T,outer_prod)                        \
   MTT_INST(T,norm_1)                            \
-  MTT_INST(T,norm_2QQQ)                            \
+  MTT_INST(T,norm_2)                            \
   MTT_INST(T,norm_inf)                          \
   MTT_INST(T,norm_F)                            \
   MTT_INST(T,qr)                                \
