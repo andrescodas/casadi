@@ -359,6 +359,11 @@ namespace CasADi{
     (*this)->reserve(nnz,ncol);
   }
 
+  void CCSSparsity::append(const CCSSparsity& sp){
+    // TODO: Rewrite more efficiently
+    *this = vertcat(*this,sp);
+  }
+
   void CCSSparsity::appendColumns(const CCSSparsity& sp){
     casadi_assert(this!=&sp); // NOTE: this case needs to be handled
     makeUnique();

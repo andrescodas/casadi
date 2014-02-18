@@ -1812,6 +1812,11 @@ namespace CasADi{
   }
 
   template<class T>
+  void Matrix<T>::append(const Matrix<T>& y){
+    *this = vertcat(*this,y);
+  }
+
+  template<class T>
   void Matrix<T>::appendColumns(const Matrix<T>& y){
 
     // Quick return if expr is empty
