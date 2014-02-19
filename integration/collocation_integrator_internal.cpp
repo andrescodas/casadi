@@ -100,20 +100,20 @@ namespace CasADi{
     MX t = msym("t",f_.input(DAE_T).sparsity());
 
     // Implicitly defined variables (z and x)
-    MX v = msym("v",1,deg_*(nx_+nz_));
+    MX v = msym("v",deg_*(nx_+nz_));
     vector<int> v_offset(1,0);
     for(int d=0; d<deg_; ++d){
       v_offset.push_back(v_offset.back()+nx_);
       v_offset.push_back(v_offset.back()+nz_);
     }
-    vector<MX> vv = horzsplit(v,v_offset);
+    vector<MX> vv = vertsplit(v,v_offset);
     vector<MX>::const_iterator vv_it = vv.begin();
 
     // Collocated states
     vector<MX> x(deg_+1), z(deg_+1);
     for(int d=1; d<=deg_; ++d){
-      x[d] = *vv_it++;
-      z[d] = *vv_it++;
+      x[d] = reshape(*vv_it++,this->x0().shape());
+      z[d] = reshape(*vv_it++,this->z0().shape());
     }
     casadi_assert(vv_it==vv.end());
 
@@ -151,10 +151,10 @@ namespace CasADi{
       }
       
       // Add collocation equation
-      eq.push_back(f_res[DAE_ODE] - xp_j);
+      eq.push_back(vec(f_res[DAE_ODE] - xp_j));
         
       // Add the algebraic conditions
-      eq.push_back(f_res[DAE_ALG]);
+      eq.push_back(vec(f_res[DAE_ALG]));
 
       // Add contribution to the final state
       xf += D[j]*x[j];
@@ -171,7 +171,7 @@ namespace CasADi{
     F_in[DAE_Z] = v;
     vector<MX> F_out(DAE_NUM_OUT);
     F_out[DAE_ODE] = xf;
-    F_out[DAE_ALG] = horzcat(eq);
+    F_out[DAE_ALG] = vertcat(eq);
     F_out[DAE_QUAD] = qf;
     F_ = MXFunction(F_in,F_out);
     F_.init();
@@ -179,25 +179,26 @@ namespace CasADi{
     // Backwards dynamics
     // NOTE: The following is derived so that it will give the exact adjoint sensitivities whenever g is the reverse mode derivative of f.
     if(!g_.isNull()){
+
       // Symbolic inputs
       MX rx0 = msym("x0",g_.input(RDAE_RX).sparsity());
       MX rp = msym("p",g_.input(RDAE_RP).sparsity());
 
       // Implicitly defined variables (rz and rx)
-      MX rv = msym("v",1,deg_*(nrx_+nrz_));
+      MX rv = msym("v",deg_*(nrx_+nrz_));
       vector<int> rv_offset(1,0);
       for(int d=0; d<deg_; ++d){
         rv_offset.push_back(rv_offset.back()+nrx_);
         rv_offset.push_back(rv_offset.back()+nrz_);
       }
-      vector<MX> rvv = horzsplit(rv,rv_offset);
+      vector<MX> rvv = vertsplit(rv,rv_offset);
       vector<MX>::const_iterator rvv_it = rvv.begin();
 
       // Collocated states
       vector<MX> rx(deg_+1), rz(deg_+1);
       for(int d=1; d<=deg_; ++d){
-        rx[d] = *rvv_it++;
-        rz[d] = *rvv_it++;
+        rx[d] = reshape(*rvv_it++,this->rx0().shape());
+        rz[d] = reshape(*rvv_it++,this->rz0().shape());
       }
       casadi_assert(rvv_it==rvv.end());
            
@@ -231,10 +232,10 @@ namespace CasADi{
         }
 
         // Add collocation equation
-        eq.push_back(g_res[RDAE_ODE] - rxp_j);
+        eq.push_back(vec(g_res[RDAE_ODE] - rxp_j));
         
         // Add the algebraic conditions
-        eq.push_back(g_res[RDAE_ALG]);
+        eq.push_back(vec(g_res[RDAE_ALG]));
 
         // Add contribution to the final state
         rxf += (C[0][j]/h_)*rx[j];
@@ -254,7 +255,7 @@ namespace CasADi{
       G_in[RDAE_RZ] = rv;
       vector<MX> G_out(RDAE_NUM_OUT);
       G_out[RDAE_ODE] = rxf;
-      G_out[RDAE_ALG] = horzcat(eq);
+      G_out[RDAE_ALG] = vertcat(eq);
       G_out[RDAE_QUAD] = -rqf; // why minus?
       G_ = MXFunction(G_in,G_out);
       G_.init();

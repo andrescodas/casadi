@@ -40,7 +40,7 @@ namespace CasADi{
     addOption("interpolation_order",           OT_INTEGER,  3,  "Order of the interpolating polynomials");
     addOption("collocation_scheme",            OT_STRING,  "radau",  "Collocation scheme","radau|legendre");
     addOption("implicit_solver",               OT_IMPLICITFUNCTION,  GenericType(), "An implicit function solver");
-    addOption("implicit_solver_options",       OT_DICTIONARY, GenericType(), "Options to be passed to the NLP Solver");
+    addOption("implicit_solver_options",       OT_DICTIONARY, GenericType(), "Options to be passed to the implicit solver");
     addOption("expand_f",                      OT_BOOLEAN,  false, "Expand the ODE/DAE residual function in an SX graph");
     addOption("expand_q",                      OT_BOOLEAN,  false, "Expand the quadrature function in an SX graph");
     addOption("hotstart",                      OT_BOOLEAN,  true, "Initialize the trajectory at the previous solution");
@@ -96,10 +96,10 @@ namespace CasADi{
     vector<MX> D(deg+1);
   
     // Coefficients of the collocation equation as DMatrix
-    DMatrix D_num = DMatrix::zeros(1,deg+1);
+    DMatrix D_num = DMatrix::zeros(deg+1);
 
     // Coefficients of the quadratures
-    DMatrix Q = DMatrix::zeros(1,deg+1);
+    DMatrix Q = DMatrix::zeros(deg+1);
 
     // For all collocation points
     for(int j=0; j<deg+1; ++j){
@@ -113,45 +113,45 @@ namespace CasADi{
       }
     
       // Evaluate the polynomial at the final time to get the coefficients of the continuity equation
-      D_num(0,j) = p(1.0);
-      D[j] = D_num(0,j);
+      D_num(j) = p(1.0);
+      D[j] = D_num(j);
     
       // Evaluate the time derivative of the polynomial at all collocation points to get the coefficients of the continuity equation
       Polynomial dp = p.derivative();
       for(int r=0; r<deg+1; ++r){
-        C_num(r,j) = dp(tau_root[r]);
-        C[j][r] = C_num(r,j);
+        C_num(j,r) = dp(tau_root[r]);
+        C[j][r] = C_num(j,r);
       }
         
       // Integrate polynomial to get the coefficients of the quadratures
       Polynomial ip = p.anti_derivative();
-      Q(0,j) = ip(1.0);
+      Q(j) = ip(1.0);
     }
 
-    C_num(ALL,std::vector<int>(1,0)) = 0;
+    C_num(std::vector<int>(1,0),ALL) = 0;
     C_num(0,0)   = 1;
     
     casadi_assert_message(fabs(sumAll(Q)-1).at(0)<1e-9,"Check on quadrature coefficients");
     casadi_assert_message(fabs(sumAll(D_num)-1).at(0)<1e-9,"Check on collocation coefficients");
   
     // Initial state
-    MX X0 = msym("X0",1,nx_);
+    MX X0 = msym("X0",x0().sparsity());
   
     // Parameters
-    MX P = msym("P",1,np_);
+    MX P = msym("P",p().sparsity());
   
     // Backward state
-    MX RX0 = msym("RX0",1,nrx_);
+    MX RX0 = msym("RX0",rx0().sparsity());
   
     // Backward parameters
-    MX RP = msym("RP",1,nrp_);
+    MX RP = msym("RP",rp().sparsity());
   
     // Collocated differential states and algebraic variables
     int nX = (nk*(deg+1)+1)*(nx_+nrx_);
     int nZ = nk*deg*(nz_+nrz_);
   
     // Unknowns
-    MX V = msym("V",1,nX+nZ);
+    MX V = msym("V",nX+nZ);
     int offset = 0;
   
     // Get collocated states, algebraic variables and times
@@ -178,9 +178,9 @@ namespace CasADi{
       // For all time points
       for(int j=0; j<nj; ++j){
         // Get expressions for the differential state
-        X[k][j] = V[range(offset,offset+nx_)];
+        X[k][j] = reshape(V[range(offset,offset+nx_)],x0().shape());
         offset += nx_;
-        RX[k][j] = V[range(offset,offset+nrx_)];
+        RX[k][j] = reshape(V[range(offset,offset+nrx_)],rx0().shape());
         offset += nrx_;
       
         // Get the local time
@@ -188,9 +188,9 @@ namespace CasADi{
       
         // Get expressions for the algebraic variables
         if(j>0){
-          Z[k][j-1] = V[range(offset,offset+nz_)];
+          Z[k][j-1] = reshape(V[range(offset,offset+nz_)],z0().shape());
           offset += nz_;
-          RZ[k][j-1] = V[range(offset,offset+nrz_)];
+          RZ[k][j-1] = reshape(V[range(offset,offset+nrz_)],rz0().shape());
           offset += nrz_;
         }
       }
@@ -204,14 +204,14 @@ namespace CasADi{
     g.reserve(2*(nk+1));
   
     // Quadrature expressions
-    MX QF = MX::zeros(1,nq_);
-    MX RQF = MX::zeros(1,nrq_);
+    MX QF = MX::zeros(qf().sparsity());
+    MX RQF = MX::zeros(rqf().sparsity());
   
     // Counter
     int jk = 0;
   
     // Add initial condition
-    g.push_back(X[0][0]-X0);
+    g.push_back(vec(X[0][0]-X0));
   
     // For all finite elements
     for(int k=0; k<nk; ++k, ++jk){
@@ -227,7 +227,7 @@ namespace CasADi{
           xp_jk += C[j2][j]*X[k][j2];
         }
       
-        // Add collocation equations to the NLP
+        // Add collocation equations to the list of equations
         vector<MX> f_in(DAE_NUM_IN);
         f_in[DAE_T] = tkj;
         f_in[DAE_P] = P;
@@ -236,11 +236,11 @@ namespace CasADi{
       
         vector<MX> f_out;
         f_out = f_.call(f_in);
-        g.push_back(h_mx*f_out[DAE_ODE] - xp_jk);
+        g.push_back(vec(h_mx*f_out[DAE_ODE] - xp_jk));
       
         // Add the algebraic conditions
         if(nz_>0){
-          g.push_back(f_out[DAE_ALG]);
+          g.push_back(vec(f_out[DAE_ALG]));
         }
       
         // Add the quadrature
@@ -257,7 +257,7 @@ namespace CasADi{
             rxp_jk += C[j2][j]*RX[k][j2];
           }
         
-          // Add collocation equations to the NLP
+          // Add collocation equations to the list of equations
           vector<MX> g_in(RDAE_NUM_IN);
           g_in[RDAE_T] = tkj;
           g_in[RDAE_X] = X[k][j];
@@ -269,11 +269,11 @@ namespace CasADi{
         
           vector<MX> g_out;
           g_out = g_.call(g_in);
-          g.push_back(h_mx*g_out[RDAE_ODE] + rxp_jk);
+          g.push_back(vec(h_mx*g_out[RDAE_ODE] + rxp_jk));
         
           // Add the algebraic conditions
           if(nrz_>0){
-            g.push_back(g_out[RDAE_ALG]);
+            g.push_back(vec(g_out[RDAE_ALG]));
           }
         
           // Add the backward quadrature
@@ -289,8 +289,8 @@ namespace CasADi{
         xf_k += D[j]*X[k][j];
       }
 
-      // Add continuity equation to NLP
-      g.push_back(X[k+1][0] - xf_k);
+      // Add continuity equation to the list of equations
+      g.push_back(vec(X[k+1][0] - xf_k));
     
       if(nrx_>0){
         // Get an expression for the state at the end of the finite element
@@ -299,19 +299,22 @@ namespace CasADi{
           rxf_k += D[j]*RX[k][j];
         }
 
-        // Add continuity equation to NLP
-        g.push_back(RX[k+1][0] - rxf_k);
+        // Add continuity equation to the list of equations
+        g.push_back(vec(RX[k+1][0] - rxf_k));
       }
     }
   
     // Add initial condition for the backward integration
     if(nrx_>0){
-      g.push_back(RX[nk][0]-RX0);
+      g.push_back(vec(RX[nk][0]-RX0));
     }
   
     // Constraint expression
-    MX gv = horzcat(g);
+    MX gv = vertcat(g);
     
+    casadi_assert(gv.size2()==1);
+
+
     // Make sure that the dimension is consistent with the number of unknowns
     casadi_assert_message(gv.size()==V.size(),"Implicit function unknowns and equations do not match");
 
@@ -339,10 +342,10 @@ namespace CasADi{
       ifcn.init();
     }
   
-    // Get the NLP creator function
+    // Get the root-finding solver creator function
     implicitFunctionCreator implicit_function_creator = getOption("implicit_solver");
   
-    // Allocate an NLP solver
+    // Allocate a root-finding solver
     implicit_solver_ = implicit_function_creator(ifcn,FX(),LinearSolver());
     std::stringstream ss_implicit_solver;
     ss_implicit_solver << "collocation_implicitsolver_" << getOption("name");
@@ -362,7 +365,7 @@ namespace CasADi{
       // Create the linear solver
       integratorCreator startup_integrator_creator = getOption("startup_integrator");
     
-      // Allocate an NLP solver
+      // Allocate a root-finding solver
       startup_integrator_ = startup_integrator_creator(f_,g_);
     
       // Pass options
