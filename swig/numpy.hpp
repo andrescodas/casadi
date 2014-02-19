@@ -27,6 +27,14 @@
 #ifndef NPY_ARRAY_CARRAY
 #define NPY_ARRAY_CARRAY NPY_CARRAY
 #endif
+
+#ifndef NPY_ARRAY_DEFAULT
+#define NPY_ARRAY_DEFAULT NPY_DEFAULT
+#endif
+
+#ifndef NPY_ARRAY_ENSUREARRAY
+#define NPY_ARRAY_ENSUREARRAY NPY_ENSUREARRAY
+#endif
 /* Macros to extract array attributes.
  */
 #define is_array(a)            ((a) && PyArray_Check((PyArrayObject *)a))
