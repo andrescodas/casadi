@@ -268,70 +268,70 @@ namespace CasADi{
     
 #ifndef SWIG
     /// get an element
-    const T& elem(int j, int c=0) const;
+    const T& elem(int rr, int cc=0) const;
     
     /// get a reference to an element
-    T& elem(int j, int i=0);
+    T& elem(int rr, int cc=0);
 #else // SWIG
     /// Access a non-zero element
-    T elem(int j, int i=0) { return elem(j,i);}
+    T elem(int rr, int cc=0) { return elem(rr,cc);}
 #endif // SWIG
 
     /// get an element, do not allocate
-    const T getElement(int j, int i=0) const{ return elem(j,i);}
+    const T getElement(int rr, int cc=0) const{ return elem(rr,cc);}
     
-    /// Returns true if the matrix has a non-zero at location i,j
-    bool hasNZ(int j, int i) const { return sparsity().hasNZ(j,i); }
+    /// Returns true if the matrix has a non-zero at location rr,cc
+    bool hasNZ(int rr, int cc) const { return sparsity().hasNZ(rr,cc); }
 
     /// Returns the truth value of a Matrix
     bool __nonzero__() const;
 
     //@{
     /// Get a submatrix
-    const Matrix<T> sub(int j, int i) const;
-    const Matrix<T> sub(const std::vector<int>& j, int i) const{ return sub(j,std::vector<int>(1,i));}
-    const Matrix<T> sub(int j, const std::vector<int>& i) const{ return sub(std::vector<int>(1,j),i);}
-    const Matrix<T> sub(const std::vector<int>& j, const std::vector<int>& i) const;
-    const Matrix<T> sub(const Slice& j, const std::vector<int>& i) const { return sub(j.getAll(size1()),i);}
-    const Matrix<T> sub(const std::vector<int>& j, const Slice& i) const { return sub(j,i.getAll(size2()));}
-    const Matrix<T> sub(const Slice& j, const Slice& i) const{ return sub(j.getAll(size1()),i.getAll(size2()));}
-    const Matrix<T> sub(const Slice& j, int i) const{ return sub(j.getAll(size1()),std::vector<int>(1,i));}
-    const Matrix<T> sub(int j, const Slice& i) const{ return sub(std::vector<int>(1,j),i.getAll(size2()));}
-    const Matrix<T> sub(const Matrix<int>& k, const std::vector<int>& i) const;
-    const Matrix<T> sub(const std::vector<int>& j, const Matrix<int>& k) const;
-    const Matrix<T> sub(const Matrix<int>& k, const Slice& i) const {return sub(k,i.getAll(size2()));}
-    const Matrix<T> sub(const Slice& j, const Matrix<int>& k) const {return sub(j.getAll(size1()),k);}
-    const Matrix<T> sub(const Matrix<int>& j, const Matrix<int>& i) const;
+    const Matrix<T> sub(int rr, int cc) const;
+    const Matrix<T> sub(const std::vector<int>& rr, int cc) const{ return sub(rr,std::vector<int>(1,cc));}
+    const Matrix<T> sub(int rr, const std::vector<int>& cc) const{ return sub(std::vector<int>(1,rr),cc);}
+    const Matrix<T> sub(const std::vector<int>& rr, const std::vector<int>& cc) const;
+    const Matrix<T> sub(const Slice& rr, const std::vector<int>& cc) const { return sub(rr.getAll(size1()),cc);}
+    const Matrix<T> sub(const std::vector<int>& rr, const Slice& cc) const { return sub(rr,cc.getAll(size2()));}
+    const Matrix<T> sub(const Slice& rr, const Slice& cc) const{ return sub(rr.getAll(size1()),cc.getAll(size2()));}
+    const Matrix<T> sub(const Slice& rr, int cc) const{ return sub(rr.getAll(size1()),std::vector<int>(1,cc));}
+    const Matrix<T> sub(int rr, const Slice& cc) const{ return sub(std::vector<int>(1,rr),cc.getAll(size2()));}
+    const Matrix<T> sub(const Matrix<int>& rr, const std::vector<int>& cc) const;
+    const Matrix<T> sub(const std::vector<int>& rr, const Matrix<int>& cc) const;
+    const Matrix<T> sub(const Matrix<int>& rr, const Slice& cc) const {return sub(rr,cc.getAll(size2()));}
+    const Matrix<T> sub(const Slice& rr, const Matrix<int>& cc) const {return sub(rr.getAll(size1()),cc);}
+    const Matrix<T> sub(const Matrix<int>& rr, const Matrix<int>& cc) const;
     const Matrix<T> sub(const CCSSparsity& sp, int dummy = 0) const;
     //@}
 
     //@{
     /// Set a submatrix
-    void setSub(const Matrix<T>& m, int j, int i);
-    void setSub(const Matrix<T>& m, const std::vector<int>& j, int i){ setSub(m,j,std::vector<int>(1,i));}
-    void setSub(const Matrix<T>& m, int j, const std::vector<int>& i){ setSub(m,std::vector<int>(1,j),i);}
-    void setSub(const Matrix<T>& m, const std::vector<int>& j, const std::vector<int>& i);
-    void setSub(const Matrix<T>& m, const Slice& j, const std::vector<int>& i){ setSub(m,j.getAll(size1()),i);}
-    void setSub(const Matrix<T>& m, const std::vector<int>& j, const Slice& i){ setSub(m,j,i.getAll(size2()));}
-    void setSub(const Matrix<T>& m, const Slice& j, const Slice& i){ setSub(m,j.getAll(size1()),i.getAll(size2()));}
-    void setSub(const Matrix<T>& m, const Matrix<int>& j, const std::vector<int>& i);
-    void setSub(const Matrix<T>& m, const std::vector<int>& j, const Matrix<int>& i);
-    void setSub(const Matrix<T>& m, const Matrix<int>& j, const Slice& i) {return setSub(m,j,i.getAll(size2()));}
-    void setSub(const Matrix<T>& m, const Slice& j, const Matrix<int>& i) {return setSub(m,j.getAll(size1()),i);}
-    void setSub(const Matrix<T>& m, const Matrix<int>& j, const Matrix<int>& i);
+    void setSub(const Matrix<T>& m, int rr, int cc);
+    void setSub(const Matrix<T>& m, const std::vector<int>& rr, int cc){ setSub(m,rr,std::vector<int>(1,cc));}
+    void setSub(const Matrix<T>& m, int rr, const std::vector<int>& cc){ setSub(m,std::vector<int>(1,rr),cc);}
+    void setSub(const Matrix<T>& m, const std::vector<int>& rr, const std::vector<int>& cc);
+    void setSub(const Matrix<T>& m, const Slice& rr, const std::vector<int>& cc){ setSub(m,rr.getAll(size1()),cc);}
+    void setSub(const Matrix<T>& m, const std::vector<int>& rr, const Slice& cc){ setSub(m,rr,cc.getAll(size2()));}
+    void setSub(const Matrix<T>& m, const Slice& rr, const Slice& cc){ setSub(m,rr.getAll(size1()),cc.getAll(size2()));}
+    void setSub(const Matrix<T>& m, const Matrix<int>& rr, const std::vector<int>& cc);
+    void setSub(const Matrix<T>& m, const std::vector<int>& rr, const Matrix<int>& cc);
+    void setSub(const Matrix<T>& m, const Matrix<int>& rr, const Slice& cc) {return setSub(m,rr,cc.getAll(size2()));}
+    void setSub(const Matrix<T>& m, const Slice& rr, const Matrix<int>& cc) {return setSub(m,rr.getAll(size1()),cc);}
+    void setSub(const Matrix<T>& m, const Matrix<int>& rr, const Matrix<int>& cc);
     void setSub(const Matrix<T>& m, const CCSSparsity& sp, int dummy);
     //@}
 
     //@{
     /// Add a submatrix to an existing matrix (TODO: remove memory allocation)
-    template<typename I, typename J>
-    void addSub(const Matrix<T>& m, I i, J j){ setSub(m+sub(i,j),i,j);}
+    template<typename RR, typename CC>
+    void addSub(const Matrix<T>& m, RR rr, CC cc){ setSub(m+sub(rr,cc),rr,cc);}
     //@}
 
     //@{
     /// Retrieve a submatrix (TODO: remove memory allocation)
-    template<typename I, typename J>
-    void getSub(Matrix<T>& m, I i, J j){ m = sub(i,j);}
+    template<typename RR, typename CC>
+    void getSub(Matrix<T>& m, RR rr, CC cc){ m = sub(rr,cc);}
     //@}
 
     //@{
@@ -369,22 +369,22 @@ namespace CasADi{
     }
     
     /// get a matrix element
-    const Matrix<T> indexed_one_based(int i, int j) const{ return (*this)(j-1,i-1);}
-    const Matrix<T> indexed_zero_based(int i, int j) const{ return (*this)(j,i);}
-    const Matrix<T> indexed(const Slice &i, const Slice &j) const{ return (*this)(j,i); }
-    const Matrix<T> indexed(const IndexList &i, const IndexList &j) const{ 
-      return (*this)(j.getAll(size1()),i.getAll(size2()));
+    const Matrix<T> indexed_one_based(int rr, int cc) const{ return (*this)(rr-1,cc-1);}
+    const Matrix<T> indexed_zero_based(int rr, int cc) const{ return (*this)(rr,cc);}
+    const Matrix<T> indexed(const Slice &rr, const Slice &cc) const{ return (*this)(rr,cc); }
+    const Matrix<T> indexed(const IndexList &rr, const IndexList &cc) const{ 
+      return (*this)(rr.getAll(size1()),cc.getAll(size2()));
     }
-    const Matrix<T> indexed(const Slice &i, const Matrix<int>& k) const{ return (*this)(k,i); }
-    const Matrix<T> indexed(const IndexList &i, const Matrix<int>& k) const{ 
-      return (*this)(k,i.getAll(size2()));
+    const Matrix<T> indexed(const Slice &rr, const Matrix<int>& cc) const{ return (*this)(rr,cc); }
+    const Matrix<T> indexed(const Matrix<int>& rr, const IndexList &cc) const{ 
+      return (*this)(rr,cc.getAll(size2()));
     }
-    const Matrix<T> indexed(const Matrix<int>& k, const Slice &j) const{ return (*this)(j,k); }
-    const Matrix<T> indexed(const Matrix<int>& k, const IndexList &j) const{ 
-      return (*this)(j.getAll(size1()),k);
+    const Matrix<T> indexed(const Matrix<int>& rr, const Slice &cc) const{ return (*this)(rr,cc); }
+    const Matrix<T> indexed(const IndexList& rr, const Matrix<int> &cc) const{ 
+      return (*this)(rr.getAll(size1()),cc);
     }
-    const Matrix<T> indexed(const Matrix<int>& i, const Matrix<int>& j) const{ 
-      return (*this)(j,i);
+    const Matrix<T> indexed(const Matrix<int>& rr, const Matrix<int>& cc) const{ 
+      return (*this)(rr,cc);
     }
     const Matrix<T> indexed(const CCSSparsity &sp) const{ return (*this)(sp); }
     
@@ -399,26 +399,26 @@ namespace CasADi{
     }
     
     /// set a matrix element
-    void indexed_one_based_assignment(int i, int j, const T & m){ elem(j-1,i-1) = m;}
-    void indexed_zero_based_assignment(int i, int j, const T & m){ elem(j,i) = m;}
-    void indexed_assignment(const Slice &i, const Slice &j, const Matrix<T>& m){ (*this)(j,i) = m; }
-    void indexed_assignment(const IndexList &i, const IndexList &j, const Matrix<T>& m){
-      (*this)(j.getAll(size1()),i.getAll(size2())) = m;
+    void indexed_one_based_assignment(int rr, int cc, const T & m){ elem(rr-1,cc-1) = m;}
+    void indexed_zero_based_assignment(int rr, int cc, const T & m){ elem(rr,cc) = m;}
+    void indexed_assignment(const Slice &rr, const Slice &cc, const Matrix<T>& m){ (*this)(rr,cc) = m; }
+    void indexed_assignment(const IndexList &rr, const IndexList &cc, const Matrix<T>& m){
+      (*this)(rr.getAll(size1()),cc.getAll(size2())) = m;
     }
-    void indexed_assignment(const Slice &i, const Matrix<int>& j, const Matrix<T>& m){
-      (*this)(j,i) = m;
+    void indexed_assignment(const Slice &rr, const Matrix<int>& cc, const Matrix<T>& m){
+      (*this)(rr,cc) = m;
     }
-    void indexed_assignment( const Matrix<int>& i, const Slice &j, const Matrix<T>& m){
-      (*this)(j,i) = m;
+    void indexed_assignment( const Matrix<int>& rr, const Slice &cc, const Matrix<T>& m){
+      (*this)(rr,cc) = m;
     }
-    void indexed_assignment(const IndexList &i, const Matrix<int>& j, const Matrix<T>& m){
-      (*this)(j,i.getAll(size2())) = m;
+    void indexed_assignment(const Matrix<int> &rr, const IndexList& cc, const Matrix<T>& m){
+      (*this)(rr,cc.getAll(size2())) = m;
     }
-    void indexed_assignment( const Matrix<int>& i, const IndexList &j, const Matrix<T>& m){
-      (*this)(j.getAll(size1()),i) = m;
+    void indexed_assignment( const IndexList& rr, const Matrix<int> &cc, const Matrix<T>& m){
+      (*this)(rr.getAll(size1()),cc) = m;
     } 
-    void indexed_assignment( const Matrix<int>& i, const Matrix<int>& j, const Matrix<T>& m){
-      (*this)(j,i) = m;
+    void indexed_assignment( const Matrix<int>& rr, const Matrix<int>& cc, const Matrix<T>& m){
+      (*this)(rr,cc) = m;
     } 
     void indexed_assignment(const CCSSparsity &sp,const Matrix<T>& m){
       // (*this)(sp) = m;   // VC2010 compiler errors
