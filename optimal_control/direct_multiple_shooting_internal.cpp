@@ -91,14 +91,14 @@ void DirectMultipleShootingInternal::init(){
   vector<MX> X(nk_+1), U(nk_);
   for(int k=0; k<=nk_; ++k){ // interior nodes
     // Local state
-    X[k] = V[Slice(v_offset,v_offset+nx_)];
+    X[k] = V(0,Slice(v_offset,v_offset+nx_));
     v_offset += nx_;
     
     // Variables below do not appear at the end point
     if(k==nk_) break;
     
     // Local control
-    U[k] = V[Slice(v_offset,v_offset+nu_)];
+    U[k] = V(0,Slice(v_offset,v_offset+nu_));
     v_offset += nu_;
   }
   

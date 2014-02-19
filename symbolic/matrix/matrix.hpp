@@ -166,7 +166,8 @@ namespace CasADi{
     using B::scalar;
     using B::dense;
     using B::dimString;
-    using B::operator[];
+    //    using B::operator[];
+    using B::AAA;
     using B::operator();
 
     /// Expose iterators
@@ -336,10 +337,10 @@ namespace CasADi{
 
     //@{
     /// Get a set of nonzeros
-    const Matrix<T> getNZ(int k) const{ return at(k);}
-    const Matrix<T> getNZ(const std::vector<int>& k) const;
-    const Matrix<T> getNZ(const Slice& k) const{ return getNZ(k.getAll(size()));}
-    const Matrix<T> getNZ(const Matrix<int>& k) const;
+    const Matrix<T> getNZQQQ(int k) const{ return at(k);}
+    const Matrix<T> getNZQQQ(const std::vector<int>& k) const;
+    const Matrix<T> getNZQQQ(const Slice& k) const{ return getNZQQQ(k.getAll(size()));}
+    const Matrix<T> getNZQQQ(const Matrix<int>& k) const;
     //@}
     
     //@{

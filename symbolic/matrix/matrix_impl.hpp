@@ -32,8 +32,8 @@ namespace CasADi{
   // Implementations
 
   template<class T>
-  const T& Matrix<T>::elem(int j, int i) const{
-    int ind = sparsity().getNZ(j,i);
+  const T& Matrix<T>::elem(int rr, int cc) const{
+    int ind = sparsity().getNZ(rr,cc);
     if(ind==-1)
       return casadi_limits<T>::zero;
     else
@@ -48,9 +48,9 @@ namespace CasADi{
   bool Matrix<T>::stream_scientific_ = false;
 
   template<class T>
-  T& Matrix<T>::elem(int j, int i){
+  T& Matrix<T>::elem(int rr, int cc){
     int oldsize = sparsity().size();
-    int ind = sparsityRef().getNZ(j,i);
+    int ind = sparsityRef().getNZ(rr,cc);
     if(oldsize != sparsity().size())
       data().insert(begin()+ind,T(0));
     return at(ind);
@@ -64,8 +64,8 @@ namespace CasADi{
   }
 
   template<class T>
-  const Matrix<T> Matrix<T>::sub(int j, int i) const{
-    return elem(j,i);
+  const Matrix<T> Matrix<T>::sub(int rr, int cc) const{
+    return elem(rr,cc);
   }
 
   template<class T>
@@ -151,7 +151,7 @@ namespace CasADi{
     int j = 0;     // Flat index into non-zeros of the resultant matrix;
     for (int i=0;i<mapping.size();++i) {
       if (mapping[i] & 1) { // If the original matrix has a non-zero entry in the union
-        if (!(mapping[i] & 4)) ret[j] = data()[k]; // If this non-zero entry appears in the intersection, add it to the mapping
+        if (!(mapping[i] & 4)) ret.at(j) = at(k); // If this non-zero entry appears in the intersection, add it to the mapping
         k++;                 // Increment the original matrix' non-zero index counter
       }
       if (mapping[i] & 2) j++;
@@ -304,9 +304,9 @@ namespace CasADi{
   }
 
   template<class T>
-  const Matrix<T> Matrix<T>::getNZ(const std::vector<int>& k) const{
+  const Matrix<T> Matrix<T>::getNZQQQ(const std::vector<int>& k) const{
     try{
-      Matrix<T> ret = zeros(1,k.size());
+      Matrix<T> ret = zeros(k.size());
       for(int el=0; el<k.size(); ++el)
         ret.data()[el] = data().at(k[el]);
   
@@ -319,7 +319,7 @@ namespace CasADi{
   }
 
   template<class T>
-  const Matrix<T> Matrix<T>::getNZ(const Matrix<int>& k) const{
+  const Matrix<T> Matrix<T>::getNZQQQ(const Matrix<int>& k) const{
     try{
       Matrix<T> ret = zeros(k.sparsity());
       for(int el=0; el<k.size(); ++el)
@@ -1548,7 +1548,7 @@ namespace CasADi{
   
     // Copy the content
     for(int i=0; i<mapping.size(); ++i)
-      ret[i] = data()[mapping[i]];
+      ret.at(i) = at(mapping[i]);
   
     return ret;
   }

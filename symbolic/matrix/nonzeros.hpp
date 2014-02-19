@@ -37,7 +37,7 @@ template<typename M, typename K>
 class NonZeros : public M{
   public:
     /// Constructor
-    NonZeros(M& mat, const K& k) : M(mat.getNZ(k)), mat_(mat), k_(k){}
+    NonZeros(M& mat, const K& k) : M(mat.getNZQQQ(k)), mat_(mat), k_(k){}
 
     //@{
     /// Methods that modify a part of the parent object (A[k] = ?, A[k] += ?, etc.)

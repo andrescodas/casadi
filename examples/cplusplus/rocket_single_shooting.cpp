@@ -128,7 +128,7 @@ int main(){
     // Assemble the input
     vector<MX> input(INTEGRATOR_NUM_IN);
     input[INTEGRATOR_X0] = X;
-    input[INTEGRATOR_P] = U[k];
+    input[INTEGRATOR_P] = U.AAA(k);
 
     // Integrate
     X = integrator.call(input).at(0);
@@ -143,7 +143,7 @@ int main(){
   MX F = inner_prod(U,U);
 
   // Terminal constraints
-  MX G = vertcat(X[0],X[1]);
+  MX G = vertcat(X.AAA(0),X.AAA(1));
   
   // Create the NLP
   MXFunction nlp(nlpIn("x",U),nlpOut("f",F,"g",G));

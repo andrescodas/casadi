@@ -93,7 +93,7 @@ int main(){
   
   // Mayer objective function
   Matrix<SX> xf = ssym("xf",nx,1);
-  SXFunction mterm(xf, xf[nx-1]);
+  SXFunction mterm(xf, xf.AAA(nx-1));
 
   // Create a multiple shooting discretization
   DirectMultipleShooting ms(res,mterm);

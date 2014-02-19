@@ -130,21 +130,21 @@ void DirectCollocationInternal::init(){
   vector<MX> U(nk_);
   for(int k=0; k<nk_; ++k){
     // Collocated states
-        X[k].resize(deg_+1);
+    X[k].resize(deg_+1);
     for(int j=0; j<=deg_; ++j){
-        // Get the expression for the state vector
-        X[k][j] = nlp_x[Slice(offset,offset+nx_)];
-        offset += nx_;
+      // Get the expression for the state vector
+      X[k][j] = nlp_x(0,Slice(offset,offset+nx_));
+      offset += nx_;
     }
-
+    
     // Parametrized controls
-    U[k] = nlp_x[Slice(offset,offset+nu_)];
+    U[k] = nlp_x(0,Slice(offset,offset+nu_));
     offset += nu_;
   }
 
   // State at end time
   X[nk_].resize(1);
-  X[nk_][0] = nlp_x[Slice(offset,offset+nx_)];
+  X[nk_][0] = nlp_x(0,Slice(offset,offset+nx_));
   offset += nx_;
   casadi_assert(offset==nlp_nx);
 

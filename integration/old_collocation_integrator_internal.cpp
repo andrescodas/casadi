@@ -178,9 +178,9 @@ namespace CasADi{
       // For all time points
       for(int j=0; j<nj; ++j){
         // Get expressions for the differential state
-        X[k][j] = reshape(V[range(offset,offset+nx_)],x0().shape());
+        X[k][j] = reshape(V(range(offset,offset+nx_)),x0().shape());
         offset += nx_;
-        RX[k][j] = reshape(V[range(offset,offset+nrx_)],rx0().shape());
+        RX[k][j] = reshape(V(range(offset,offset+nrx_)),rx0().shape());
         offset += nrx_;
       
         // Get the local time
@@ -188,9 +188,9 @@ namespace CasADi{
       
         // Get expressions for the algebraic variables
         if(j>0){
-          Z[k][j-1] = reshape(V[range(offset,offset+nz_)],z0().shape());
+          Z[k][j-1] = reshape(V(range(offset,offset+nz_)),z0().shape());
           offset += nz_;
-          RZ[k][j-1] = reshape(V[range(offset,offset+nrz_)],rz0().shape());
+          RZ[k][j-1] = reshape(V(range(offset,offset+nrz_)),rz0().shape());
           offset += nrz_;
         }
       }
@@ -245,7 +245,7 @@ namespace CasADi{
       
         // Add the quadrature
         if(nq_>0){
-          QF += Q[j]*h_mx*f_out[DAE_QUAD];
+          QF += Q(j)*h_mx*f_out[DAE_QUAD];
         }
       
         // Now for the backward problem
@@ -278,7 +278,7 @@ namespace CasADi{
         
           // Add the backward quadrature
           if(nrq_>0){
-            RQF += Q[j]*h_mx*g_out[RDAE_QUAD];
+            RQF += Q(j)*h_mx*g_out[RDAE_QUAD];
           }
         }
       }

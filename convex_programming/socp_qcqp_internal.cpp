@@ -95,25 +95,25 @@ void SOCPQCQPInternal::evaluate() {
   // f = sqrt(h'h-r)
   
   for (int i=0;i<nq_;++i) {
-    socpsolver_.input(SOCP_SOLVER_F)[i+1] = -input(QCQP_SOLVER_R)[i];
+    socpsolver_.input(SOCP_SOLVER_F).at(i+1) = -input(QCQP_SOLVER_R).at(i);
   }
-  socpsolver_.input(SOCP_SOLVER_F)[0] = 0;
+  socpsolver_.input(SOCP_SOLVER_F).at(0) = 0;
 
   for (int i=0;i<nq_+1;++i) {
     for (int k=0;k<n_+1;++k) {
       double v = socpsolver_.input(SOCP_SOLVER_H).at(i*(n_+1)+k);
-      socpsolver_.input(SOCP_SOLVER_F)[i]+=v*v;
+      socpsolver_.input(SOCP_SOLVER_F).at(i)+=v*v;
     }
     socpsolver_.input(SOCP_SOLVER_F).at(i) = sqrt(socpsolver_.input(SOCP_SOLVER_F).at(i));
   }
   
-  socpsolver_.input(SOCP_SOLVER_E)[n_] = 0.5/socpsolver_.input(SOCP_SOLVER_F)[0];
+  socpsolver_.input(SOCP_SOLVER_E).at(n_) = 0.5/socpsolver_.input(SOCP_SOLVER_F).at(0);
   
   // Fix the first qc arising from epigraph reformulation: we must make use of e here.
-  socpsolver_.input(SOCP_SOLVER_G)[cholesky_[0].getFactorization().size()] = socpsolver_.input(SOCP_SOLVER_E)[n_];
+  socpsolver_.input(SOCP_SOLVER_G).AAA(cholesky_[0].getFactorization().size()) = socpsolver_.input(SOCP_SOLVER_E).at(n_);
   
   /// Objective of the epigraph form  
-  socpsolver_.input(SOCP_SOLVER_C)[n_] = 1;
+  socpsolver_.input(SOCP_SOLVER_C).at(n_) = 1;
 
   std::copy(input(QCQP_SOLVER_LBX).begin(),input(QCQP_SOLVER_LBX).end(),socpsolver_.input(SOCP_SOLVER_LBX).begin());
   std::copy(input(QCQP_SOLVER_UBX).begin(),input(QCQP_SOLVER_UBX).end(),socpsolver_.input(SOCP_SOLVER_UBX).begin());

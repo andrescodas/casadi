@@ -128,8 +128,8 @@ FX parameterizeTime(FX dae) {
    
    // The dae parameters augmented with t0 and tf
    MX P = msym("P",1,2+dae.input(DAE_P).size());
-   MX t0 = P[0];
-   MX tf = P[1];
+   MX t0 = P.AAA(0);
+   MX tf = P.AAA(1);
    
    std::vector<MX> dae_in(DAE_NUM_IN);
    std::vector<MX> dae_input = dae.symbolicInput();
@@ -138,7 +138,7 @@ FX parameterizeTime(FX dae) {
      dae_in[DAE_T]    = t0 + (tf-t0)*tau;
    }
    
-   dae_in[DAE_P]    = reshape(P[range(2,2+dae.input(DAE_P).size())],dae.input(DAE_P).sparsity());
+   dae_in[DAE_P]    = reshape(trans(P.AAA(range(2,2+dae.input(DAE_P).size()))),dae.input(DAE_P).sparsity());
    dae_in[DAE_X]    = dae_input[DAE_X];
 
    std::vector<MX> ret_in(DAE_NUM_IN);
@@ -169,8 +169,8 @@ FX parameterizeTimeOutput(FX f) {
    
    // The f parameters augmented with t0 and tf
    MX P = msym("P",1,2+f.input(DAE_P).size());
-   MX t0 = P[0];
-   MX tf = P[1];
+   MX t0 = P.AAA(0);
+   MX tf = P.AAA(1);
    
    std::vector<MX> f_in(DAE_NUM_IN);
    std::vector<MX> f_input = f.symbolicInput();
@@ -179,7 +179,7 @@ FX parameterizeTimeOutput(FX f) {
      f_in[DAE_T]    = t0 + (tf-t0)*tau;
    }
    
-   f_in[DAE_P]    = reshape(P[range(2,2+f.input(DAE_P).size())],f.input(DAE_P).sparsity());
+   f_in[DAE_P]    = reshape(trans(P.AAA(range(2,2+f.input(DAE_P).size()))),f.input(DAE_P).sparsity());
    f_in[DAE_X]    = f_input[DAE_X];
 
    std::vector<MX> ret_in(DAE_NUM_IN);

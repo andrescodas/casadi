@@ -95,7 +95,7 @@ int main(){
   for(int k=0; k<nu; ++k){
     // Assemble the input
     vector<MX> input(2);
-    input[0] = U[k];
+    input[0] = U.AAA(k);
     input[1] = X;
 
     // Integrate
@@ -106,7 +106,7 @@ int main(){
   MX F = inner_prod(U,U);
 
   // Terminal constraints
-  MX G = vertcat(X[0],X[1]);
+  MX G = vertcat(X.AAA(0),X.AAA(1));
   
   // Create the NLP
   MXFunction nlp(nlpIn("x",U),nlpOut("f",F,"g",G));

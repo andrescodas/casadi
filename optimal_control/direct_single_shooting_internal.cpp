@@ -79,17 +79,17 @@ void DirectSingleShootingInternal::init(){
   int offset = 0;
 
   // Global parameters
-  MX P = V[Slice(0,np_)];
+  MX P = V(0,Slice(0,np_));
   offset += np_;
 
   // Initial state
-  MX X0 = V[Slice(offset,offset+nx_)];
+  MX X0 = V(0,Slice(offset,offset+nx_));
   offset += nx_;
   
   // Control for each shooting interval
   vector<MX> U(nk_);
   for(int k=0; k<nk_; ++k){ // interior nodes
-    U[k] = V[range(offset,offset+nu_)];
+    U[k] = V(0,range(offset,offset+nu_));
     offset += nu_;
   }
   

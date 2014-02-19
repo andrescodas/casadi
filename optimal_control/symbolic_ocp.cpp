@@ -871,7 +871,7 @@ void SymbolicOCP::scaleEquations(){
   
   // Scale the equations
   for(int i=0; i<ode.size(); ++i){
-    ode[i] /= scale[i];
+    ode.at(i) /= scale.at(i);
   }
   
   double time2 = clock();

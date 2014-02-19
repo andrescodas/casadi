@@ -57,12 +57,12 @@ int main(){
   SXMatrix p = ssym("p",2);
   
   // Objective
-  SXMatrix f = x[0]*x[0] + x[1]*x[1] + x[2]*x[2];
+  SXMatrix f = x.AAA(0)*x.AAA(0) + x.AAA(1)*x.AAA(1) + x.AAA(2)*x.AAA(2);
   
   // Constraints
   SXMatrix g = vertcat(
-       6*x[0] + 3*x[1] + 2*x[2] - p[0],
-    p[1]*x[0] +   x[1] -   x[2] -    1
+                       6*x.AAA(0) + 3*x.AAA(1) + 2*x.AAA(2) - p.AAA(0),
+                       p.AAA(1)*x.AAA(0) +   x.AAA(1) -   x.AAA(2) -    1
   );
   
   // Infinity
