@@ -25,7 +25,7 @@ from casadi import *
 from casadi.tools import *
 import scipy.linalg
 import numpy as np
-from casadi import vec
+from casadi import flatten
 
 """
 This example how an Linear Quadratic Regulator (LQR) can be designed
@@ -61,7 +61,7 @@ for i in range(ns):
   R.append(p)
   p = mul([A,p])
   
-R = vertcat(R)
+R = horzcat(R)
 
 # R must be of full rank
 _, s, _ = linalg.svd(R)
@@ -130,7 +130,7 @@ plot(tf,sim.getOutput()-out,linewidth=3)
 # for i in range(len(tf)):
 #   dev_est.append(mul(jacsim.getOutput()[i*ns:(i+1)*ns,:],x0_pert))
 
-# dev_est = vertcat(dev_est).T
+# dev_est = horzcat(dev_est).T
 # plot(tf,dev_est,'+k')
 # legend(('s1 dev', 's2 dev','s3 dev','s1 dev (est.)', 's2 dev (est.)','s3 dev (est.)'),loc='upper left')
 
@@ -171,9 +171,9 @@ plot(tf,sim.getOutput()-out,linewidth=3)
 
 # dev_est = []
 # for i in range(len(tf)):
-#   dev_est.append(mul(jacsim.getOutput()[i*ns:(i+1)*ns,:],vec(u_perturb)))
+#   dev_est.append(mul(jacsim.getOutput()[i*ns:(i+1)*ns,:],flatten(u_perturb)))
 
-# dev_est = vertcat(dev_est).T
+# dev_est = horzcat(dev_est).T
 # plot(tf,dev_est,'+k')
 # legend(('s1 dev', 's2 dev','s3 dev','s1 dev (est.)', 's2 dev (est.)','s3 dev (est.)'),loc='upper left')
 
@@ -188,8 +188,8 @@ plot(tf,sim.getOutput()-out,linewidth=3)
 #  http://www-control.eng.cam.ac.uk/jmm/3f2/handout4.pdf
 #  http://www.ece.rutgers.edu/~gajic/psfiles/chap5.pdf
 
-x0 = horzcat([1,0,0])
-xref_e = horzcat([1,0,0])
+x0 = vertcat([1,0,0])
+xref_e = vertcat([1,0,0])
 
 states = struct_ssym([
            entry("eAt",shape=(ns,ns)),
@@ -298,7 +298,7 @@ P = ssym("P",ns,ns)
 
 ric = (Q + mul(A.T,P) + mul(P,A) - mul([P,B,inv(R),B.T,P]))
 
-dae = SXFunction(daeIn(x=vec(P)),daeOut(ode=vec(ric)))
+dae = SXFunction(daeIn(x=flatten(P)),daeOut(ode=flatten(ric)))
 dae.init()
 
 # We solve the ricatti equation by simulating backwards in time until steady state is reached.
@@ -310,7 +310,7 @@ integrator.init()
 u = DMatrix.eye(ns)
 makeDense(u)
 integrator.reset()
-integrator.setInput(vec(u),"x0")
+integrator.setInput(flatten(u),"x0")
 integrator.integrate(0)
 
 # Keep integrating until steady state is reached
@@ -348,14 +348,14 @@ print "feedback matrix= ", K
 print "Open-loop eigenvalues: ", D
 
 # Check what happens if we integrate the Riccati equation forward in time
-dae = SXFunction(daeIn(x = vec(P)),daeOut(ode=vec(-ric)))
+dae = SXFunction(daeIn(x = flatten(P)),daeOut(ode=flatten(-ric)))
 dae.init()
 
 integrator = CVodesIntegrator(dae)
 integrator.setOption("reltol",1e-16)
 integrator.setOption("stop_at_end",False)
 integrator.init()
-integrator.setInput(vec(P_),"x0")
+integrator.setInput(flatten(P_),"x0")
 integrator.input("x0")[0] += 1e-9 # Put a tiny perturbation
 integrator.reset()
 integrator.integrate(0)
@@ -401,7 +401,7 @@ t = SX("t")
 
 figure(6)
 
-for k,yref in enumerate([ horzcat([-1,sqrt(t)]) , horzcat([-1,-0.5]), horzcat([-1,sin(t)])]):
+for k,yref in enumerate([ vertcat([-1,sqrt(t)]) , vertcat([-1,-0.5]), vertcat([-1,sin(t)])]):
   u = -mul(K,y) + mul(mul(K,F)+Nm,yref)
   rhs = mul(A,y)+mul(B,u)
   cdae = SXFunction(controldaeIn(t=t, x=y),[rhs])
@@ -438,7 +438,7 @@ for k,yref in enumerate([ horzcat([-1,sqrt(t)]) , horzcat([-1,-0.5]), horzcat([-
 #  To obtain a continous tracking reference,
 #  we augment statespace to construct it on the fly
 
-x0 = horzcat([1,0,0])
+x0 = vertcat([1,0,0])
 
 # Now simulate with open-loop controls
 states = struct_ssym([
@@ -536,7 +536,7 @@ mi = sim.getMajorIndex()
 controls_ = sim.getOutput(2)[mi[:-1],:]
 yref_     = sim.getOutput(3)[mi[:-1],:]
 
-u_ = vertcat([controls_,yref_])
+u_ = horzcat([controls_,yref_])
 
 x0 = DMatrix([1,0,0])
 

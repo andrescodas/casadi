@@ -35,7 +35,7 @@ m = x[2] # mass
 sdot = v
 vdot = (u - 0.05 * v*v)/m
 mdot = -0.1*u*u
-xdot = horzcat([sdot,vdot,mdot])
+xdot = vertcat([sdot,vdot,mdot])
 
 # ODE right hand side function
 f = MXFunction([x,u],[xdot])

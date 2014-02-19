@@ -22,9 +22,9 @@ parameters_["k"] = 10
 parameters_["beta"] = 1
 parameters_["c"] = 1
 
-vel = horzcat([dx,dy])
-p = horzcat([x,y])
-q = horzcat([u,v])
+vel = vertcat([dx,dy])
+p = vertcat([x,y])
+q = vertcat([u,v])
 
 # System dynamics
 F = -k*(p-q) - beta*v*sqrt(sumAll(vel**2)+c**2)
@@ -67,7 +67,7 @@ output = states.repeated(csim.getOutput())
 
 # Plot all states
 for k in states.keys():
-  plot(tgrid,output[horzcat,:,k])
+  plot(tgrid,output[vertcat,:,k])
 xlabel("t")
 legend(tuple(states.keys()))
 
@@ -150,7 +150,7 @@ for x0_ in sample_x:
   csim.evaluate()
   simulated_x.append(csim.getOutput()[-1,:])
   
-simulated_x = horzcat(simulated_x).T
+simulated_x = vertcat(simulated_x).T
 
 Xf_mean = mul(simulated_x,W)
 

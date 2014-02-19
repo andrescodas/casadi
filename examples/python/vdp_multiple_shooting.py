@@ -33,7 +33,7 @@ u  = ssym("u")    # control
 x  = ssym("x",3)  # state
 
 # ODE rhs function
-ode = horzcat([(1 - x[1]*x[1])*x[0] - x[1] + u, \
+ode = vertcat([(1 - x[1]*x[1])*x[0] - x[1] + u, \
        x[0], \
        x[0]*x[0] + x[1]*x[1] + u*u])
 dae = SXFunction(daeIn(x=x,p=u,t=t),daeOut(ode=ode))
@@ -95,8 +95,8 @@ g = [];  g_min = []; g_max = []
 # Build up a graph of integrator calls
 for k in range(nk):
   # Local state vector
-  Xk = horzcat((X0[k],X1[k],X2[k]))
-  Xk_next = horzcat((X0[k+1],X1[k+1],X2[k+1]))
+  Xk = vertcat((X0[k],X1[k],X2[k]))
+  Xk_next = vertcat((X0[k+1],X1[k+1],X2[k+1]))
   
   # Call the integrator
   Xk_end, = integratorOut(integrator.call(integratorIn(x0=Xk,p=U[k])),"xf")
@@ -110,7 +110,7 @@ for k in range(nk):
 f = X2[nk]
 
 # Continuity constraints: 0<= x(T(k+1)) - X(T(k)) <=0
-g = horzcat(g)
+g = vertcat(g)
 
 # Create NLP solver instance
 nlp = MXFunction(nlpIn(x=V),nlpOut(f=f,g=g))

@@ -38,7 +38,7 @@ u = ssym("u")   # Control
 t = ssym("t")   # Time
 
 # Differential equation
-f_x = horzcat((z*x[0]-x[1]+u, x[0]))
+f_x = vertcat((z*x[0]-x[1]+u, x[0]))
 
 # Algebraic equation
 f_z = x[1]**2 + z - 1

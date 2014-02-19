@@ -113,7 +113,7 @@ dy = ssym("dy")
 dw = ssym("dw")
 
       
-res = horzcat([xddot[0] - dx,\
+res = vertcat([xddot[0] - dx,\
        xddot[1] - dy,\
        xddot[2] - dw,\
        m*xddot[3] + (x-w)*xa, \
@@ -364,7 +364,7 @@ ld0 = lDotAtTauRoot[1:,0]
 lagrangeTerm = 0
 for k in range(nk):
     for i in range(nicp):
-        dQs = h*flattencat([LagrangeTerm.call([0., XD[k][i][j], XA[k][i][j-1], U[k], P])[0] \
+        dQs = h*veccat([LagrangeTerm.call([0., XD[k][i][j], XA[k][i][j-1], U[k], P])[0] \
                         for j in range(1,deg+1)])
         Qs = mul( ldInv, dQs)
         m = mul( Qs.T, lAtOne[1:])
@@ -373,7 +373,7 @@ for k in range(nk):
 Obj += lagrangeTerm        
 
 # NLP
-nlp = MXFunction(nlpIn(x=V),nlpOut(f=Obj,g=horzcat(g)))
+nlp = MXFunction(nlpIn(x=V),nlpOut(f=Obj,g=vertcat(g)))
 
 ## ----
 ## SOLVE THE NLP

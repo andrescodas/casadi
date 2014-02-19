@@ -25,13 +25,13 @@ import matplotlib.pyplot as plt
 
 # Declare variables (use simple, efficient DAG)
 x0=ssym("x0"); x1=ssym("x1")
-x = horzcat((x0,x1))
+x = vertcat((x0,x1))
 
 # Control
 u = ssym("u")
 
 # ODE right hand side
-xdot = horzcat([(1 - x1*x1)*x0 - x1 + u, x0])
+xdot = vertcat([(1 - x1*x1)*x0 - x1 + u, x0])
 
 # Lagrangian function
 L = x0*x0 + x1*x1 + u*u
@@ -61,11 +61,11 @@ u_opt = max(u_opt,-0.75)
 print "optimal control: ", u_opt
 
 # Augment f with lam_dot and subtitute in the value for the optimal control
-f = horzcat((xdot,ldot))
+f = vertcat((xdot,ldot))
 f = substitute(f,u,u_opt)
 
 # Create the right hand side function
-rhs_in = daeIn(x=horzcat((x,lam)))
+rhs_in = daeIn(x=vertcat((x,lam)))
 rhs = SXFunction(rhs_in,daeOut(ode=f))
 
 # Augmented DAE state dimension
@@ -105,7 +105,7 @@ for k in range(num_nodes):
 G.append(X[num_nodes][2:] - NP.array([0,0])) # costates fixed, states free at final time
 
 # Terminal constraints: lam = 0
-rfp = MXFunction([V],[horzcat(G)])
+rfp = MXFunction([V],[vertcat(G)])
 
 # Select a solver for the root-finding problem
 Solver = NLPImplicitSolver

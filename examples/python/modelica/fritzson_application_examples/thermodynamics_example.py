@@ -74,8 +74,8 @@ ocp.eliminateAlgebraic()
 # Inputs to the integrator
 dae_fcn_in = daeIn(
   t = ocp.t,
-  x = horzcat(var(ocp.x)),
-  p = horzcat(var(ocp.pi)+var(ocp.pf))
+  x = vertcat(var(ocp.x)),
+  p = vertcat(var(ocp.pi)+var(ocp.pf))
 )
 
 # Create an integrator
@@ -88,9 +88,9 @@ P = ocp.variable("P").var()
 output_fcn_out = ocp.substituteDependents([m,P])
 output_fcn_in = daeIn(
   t=ocp.t,
-  x = horzcat(var(ocp.x)),
-  z = horzcat(var(ocp.z)),
-  p = horzcat(var(ocp.pi)+var(ocp.pf)+var(ocp.u))
+  x = vertcat(var(ocp.x)),
+  z = vertcat(var(ocp.z)),
+  p = vertcat(var(ocp.pi)+var(ocp.pf)+var(ocp.u))
 )
 output_fcn = SXFunction(output_fcn_in,output_fcn_out)
 
@@ -138,8 +138,8 @@ ocp.eliminateAlgebraic()
 # Inputs to the integrator
 dae_fcn_in = daeIn(
   t = ocp.t,
-  x = horzcat(var(ocp.x)),
-  p = horzcat(var(ocp.pi)+var(ocp.pf))
+  x = vertcat(var(ocp.x)),
+  p = vertcat(var(ocp.pi)+var(ocp.pf))
 )
 
 # Create an integrator
@@ -151,9 +151,9 @@ T = ocp.variable("T").var()
 output_fcn_out = ocp.substituteDependents([T])
 output_fcn_in = daeIn(
   t=ocp.t,
-  x = horzcat(var(ocp.x)),
-  z = horzcat(var(ocp.z)),
-  p = horzcat(var(ocp.pi)+var(ocp.pf)+var(ocp.u))
+  x = vertcat(var(ocp.x)),
+  z = vertcat(var(ocp.z)),
+  p = vertcat(var(ocp.pi)+var(ocp.pf)+var(ocp.u))
 )
 output_fcn = SXFunction(output_fcn_in,output_fcn_out)
 
@@ -194,8 +194,8 @@ ocp.eliminateAlgebraic()
 # Inputs to the integrator
 dae_fcn_in = daeIn(
   t = ocp.t,
-  x = horzcat(var(ocp.x)),
-  p = horzcat(var(ocp.pi)+var(ocp.pf))
+  x = vertcat(var(ocp.x)),
+  p = vertcat(var(ocp.pi)+var(ocp.pf))
 )
 
 # Create an integrator
@@ -209,9 +209,9 @@ V = ocp.variable("V").var()
 output_fcn_out = ocp.substituteDependents([T,U,V])
 output_fcn_in = daeIn(
   t=ocp.t,
-  x = horzcat(var(ocp.x)),
-  z = horzcat(var(ocp.z)),
-  p = horzcat(var(ocp.pi)+var(ocp.pf)+var(ocp.u))
+  x = vertcat(var(ocp.x)),
+  z = vertcat(var(ocp.z)),
+  p = vertcat(var(ocp.pi)+var(ocp.pf)+var(ocp.u))
 )
 output_fcn = SXFunction(output_fcn_in,output_fcn_out)
 

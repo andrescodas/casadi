@@ -41,7 +41,7 @@ x  = ssym("x",nx)  # state
 p  = ssym("u",np)  # control
 
 # ODE right hand side function
-ode = horzcat([(1 - x[1]*x[1])*x[0] - x[1] + p, \
+ode = vertcat([(1 - x[1]*x[1])*x[0] - x[1] + p, \
                x[0], \
                x[0]*x[0] + x[1]*x[1] + p*p])
 f = SXFunction(daeIn(x=x,p=p),daeOut(ode=ode))
@@ -97,7 +97,7 @@ P  = msym("P",np)
 V = msym("V",d*nx)
 
 # Get the state at each collocation point
-X = [X0] + list(horzsplit(V,[r*nx for r in range(d+1)]))
+X = [X0] + list(vertsplit(V,[r*nx for r in range(d+1)]))
 
 # Get the collocation quations (that define V)
 V_eq = []
@@ -112,7 +112,7 @@ for j in range(1,d+1):
   V_eq.append(h*f_j - xp_j)
 
 # Concatenate constraints
-V_eq = horzcat(V_eq)
+V_eq = vertcat(V_eq)
 
 # Root-finding function, implicitly defines V as a function of X0 and P
 vfcn = MXFunction([V,X0,P],[V_eq])

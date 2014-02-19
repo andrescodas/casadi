@@ -42,14 +42,14 @@ for Integrators in (ODE_integrators,DAE_integrators):
 
     # Differential states
     s = ssym("s"); v = ssym("v"); m = ssym("m")
-    x = horzcat([s,v,m])
+    x = vertcat([s,v,m])
 
     # Constants
     alpha = 0.05 # friction
     beta = 0.1   # fuel consumption rate
       
     # Differential equation
-    ode = horzcat([
+    ode = vertcat([
       v,
       (u-alpha*v*v)/m,
       -beta*u*u])

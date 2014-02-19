@@ -33,7 +33,7 @@ u  = ssym("u")    # control
 x  = ssym("x",3)  # state
 
 # ODE right hand side function
-rhs = horzcat([(1 - x[1]*x[1])*x[0] - x[1] + u, \
+rhs = vertcat([(1 - x[1]*x[1])*x[0] - x[1] + u, \
                x[0], \
                x[0]*x[0] + x[1]*x[1] + u*u])
 f = SXFunction([t,x,u],[rhs])
@@ -197,7 +197,7 @@ for k in range(nk):
   ubg.append(NP.zeros(nx))
   
 # Concatenate constraints
-g = horzcat(g)
+g = vertcat(g)
 
 # Objective function
 [f] = m.call([T[nk-1,d],X[nk,0],U[nk-1]])
