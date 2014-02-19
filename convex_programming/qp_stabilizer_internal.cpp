@@ -71,7 +71,7 @@ void QPStabilizerInternal::evaluate() {
         int col_end = A_colind[i+1];
         // Copy col contents
         std::copy(A.begin()+col_start,A.begin()+col_end,A_qp.begin()+col_start+i);
-        A_qp.AAA(col_end+i) = -muR;
+        A_qp[col_end+i] = -muR;
       }
       
       // Add constant to linear inequality 

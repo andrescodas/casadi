@@ -86,7 +86,7 @@ int main(){
 
   // Mayer objective function
   SXMatrix xf = ssym("xf",x.size(),1);
-  SXFunction mterm(xf, xf.AAA(0));
+  SXFunction mterm(xf, xf[0]);
   
   // DAE residual function
   SXFunction dae(daeIn("x",x, "p",u, "t",t),daeOut("ode",ocp.ode));

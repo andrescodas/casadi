@@ -304,7 +304,7 @@ namespace CasADi{
   }
 
   template<class T>
-  const Matrix<T> Matrix<T>::getNZQQQ(const std::vector<int>& k) const{
+  const Matrix<T> Matrix<T>::getNZ(const std::vector<int>& k) const{
     try{
       Matrix<T> ret = zeros(k.size());
       for(int el=0; el<k.size(); ++el)
@@ -319,7 +319,7 @@ namespace CasADi{
   }
 
   template<class T>
-  const Matrix<T> Matrix<T>::getNZQQQ(const Matrix<int>& k) const{
+  const Matrix<T> Matrix<T>::getNZ(const Matrix<int>& k) const{
     try{
       Matrix<T> ret = zeros(k.sparsity());
       for(int el=0; el<k.size(); ++el)

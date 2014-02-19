@@ -110,7 +110,7 @@ int main(){
   vector<MX> X, U;
   for(int k=0; k<ns; ++k){
     // Local state
-    X.push_back( V(Slice(offset,offset+nx)) );
+    X.push_back( V[Slice(offset,offset+nx)] );
     if(k==0){
       v_min.insert(v_min.end(),x0_min,x0_min+nx);
       v_max.insert(v_max.end(),x0_max,x0_max+nx);
@@ -122,7 +122,7 @@ int main(){
     offset += nx;
     
     // Local control
-    U.push_back( V(Slice(offset,offset+nu)) );
+    U.push_back( V[Slice(offset,offset+nu)] );
     v_min.insert(v_min.end(),u_min,u_min+nu);
     v_max.insert(v_max.end(),u_max,u_max+nu);
     v_init.insert(v_init.end(),u_init,u_init+nu);    
@@ -130,7 +130,7 @@ int main(){
   }
   
   // State at end
-  X.push_back(V(Slice(offset,offset+nx)));
+  X.push_back(V[Slice(offset,offset+nx)]);
   v_min.insert(v_min.end(),xf_min,xf_min+nx);
   v_max.insert(v_max.end(),xf_max,xf_max+nx);
   v_init.insert(v_init.end(),x_init,x_init+nx);    

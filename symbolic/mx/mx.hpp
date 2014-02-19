@@ -115,10 +115,10 @@ namespace CasADi{
     const MX indexed_one_based(int k) const{ return at(k-1);}
     const MX indexed_zero_based(int k) const{ return at(k);}
     const MX indexed(const IndexList &k) const{
-      return (*this).AAA(k.getAll(size()));
+      return (*this)[k.getAll(size())];
     }
     const MX indexed(const Slice &k) const{ 
-      return (*this).AAA(k.getAll(size()));
+      return (*this)[k.getAll(size())];
     }
     
     /// get a matrix element
@@ -152,10 +152,10 @@ namespace CasADi{
     void indexed_one_based_assignment(int k, const MX &m){ at(k-1) = m(0,0);}
     void indexed_zero_based_assignment(int k, const MX &m){ at(k) = m(0,0);}
     void indexed_assignment(const IndexList &k, const MX &m){
-      (*this).AAA(k.getAll(size())) = m;
+      (*this)[k.getAll(size())] = m;
     }
     void indexed_assignment(const Slice &k, const MX &m){
-      (*this).AAA(k.getAll(size())) = m;
+      (*this)[k.getAll(size())] = m;
     }
     
     /// set a matrix element
@@ -170,7 +170,7 @@ namespace CasADi{
     }
     
     void indexed_zero_based_assignment(const Matrix<int>& k, const MX &m){
-      (*this).AAA(k) = m;
+      (*this)[k] = m;
     }
     void indexed_assignment(const CCSSparsity& sp, const MX &m){
       (*this)(sp) = m;
@@ -378,10 +378,10 @@ namespace CasADi{
     void setSub(const MX& m, const Matrix<int>& j, const Matrix<int>& i);
     void setSub(const MX& m, const CCSSparsity& sp, int dummy);
     
-    MX getNZQQQ(int k) const;
-    MX getNZQQQ(const std::vector<int>& k) const;
-    MX getNZQQQ(const Slice& k) const{ return getNZQQQ(k.getAll(size()));}
-    MX getNZQQQ(const Matrix<int>& k) const;
+    MX getNZ(int k) const;
+    MX getNZ(const std::vector<int>& k) const;
+    MX getNZ(const Slice& k) const{ return getNZ(k.getAll(size()));}
+    MX getNZ(const Matrix<int>& k) const;
     void setNZ(int k, const MX& el);
     void setNZ(const std::vector<int>& k, const MX& el);
     void setNZ(const Slice& k, const MX& m){ setNZ(k.getAll(size()),m);}

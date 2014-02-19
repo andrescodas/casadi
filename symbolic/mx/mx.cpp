@@ -153,7 +153,7 @@ namespace CasADi{
     for (int i=0;i<ii.size();++i) {
       MX m(k.sparsity(),MX(0));
       for (int j=0;j<m.size();++j) {
-        m.AAA(j) = sub(k.at(j),ii.at(i));
+        m[j] = sub(k.at(j),ii.at(i));
       }
       temp.push_back(m);
     }
@@ -169,7 +169,7 @@ namespace CasADi{
     for (int j=0;j<jj.size();++j) {
       MX m(k.sparsity(),MX(0));
       for (int i=0;i<m.size();++i) {
-        m.AAA(i) = sub(jj.at(j),k.at(i));
+        m[i] = sub(jj.at(j),k.at(i));
       }
       temp.push_back(m);
     }
@@ -183,7 +183,7 @@ namespace CasADi{
 
     MX ret(i.sparsity(),MX(0));
     for (int k=0;k<i.size();++k) {
-      ret.AAA(k) = sub(j.at(k),i.at(k));
+      ret[k] = sub(j.at(k),i.at(k));
     }
     simplify(ret);
     return ret;
@@ -271,7 +271,7 @@ namespace CasADi{
           kk2.push_back(i*ld_el+j);
         }
       }
-      (*this).AAA(kk1)=m.AAA(kk2);
+      (*this)[kk1]=m[kk2];
     } else {
       // Sparse mode
 
@@ -308,7 +308,7 @@ namespace CasADi{
     for(int k=0; k<jj.size(); ++k) {
       MX el_k = m(range(k*i.size1(),(k+1)*i.size1()),slice_i);
       for (int j=0;j<i.size();++j) {
-        (*this)(jj[k],i.at(j))=el_k.AAA(j);
+        (*this)(jj[k],i.at(j))=el_k[j];
       }
     }
   
@@ -337,7 +337,7 @@ namespace CasADi{
     for(int k=0; k<ii.size(); ++k) {
       MX el_k = m(slice_j,range(k*j.size2(),(k+1)*j.size2()));
       for (int i=0;i<j.size();++i) {
-        (*this)(j.at(i),ii[k])=el_k.AAA(i);
+        (*this)(j.at(i),ii[k])=el_k[i];
       }
     }
   
@@ -356,7 +356,7 @@ namespace CasADi{
     casadi_assert_message(m.sparsity()==i.sparsity(),"setSub(MX m, Imatrix i, Imatrix j): sparsities must match. Got " << m.dimString() << " for m and " << j.dimString() << " for i and j.");
   
     for(int k=0; k<i.size(); ++k) {
-      (*this)(j.at(k),i.at(k)) = m.AAA(k); 
+      (*this)(j.at(k),i.at(k)) = m[k]; 
     }
   }
 
@@ -395,13 +395,13 @@ namespace CasADi{
     
   }
 
-  MX MX::getNZQQQ(int k) const{
+  MX MX::getNZ(int k) const{
     if (k<0) k+=size();
     casadi_assert_message(k<size(),"MX::getNZ: requested at(" <<  k << "), but that is out of bounds:  " << dimString() << ".");
-    return getNZQQQ(vector<int>(1,k));
+    return getNZ(vector<int>(1,k));
   }
 
-  MX MX::getNZQQQ(const vector<int>& k) const{
+  MX MX::getNZ(const vector<int>& k) const{
     CCSSparsity sp(k.size(),1,true);
   
     for (int i=0;i<k.size();i++) {
@@ -412,7 +412,7 @@ namespace CasADi{
     return ret;
   }
 
-  MX MX::getNZQQQ(const Matrix<int>& k) const{
+  MX MX::getNZ(const Matrix<int>& k) const{
     CCSSparsity sp(k.size(),1,true);
     MX ret = (*this)->getGetNonzeros(sp,k.data());
     return ret;
@@ -470,7 +470,7 @@ namespace CasADi{
   }
 
   const MX MX::at(int k) const {
-    return getNZQQQ(k); 
+    return getNZ(k); 
   }
 
   /// Access a non-zero element

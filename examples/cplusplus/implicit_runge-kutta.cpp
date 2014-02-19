@@ -50,9 +50,9 @@ int main(){
 
   // ODE right hand side function
   SXMatrix ode;
-  ode.append( (1 - x.AAA(1)*x.AAA(1))*x.AAA(0) - x.AAA(1) + p );
-  ode.append( x.AAA(0)                            );
-  ode.append( x.AAA(0)*x.AAA(0) + x.AAA(1)*x.AAA(1) + p*p     );
+  ode.append( (1 - x[1]*x[1])*x[0] - x[1] + p );
+  ode.append( x[0]                            );
+  ode.append( x[0]*x[0] + x[1]*x[1] + p*p     );
   SXFunction f(daeIn("x",x,"p",p),daeOut("ode",ode));
   f.init();
 
@@ -103,7 +103,7 @@ int main(){
   // Get the state at each collocation point
   vector<MX> X(1,X0);
   for(int r=0; r<d; ++r){
-    X.push_back(V(Slice(r*nx,(r+1)*nx)));
+    X.push_back(V[Slice(r*nx,(r+1)*nx)]);
   }
   
   // Get the collocation quations (that define V)
@@ -142,7 +142,7 @@ int main(){
   V = ifcn.call(ifcn_arg).front();
   X.resize(1);
   for(int r=0; r<d; ++r){
-    X.push_back(V(Slice(r*nx,(r+1)*nx)));
+    X.push_back(V[Slice(r*nx,(r+1)*nx)]);
   }
 
   // Get an expression for the state at the end of the finite element

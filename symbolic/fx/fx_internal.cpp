@@ -2200,7 +2200,7 @@ namespace CasADi{
   }
 
   void FXInternal::assignIgnore(MX& y, const MX& x, const std::vector<int>& nz){
-    y.AAA(nz) = x;
+    y[nz] = x;
   }
 
   void FXInternal::assignIgnore(SXMatrix& y, const SXMatrix& x, const std::vector<int>& nz){

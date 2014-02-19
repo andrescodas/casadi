@@ -118,13 +118,11 @@ namespace CasADi{
 #ifndef SWIG
     /** \brief  Get vector nonzero or slice of nonzeros */
     template<typename K>
-    const MatType AAA(const K& k) const{ return static_cast<const MatType*>(this)->getNZQQQ(k); }
-    //    const MatType operator[](const K& k) const{ return static_cast<const MatType*>(this)->getNZ(k); }
+    const MatType operator[](const K& k) const{ return static_cast<const MatType*>(this)->getNZ(k); }
 
     /** \brief  Access vector nonzero or slice of nonzeros */
     template<typename K>
-    NonZeros<MatType,K> AAA(const K& k){ return NonZeros<MatType,K>(static_cast<MatType&>(*this),k); }
-    //    NonZeros<MatType,K> operator[](const K& k){ return NonZeros<MatType,K>(static_cast<MatType&>(*this),k); }
+    NonZeros<MatType,K> operator[](const K& k){ return NonZeros<MatType,K>(static_cast<MatType&>(*this),k); }
 
     /** \brief  Get vector element or slice */
     template<typename RR>

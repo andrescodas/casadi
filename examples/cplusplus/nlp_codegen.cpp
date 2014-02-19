@@ -71,10 +71,10 @@ int main(){
   MX x = msym("x",2);
 
   // Objective
-  MX f = x.AAA(0)*x.AAA(0) + x.AAA(1)*x.AAA(1);
+  MX f = x[0]*x[0] + x[1]*x[1];
 
   // Constraints
-  MX g = x.AAA(0)+x.AAA(1)-10;
+  MX g = x[0]+x[1]-10;
     
   // Infinity
   double inf = numeric_limits<double>::infinity();

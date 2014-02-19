@@ -110,7 +110,7 @@ void SOCPQCQPInternal::evaluate() {
   socpsolver_.input(SOCP_SOLVER_E).at(n_) = 0.5/socpsolver_.input(SOCP_SOLVER_F).at(0);
   
   // Fix the first qc arising from epigraph reformulation: we must make use of e here.
-  socpsolver_.input(SOCP_SOLVER_G).AAA(cholesky_[0].getFactorization().size()) = socpsolver_.input(SOCP_SOLVER_E).at(n_);
+  socpsolver_.input(SOCP_SOLVER_G)[cholesky_[0].getFactorization().size()] = socpsolver_.input(SOCP_SOLVER_E).at(n_);
   
   /// Objective of the epigraph form  
   socpsolver_.input(SOCP_SOLVER_C).at(n_) = 1;
