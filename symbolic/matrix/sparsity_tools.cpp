@@ -192,6 +192,10 @@ namespace CasADi{
     return a.reshape(nrow,ncol);
   }
 
+  CCSSparsity vec(const CCSSparsity& a){ 
+    return reshape(a,a.numel(),1);
+  }
+
   CCSSparsity flatten(const CCSSparsity& a){
     return reshape(trans(a),a.numel(),1);
   }

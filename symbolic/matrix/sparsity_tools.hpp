@@ -121,8 +121,12 @@ namespace CasADi{
   */
   std::vector<int> getNZDense(const CCSSparsity& sp);
   
-  
+  /** \ brief Reshape the sparsity pattern keeping the relative location of the nonzeros
+   */
   CCSSparsity reshape(const CCSSparsity& a, int nrow, int ncol);
+
+  /** \ brief Vectorize the pattern */
+  CCSSparsity vec(const CCSSparsity& a);
   
   CCSSparsity flatten(const CCSSparsity& a);
   
