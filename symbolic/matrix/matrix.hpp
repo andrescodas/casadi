@@ -203,21 +203,21 @@ namespace CasADi{
 
     /** \brief  Create an expression from an stl vector  */
     template<typename A>
-    Matrix(const std::vector<A>& x) : sparsity_(CCSSparsity(1,x.size(),true)), data_(std::vector<T>(x.size())){
+    Matrix(const std::vector<A>& x) : sparsity_(CCSSparsity(x.size(),1,true)), data_(std::vector<T>(x.size())){
       copy(x.begin(),x.end(),begin());
     }
 
     /** \brief  Create a non-vector expression from an stl vector */
     template<typename A>
-    Matrix(const std::vector<A>& x,  int n, int m) : sparsity_(CCSSparsity(m,n,true)), data_(std::vector<T>(x.size())){
-      if(x.size() != n*m) throw CasadiException("Matrix::Matrix(const std::vector<T>& x,  int n, int m): dimension mismatch");
+    Matrix(const std::vector<A>& x,  int nrow, int ncol) : sparsity_(CCSSparsity(nrow,ncol,true)), data_(std::vector<T>(x.size())){
+      if(x.size() != nrow*ncol) throw CasadiException("Matrix::Matrix(const std::vector<T>& x,  int n, int m): dimension mismatch");
       copy(x.begin(),x.end(),begin());
     }
     
     /** \brief  ublas vector */
 #ifdef HAVE_UBLAS
     template<typename T, typename A>
-    explicit Matrix<T>(const ublas::vector<A> &x) : sparsity_(CCSSparsity(1,x.size(),true)), data_(std::vector<T>(x.size())){
+    explicit Matrix<T>(const ublas::vector<A> &x) : sparsity_(CCSSparsity(x.size(),1,true)), data_(std::vector<T>(x.size())){
       copy(x.begin(),x.end(),begin());
     }
 
