@@ -273,7 +273,7 @@ for j=1:n
     % Calculate the perturbed function value
     f_pert = feval(fun,x_pert);
 
-    % Calculate col j of the Jacobian
+    % Calculate row j of the Jacobian
     J(:,j) = imag(f_pert) / e;
 end
 

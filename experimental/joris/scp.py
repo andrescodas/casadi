@@ -51,7 +51,7 @@ Lambd = ssym("lambda",nsd.sparsity())
 
 lag = f+mul(lambd.T,g)+trace(mul(Lambd,nsd))
 
-oracle = SXFunction(customIO(x=x,lambd=lambd,Lambd=Lambd),customIO(f=f,g=g,nsd=nsd,hess=hessian(lag,x), gradF=gradient(f,x), jacG= jacobian(g,x),jac_nsd=jacobian(flatten(nsd),x)))
+oracle = SXFunction(customIO(x=x,lambd=lambd,Lambd=Lambd),customIO(f=f,g=g,nsd=nsd,hess=hessian(lag,x), gradF=gradient(f,x), jacG= jacobian(g,x),jac_nsd=jacobian(vec(nsd),x)))
 oracle.init()
 
 lambda_k = DMatrix([0])
@@ -65,7 +65,7 @@ for i in range(25):
   oracle.setInput(Lambda_k,"Lambd")
   oracle.evaluate()
   
-  step, lambda_k, Lambda_k = sdqp_sol(h=oracle.output("hess"),c=oracle.output("gradF"),a=oracle.output("jacG"),uba=-oracle.output("g"),f=horzcat([ oracle.output("jac_nsd")[:,i].reshape(oracle.output("nsd").shape) for i in range(x_k.size())]),g=-oracle.output("nsd"))
+  step, lambda_k, Lambda_k = sdqp_sol(h=oracle.output("hess"),c=oracle.output("gradF"),a=oracle.output("jacG"),uba=-oracle.output("g"),f=vertcat([ oracle.output("jac_nsd")[:,i].reshape(oracle.output("nsd").shape) for i in range(x_k.size())]),g=-oracle.output("nsd"))
    
   x_k+= step
   

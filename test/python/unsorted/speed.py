@@ -81,10 +81,10 @@ for sol in solvers:
     # fill with random elements
     t_before = time.time()
     for i in range(nel):
-      col = randrange(n)
-      row = randrange(m)
+      row = randrange(n)
+      col = randrange(m)
       res = random()
-      M[col,row] = res
+      M[row,col] = res
 
     # need to convert back to csr
     if sol!="casadi" and use_lil:
@@ -95,23 +95,23 @@ for sol in solvers:
 
     # convert casadi matrix to csr
     if sol=="casadi":
-      M = csr_matrix((M.data(),M.row(),M.colind()),(M.size2(),M.size1()),dtype=float)
+      M = csr_matrix((M.data(),M.col(),M.rowind()),(M.size1(),M.size2()),dtype=float)
     
     # Save the matrix
     SM.append(M)
 
     # convert scipy to casadi
     dim = M.shape
-    row = list(int(i) for i in M.indices)
-    colind = list(int(i) for i in M.indptr)
-    M = DMatrix(dim[0],dim[1],row,colind,M.data)
+    col = list(int(i) for i in M.indices)
+    rowind = list(int(i) for i in M.indptr)
+    M = DMatrix(dim[0],dim[1],col,rowind,M.data)
     
     # Save the matrix
     CM.append(M)
 
     # convert back again
     if sol!="casadi":
-      M = csr_matrix((M.data(),M.row(),M.colind()),(M.size2(),M.size1()),dtype=float)
+      M = csr_matrix((M.data(),M.col(),M.rowind()),(M.size1(),M.size2()),dtype=float)
 
     t_convert = time.time()
     dur_convert.append(t_convert-t_build)
@@ -151,6 +151,6 @@ for sol in solvers:
     print M.getnnz()
 
 
-M2_C_S = csr_matrix((M2_C.data(),M2_C.row(),M2_C.colind()),(M2_C.size2(),M2_C.size1()),dtype=float)
+M2_C_S = csr_matrix((M2_C.data(),M2_C.col(),M2_C.rowind()),(M2_C.size1(),M2_C.size2()),dtype=float)
 M2_DIFF = M2_C_S-M2_S
 print "difference is ", repr(M2_DIFF)

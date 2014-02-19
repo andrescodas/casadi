@@ -42,14 +42,14 @@ ff = ssym("f")
 
 tf = 40
 
-params = horzcat([w0,a3,a5,mu1,mu3,ff])
-rhs    = horzcat([x2,(-(-w0**2 *x1 + a3*x1**3 + a5*x1**5) - (2 *mu1 *x2 + mu3 * x2**3))/100+ff])
+params = vertcat([w0,a3,a5,mu1,mu3,ff])
+rhs    = vertcat([x2,(-(-w0**2 *x1 + a3*x1**3 + a5*x1**5) - (2 *mu1 *x2 + mu3 * x2**3))/100+ff])
 
 f=SXFunction(daeIn(x=x,p=params),daeOut(ode=rhs))
 f.init()
 
 t = SX("t")
-cf=SXFunction(controldaeIn(t=t, x=x, p=horzcat([w0,a3,a5,mu1,mu3]), u=ff),[rhs])
+cf=SXFunction(controldaeIn(t=t, x=x, p=vertcat([w0,a3,a5,mu1,mu3]), u=ff),[rhs])
 cf.init()
 
 integrator = CVodesIntegrator(f)

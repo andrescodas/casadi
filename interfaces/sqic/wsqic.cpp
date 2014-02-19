@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
   std::fill(bl.begin()+n,bl.begin()+n+m,0);
   std::fill(bu.begin()+n,bu.begin()+n+m,inf);
 
-  //iObj   = 18  means the linear objective is col 18 in valA(*).
-  //The objective col is free.
+  //iObj   = 18  means the linear objective is row 18 in valA(*).
+  //The objective row is free.
 
   int iObj   = 17;
   bl[n+iObj] = -inf;

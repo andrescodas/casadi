@@ -29,9 +29,9 @@ from helpers import *
 class FXtests(casadiTestCase):
 
   def test_call_empty(self):
-    x = ssym("x",1,2)
+    x = ssym("x",2)
     fsx = SXFunction([x,[]],[x])
-    x = msym("x",1,2)
+    x = msym("x",2)
     fmx1 = MXFunction([x,MX()],[x])
     fmx2 = MXFunction([x,[]],[x])
     
@@ -39,16 +39,16 @@ class FXtests(casadiTestCase):
       f.init()
       f.evaluate()
 
-      X = msym("X",1,2)
+      X = msym("X",2)
       F = f.call([X,X])[0]
       g = MXFunction([X],[F])
       g.init()
 
       g.evaluate()
     
-    x = ssym("x",1,2)
+    x = ssym("x",2)
     fsx = SXFunction([x],[x,[]])
-    x = msym("x",1,2)
+    x = msym("x",2)
     fmx1 = MXFunction([x],[x,MX()])
     fmx2 = MXFunction([x],[x,[]])
     
@@ -56,7 +56,7 @@ class FXtests(casadiTestCase):
       f.init()
       f.evaluate()
 
-      X = msym("X",1,2)
+      X = msym("X",2)
       F = f.call([X])[0]
       g = MXFunction([X],[F])
       g.init()
@@ -65,8 +65,8 @@ class FXtests(casadiTestCase):
   
   def test_Parallelizer(self):
     self.message("Parallelizer")
-    x = msym("x",1,2)
-    y = msym("y")
+    x = MX("x",2)
+    y = MX("y")
 
     f = MXFunction([x,y],[sin(x) + y])
     f.init()
@@ -95,10 +95,10 @@ class FXtests(casadiTestCase):
       
   def test_MXFunctionSeed(self):
     self.message("MXFunctionSeed")
-    x1 = msym("x",1,2)
-    y1 = msym("y")
-    x2 = msym("x",1,2)
-    y2 = msym("y")
+    x1 = MX("x",2)
+    y1 = MX("y")
+    x2 = MX("x",2)
+    y2 = MX("y")
     p= MXFunction([x1,y1,x2,y2],[sin(x1) + y1,sin(x2) + y2])
     p.init()
     
@@ -119,8 +119,8 @@ class FXtests(casadiTestCase):
         
   def test_Parallelizer2(self):
     self.message("Parallelizer")
-    x = msym("x",1,2)
-    y = msym("y")
+    x = MX("x",2)
+    y = MX("y")
 
     f = MXFunction([x,y],[sin(x) + y])
     f.init()
@@ -131,10 +131,10 @@ class FXtests(casadiTestCase):
       pp.setOption("parallelization",mode)
       pp.init()
       
-      x1 = msym("x",1,2)
-      y1 = msym("y")
-      x2 = msym("x",1,2)
-      y2 = msym("y")
+      x1 = MX("x",2)
+      y1 = MX("y")
+      x2 = MX("x",2)
+      y2 = MX("y")
       p = MXFunction([x1,y1,x2,y2], pp.call([x1,y1,x2,y2]) )
       p.init()
       
@@ -155,17 +155,17 @@ class FXtests(casadiTestCase):
           
   def test_ParallelizerMXCall(self):
     self.message("MX parallel call")
-    x = msym("x",1,2)
-    y = msym("y")
+    x = MX("x",2)
+    y = MX("y")
 
     f = MXFunction([x,y],[sin(x) + y])
     f.init()
 
     #! Evaluate this function ten times in parallel
-    x1 = msym("x",1,2)
-    y1 = msym("y")
-    x2 = msym("x",1,2)
-    y2 = msym("y")
+    x1 = MX("x",2)
+    y1 = MX("y")
+    x2 = MX("x",2)
+    y2 = MX("y")
     [[F1],[F2]] = f.call([[x1,y1],[x2,y2]])
     p = MXFunction([x1,y1,x2,y2],[F1,F2])
     p.init()
@@ -191,9 +191,9 @@ class FXtests(casadiTestCase):
 
     f = SXFunction([x],[x])
     f.init()
-    A = DMatrix.sparse(1,1)
+    A = DMatrix(1,1)
     #self.assertRaises(RuntimeError,lambda : f.getFwdSeed(A,0)) # This is now o.k. syntax
-    B = DMatrix.repmat(2,2,1)
+    B = DMatrix(1,2,2)
     #self.assertRaises(RuntimeError,lambda : f.getFwdSeed(A,0)) # This is now o.k. syntax
     
   def test_issue304(self):
@@ -203,7 +203,7 @@ class FXtests(casadiTestCase):
     f = SXFunction([x],[x**2,x**3])
     f.init()
 
-    X = [msym("X")]
+    X = [MX("X")]
 
     z=f.call(X)
 
@@ -213,8 +213,8 @@ class FXtests(casadiTestCase):
     g.expand([x])
   
   def test_jacobian(self):
-    x = ssym("x",1,3)
-    y = ssym("y",1,2)
+    x = ssym("x",3,1)
+    y = ssym("y",2,1)
 
     f = SXFunction([x,y],[x**2,y,x*y[0]])
     f.init()
@@ -225,8 +225,8 @@ class FXtests(casadiTestCase):
     self.assertEqual(g.getNumOutputs(),f.getNumOutputs()+1)
 
   def test_xfunction(self):
-    x = ssym("x",1,3)
-    y = ssym("y",1,2)
+    x = ssym("x",3,1)
+    y = ssym("y",2,1)
     
     f = SXFunction([x,y],[x**2,y,x*y[0]])
     f.init()
@@ -234,8 +234,8 @@ class FXtests(casadiTestCase):
     f.setInput([0.1,0.7,1.3],0)
     f.setInput([7.1,2.9],1)
     
-    X = msym("x",1,3)
-    Y = msym("y",1,2)
+    X = msym("x",3,1)
+    Y = msym("y",2,1)
     
     F = MXFunction([X,Y],[X**2,Y,X*Y[0]])
     F.init()
@@ -255,14 +255,14 @@ class FXtests(casadiTestCase):
     
     
     def test(sp):
-      x = ssym("x",1,sp.size1())
-      sp2 = jacobian(mul(x,DMatrix(sp,1)),x).sparsity().transpose()
-      self.checkarray(sp.row(),sp2.row());
-      self.checkarray(sp.colind(),sp2.colind());   
+      x = ssym("x",sp.size2())
+      sp2 = jacobian(mul(DMatrix(sp,1),x),x).sparsity()
+      self.checkarray(sp.col(),sp2.col());
+      self.checkarray(sp.rowind(),sp2.rowind());   
 
     for i in range(5):
-      test(sp_triu(i))
-      test(sp_triu(i).T)
+      test(sp_tril(i))
+      test(sp_tril(i).T)
       test(sp_dense(i,i))
       test(sp_diag(i))
     
@@ -270,10 +270,10 @@ class FXtests(casadiTestCase):
       d = sp_diag(i)
       test(d)
       
-      test(d + sp_colrow([5],[0],i,i))
+      test(d + sp_rowcol([0],[5],i,i))
       
       b = sp_band(i,-1) + sp_band(i,1)
-      test(b + sp_colrow([5],[0],i,i))
+      test(b + sp_rowcol([0],[5],i,i))
       
     m = IMatrix(sp_diag(129),1)
     m[:50,0] = 1
@@ -307,13 +307,13 @@ class FXtests(casadiTestCase):
     test(sp.T)
     
     for i in [63,64,65,127,128,129]:
-      test(sp_triu(i))
-      test(sp_triu(i).T)
+      test(sp_tril(i))
+      test(sp_tril(i).T)
     
     for n in [63,64,65,127,128,129]:
       for m in [63,64,65,127,128,129]:
         print (n,m)
-        sp = sp_dense(m,n)
+        sp = sp_dense(n,m)
         
         test(sp)
         
@@ -330,56 +330,56 @@ class FXtests(casadiTestCase):
         
         test(sp_holes)
         
-        z = IMatrix.sparse(sp_holes.shape[1],sp_holes.shape[0])
+        z = IMatrix(sp_holes.shape[0],sp_holes.shape[1])
         
         R = 5
         v = []
         for r in range(R):
           h = [z]*5
           h[r] = I
-          v.append(vertcat(h))
-        d = horzcat(v)
+          v.append(horzcat(h))
+        d = vertcat(v)
         
         test(d.sparsity())
         
   @memory_heavy()
   def test_hessians(self):
     def test(sp):
-      x = ssym("x",1,sp.size1())
+      x = ssym("x",sp.size2())
       self.assertTrue(sp==sp.transpose())
-      f = SXFunction([x],[mul([x,DMatrix(sp,1),x.T])])
+      f = SXFunction([x],[mul([x.T,DMatrix(sp,1),x])])
       f.init()
       J = f.hessian()
       J.init()
       sp2 = J.output().sparsity()
-      self.checkarray(sp.row(),sp2.row())
-      self.checkarray(sp.colind(),sp2.colind())
+      self.checkarray(sp.col(),sp2.col())
+      self.checkarray(sp.rowind(),sp2.rowind())
       
-    A = IMatrix([[1,1,0,0,0,0],[1,1,1,0,1,1],[0,1,1,1,0,0],[0,0,1,1,0,1],[0,1,0,0,1,0],[0,1,0,1,0,1]]).T
+    A = IMatrix([[1,1,0,0,0,0],[1,1,1,0,1,1],[0,1,1,1,0,0],[0,0,1,1,0,1],[0,1,0,0,1,0],[0,1,0,1,0,1]])
     makeSparse(A)
     C = A.sparsity()
     
     test(C)
     
-    A = IMatrix([[1,0,0,0,0,0],[0,1,1,0,1,1],[0,1,1,1,0,0],[0,0,1,1,0,1],[0,1,0,0,1,0],[0,1,0,1,0,1]]).T
+    A = IMatrix([[1,0,0,0,0,0],[0,1,1,0,1,1],[0,1,1,1,0,0],[0,0,1,1,0,1],[0,1,0,0,1,0],[0,1,0,1,0,1]])
     makeSparse(A)
     C = A.sparsity()
     
     test(C)
     
-    A = IMatrix([[1,0,0,0,0,0],[0,1,0,0,1,1],[0,0,1,1,0,0],[0,0,1,1,0,1],[0,1,0,0,1,0],[0,1,0,1,0,1]]).T
-    makeSparse(A)
-    C = A.sparsity()
-      
-    test(C)
-
-    A = IMatrix([[0,0,0,0,0,0],[0,1,0,0,1,1],[0,0,1,1,0,0],[0,0,1,1,0,1],[0,1,0,0,1,0],[0,1,0,1,0,1]]).T
+    A = IMatrix([[1,0,0,0,0,0],[0,1,0,0,1,1],[0,0,1,1,0,0],[0,0,1,1,0,1],[0,1,0,0,1,0],[0,1,0,1,0,1]])
     makeSparse(A)
     C = A.sparsity()
       
     test(C)
 
-    A = IMatrix([[0,0,0,0,0,0],[0,1,0,0,1,0],[0,0,1,1,0,0],[0,0,1,1,0,1],[0,1,0,0,1,0],[0,0,0,1,0,1]]).T
+    A = IMatrix([[0,0,0,0,0,0],[0,1,0,0,1,1],[0,0,1,1,0,0],[0,0,1,1,0,1],[0,1,0,0,1,0],[0,1,0,1,0,1]])
+    makeSparse(A)
+    C = A.sparsity()
+      
+    test(C)
+
+    A = IMatrix([[0,0,0,0,0,0],[0,1,0,0,1,0],[0,0,1,1,0,0],[0,0,1,1,0,1],[0,1,0,0,1,0],[0,0,0,1,0,1]])
     makeSparse(A)
     C = A.sparsity()
       
@@ -390,16 +390,16 @@ class FXtests(casadiTestCase):
       d = sp_diag(i)
       test(d)
       
-      test(d + sp_colrow([5],[0],i,i) + sp_colrow([0],[5],i,i))
+      test(d + sp_rowcol([0],[5],i,i) + sp_rowcol([5],[0],i,i))
       
       b = sp_band(i,-1) + sp_band(i,1)
       test(b)
-      test(b + sp_colrow([5],[0],i,i) + sp_colrow([0],[5],i,i))
+      test(b + sp_rowcol([0],[5],i,i) + sp_rowcol([5],[0],i,i))
       
       d = sp_dense(i,i)
       test(d)
       
-      d = sp_diag(i) + sp_triplet(i,i,range(i),[0]*i)+sp_triplet(i,i,[0]*i,range(i))
+      d = sp_diag(i) + sp_triplet(i,i,[0]*i,range(i))+sp_triplet(i,i,range(i),[0]*i)
       test(d)
 
 
@@ -419,20 +419,20 @@ class FXtests(casadiTestCase):
       
       test(sp_holes)
       
-      z = IMatrix.sparse(sp_holes.shape[1],sp_holes.shape[0])
+      z = IMatrix(sp_holes.shape[0],sp_holes.shape[1])
       
       R = 5
       v = []
       for r in range(R):
         h = [z]*5
         h[r] = I
-        v.append(vertcat(h))
-      d = horzcat(v)
+        v.append(horzcat(h))
+      d = vertcat(v)
       
       test(d.sparsity())
       
   def test_getOutput(self):
-    x = ssym("x",1,2)
+    x = ssym("x",2)
     
     f = SXFunction(daeIn(x=x),daeOut(ode=x))
     f.init()
@@ -502,61 +502,88 @@ class FXtests(casadiTestCase):
     f.setOption({"name": "def"},True)
     self.assertTrue(f.getOption("name")=="def")
     
-  def test_CustomFunctionDefault(self):
-    # Commented out, #884
-    return
-    
-    x = msym("x")
-    y = msym("y")
-
-    @pyevaluate
-    def fun(f):
-      # sin(x+3*y)
-      
-      x = f.input(0)
-      y = f.input(1)
-            
-      z0 = 3*y
-      z1 = x+z0
-      z2 = sin(z1)
-            
-      f.setOutput(z2)
-      
-    Fun = CustomFunction(fun, [sp_dense(1,1),sp_dense(1,1)], [sp_dense(1,1)] )
-    Fun.init()
-    with self.assertRaises(Exception):
-      Fun.jacobian()
-    
-  def test_CustomFunction(self):
-    # commented out #884
-    return
+  def test_CustomFunctionHard(self):
   
     x = msym("x")
     y = msym("y")
+    
         
     g = MXFunction([x,y],[sin(x+3*y)])
     g.init()
     
+
     g.setInput(0.2,0)
     g.setInput(0.7,1)
+    
+    def getP(max_fwd=1,max_adj=1,indirect=True):
 
-    def getP(indirect=True):
-
-      @pyevaluate
-      def fun(f):
+      class Fun:
         # sin(x+3*y)
-                
-        x = f.input(0)
-        y = f.input(1)
-                
-        z0 = 3*y
-        z1 = x+z0
-        z2 = sin(z1)
-                
-        f.setOutput(z2)
+        
+        def evaluate(self,(x,y),(z,)):
+          z0 = 3*y
+          z1 = x+z0
+          z2 = sin(z1)
+          z.set(z2)
+          
+        def getDerivative(self,f,nfwd,nadj):
+          inputs = [f.input(i).sparsity() for i in range(f.getNumInputs())]
+          outputs = [f.output(i).sparsity() for i in range(f.getNumOutputs())]
+          
+          sself = self
 
-      Fun = CustomFunction(fun, [sp_dense(1,1),sp_dense(1,1)], [sp_dense(1,1)] )
-      Fun.setOption("name","Fun")
+          class Der:
+             def evaluate(self,xy_andseeds,z_andseeds):  sself.evaluateDer(xy_andseeds,z_andseeds,nfwd,nadj)
+
+          FunDer = PyFunction(Der(),inputs+inputs*nfwd+outputs*nadj,outputs*(nfwd+1)+inputs*nadj)
+          return FunDer
+          
+        def evaluateDer(self,inputs,outputs,nfwd,nadj):
+          # sin(x+3*y)
+          
+          num_in  =  2
+          num_out =  1
+          
+          x = inputs[0]
+          y = inputs[1]
+          
+          z0 = 3*y
+          z1 = x+z0
+          z2 = sin(z1)
+          outputs[0].set(z2)
+          
+          for i in range(nfwd):
+            dx = inputs[num_in + i*num_in+0]
+            dy = inputs[num_in + i*num_in+1]
+            
+            dz0 = 3*dy
+            dz1 = dx+dz0
+            dz2 = cos(z1)*dz1
+            
+            outputs[num_out + i].set(dz2)
+          
+          for i in range(nadj):
+            # Backwards sweep
+            bx = 0
+            by = 0
+            bz1 = 0
+            bz0 = 0
+            
+            bz2 = inputs[num_in + nfwd*num_in+i*num_out+0]
+            bz1 += bz2*cos(z1)
+            bx+= bz1;bz0+= bz1
+            by+= 3*bz0
+            outputs[num_out + nfwd*num_out + num_in*i+0].set(bx)
+            outputs[num_out + nfwd*num_out + num_in*i+1].set(by)
+          
+
+      Fun = PyFunction(Fun(),[sp_dense(1,1),sp_dense(1,1)], [sp_dense(1,1)])
+      if max_fwd and max_adj:
+        Fun.setOption("ad_mode","automatic")
+      elif max_adj:
+        Fun.setOption("ad_mode","reverse")
+      elif max_fwd:
+        Fun.setOption("ad_mode","forward")
       Fun.init()
       
       if not indirect: 
@@ -571,26 +598,226 @@ class FXtests(casadiTestCase):
       f.setInput(0.7,1)
       
       return f
-
+      
     for indirect in [True,False]:
-
-      print "indirect = ", indirect
-
-      f = getP(indirect=indirect)
+      f = getP(max_fwd=1,max_adj=1,indirect=indirect)
                 
       self.checkfx(f,g,sens_der=False,hessian=False,evals=1)
 
-      f = getP(indirect=indirect)
+      f = getP(max_fwd=1,max_adj=0,indirect=indirect)
                 
       self.checkfx(f,g,sens_der=False,hessian=False,adj=False,evals=1)
 
+      f = getP(max_fwd=0,max_adj=1,indirect=indirect)
+                
+      self.checkfx(f,g,sens_der=False,hessian=False,fwd=False,evals=1)
+    
+  def test_CustomFunction(self):
+  
+    x = msym("x")
+    y = msym("y")
+    
+        
+    g = MXFunction([x,y],[sin(x+3*y)])
+    g.init()
+    
+
+    g.setInput(0.2,0)
+    g.setInput(0.7,1)
+    
+    # Simple syntax
+    def getP(indirect=True):
+    
+      @pyfunction([sp_dense(1,1),sp_dense(1,1)], [sp_dense(1,1)])
+      def Fun((x,y)):
+        # sin(x+3*y)
+        
+        z0 = 3*y
+        z1 = x+z0
+        z2 = sin(z1)
+        return [z2]
+          
+      Fun.init()
+      
+      if not indirect: 
+        Fun.setInput(0.2,0)
+        Fun.setInput(0.7,1)
+        return Fun
+
+      f = MXFunction([x,y],Fun.call([x,y]))
+      f.init()
+
+      f.setInput(0.2,0)
+      f.setInput(0.7,1)
+      
+      return f
+      
+    for indirect in [True,False]:
       f = getP(indirect=indirect)
+      self.checkfx(f,g,sens_der=False,jacobian=False,gradient=False,hessian=False,evals=False)
+    
+      with self.assertRaises(Exception):          
+        f.gradient()
+
+      with self.assertRaises(Exception): 
+        f.jacobian()
+    
+      with self.assertRaises(Exception):
+        f.derivative()
+        
+    def getP(max_fwd=1,max_adj=1,indirect=True):
+
+      class Fun:
+        # sin(x+3*y)
+        
+        def evaluate(self,(x,y),(z,)):
+          z0 = 3*y
+          z1 = x+z0
+          z2 = sin(z1)
+          z.set(z2)
+
+        def fwd(self,(x,y),(z,),seeds,sens):
+          z0 = 3*y
+          z1 = x+z0
+          z2 = sin(z1)
+          z.set(z2)
+          
+          for ((dx,dy),(dz,)) in zip(seeds,sens):
+            dz0 = 3*dy
+            dz1 = dx+dz0
+            dz2 = cos(z1)*dz1
+            dz.set(dz2)
+        
+        def adj(self,(x,y),(z,),seeds,sens):
+          z0 = 3*y
+          z1 = x+z0
+          z2 = sin(z1)
+          z.set(z2)
+          
+          for ((z_bar,),(x_bar,y_bar)) in zip(seeds,sens):
+            bx = 0
+            by = 0
+            bz1 = 0
+            bz0 = 0
+            
+            bz2 = z_bar
+            bz1 += bz2*cos(z1)
+            bx+= bz1;bz0+= bz1
+            by+= 3*bz0
+            x_bar.set(bx)
+            y_bar.set(by)
+
+      Fun = PyFunction(Fun(),[sp_dense(1,1),sp_dense(1,1)], [sp_dense(1,1)])
+      if max_fwd and max_adj:
+        Fun.setOption("ad_mode","automatic")
+      elif max_adj:
+        Fun.setOption("ad_mode","reverse")
+      elif max_fwd:
+        Fun.setOption("ad_mode","forward")
+      Fun.init()
+      
+      if not indirect: 
+        Fun.setInput(0.2,0)
+        Fun.setInput(0.7,1)
+        return Fun
+
+      f = MXFunction([x,y],Fun.call([x,y]))
+      f.init()
+
+      f.setInput(0.2,0)
+      f.setInput(0.7,1)
+      
+      return f
+      
+    for indirect in [True,False]:
+      f = getP(max_fwd=1,max_adj=1,indirect=indirect)
+                
+      self.checkfx(f,g,sens_der=False,hessian=False,evals=1)
+
+      f = getP(max_fwd=1,max_adj=0,indirect=indirect)
+                
+      self.checkfx(f,g,sens_der=False,hessian=False,adj=False,evals=1)
+
+      f = getP(max_fwd=0,max_adj=1,indirect=indirect)
+                
+      self.checkfx(f,g,sens_der=False,hessian=False,fwd=False,evals=1)
+
+    def getP(max_fwd=1,max_adj=1,indirect=True):
+
+      class Fun:
+        # sin(x+3*y)
+        
+        def evaluate(self,(x,y),(z,)):
+          z0 = 3*y
+          z1 = x+z0
+          z2 = sin(z1)
+          z.set(z2)
+          
+        if max_fwd:
+          def fwd(self,(x,y),(z,),seeds,sens):
+            z0 = 3*y
+            z1 = x+z0
+            z2 = sin(z1)
+            z.set(z2)
+            
+            for ((dx,dy),(dz,)) in zip(seeds,sens):
+              dz0 = 3*dy
+              dz1 = dx+dz0
+              dz2 = cos(z1)*dz1
+              dz.set(dz2)
+        
+        if max_adj:
+          def adj(self,(x,y),(z,),seeds,sens):
+            z0 = 3*y
+            z1 = x+z0
+            z2 = sin(z1)
+            z.set(z2)
+            
+            for ((z_bar,),(x_bar,y_bar)) in zip(seeds,sens):
+              bx = 0
+              by = 0
+              bz1 = 0
+              bz0 = 0
+              
+              bz2 = z_bar
+              bz1 += bz2*cos(z1)
+              bx+= bz1;bz0+= bz1
+              by+= 3*bz0
+              x_bar.set(bx)
+              y_bar.set(by)
+
+      Fun = PyFunction(Fun(),[sp_dense(1,1),sp_dense(1,1)], [sp_dense(1,1)])
+      Fun.init()
+      
+      if not indirect: 
+        Fun.setInput(0.2,0)
+        Fun.setInput(0.7,1)
+        return Fun
+
+      f = MXFunction([x,y],Fun.call([x,y]))
+      f.init()
+
+      f.setInput(0.2,0)
+      f.setInput(0.7,1)
+      
+      return f
+      
+    for indirect in [True,False]:
+      f = getP(max_fwd=1,max_adj=1,indirect=indirect)
+                
+      self.checkfx(f,g,sens_der=False,hessian=False,evals=1)
+
+      f = getP(max_fwd=1,max_adj=0,indirect=indirect)
+                
+      self.checkfx(f,g,sens_der=False,hessian=False,adj=False,evals=1)
+
+      f = getP(max_fwd=0,max_adj=1,indirect=indirect)
                 
       self.checkfx(f,g,sens_der=False,hessian=False,fwd=False,evals=1)
       
     # vector input
     
-    x = msym("x",1,2)
+    x = msym("x",2)
     y = msym("y")
         
     g = MXFunction([x,y],[sin(x[0]+3*y)*x[1]])
@@ -600,24 +827,81 @@ class FXtests(casadiTestCase):
     g.setInput([0.2,0.6],0)
     g.setInput(0.7,1)
     
-    def getP(indirect=True):
+    def getP(max_fwd=1,max_adj=1,indirect=True):
 
-      @pyevaluate
-      def fun(f):
-        # sin(x0+3*y)*x1
+      class Fun:
         
-        x0 = f.input(0)[0]
-        x1 = f.input(0)[1]
-        y = f.input(1)
-                
-        z0 = 3*y
-        z1 = x0+z0
-        z2 = sin(z1)
-        z3 = z2*x1
-        f.setOutput(z3)
+        def evaluate(self,(x,y),(z,)):
+          # sin(x0+3*y)*x1
 
-      Fun = CustomFunction(fun, [sp_dense(1,2),sp_dense(1,1)], [sp_dense(1,1)] )
-      Fun.setOption("name","Fun")
+          x0 = x[0]
+          x1 = x[1]
+          
+          z0 = 3*y
+          z1 = x0+z0
+          z2 = sin(z1)
+          z3 = z2*x1
+          
+          z.set(z3)
+        
+        def fwd(self,(x,y),(z,),seeds,sens):
+          x0 = x[0]
+          x1 = x[1]
+          
+          z0 = 3*y
+          z1 = x0+z0
+          z2 = sin(z1)
+          z3 = z2*x1
+          
+          z.set(z3)
+          
+          for ((dx,dy),(dz,)) in zip(seeds,sens):
+            dx0=dx[0]
+            dx1=dx[1]
+
+            dz0 = 3*dy
+            dz1 = dx0+dz0
+            dz2 = cos(z1)*dz1
+            dz3 = x1*dz2 + dx1*z2
+          
+            dz.set(dz3)
+        def adj(self,(x,y),(z,),seeds,sens):
+          x0 = x[0]
+          x1 = x[1]
+          
+          z0 = 3*y
+          z1 = x0+z0
+          z2 = sin(z1)
+          z3 = z2*x1
+          
+          z.set(z3)
+          
+          for ((z_bar,),(x_bar,y_bar)) in zip(seeds,sens):
+            # Backwards sweep
+            bx0 = 0
+            bx1 = 0
+            by = 0
+            
+            bz2 = 0
+            bz1 = 0
+            bz0 = 0
+            
+            bz3 = z_bar
+            bz2 += bz3*x1
+            bx1 += bz3*z2
+            bz1 += bz2*cos(z1)
+            bx0+= bz1;bz0+= bz1
+            by+= 3*bz0
+            x_bar.set([bx0,bx1])
+            y_bar.set(by)
+
+      Fun = PyFunction(Fun(),[sp_dense(2,1),sp_dense(1,1)], [sp_dense(1,1)])
+      if max_fwd and max_adj:
+        Fun.setOption("ad_mode","automatic")
+      elif max_adj:
+        Fun.setOption("ad_mode","reverse")
+      elif max_fwd:
+        Fun.setOption("ad_mode","forward")
       Fun.init()
 
       if not indirect: 
@@ -634,39 +918,63 @@ class FXtests(casadiTestCase):
       return f
     
     for indirect in [True,False]:
-      f = getP(indirect=indirect)
+      f = getP(max_fwd=1,max_adj=1,indirect=indirect)
                 
       self.checkfx(f,g,sens_der=False,hessian=False,evals=1)
 
-      f = getP(indirect=indirect)
+      f = getP(max_fwd=1,max_adj=0,indirect=indirect)
                 
       self.checkfx(f,g,sens_der=False,hessian=False,adj=False,evals=1)
 
-      f = getP(indirect=indirect)
+      f = getP(max_fwd=0,max_adj=1,indirect=indirect)
                 
       self.checkfx(f,g,sens_der=False,hessian=False,fwd=False,evals=1)
       
     # vector input, vector output
     
-    x = msym("x",1,2)
+    x = msym("x",2)
         
-    g = MXFunction([x],[horzcat([x[0]**2,x[1]**2])])
+    g = MXFunction([x],[vertcat([x[0]**2+x[1],x[0]*x[1]])])
     g.init()
     
 
     g.setInput([0.2,0.6],0)
  
-    def getP(indirect=True):
+    def getP(max_fwd=1,max_adj=1,indirect=True):
 
-      @pyevaluate
-      def squares(f):
-        x = f.getInput(0)[0]
-        y = f.getInput(0)[1]
+      
+      class Squares:
 
-        f.setOutput(f.getInput(0)**2,0)
-        f.setOutput(f.getInput(0)**2,0)
-                  
-      c = CustomFunction( squares, [sp_dense(1,2)], [sp_dense(1,2)] )
+         def evaluate(self,(X,),(Y,)):
+            x = X[0]
+            y = X[1]
+            Y.set([x**2+y,x*y])
+          
+         def fwd(self,(X,),(Y,),seeds,sens):
+            x = X[0]
+            y = X[1]
+            Y.set([x**2+y,x*y])
+            for ((Xdot,),(Zdot,)) in zip(seeds,sens):
+              xdot = Xdot[0]
+              ydot = Xdot[1]
+              Zdot.set([2*x*xdot+ydot,y*xdot+x*ydot])
+            
+         def adj(self,(X,),(Y,),seeds,sens):
+            x = X[0]
+            y = X[1]
+            Y.set([x**2+y,x*y])
+            for ((Y_bar,),(X_bar,)) in zip(seeds,sens):
+              xb = Y_bar[0]
+              yb = Y_bar[1]
+              X_bar.set([2*x*xb+y*yb,xb+x*yb])
+          
+      c = PyFunction(Squares(),[sp_dense(2,1)], [sp_dense(2,1)])
+      if max_fwd and max_adj:
+        c.setOption("ad_mode","automatic")
+      elif max_adj:
+        c.setOption("ad_mode","reverse")
+      elif max_fwd:
+        c.setOption("ad_mode","forward")
       c.init()
 
       if not indirect: 
@@ -680,70 +988,22 @@ class FXtests(casadiTestCase):
       
       return f
     
-    for indirect in [True,False]:
-      f = getP(indirect=indirect)
-      
-      with self.assertRaises(Exception):          
-        self.checkfx(f,g,sens_der=False,hessian=False,evals=1)
-
-      f = getP(indirect=indirect)
-        
-      with self.assertRaises(Exception): 
-        self.checkfx(f,g,sens_der=False,hessian=False,adj=False,evals=1)
-
-      f = getP(indirect=indirect)
-                
-      with self.assertRaises(Exception):
-        self.checkfx(f,g,sens_der=False,hessian=False,fwd=False,evals=1)
-      
-    # vector input, vector output
-    
-    x = msym("x",1,2)
-        
-    g = MXFunction([x],[horzcat([x[0]**2+x[1],x[0]*x[1]])])
-    g.init()
-    
-
-    g.setInput([0.2,0.6],0)
- 
-    def getP(indirect=True):
-
-      @pyevaluate
-      def squares(f):
-        x = f.getInput(0)[0]
-        y = f.getInput(0)[1]
-
-        f.setOutput([x**2+y,x*y],0)
-                  
-      c = CustomFunction( squares, [sp_dense(1,2)], [sp_dense(1,2)] )
-      c.init()
-
-      if not indirect: 
-        c.setInput([0.2,0.6],0)
-        return c
-        
-      f = MXFunction([x],c.call([x]))
-      f.init()
-
-      f.setInput([0.2,0.6],0)
-      
-      return f
-    
-    for indirect in [True,False]:
-      f = getP(indirect=indirect)
+    for indirect in [False]:
+      f = getP(max_fwd=1,max_adj=1,indirect=indirect)
                 
       self.checkfx(f,g,sens_der=False,hessian=False,evals=1)
 
-      f = getP(indirect=indirect)
+      print f
+      f = getP(max_fwd=1,max_adj=0,indirect=indirect)
                 
       self.checkfx(f,g,sens_der=False,hessian=False,adj=False,evals=1)
 
-      f = getP(indirect=indirect)
+      f = getP(max_fwd=0,max_adj=1,indirect=indirect)
                 
       self.checkfx(f,g,sens_der=False,hessian=False,fwd=False,evals=1)
-      
+         
   def test_setjacsparsity(self):
-    x = msym("x",1,4)
+    x = msym("x",4)
           
     f = MXFunction([x],[x])
     f.init()
@@ -809,20 +1069,20 @@ class FXtests(casadiTestCase):
   def test_derivative_simplifications(self):
   
     n = 1
-    x = ssym("x",1,n)
+    x = ssym("x",n)
 
-    M = SXFunction([x],[mul(x.T,(x-DMatrix(range(n))))])
+    M = SXFunction([x],[mul((x-DMatrix(range(n))),x.T)])
     M.setOption("name","M")
     M.init()
     M.evaluate()
 
 
     P = msym("P",n,n)
-    X = msym("X",1,n)
+    X = msym("X",n)
 
     MX= M.call([X])[0]
 
-    Pf = MXFunction([X,P],[mul(P,MX)])
+    Pf = MXFunction([X,P],[mul(MX,P)])
     Pf.setOption("name","P")
     Pf.init()
 

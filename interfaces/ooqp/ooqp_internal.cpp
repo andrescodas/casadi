@@ -71,7 +71,7 @@ OOQPInternal* OOQPInternal::clone() const{
   return node;
 }
   
-OOQPInternal::OOQPInternal(const std::vector<CCSSparsity>& st) : QPSolverInternal(st){
+OOQPInternal::OOQPInternal(const std::vector<CRSSparsity>& st) : QPSolverInternal(st){
   addOption("print_level",OT_INTEGER,0,"Print level. OOQP listens to print_level 0, 10 and 100");
   addOption("mutol",OT_REAL,1e-8,"tolerance as provided with setMuTol to OOQP");
   addOption("artol",OT_REAL,1e-8,"tolerance as provided with setArTol to OOQP");
@@ -121,13 +121,13 @@ void OOQPInternal::evaluate() {
   input(QP_SOLVER_H).get(H_.data(),SPARSESYM);
   
   // Pass on QP_SOLVER_A
-  vector<int> colind,row;
-  A_.sparsity().getSparsityCCS(colind,row);
+  vector<int> rowind,col;
+  A_.sparsity().getSparsityCRS(rowind,col);
   int k_orig = 0;
   int k_new = 0;
-  for(int r=0; r<colind.size()-1; ++r) {
-    for(int el=colind[r]; el<colind[r+1]; ++el){
-      if (el<colind[r+1]-1) {
+  for(int r=0; r<rowind.size()-1; ++r) {
+    for(int el=rowind[r]; el<rowind[r+1]; ++el){
+      if (el<rowind[r+1]-1) {
         A_.data()[k_new] = input(QP_SOLVER_A).data()[k_orig];
         k_orig++;
       }
@@ -136,11 +136,11 @@ void OOQPInternal::evaluate() {
   }
 
   // Get references to sparsity (NOTE: OOQP does not appear do be const correct)
-  int *H_colind = const_cast<int*>(getPtr(H_.sparsity().colind()));
-  int *H_row = const_cast<int*>(getPtr(H_.sparsity().row()));
+  int *H_rowind = const_cast<int*>(getPtr(H_.sparsity().rowind()));
+  int *H_col = const_cast<int*>(getPtr(H_.sparsity().col()));
 
-  int *A_colind = const_cast<int*>(getPtr(A_.sparsity().colind()));
-  int *A_row = const_cast<int*>(getPtr(A_.sparsity().row()));
+  int *A_rowind = const_cast<int*>(getPtr(A_.sparsity().rowind()));
+  int *A_col = const_cast<int*>(getPtr(A_.sparsity().col()));
 
   if (qp_) {
     delete qp_;
@@ -152,16 +152,16 @@ void OOQPInternal::evaluate() {
   // Set up a Sparse solver; the decision space is [x,s]; there are no inequalities
   qp_ = new QpGenSparseMa27( n_ + nc_, nc_, 0, H_.size() , G_.size(), A_.size() );
   
-  std::vector<int> colind_empty_(1,0);
+  std::vector<int> rowind_empty_(1,0);
   
   // Set all pointers to problem data
   prob_ = (QpGenData * )qp_->makeData( getPtr(G_),
-                                       H_colind,  H_row,  getPtr(H_),
+                                       H_rowind,  H_col,  getPtr(H_),
                                        getPtr(lbX_),  getPtr(ixlow_),
                                        getPtr(ubX_),  getPtr(ixupp_),
-                                       A_colind, A_row,  getPtr(A_),
+                                       A_rowind, A_col,  getPtr(A_),
                                        getPtr(b_),
-                                       getPtr(colind_empty_), 0,  0,
+                                       getPtr(rowind_empty_), 0,  0,
                                        0,  0,
                                        0,  0);
                                        
@@ -226,25 +226,25 @@ void OOQPInternal::init(){
   std::vector<DMatrix> A_trans;
   A_trans.push_back(input(QP_SOLVER_A));
   A_trans.push_back(-DMatrix::eye(nc_));
-  A_ = vertcat(A_trans);
+  A_ = horzcat(A_trans);
   
   // Reformulation of G
   std::vector<DMatrix> G_trans;
   G_trans.push_back(input(QP_SOLVER_G));
   G_trans.push_back(DMatrix::zeros(nc_));
-  G_ = horzcat(G_trans);
+  G_ = vertcat(G_trans);
   
   // Reformulation of H
   std::vector<DMatrix> H_trans;
   H_trans.push_back(DMatrix(lowerSparsity(input(QP_SOLVER_H).sparsity())));
   H_trans.push_back(DMatrix(n_,nc_));
   
-  H_ = vertcat(H_trans);
+  H_ = horzcat(H_trans);
   H_trans.clear();
   H_trans.push_back(H_);
   H_trans.push_back(DMatrix(nc_,n_+nc_));
   
-  H_ = horzcat(H_trans);
+  H_ = vertcat(H_trans);
   
   // Allocate vectors to hold indicators of infinite variable bounds
   ixlow_.resize(n_+nc_,0);

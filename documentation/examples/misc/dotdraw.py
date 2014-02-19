@@ -35,13 +35,13 @@ dotdraw(c)
 
 #! An SX Matrix
 
-dotdraw(ssym("x",sp_triu(3)))
+dotdraw(ssym("x",sp_tril(3)))
 
-dotdraw(ssym("x",sp_triu(3))**2)
+dotdraw(ssym("x",sp_tril(3))**2)
 
 #! An MX graph
-x = MX("x",sp_triu(2))
-y = MX("y",sp_triu(2))
+x = MX("x",sp_tril(2))
+y = MX("y",sp_tril(2))
 
 z = msym("z",4,2)
 
@@ -53,7 +53,7 @@ f = MXFunction([z,y],[z+x[0],x-y])
 f.setOption("name","magic")
 f.init()
 
-[z,z2] = f.call([horzcat([x,y]),zz.T])
+[z,z2] = f.call([vertcat([x,y]),zz.T])
 
 z = z[:2,:] +x + cos(x) - sin(x) / tan(z2)
 

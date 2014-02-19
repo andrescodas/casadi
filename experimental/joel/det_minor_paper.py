@@ -28,13 +28,13 @@ import sys
 
 # Calculates the determinant by minor expansion
 def f(A):
-  n = A.shape[0]    # Number of cols
+  n = A.shape[0]    # Number of rows
   if n==1: return A # If scalar
   
-  # Expand along the first row
+  # Expand along the first column
   R = 0             # Return value
   for i in range(n):
-    # Remove col i and row 0 from A
+    # Remove row i and column 0 from A
     M = A[range(i)+range(i+1,n),1:,]
     
     # Add/subtract the minor
@@ -120,15 +120,15 @@ F_small.init()
 
 # Calculates the determinant by minor expansion
 def f_mod(A,n_min,F_min):
-  n = A.shape[0]    # Number of cols
+  n = A.shape[0]    # Number of rows
   if n==n_min:
     [d] = F_min.call([A]) # Create a function call
     return d
   
-  # Expand along the first row
+  # Expand along the first column
   R = 0             # Return value
   for i in range(n):
-    # Remove col i and row 0 from A
+    # Remove row i and column 0 from A
     M = A[range(i)+range(i+1,n),1:,]
     
     # Add/subtract the minor

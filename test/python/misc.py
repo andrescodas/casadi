@@ -50,7 +50,7 @@ class Misctests(casadiTestCase):
       x = casadi.SX("x")
       f = casadi.SXFunction([x], [x ** 2])
       f.init()
-      return f.jacSparsity().transpose()
+      return f.jacSparsity()
     
     def print_sparsity():
         sparsity = calc_sparsity()
@@ -59,7 +59,7 @@ class Misctests(casadiTestCase):
     print_sparsity()
     
   def test_sanity(self):
-    DMatrix(4,3,[0,2,2,3],[1,2,1],[0.738,0.39,0.99])
+    DMatrix(3,4,[1,2,1],[0,2,2,3],[0.738,0.39,0.99])
     self.assertRaises(RuntimeError,lambda : DMatrix(4,4,[1,2,1],[0,2,2,3],[0.738,0.39,0.99]))
     self.assertRaises(RuntimeError,lambda : DMatrix(3,4,[1,2,1],[0,2,2,12],[0.738,0.39,0.99]))
     self.assertRaises(RuntimeError,lambda : DMatrix(3,4,[1,2,1],[-10,2,2,3],[0.738,0.39,0.99]))
@@ -95,7 +95,7 @@ class Misctests(casadiTestCase):
     
   def test_copyconstr_norefcount(self):
     self.message("Copy constructor for non-refcounted classes")
-    x = DMatrix.ones(3,2)
+    x = DMatrix(2,3,1)
 
     y = DMatrix(x)
     x[0,0] = 5
@@ -108,9 +108,9 @@ class Misctests(casadiTestCase):
     self.message("Copy constructor for refcounted classes")
     x = sp_diag(4)
 
-    y = CCSSparsity(x)
+    y = CRSSparsity(x)
         
-    x.resize(8,2)
+    x.resize(2,8)
     
     self.assertFalse(id(x)==id(y))
     self.assertTrue(x.numel(),y.numel())
@@ -138,7 +138,7 @@ class Misctests(casadiTestCase):
     self.message("Shallow copy for non-refcounted classes")
     import copy
     
-    x = DMatrix.ones(3,2)
+    x = DMatrix(2,3,1)
 
     y = copy.copy(x)
     x[0,0] = 5
@@ -154,7 +154,7 @@ class Misctests(casadiTestCase):
 
     y = copy.copy(x)
         
-    x.resize(8,2)
+    x.resize(2,8)
     
     self.assertFalse(id(x)==id(y))
     self.assertTrue(x.numel(),y.numel())
@@ -181,7 +181,7 @@ class Misctests(casadiTestCase):
     self.message("Deep copy for non-refcounted classes")
     import copy
     
-    x = DMatrix.ones(3,2)
+    x = DMatrix(2,3,1)
 
     y = copy.deepcopy(x)
     x[0,0] = 5
@@ -197,7 +197,7 @@ class Misctests(casadiTestCase):
 
     y = copy.deepcopy(x)
         
-    x.resize(8,2)
+    x.resize(2,8)
     
     self.assertFalse(id(x)==id(y))
     self.assertTrue(x.numel(),y.numel())
@@ -334,23 +334,23 @@ class Misctests(casadiTestCase):
     
   def test_pickling(self):
 
-    a = sp_triu(4)
+    a = sp_tril(4)
     s = pickle.dumps(a)
     b = pickle.loads(s)
     self.assertTrue(a==b)
 
-    a = CCSSparsity()
+    a = CRSSparsity()
     s = pickle.dumps(a)
     b = pickle.loads(s)
     self.assertTrue(a.isNull())
     
-    a = IMatrix(sp_triu(4),range(10))
+    a = IMatrix(sp_tril(4),range(10))
     s = pickle.dumps(a)
     b = pickle.loads(s)
     self.checkarray(a,b)
 
 
-    a = DMatrix(sp_triu(4),range(10))
+    a = DMatrix(sp_tril(4),range(10))
     s = pickle.dumps(a)
     b = pickle.loads(s)
     self.checkarray(a,b)
@@ -383,7 +383,7 @@ class Misctests(casadiTestCase):
     
 
     
-pickle.dump(CCSSparsity(),file("temp.txt","w"))
+pickle.dump(CRSSparsity(),file("temp.txt","w"))
     
 if __name__ == '__main__':
     unittest.main()

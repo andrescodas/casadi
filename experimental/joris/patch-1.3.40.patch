@@ -29,7 +29,7 @@
 +      }
 +      
 +      const Cell & c=outarg(0).cell_value();
-+      int ndim = c.cols();
++      int ndim = c.rows();
 +   
 +      dim_vector d;
 +      d.resize(ndim);
@@ -60,7 +60,7 @@
  
 +    virtual bool is_object() const { return ptr->is_object(); }
 +      
-+    // The following methods are needed to get size/rows/cols working
++    // The following methods are needed to get size/columns/rows working
 +    virtual dim_vector dims (void) const { return ptr->dims(); }
 +
      virtual std::string string_value(bool force = false) const 

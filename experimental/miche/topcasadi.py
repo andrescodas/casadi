@@ -80,7 +80,7 @@ class mbb2d:
 		
 		F[0,0] = -1;
 
-		#Filter matrix (col compressed format)
+		#Filter matrix (row compressed format)
 
 		crmin = int(ceil(rmin))
 		nh =  (2 * (crmin-1)+1)*(2 * (crmin-1)+1)
@@ -139,7 +139,7 @@ mbb = mbb2d(nelx,nely,rmin,penal,volfrac)
 nelem = mbb.nelem
 nfreedofs = mbb.nfreedofs
 
-x = horzcat([ssym("x",nelem),ssym("u",nfreedofs)])
+x = vertcat([ssym("x",nelem),ssym("u",nfreedofs)])
 for i in range(nelem,nelem+nfreedofs-2,2):
 	x[i]=-1;
 	

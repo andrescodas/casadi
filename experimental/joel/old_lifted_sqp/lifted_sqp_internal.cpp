@@ -131,7 +131,7 @@ void LiftedSQPInternal::init(){
     SXMatrix lam_v = ssym("lam_v",nv);
     
     // Lagrange multipliers for the simple bounds on x
-    lam_x = horzcat(lam_u,lam_v);
+    lam_x = vertcat(lam_u,lam_v);
 
     // Lagrange multipliers corresponding to the definition of the dependent variables
     SXMatrix lam_v_eq = ssym("lam_v_eq",nv);
@@ -144,7 +144,7 @@ void LiftedSQPInternal::init(){
     }
     
     // Lagrange multipliers for constraints
-    lam_g = horzcat(lam_v_eq,lam_f2);
+    lam_g = vertcat(lam_v_eq,lam_f2);
     
     // Lagrangian function
     SXMatrix lag = f + inner_prod(lam_x,x);
@@ -153,7 +153,7 @@ void LiftedSQPInternal::init(){
     
     // Gradient of the Lagrangian
     SXMatrix lgrad = CasADi::gradient(lag,x);
-    if(!v.empty()) lgrad -= horzcat(SXMatrix::zeros(nu),lam_v_eq); // Put here to ensure that lgrad is of the form "h_extended -v_extended"
+    if(!v.empty()) lgrad -= vertcat(SXMatrix::zeros(nu),lam_v_eq); // Put here to ensure that lgrad is of the form "h_extended -v_extended"
     makeDense(lgrad);
     if(verbose_){
       cout << "Generated the gradient of the Lagrangian." << endl;
@@ -227,7 +227,7 @@ void LiftedSQPInternal::init(){
   enum ZOut{Z_D_DEF,Z_F12,Z_NUM_OUT};
   SXMatrixVector zfcn_out(Z_NUM_OUT);
   zfcn_out[Z_D_DEF] = d_def;
-  zfcn_out[Z_F12] = horzcat(f1_z,f2_z);
+  zfcn_out[Z_F12] = vertcat(f1_z,f2_z);
   
   SXFunction zfcn(zfcn_in,zfcn_out);
   zfcn.init();
@@ -237,11 +237,11 @@ void LiftedSQPInternal::init(){
 
   // Matrix A and B in lifted Newton
   SXMatrix B = zfcn.jac(Z_U,Z_F12);
-  SXMatrix B1 = B(Slice(0,nf1),Slice(0,B.size1()));
-  SXMatrix B2 = B(Slice(nf1,B.size2()),Slice(0,B.size1()));
+  SXMatrix B1 = B(Slice(0,nf1),Slice(0,B.size2()));
+  SXMatrix B2 = B(Slice(nf1,B.size1()),Slice(0,B.size2()));
   if(verbose_){
-    cout << "Formed B1 (dimension " << B1.size2() << "-by-" << B1.size1() << ", "<< B1.size() << " nonzeros) " <<
-    "and B2 (dimension " << B2.size2() << "-by-" << B2.size1() << ", "<< B2.size() << " nonzeros)." << endl;
+    cout << "Formed B1 (dimension " << B1.size1() << "-by-" << B1.size2() << ", "<< B1.size() << " nonzeros) " <<
+    "and B2 (dimension " << B2.size1() << "-by-" << B2.size2() << ", "<< B2.size() << " nonzeros)." << endl;
   }
   
   // Step in u
@@ -272,12 +272,12 @@ void LiftedSQPInternal::init(){
     zfcn.eval(zfcn_in,zfcn_out,Z_fwdSeed,Z_fwdSens,Z_adjSeed,Z_adjSens);
     
     b1 += Z_fwdSens[0][Z_F12](Slice(0,nf1));
-    b2 += Z_fwdSens[0][Z_F12](Slice(nf1,B.size2()));
+    b2 += Z_fwdSens[0][Z_F12](Slice(nf1,B.size1()));
     e = Z_fwdSens[1][Z_D_DEF];
   }
   if(verbose_){
-    cout << "Formed b1 (dimension " << b1.size2() << "-by-" << b1.size1() << ", "<< b1.size() << " nonzeros) " <<
-    "and b2 (dimension " << b2.size2() << "-by-" << b2.size1() << ", "<< b2.size() << " nonzeros)." << endl;
+    cout << "Formed b1 (dimension " << b1.size1() << "-by-" << b1.size2() << ", "<< b1.size() << " nonzeros) " <<
+    "and b2 (dimension " << b2.size1() << "-by-" << b2.size2() << ", "<< b2.size() << " nonzeros)." << endl;
   }
   
   // Generate Gauss-Newton Hessian
@@ -285,7 +285,7 @@ void LiftedSQPInternal::init(){
     b1 = mul(trans(B1),b1);
     B1 = mul(trans(B1),B1);
     if(verbose_){
-      cout << "Gauss Newton Hessian (dimension " << B1.size2() << "-by-" << B1.size1() << ", "<< B1.size() << " nonzeros)." << endl;
+      cout << "Gauss Newton Hessian (dimension " << B1.size1() << "-by-" << B1.size2() << ", "<< B1.size() << " nonzeros)." << endl;
     }
   }
   
@@ -502,7 +502,7 @@ void LiftedSQPInternal::evaluate(int nfdir, int nadir){
     }
     norm_viol = sqrt(norm_viol);
     
-    // Print progress (including the header every 10 cols)
+    // Print progress (including the header every 10 rows)
     if(k % 10 == 0){
       cout << setw(4) << "iter" << setw(20) << "objective" << setw(20) << "norm_step" << setw(20) << "norm_viol" << endl;
     }

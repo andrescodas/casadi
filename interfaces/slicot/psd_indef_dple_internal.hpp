@@ -40,7 +40,7 @@ namespace CasADi{
      *  \param[in] A  List of sparsities of A_i 
      *  \param[in] V  List of sparsities of V_i 
      */
-    PsdIndefDpleInternal(const std::vector< CCSSparsity > & A, const std::vector< CCSSparsity > &V, int nwfd=0, int nadj=0);
+    PsdIndefDpleInternal(const std::vector< CRSSparsity > & A, const std::vector< CRSSparsity > &V, int nwfd=0, int nadj=0);
     
     /** \brief  Destructor */
     virtual ~PsdIndefDpleInternal();
@@ -52,7 +52,7 @@ namespace CasADi{
     virtual void deepCopyMembers(std::map<SharedObjectNode*,SharedObject>& already_copied);
   
     /** \brief  Create a new solver */
-    virtual PsdIndefDpleInternal* create(const std::vector< CCSSparsity > & A, const std::vector< CCSSparsity > &V) const{ return new PsdIndefDpleInternal(A,V);}
+    virtual PsdIndefDpleInternal* create(const std::vector< CRSSparsity > & A, const std::vector< CRSSparsity > &V) const{ return new PsdIndefDpleInternal(A,V);}
      
     /** \brief  Print solver statistics */
     virtual void printStats(std::ostream &stream) const{}
@@ -93,7 +93,13 @@ namespace CasADi{
     
     /// Temp data  nxn x K
     std::vector< Matrix<double> > nnKb_;
-  
+    
+    /// Real parts of eigenvalues
+    std::vector< double > eig_real_;
+
+    /// Imaginary parts of eigenvalues
+    std::vector< double > eig_imag_;
+      
     /// Solvers for low-order Discrete Periodic Sylvester Equations
     std::vector< std::vector< LinearSolver> > dpse_solvers_;
     

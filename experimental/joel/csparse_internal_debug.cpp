@@ -21,13 +21,13 @@
  */
 
 #include "csparse_internal.hpp"
-#include "symbolic/matrix/ccs_sparsity_internal.hpp"
+#include "symbolic/matrix/crs_sparsity_internal.hpp"
 #include "symbolic/stl_vector_tools.hpp"
 
 using namespace std;
 namespace CasADi{
 
-CSparseInternal::CSparseInternal(const CCSSparsity& sparsity)  : LinearSolverInternal(sparsity){
+CSparseInternal::CSparseInternal(const CRSSparsity& sparsity)  : LinearSolverInternal(sparsity){
   N_ = 0;
   S_ = 0;
 }
@@ -45,12 +45,12 @@ void CSparseInternal::init(){
   LinearSolverInternal::init();
 
   AT_.nzmax = input().size();  // maximum number of entries 
-  AT_.m = input().size1(); // number of cols
-  AT_.n = input().size2(); // number of rows
-  AT_.p = const_cast<int*>(&input().colind().front()); // row pointers (size n+1) or row indices (size nzmax)
-  AT_.i = const_cast<int*>(&input().row().front()); // col indices, size nzmax
-  AT_.x = &input().front(); // col indices, size nzmax
-  AT_.nz = -1; // of entries in triplet matrix, -1 for compressed-row 
+  AT_.m = input().size2(); // number of rows
+  AT_.n = input().size1(); // number of columns
+  AT_.p = const_cast<int*>(&input().rowind().front()); // column pointers (size n+1) or col indices (size nzmax)
+  AT_.i = const_cast<int*>(&input().col().front()); // row indices, size nzmax
+  AT_.x = &input().front(); // row indices, size nzmax
+  AT_.nz = -1; // of entries in triplet matrix, -1 for compressed-col 
 
   // Temporary
   temp_.resize(AT_.n);
@@ -146,7 +146,7 @@ void CSparseInternal::solve(double* x, int nrhs, bool transpose){
       cs_ltsolve (N_->L, t) ;              // t = L'\t 
       cs_pvec (N_->pinv, t, x, AT_.n) ;    // x = P1*t 
     }
-    x += ncol();
+    x += nrow();
   }
 }
 

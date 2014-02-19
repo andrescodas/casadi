@@ -1,6 +1,6 @@
 from casadi import *
 
-# Create a function with a Hessian with one dense col, one dense row and a diagonal
+# Create a function with a Hessian with one dense row, one dense column and a diagonal
 n = 100000
 x = ssym("x",n)
 f = log(x[0])*inner_prod(x,x)
@@ -18,12 +18,12 @@ hfcn = fcn.hessian()
 
 # Note about the bipartitive graph defined by the Hessian sparsity pattern:
 #
-# First col has:
+# First row has:
 #   O(n) distance-1 neighbors
 #   O(n^2) distance-2 neighbors
 #   O(n^3) distance-3 neighbors
 #
-# Other cols have:
+# Other rows have:
 #   O(1) distance-1 neighbor
 #   O(n) distance-2 neighbors
 #   O(n^2) distance-3 neighbors

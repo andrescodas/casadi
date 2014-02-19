@@ -40,8 +40,8 @@ F = x4 - 2
 ffcn = SXFunction([u],[F])
 
 # Lifting function
-ifcn = SXFunction([u],[horzcat([x1,x2,x3,x4])]) # lifting
-#ifcn = SXFunction([u],[horzcat([u])])          # no lifting
+ifcn = SXFunction([u],[vertcat([x1,x2,x3,x4])]) # lifting
+#ifcn = SXFunction([u],[vertcat([u])])          # no lifting
 
 # Initial guess for u
 u_guess = 0.8

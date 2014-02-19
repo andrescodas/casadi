@@ -22,16 +22,16 @@ Ocp::~Ocp()
 
 void Ocp::addNonlconIneq( SXMatrix gNew, string name)
 {
-     if (gNew.size1() != 1){
-          cerr << "gNew.size1() != 1" << endl;
+     if (gNew.size2() != 1){
+          cerr << "gNew.size2() != 1" << endl;
           throw 1;
      }
 
-     g = horzcat(g, gNew);
-     gSizes.push_back(gNew.size2());
+     g = vertcat(g, gNew);
+     gSizes.push_back(gNew.size1());
      gLabels.push_back(name);
 
-     for (int k=0; k<gNew.size2(); k++){
+     for (int k=0; k<gNew.size1(); k++){
           gMin.push_back(-1.0e50);
           gMax.push_back(0.0);
           //    -numeric_limits<double>::infinity()
@@ -44,16 +44,16 @@ void Ocp::addNonlconIneq( SXMatrix gNew )
 
 void Ocp::addNonlconEq( SXMatrix gNew, string name)
 {
-     if (gNew.size1() != 1){
-          cerr << "gNew.size1() != 1" << endl;
+     if (gNew.size2() != 1){
+          cerr << "gNew.size2() != 1" << endl;
           throw 1;
      }
 
-     g = horzcat(g, gNew);
-     gSizes.push_back(gNew.size2());
+     g = vertcat(g, gNew);
+     gSizes.push_back(gNew.size1());
      gLabels.push_back(name);
 
-     for (int k=0; k<gNew.size2(); k++){
+     for (int k=0; k<gNew.size1(); k++){
           gMin.push_back(0);
           gMax.push_back(0);
      }
@@ -94,10 +94,10 @@ MultipleShooting & Ocp::addMultipleShooting(string name, Ode & ode, SX t0, SX tf
      assertUniqueName(name);
 
      int numNew = ode.nxu()*N;
-     if (designVariables.size2() == 0)
+     if (designVariables.size1() == 0)
           designVariables = ssym(name, numNew);
      else
-          designVariables = horzcat( designVariables, ssym(name, numNew) );
+          designVariables = vertcat( designVariables, ssym(name, numNew) );
 
      for (int k=0; k<numNew; k++){
           lb.push_back(-1e50);
@@ -105,7 +105,7 @@ MultipleShooting & Ocp::addMultipleShooting(string name, Ode & ode, SX t0, SX tf
           guess.push_back(0);
      }
 
-     ms[name] = new MultipleShooting(name, ode, t0, tf, N, lb, ub, guess, designVariables, designVariables.size2() - ode.nxu()*N, params);
+     ms[name] = new MultipleShooting(name, ode, t0, tf, N, lb, ub, guess, designVariables, designVariables.size1() - ode.nxu()*N, params);
 
      // dynamics constraint
      for (int k=0; k<N-1; k++)
@@ -141,14 +141,14 @@ SX & Ocp::addParam(string _newParam)
 {
      assertUniqueName(_newParam);
 
-     int idx = designVariables.size2();
+     int idx = designVariables.size1();
 
      SXMatrix newDv = ssym(_newParam, 1);
-//      designVariables = horzcat( designVariables, ssym(_newParam, 1) );
-     if (designVariables.size2() == 0)
+//      designVariables = vertcat( designVariables, ssym(_newParam, 1) );
+     if (designVariables.size1() == 0)
           designVariables = newDv;
      else
-          designVariables = horzcat( designVariables, newDv );
+          designVariables = vertcat( designVariables, newDv );
 
      guess.push_back(0);
      lb.push_back(-1e50);

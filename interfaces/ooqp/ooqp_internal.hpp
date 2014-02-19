@@ -51,7 +51,7 @@ public:
   virtual OOQPInternal* clone() const;
   
   /** \brief  Create a new Solver */
-  explicit OOQPInternal(const std::vector<CCSSparsity>& st);
+  explicit OOQPInternal(const std::vector<CRSSparsity>& st);
 
   /** \brief  Destructor */
   virtual ~OOQPInternal();
@@ -76,10 +76,10 @@ public:
     /* @} */
     
     
-    /// Reformulated A : vertcat([A,-DMatrix.eye(nc_)]) 
+    /// Reformulated A : horzcat([A,-DMatrix.eye(nc_)]) 
     DMatrix A_;
     
-    /// Reformulated G : vertcat([G,-DMatrix.zeros(nc_)])
+    /// Reformulated G : horzcat([G,-DMatrix.zeros(nc_)])
     DMatrix G_;
     
     /// Reformulated H : [tril(H) 0;0 0]

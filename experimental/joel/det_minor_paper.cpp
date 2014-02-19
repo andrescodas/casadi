@@ -43,11 +43,11 @@ M getMinor(const M& x, int i, int j);
 // Determinant
 template<class M>
 M det(const M& a){
-  int n = a.size2(); // Dimension
+  int n = a.size1(); // Dimension
   if(n==n_min) return det_n_min.call(a)[0]; // Quick return
   if(n==1) return a; // Quick return
   
-  // Expand along the first row
+  // Expand along the first column
   M ret = 0;
   for(int i=0; i<n; ++i){
     int sign = i % 2 == 1 ? 1 : -1;
@@ -59,9 +59,9 @@ M det(const M& a){
 // Minor
 template<class M>
 M getMinor(const M& x, int i, int j){
-  int n = x.size2(); // Dimension
+  int n = x.size1(); // Dimension
 
-  // Remove col i and row j from x
+  // Remove row i and column j from x
   M m(n-1,n-1); // (n-1)-by-(n-1) matrix
   for(int i1=0; i1<n; ++i1){
     for(int j1=0; j1<n; ++j1){
@@ -143,7 +143,7 @@ void test_sx(){
   cout << "time to create graph: " << (t*1e3) << " ms, " << endl;
   
   time1 = clock();
-  SXFunction f(flatten(x),detx);
+  SXFunction f(vec(x),detx);
   f.setOption("live_variables",true);
   f.setOption("topological_sorting","depth-first");
   f.init();
@@ -155,7 +155,7 @@ void test_sx(){
 
   // Create a new function without live variables (a bug prevents them from working together with symbolic calculations)
   time1 = clock();
-  SXFunction f_nolive(flatten(x),detx);
+  SXFunction f_nolive(vec(x),detx);
   f_nolive.init();
   time2 = clock();
   t = double(time2 - time1)/CLOCKS_PER_SEC;
@@ -170,7 +170,7 @@ void test_sx(){
 
   // Differentiating symbolically
   time1 = clock();
-  SXFunction g(flatten(x),grad);
+  SXFunction g(vec(x),grad);
   g.setOption("live_variables",true);
   g.setOption("topological_sorting","depth-first");
   g.init();
@@ -181,7 +181,7 @@ void test_sx(){
   cout << "time to create gradient function: " << (t*1e3) << " ms, " << (t*1e9/nops_grad) << " ns per elementary operation" << endl;
 
   // Some "random" matrix as input
-  f.setInput(flatten(x0(n)));
+  f.setInput(vec(x0(n)));
 
   // Evaluate without derivatives
   int nrep = 1000;

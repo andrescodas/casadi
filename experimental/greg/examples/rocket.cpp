@@ -98,9 +98,9 @@ main()
 
 	// hessian
 	SXMatrix sigma = ssym("sigma");
-	SXMatrix lambda = ssym("lambda", ocp.g.size2());
+	SXMatrix lambda = ssym("lambda", ocp.g.size1());
 	SX lagrangian = sigma.at(0)*ocp.objFun;
-	for (int k=0; k<ocp.g.size2(); k++)
+	for (int k=0; k<ocp.g.size1(); k++)
 		lagrangian += lambda.at(k)*ocp.g.at(k);
 
 	SXMatrix h = hessian(lagrangian, ocp.designVariables);
@@ -149,7 +149,7 @@ main()
 	cout << "optimal time: " << cost << endl;
 
 	// // Print the optimal solution
-	vector<double>xopt(ocp.designVariables.size2());
+	vector<double>xopt(ocp.designVariables.size1());
 	solver.getOutput(xopt,"x");
 	// cout << "optimal solution: " << xopt << endl;
 

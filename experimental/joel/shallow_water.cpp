@@ -332,9 +332,9 @@ void Tester::transcribe(bool single_shooting, bool gauss_newton, bool codegen, b
   }
 
   // Reshape to vectors (should not be needed)
-  nlp_g = vec(nlp_g);
+  nlp_g = flatten(nlp_g);
   if(gauss_newton){
-    nlp_f = vec(nlp_f);
+    nlp_f = flatten(nlp_f);
   }
 
   MXFunction nlp(nlpIn("x",P),nlpOut("f",nlp_f,"g",nlp_g));

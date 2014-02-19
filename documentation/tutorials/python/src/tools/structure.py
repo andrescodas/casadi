@@ -53,7 +53,7 @@ print states["y"]
 #! To obtain aliases, use the Ellipsis index:
 x,y,z = states[...]
 
-#! The cat attribute will return the concatenated version of the struct. This will always be a row vector
+#! The cat attribute will return the concatenated version of the struct. This will always be a column vector
 print states.cat
 
 #! This structure is of size:
@@ -80,7 +80,7 @@ simplestates = struct_ssym([
 states = struct_ssym([
     entry("x",shape=3),
     entry("y",shape=(2,2)),
-    entry("z",shape=sp_triu(2))
+    entry("z",shape=sp_tril(2))
   ])
   
 print states["x"]
@@ -228,8 +228,8 @@ print init["X",:,:,"x"]
 #! Callables/functions can be thrown in in the powerIndex at any location.
 #! They operate on subresults obtain from resolving the remainder of the powerIndex
 
-print init["X",:,vertcat,:,"x"]
-print init["X",horzcat,:,vertcat,:,"x"]
+print init["X",:,horzcat,:,"x"]
+print init["X",vertcat,:,horzcat,:,"x"]
 print init["X",blockcat,:,:,"x"]
 
 #! Set all quaternions to 1,0,0,0
@@ -261,7 +261,7 @@ print init["X",blockcat,:,:,"q",0,0]
 #! shapeStruct and delegated indexing
 #! -----------------------------------
 
-#! When working with covariance matrices, both the cols and rows relate to states
+#! When working with covariance matrices, both the rows and columns relate to states
 
 states = struct(["x","y",entry("q",repeat=2)])
 V = struct_ssym([
@@ -359,7 +359,7 @@ P0.set(P)
 
 #! Next we represent the 'squared_repeated' helper construct
 #! Imagine we somehow obtain a matrix that represents a vertical concatenation of covariance
-P0 = horzcat([DMatrix.zeros(states.size,states.size),DMatrix.ones(states.size,states.size)])
+P0 = vertcat([DMatrix.zeros(states.size,states.size),DMatrix.ones(states.size,states.size)])
 
 #! We can conveniently access it as follows:
 P = states.squared_repeated(P0)

@@ -6,11 +6,11 @@ t = ssym("t")
 
 # Differential states
 s = ssym("s"); v = ssym("v"); m = ssym("m")
-x = horzcat([s,v,m])
+x = vertcat([s,v,m])
 
 # State derivatives
 sdot = ssym("sdot"); vdot = ssym("vdot"); mdot = ssym("mdot")
-xdot = horzcat([sdot,vdot,mdot])
+xdot = vertcat([sdot,vdot,mdot])
 
 # Control
 u = ssym("u")
@@ -20,7 +20,7 @@ alpha = 0.05 # friction
 beta = 0.1   # fuel consumption rate
   
 # Differential equation
-ode = horzcat([
+ode = vertcat([
   v-sdot,
   (u-alpha*v*v)/m - vdot,
   -beta*u*u       - mdot])

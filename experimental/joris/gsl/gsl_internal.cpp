@@ -96,9 +96,9 @@ void GslInternal::init(){
   if (f_.input(DAE_T).numel()==0) {
     std::vector<MX> in1(DAE_NUM_IN);
     in1[DAE_T] = MX("T");
-    in1[DAE_Y] = MX("Y",f_.input(DAE_Y).size2(),f_.input(DAE_Y).size1());
-    in1[DAE_YDOT] = MX("YDOT",f_.input(DAE_YDOT).size2(),f_.input(DAE_YDOT).size1());
-    in1[DAE_P] = MX("P",f_.input(DAE_P).size2(),f_.input(DAE_P).size1());
+    in1[DAE_Y] = MX("Y",f_.input(DAE_Y).size1(),f_.input(DAE_Y).size2());
+    in1[DAE_YDOT] = MX("YDOT",f_.input(DAE_YDOT).size1(),f_.input(DAE_YDOT).size2());
+    in1[DAE_P] = MX("P",f_.input(DAE_P).size1(),f_.input(DAE_P).size2());
     std::vector<MX> in2(in1);
     in2[DAE_T] = MX();
     f_ = MXFunction(in1,f_.call(in2));
@@ -106,15 +106,15 @@ void GslInternal::init(){
   }
   
   // We only allow for 0-D time
-  casadi_assert_message(f_.input(DAE_T).numel()==1, "IntegratorInternal: time must be zero-dimensional, not (" <<  f_.input(DAE_T).size2() << 'x' << f_.input(DAE_T).size1() << ")");
+  casadi_assert_message(f_.input(DAE_T).numel()==1, "IntegratorInternal: time must be zero-dimensional, not (" <<  f_.input(DAE_T).size1() << 'x' << f_.input(DAE_T).size2() << ")");
   
   // ODE right hand side must be a dense matrix
   casadi_assert_message(f_.output(DAE_RES).dense(),"ODE right hand side must be dense: reformulate the problem");
   
   // States and RHS should match 
   casadi_assert_message(f_.output(DAE_RES).size()==f_.input(DAE_Y).size(),
-    "IntegratorInternal: rhs of ODE is (" <<  f_.output(DAE_RES).size2() << 'x' << f_.output(DAE_RES).size1() << ") - " << f_.output(DAE_RES).size() << " non-zeros" << std::endl <<
-    "              ODE state matrix is (" <<  f_.input(DAE_Y).size2() << 'x' << f_.input(DAE_Y).size1() << ") - " << f_.input(DAE_Y).size() << " non-zeros" << std::endl <<
+    "IntegratorInternal: rhs of ODE is (" <<  f_.output(DAE_RES).size1() << 'x' << f_.output(DAE_RES).size2() << ") - " << f_.output(DAE_RES).size() << " non-zeros" << std::endl <<
+    "              ODE state matrix is (" <<  f_.input(DAE_Y).size1() << 'x' << f_.input(DAE_Y).size2() << ") - " << f_.input(DAE_Y).size() << " non-zeros" << std::endl <<
     "Mismatch between number of non-zeros"
   );
 

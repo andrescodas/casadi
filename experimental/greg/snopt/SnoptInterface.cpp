@@ -64,7 +64,7 @@ SnoptInterface::SnoptInterface( Ocp& _ocp ) : designVariables(_ocp.designVariabl
 {
 	si = this;
 
-	ftotal = horzcat( SXMatrix(_ocp.objFun), _ocp.g );
+	ftotal = vertcat( SXMatrix(_ocp.objFun), _ocp.g );
 
 	init();
 
@@ -111,7 +111,7 @@ SnoptInterface::init()
 	/*********** objective/constraint functions ***********/
 	neF = Ftotal.output().size();
 	objAdd = 0.0;
-	objCol = FIRST_FORTRAN_INDEX;
+	objRow = FIRST_FORTRAN_INDEX;
 	F = new doublereal[neF];
 	Flow = new doublereal[neF];
 	Fupp = new doublereal[neF];
@@ -124,15 +124,15 @@ SnoptInterface::init()
 		Fmul[k] = 0;
 		Fstate[k] = 0;
 	}
-	Fupp[ objCol - FIRST_FORTRAN_INDEX ] = SNOPT_INFINITY;
+	Fupp[ objRow - FIRST_FORTRAN_INDEX ] = SNOPT_INFINITY;
 
 	/****************** jacobian *********************/
 	SXMatrix fnonlinear = ftotal;
 
 	SXFunction gradF(Ftotal.jacobian());
 
-	vector<int> colind,row;
-	gradF.output().sparsity().getSparsityCCS(colind,row);
+	vector<int> rowind,col;
+	gradF.output().sparsity().getSparsityCRS(rowind,col);
 
 	// split jacobian into constant and nonconstant elements (linear and nonlinear parts of F)
 	vector<doublereal> A_;
@@ -143,21 +143,21 @@ SnoptInterface::init()
 	vector<integer> iGfun_;
 	vector<integer> jGvar_;
 
-	for(int r=0; r<colind.size()-1; ++r)
-        for(int el=colind[r]; el<colind[r+1]; ++el)
-			if (gradF.outputExpr(0).getElement(r, row[el]).isConstant()){
-				A_.push_back( gradF.outputExpr(0).getElement(r, row[el]).getValue() );
+	for(int r=0; r<rowind.size()-1; ++r)
+        for(int el=rowind[r]; el<rowind[r+1]; ++el)
+			if (gradF.outputExpr(0).getElement(r, col[el]).isConstant()){
+				A_.push_back( gradF.outputExpr(0).getElement(r, col[el]).getValue() );
 				iAfun_.push_back( r + FIRST_FORTRAN_INDEX );
-				jAvar_.push_back( row[el] + FIRST_FORTRAN_INDEX );
+				jAvar_.push_back( col[el] + FIRST_FORTRAN_INDEX );
 
 				// subtract out linear part
-				SXMatrix linearpart = gradF.outputExpr(0).getElement(r, row[el])*designVariables[row[el]];
+				SXMatrix linearpart = gradF.outputExpr(0).getElement(r, col[el])*designVariables[col[el]];
 				fnonlinear[r] -= linearpart.at(0);
 				simplify(fnonlinear.at(r));
 			} else {
-				G_.push_back( gradF.outputExpr(0).getElement(r, row[el]) );
+				G_.push_back( gradF.outputExpr(0).getElement(r, col[el]) );
 				iGfun_.push_back( r + FIRST_FORTRAN_INDEX );
-				jGvar_.push_back( row[el] + FIRST_FORTRAN_INDEX );
+				jGvar_.push_back( col[el] + FIRST_FORTRAN_INDEX );
 			}
 	
 	// nonlinear function
@@ -209,7 +209,7 @@ SnoptInterface::run()
 	integer    iw[LENIW];
 	char       cw[8*LENCW];
 
-	integer    Rowd = 0, Basis = 1, Warm = 2;
+	integer    Cold = 0, Basis = 1, Warm = 2;
 
 	integer    INFO;
 
@@ -322,8 +322,8 @@ SnoptInterface::run()
 	/*     Solve the problem                                                  */
 	/*     ------------------------------------------------------------------ */
 	snopta_
-		( &Rowd, &neF, &n, &nxname, &nFname,
-		  &objAdd, &objCol, Prob, (U_fp)userfcn,
+		( &Cold, &neF, &n, &nxname, &nFname,
+		  &objAdd, &objRow, Prob, (U_fp)userfcn,
 		  iAfun, jAvar, &lenA, &neA, A,
 		  iGfun, jGvar, &lenG, &neG,
 		  xlow, xupp, xnames, Flow, Fupp, Fnames,
@@ -337,7 +337,7 @@ SnoptInterface::run()
 
 // extern int snopta_
 // ( integer *start, integer *nef, integer *n, integer *nxname, integer *nfname,
-//   doublereal *objadd, integer *objcol, char *prob, U_fp usrfun,
+//   doublereal *objadd, integer *objrow, char *prob, U_fp usrfun,
 //   integer *iafun, integer *javar, integer *lena, integer *nea, doublereal *a,
 //   integer *igfun, integer *jgvar, integer *leng, integer *neg,
 //   doublereal *xlow, doublereal *xupp, char *xnames, doublereal *flow, doublereal *fupp, char *fnames,

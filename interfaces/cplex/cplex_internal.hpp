@@ -42,7 +42,7 @@ public:
   virtual CplexInternal* clone() const;
   
   /// Constructor using sparsity patterns
-  explicit CplexInternal(const std::vector<CCSSparsity>& st);
+  explicit CplexInternal(const std::vector<CRSSparsity>& st);
 
   /// Destructor
   virtual ~CplexInternal();
@@ -57,7 +57,7 @@ public:
   virtual void evaluate();
 
   /// Converts CasADi sparsity to Cplex sparsity
-  static void toCplexSparsity(const CCSSparsity& sp_trans, std::vector<int> &matbeg, std::vector<int>& matcnt, std::vector<int>& matind);
+  static void toCplexSparsity(const CRSSparsity& sp_trans, std::vector<int> &matbeg, std::vector<int>& matcnt, std::vector<int>& matind);
   
 protected:
   
@@ -81,9 +81,9 @@ protected:
   /// Accuracy
   double tol_;
   /// Number of variables
-  int NUMROWS_;
-  /// Number of constrains (altogether)
   int NUMCOLS_;
+  /// Number of constrains (altogether)
+  int NUMROWS_;
   /// Nature of problem (always minimization)
   int objsen_;
   

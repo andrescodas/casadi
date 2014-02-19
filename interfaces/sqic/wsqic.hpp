@@ -4,8 +4,8 @@ extern "C" {
    const int *m, // Number of constraints + 1 (for the objective)
    const int* n, // Number of decision variables
    const int* nnzA, // Number of nonzeros in objective-augmented linear constraint matrix  A
-   const int *indA, // rowind of Compressed Row Storage A , length: nnzA
-   const int *locA, // col of  Compressed Row Storage A, length n + 1
+   const int *indA, // colind of Compressed Column Storage A , length: nnzA
+   const int *locA, // row of  Compressed Column Storage A, length n + 1
    const double *valA, // Values of A
    const double* bl, // Lower bounds to decision variables + objective
    const double* bu, // Upper bounds to decision variables + objective
@@ -15,8 +15,8 @@ extern "C" {
    double *pi, // ?
    double *rc, // Multipliers (initial + optimal), length n+m
    const int* nnzH, // Number of nonzeros in full hessian H
-   const int* indH, // rowind of Compressed Row Storage H , length: nnzH
-   const int* locH, // col of  Compressed Row Storage H, length n + 1
+   const int* indH, // colind of Compressed Column Storage H , length: nnzH
+   const int* locH, // row of  Compressed Column Storage H, length n + 1
    double* valH
    );
    

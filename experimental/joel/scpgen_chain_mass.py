@@ -112,7 +112,7 @@ gamma = 0.01
 dpEnd = p[:,-1]-pEnd
 
 # Cost function
-L = alpha * inner_prod(dpEnd,dpEnd) + beta * inner_prod(flatten(p),flatten(p)) + gamma * inner_prod(u,u)
+L = alpha * inner_prod(dpEnd,dpEnd) + beta * inner_prod(vec(p),vec(p)) + gamma * inner_prod(u,u)
 
 # Number of shooting intervals
 nk = 20

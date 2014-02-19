@@ -31,7 +31,7 @@ u  = ssym("u")    # control
 x  = ssym("x",3)  # states
 
 # ODE right hand side
-xdot = horzcat( [(1 - x[1]*x[1])*x[0] - x[1] + u, \
+xdot = vertcat( [(1 - x[1]*x[1])*x[0] - x[1] + u, \
                 x[0], \
                 x[0]*x[0] + x[1]*x[1] + u*u] )
 

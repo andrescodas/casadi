@@ -41,7 +41,7 @@ w = xt*(t+1)/2.
 fmax = xt/t
 
 x = ssym("x", t)
-xe = horzcat((0.,x))
+xe = vertcat((0.,x))
 x_lb =  0.0 * NP.ones(t)
 x_ub =   xt * NP.ones(t)
 x_guess =  NP.array(list(i*h for i in range(1,t+1)))
@@ -50,7 +50,7 @@ x_guess =  NP.array(list(i*h for i in range(1,t+1)))
 #x_ub[0] = 0.0
 
 y = ssym("y", t)
-ye = horzcat((0.,y))
+ye = vertcat((0.,y))
 y_lb = -inf * NP.ones(t)
 y_ub =  inf * NP.ones(t)
 y_guess = 0.0 * NP.ones(t)
@@ -59,7 +59,7 @@ y_guess = 0.0 * NP.ones(t)
 #y_ub[0] = 0.0
 
 z = ssym("z", t)
-ze = horzcat((1.,z))
+ze = vertcat((1.,z))
 z_lb = -inf * NP.ones(t)
 z_ub =  inf * NP.ones(t)
 z_guess = 0.0 * NP.ones(t)
@@ -68,7 +68,7 @@ z_guess = 0.0 * NP.ones(t)
 #z_ub[0] = 1.0
 
 vx = ssym("vx", t-1)
-vxe = horzcat((0.,vx,0.))
+vxe = vertcat((0.,vx,0.))
 vx_lb = -inf * NP.ones(t-1)
 vx_ub =  inf * NP.ones(t-1)
 vx_guess = 1.0 * NP.ones(t-1)
@@ -79,7 +79,7 @@ vx_guess = 1.0 * NP.ones(t-1)
 #vx_ub[t-1] = 0.0
 
 vy = ssym("vy", t-1)
-vye = horzcat((0.,vy,0.))
+vye = vertcat((0.,vy,0.))
 vy_lb = -inf * NP.ones(t-1)
 vy_ub =  inf * NP.ones(t-1)
 vy_guess = 0.0 * NP.ones(t-1)
@@ -90,7 +90,7 @@ vy_guess = 0.0 * NP.ones(t-1)
 #vy_ub[t-1] = 0.0
 
 vz = ssym("vz", t-1)
-vze = horzcat((0.,vz,0.))
+vze = vertcat((0.,vz,0.))
 vz_lb = -inf * NP.ones(t-1)
 vz_ub =  inf * NP.ones(t-1)
 vz_guess = 0.0 * NP.ones(t-1)
@@ -116,7 +116,7 @@ uz_ub =  fmax * NP.ones(t)
 uz_guess = 0.0 * NP.ones(t)
 
 # All variables
-v = horzcat([x,y,z,vx,vy,vz,ux,uy,uz])
+v = vertcat([x,y,z,vx,vy,vz,ux,uy,uz])
 v_lb = NP.concatenate([x_lb,y_lb,z_lb,vx_lb,vy_lb,vz_lb,ux_lb,uy_lb,uz_lb])
 v_ub = NP.concatenate([x_ub,y_ub,z_ub,vx_ub,vy_ub,vz_ub,ux_ub,uy_ub,uz_ub])
 v_guess = NP.concatenate([x_guess,y_guess,z_guess,vx_guess,vy_guess,vz_guess,ux_guess,uy_guess,uz_guess])
@@ -191,7 +191,7 @@ for i in range(1,t+1):
   sc_lb.append(-inf)
   sc_ub.append(0)
   
-g = horzcat([acx,acy,acz,psx,psy,psz,sc])
+g = vertcat([acx,acy,acz,psx,psy,psz,sc])
 g_lb = NP.concatenate([acx_lb,acy_lb,acz_lb,psx_lb,psy_lb,psz_lb,sc_lb])
 g_ub = NP.concatenate([acx_ub,acy_ub,acz_ub,psx_ub,psy_ub,psz_ub,sc_ub])
 

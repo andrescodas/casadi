@@ -125,8 +125,8 @@ int main(){
   
   // All variables
   SXMatrix x;
-  x << flatten(trans(Z));
-  // x << flatten(ZF);  
+  x << vec(trans(Z));
+  // x << vec(ZF);  
   cout << "x = " << x << endl;
   
   // Construct the "NLP"

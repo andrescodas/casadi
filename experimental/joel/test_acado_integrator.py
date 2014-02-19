@@ -39,11 +39,11 @@ q = ssym("q")
 # Differential equation input argument
 ffcn_in = SXMatrixVector(DAE_NUM_IN)
 ffcn_in[DAE_T] = t
-ffcn_in[DAE_Y] = horzcat((x,z))
-ffcn_in[DAE_P] = horzcat((p,q))
+ffcn_in[DAE_Y] = vertcat((x,z))
+ffcn_in[DAE_P] = vertcat((p,q))
 
 # Differential equation output argument
-ffcn_out = [horzcat((-p*x*x*z, \
+ffcn_out = [vertcat((-p*x*x*z, \
                       q*q - z*z + 0.1*x))]
 
 # Differential equation

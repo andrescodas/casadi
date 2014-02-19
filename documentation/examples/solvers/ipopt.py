@@ -59,7 +59,7 @@ n = 5
 
 x=ssym("x",n)
 #! Note how we do not distinguish between equalities and inequalities here
-nlp=SXFunction(nlpIn(x=x),nlpOut(f=mul((x-1).T,x-1),g=horzcat([x[1]+x[2],x[0]])))
+nlp=SXFunction(nlpIn(x=x),nlpOut(f=mul((x-1).T,x-1),g=vertcat([x[1]+x[2],x[0]])))
 
 solver = IpoptSolver(nlp)
 solver.init()

@@ -119,7 +119,7 @@ class casadiTestCase(unittest.TestCase):
       else:
         return ret
     else:
-      ret = DMatrix([valuegenerator() for i in range(n*m)],m,n)
+      ret = DMatrix([valuegenerator() for i in range(n*m)],n,m)
       if symm:
         return (ret + ret.T)/2
       else:
@@ -403,7 +403,7 @@ class casadiTestCase(unittest.TestCase):
       
       ndir = 2
       
-      def vec(l):
+      def flatten(l):
         ret = []
         for i in l:
           ret.extend(i)
@@ -421,7 +421,7 @@ class casadiTestCase(unittest.TestCase):
       
           res,fwdsens,adjsens = f.eval(inputss,fseeds,aseeds)
           
-          vf = Function(inputss+vec([fseeds[i]+aseeds[i] for i in range(ndir)]),list(res) + vec([list(fwdsens[i])+list(adjsens[i]) for i in range(ndir)]))
+          vf = Function(inputss+flatten([fseeds[i]+aseeds[i] for i in range(ndir)]),list(res) + flatten([list(fwdsens[i])+list(adjsens[i]) for i in range(ndir)]))
           
           vf.init()
 
@@ -430,7 +430,7 @@ class casadiTestCase(unittest.TestCase):
         
           # Complete random seeding
           random.seed(1)
-          for i in range(vf.getNumInputs()):
+          for i in range(f.getNumInputs(),vf.getNumInputs()):
             vf.setInput(DMatrix(vf.input(i).sparsity(),random.random(vf.input(i).size())),i)
           
           vf.evaluate()
@@ -452,11 +452,14 @@ class casadiTestCase(unittest.TestCase):
            
               res2,fwdsens2,adjsens2 = vf.eval(inputss2,fseeds2,aseeds2)
 
-              vf2 = Function(inputss2+vec([fseeds2[i]+aseeds2[i] for i in range(ndir)]),list(res2) + vec([list(fwdsens2[i])+list(adjsens2[i]) for i in range(ndir)]))
+              vf2 = Function(inputss2+flatten([fseeds2[i]+aseeds2[i] for i in range(ndir)]),list(res2) + flatten([list(fwdsens2[i])+list(adjsens2[i]) for i in range(ndir)]))
               vf2.init()
                 
+              for i,v in enumerate(values):
+                vf2.setInput(v,i)
+            
               random.seed(1)
-              for i in range(vf2.getNumInputs()):
+              for i in range(f.getNumInputs(),vf2.getNumInputs()):
                 vf2.setInput(DMatrix(vf2.input(i).sparsity(),random.random(vf2.input(i).size())),i)
               
               vf2.evaluate()

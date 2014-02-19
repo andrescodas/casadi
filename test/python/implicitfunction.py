@@ -111,13 +111,13 @@ class NLPtests(casadiTestCase):
       
       message = Solver.__name__
       N = 5
-      s = sp_triu(N)
+      s = sp_tril(N)
       x=ssym("x",s)
 
       y=ssym("y",s)
       y0 = DMatrix(sp_diag(N),0.1)
 
-      f=SXFunction([flattenNZ(y).T,flattenNZ(x).T],[flattenNZ((mul((x+y0).T,(x+y0))-mul((y+y0).T,(y+y0)))[s]).T])
+      f=SXFunction([vecNZ(y),vecNZ(x)],[vecNZ((mul((x+y0),(x+y0).T)-mul((y+y0),(y+y0).T))[s])])
       f.init()
       solver=Solver(f)
       solver.setOption(options)
@@ -126,7 +126,7 @@ class NLPtests(casadiTestCase):
       solver.init()
       
       X = msym("X",x.sparsity())
-      [R] = solver.call([MX(),flattenNZ(X).T])
+      [R] = solver.call([MX(),vecNZ(X)])
       
       trial = MXFunction([X],[R])
       trial.init()
@@ -134,14 +134,14 @@ class NLPtests(casadiTestCase):
       trial.evaluate()
 
       f.setInput(trial.output(),0)
-      f.setInput(flattenNZ(trial.input()).T,1)
+      f.setInput(vecNZ(trial.input()),1)
       f.evaluate()
 
-      f.setInput(flattenNZ(trial.input()).T,0)
-      f.setInput(flattenNZ(trial.input()).T,1)
+      f.setInput(vecNZ(trial.input()),0)
+      f.setInput(vecNZ(trial.input()),1)
       f.evaluate()
       
-      refsol = MXFunction([X],[flattenNZ(X).T])
+      refsol = MXFunction([X],[vecNZ(X)])
       refsol.init()
       refsol.setInput(trial.input())
 
@@ -154,11 +154,11 @@ class NLPtests(casadiTestCase):
       self.message(Solver.__name__)
       message = Solver.__name__
       x=SX("x")
-      y=ssym("y",1,2)
+      y=ssym("y",2)
       y0 = DMatrix([0.1,0.4])
       yy = y + y0
       n=0.2
-      f=SXFunction([y,x],[horzcat([x-arcsin(yy[0]),yy[1]**2-yy[0]])])
+      f=SXFunction([y,x],[vertcat([x-arcsin(yy[0]),yy[1]**2-yy[0]])])
       f.init()
       solver=Solver(f)
       solver.setOption(options)
@@ -166,7 +166,7 @@ class NLPtests(casadiTestCase):
       solver.setInput(n)
       solver.evaluate()
       
-      refsol = SXFunction([y,x],[horzcat([sin(x),sqrt(sin(x))])-y0]) # ,sin(x)**2])
+      refsol = SXFunction([y,x],[vertcat([sin(x),sqrt(sin(x))])-y0]) # ,sin(x)**2])
       refsol.init()
       refsol.setInput(n)
       self.checkfx(solver,refsol,digits=5,sens_der=False,failmessage=message)
@@ -188,8 +188,8 @@ class NLPtests(casadiTestCase):
     for Solver, options in solvers:
       if 'Kinsol' in str(Solver): continue
       if 'Newton' in str(Solver): continue
-      x=ssym("x",1,2)
-      f=SXFunction([x],[horzcat([mul((x-2),(x+3).T),mul((x+horzcat([1,2])),(x-4).T)])])
+      x=ssym("x",2)
+      f=SXFunction([x],[vertcat([mul((x+3).T,(x-2)),mul((x-4).T,(x+vertcat([1,2])))])])
       f.init()
       
       solver=Solver(f)
@@ -200,7 +200,7 @@ class NLPtests(casadiTestCase):
       
       self.checkarray(solver.output(),DMatrix([-3.0/50*(sqrt(1201)-1),2.0/25*(sqrt(1201)-1)]),digits=6)
 
-      f=SXFunction([x],[horzcat([mul((x-2),(x+3).T),mul((x+horzcat([1,2])),(x-4).T)])])
+      f=SXFunction([x],[vertcat([mul((x+3).T,(x-2)),mul((x-4).T,(x+vertcat([1,2])))])])
       f.init()
       
       solver=Solver(f)
@@ -216,7 +216,7 @@ class NLPtests(casadiTestCase):
     X0 = msym("X0")
     V = msym("V")
 
-    V_eq = horzcat([V[0]-X0])
+    V_eq = vertcat([V[0]-X0])
 
     # Root-finding function, implicitly defines V as a function of X0 and P
     vfcn = MXFunction([V,X0],[V_eq])
@@ -232,7 +232,7 @@ class NLPtests(casadiTestCase):
     ifcn.setOption("linear_solver",CSparse)
     ifcn.init()
 
-    #ifcn = MXFunction([X0],[horzcat([X0])])
+    #ifcn = MXFunction([X0],[vertcat([X0])])
     #ifcn.setOption("name","I")
     #ifcn.init()
     [V] = ifcn.eval([0,X0])

@@ -26,7 +26,7 @@
 #include "symbolic/fx/external_function.hpp"
 #include "symbolic/sx/sx_tools.hpp"
 #include "symbolic/mx/mx_tools.hpp"
-#include "symbolic/matrix/ccs_sparsity_internal.hpp"
+#include "symbolic/matrix/crs_sparsity_internal.hpp"
 #include "symbolic/matrix/sparsity_tools.hpp"
 #include "interfaces/csparse/csparse.hpp"
 extern "C"{
@@ -41,54 +41,54 @@ using namespace CasADi;
 int main(){
   
   // Size
-  int ncol = 50;
   int nrow = 50;
+  int ncol = 50;
   
   // Density
   double dens = 0.12;
   
   // Number of nonzero elements
-  int nnz = std::max(std::max(ncol,nrow),int(ncol*nrow*dens));
+  int nnz = std::max(std::max(nrow,ncol),int(nrow*ncol*dens));
   
   // Seed
   double seed = 0.331;
   
   // Generate "random" (but deterministic) sparsity pattern
-  vector<int> col(nnz), row(nnz);
+  vector<int> row(nnz), col(nnz);
   
   // Add diagonal
-  for(int k=0; k<ncol; ++k){
-    col[k] = k;
+  for(int k=0; k<nrow; ++k){
     row[k] = k;
+    col[k] = k;
   }
   
-  for(int k=std::max(ncol,nrow); k<nnz; ++k){
+  for(int k=std::max(nrow,ncol); k<nnz; ++k){
     // Generate a random number between 0 and 1
     seed = 100*fabs(sin(seed*123 + 3));
     seed = seed - floor(seed);
 
     // Generate a random number between 0 and 300
-    col[k] = std::min(int(seed*ncol),ncol-1);
+    row[k] = std::min(int(seed*nrow),nrow-1);
 
     // Generate a random number between 0 and 1
     seed = 100*fabs(sin(seed*123 + 3));
     seed = seed - int(seed);
 
     // Generate a random number between 0 and 300
-    row[k] = std::min(int(seed*nrow),nrow-1);
+    col[k] = std::min(int(seed*ncol),ncol-1);
   }
   
   // Create sparsity pattern
-  CCSSparsity C1 = sp_triplet(ncol, nrow, col, row);
+  CRSSparsity C1 = sp_triplet(nrow, ncol, row, col);
 
   // This is the bcsstk01 matrix from CSparse
-  int ncol2 = 48;
   int nrow2 = 48;
-  int col2[224] = {0,4,5,6,10,18,24,29,1,3,5,7,9,19,23,25,2,3,4,8,20,22,26,27,3,7,9,21,26,27,4,6,10,20,22,28,5,11,19,23,24,29,6,10,11,12,30,35,7,9,11,13,17,31,8,9,10,14,16,32,33,9,15,32,33,10,14,16,34,11,13,17,30,
+  int ncol2 = 48;
+  int row2[224] = {0,4,5,6,10,18,24,29,1,3,5,7,9,19,23,25,2,3,4,8,20,22,26,27,3,7,9,21,26,27,4,6,10,20,22,28,5,11,19,23,24,29,6,10,11,12,30,35,7,9,11,13,17,31,8,9,10,14,16,32,33,9,15,32,33,10,14,16,34,11,13,17,30,
                35,12,16,17,18,22,36,41,42,46,47,13,14,15,17,19,21,37,43,44,45,14,15,16,20,38,39,43,44,45,15,19,21,38,39,43,44,45,16,17,18,22,40,42,46,47,17,23,36,41,42,46,47,18,22,23,42,47,19,21,23,43,20,21,22,
                44,45,21,44,45,22,46,23,42,47,24,28,29,30,34,25,27,31,33,26,27,32,27,31,33,28,30,34,29,35,30,34,35,36,31,33,35,37,41,32,33,34,38,40,33,39,34,38,40,35,37,41,36,40,41,42,46,37,39,41,43,45,38,39,40,
                44,39,43,45,40,42,46,41,47,42,46,47,43,44,45,44,45,45,46,47,47};
-  int row2[224] = {0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,7,7,7,7,7,7,8,8,8,8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11,11,12,12,12,12,12,12,12,12,12,12,13,13,
+  int col2[224] = {0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,3,3,4,4,4,4,4,4,5,5,5,5,5,5,6,6,6,6,6,6,7,7,7,7,7,7,8,8,8,8,8,8,8,9,9,9,9,10,10,10,10,11,11,11,11,11,12,12,12,12,12,12,12,12,12,12,13,13,
                13,13,13,13,13,13,13,13,14,14,14,14,14,14,14,14,14,15,15,15,15,15,15,15,15,16,16,16,16,16,16,16,16,17,17,17,17,17,17,17,18,18,18,18,18,19,19,19,19,20,20,20,20,20,21,21,21,22,22,23,23,23,24,24,24,
                24,24,25,25,25,25,26,26,26,27,27,27,28,28,28,29,29,30,30,30,30,31,31,31,31,31,32,32,32,32,32,33,33,34,34,34,35,35,35,36,36,36,36,36,37,37,37,37,37,38,38,38,38,39,39,39,40,40,40,41,41,42,42,42,43,
                43,43,44,44,45,46,46,47};
@@ -110,7 +110,7 @@ int main(){
                   2.16916666667e+09,-2.5e+06,6.47105806113e+04,2.39928529451e+06,1.40838195984e+05,3.50487988027e+06,5.17922131816e+05,-4.79857058902e+06,4.57738374749e+06,1.34990274700e+05,2.47238730198e+09,9.61679848804e+08,-1.09779731332e+08,5.31278103775e+08};
 
   vector<int> mapping;
-  CCSSparsity C2 = sp_triplet(ncol2, nrow2, vector<int>(col2,col2+224), vector<int>(row2,row2+224),mapping);
+  CRSSparsity C2 = sp_triplet(nrow2, ncol2, vector<int>(row2,row2+224), vector<int>(col2,col2+224),mapping);
   vector<double> valv(mapping.size());
   for(int k=0; k<valv.size(); ++k){
     valv[k] = val2[mapping[k]];
@@ -132,23 +132,23 @@ int main(){
   
   
   // Now test a nonsymmetric matrix
-  int colind3[11] = {0,1,2,4,4,5,6,6,6,8,10};
-  int row3[10] = {0,1,0,1,2,4,2,3,3,4};
-  int ncol3 = 10;
-  int nrow3 = 5;
-  CCSSparsity S3(ncol3,nrow3,vector<int>(row3,row3+10),vector<int>(colind3,colind3+11));
+  int rowind3[11] = {0,1,2,4,4,5,6,6,6,8,10};
+  int col3[10] = {0,1,0,1,2,4,2,3,3,4};
+  int nrow3 = 10;
+  int ncol3 = 5;
+  CRSSparsity S3(nrow3,ncol3,vector<int>(col3,col3+10),vector<int>(rowind3,rowind3+11));
   
   IMatrix(S3,1).printDense();
 
   
   cs AT_;
   AT_.nzmax = S3.size();  // maximum number of entries 
-  AT_.m = S3.size1(); // number of cols
-  AT_.n = S3.size2(); // number of rows
-  AT_.p = &S3.colindRef().front(); // row pointers (size n+1) or row indices (size nzmax)
-  AT_.i = &S3.rowRef().front(); // col indices, size nzmax
-  AT_.x = 0; // col indices, size nzmax
-  AT_.nz = -1; // of entries in triplet matrix, -1 for compressed-row 
+  AT_.m = S3.size2(); // number of rows
+  AT_.n = S3.size1(); // number of columns
+  AT_.p = &S3.rowindRef().front(); // column pointers (size n+1) or col indices (size nzmax)
+  AT_.i = &S3.colRef().front(); // row indices, size nzmax
+  AT_.x = 0; // row indices, size nzmax
+  AT_.nz = -1; // of entries in triplet matrix, -1 for compressed-col 
 
 
   int order = 3;
@@ -200,33 +200,33 @@ int main(){
   int dmseed = 0;
   csd *perm = cs_dmperm (&AT_, dmseed);
     
-  // Save to BLT structure // NOTE: swapping col<>row due to col/row major
-  vector<int> colperm3(perm->q, perm->q + S3.size2());
-  vector<int> rowperm3(perm->p, perm->p + S3.size1());
+  // Save to BLT structure // NOTE: swapping row<>col due to row/column major
+  vector<int> rowperm3(perm->q, perm->q + S3.size1());
+  vector<int> colperm3(perm->p, perm->p + S3.size2());
   int nb3 = perm->nb;
-  vector<int> colblock3(perm->s, perm->s + nb3 + 1);
-  vector<int> rowblock3(perm->r, perm->r + nb3 + 1);
-  vector<int> coarse_colblock3(perm->cc, perm->cc+5);
-  vector<int> coarse_rowblock3(perm->rr, perm->rr+5);
+  vector<int> rowblock3(perm->s, perm->s + nb3 + 1);
+  vector<int> colblock3(perm->r, perm->r + nb3 + 1);
+  vector<int> coarse_rowblock3(perm->cc, perm->cc+5);
+  vector<int> coarse_colblock3(perm->rr, perm->rr+5);
   
   cout << "csparse" << endl;
-  cout << colperm3 << endl;
   cout << rowperm3 << endl;
-  cout << colblock3 << endl;
+  cout << colperm3 << endl;
   cout << rowblock3 << endl;
-  cout << coarse_colblock3 << endl;
+  cout << colblock3 << endl;
   cout << coarse_rowblock3 << endl;
+  cout << coarse_colblock3 << endl;
   
   
-  S3.dulmageMendelsohn(colperm3, rowperm3, colblock3, rowblock3, coarse_colblock3, coarse_rowblock3, dmseed);
+  S3.dulmageMendelsohn(rowperm3, colperm3, rowblock3, colblock3, coarse_rowblock3, coarse_colblock3, dmseed);
 
   cout << "casadi" << endl;
-  cout << colperm3 << endl;
   cout << rowperm3 << endl;
-  cout << colblock3 << endl;
+  cout << colperm3 << endl;
   cout << rowblock3 << endl;
-  cout << coarse_colblock3 << endl;
+  cout << colblock3 << endl;
   cout << coarse_rowblock3 << endl;
+  cout << coarse_colblock3 << endl;
 
   
   // Free allocated memory and return

@@ -697,8 +697,8 @@ There are several options to build sparse CasADi matrix types:
 \end{itemize}
 
 \begin{pytex}
-print DMatrix(sp_triu(3),1)          # [[1,  00,  00 ], [1,  1,  00 ], [1,  1,  1 ]]
-print DMatrix(sp_triu(3),range(6))  # [[0,  00,  00 ], [1,  2,  00 ], [3,  4,  5 ]]
+print DMatrix(sp_tril(3),1)          # [[1,  00,  00 ], [1,  1,  00 ], [1,  1,  1 ]]
+print DMatrix(sp_tril(3),range(6))  # [[0,  00,  00 ], [1,  2,  00 ], [3,  4,  5 ]]
 \end{pytex}
 
 \paragraph{diagonal}
@@ -709,7 +709,7 @@ sp_diag(3).spy()
 \paragraph{triangular}
 
 \begin{pytex}
-sp_triu(3).spy()
+sp_tril(3).spy()
 \end{pytex}
 
 \paragraph{banded}
@@ -740,7 +740,7 @@ The \texttt{+} operator is overloaded for sparsity patterns to perform an \emph{
 The \texttt{*} operator is overloaded for sparsity patterns to perform an \emph{and} operation:
 
 \begin{pytex}
-(sp_triu(4)*sp_rowcol([2,3],range(4),4,4)).spy()
+(sp_tril(4)*sp_rowcol([2,3],range(4),4,4)).spy()
 \end{pytex}
 
 \chapter{Automatic differentiation\label{chapter:ad}}

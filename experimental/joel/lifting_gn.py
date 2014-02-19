@@ -164,18 +164,18 @@ for (i,x0) in enumerate([0.08]):
     xdot = ssym("xdot",x.size())
     
     # Lagrange multipliers
-    mux = ssym("mux",u.size2())
-    mug = ssym("mug",f2.size2())
+    mux = ssym("mux",u.size1())
+    mug = ssym("mug",f2.size1())
 
     # Gradient of the Lagrangian
-    xu = horzcat((u,x))
+    xu = vertcat((u,x))
     lgrad = gradient(f1 - inner_prod(mug,f2) + inner_prod(xdot,xdef),xu)
 
     # Gradient of the Lagrangian
-    f1 = lgrad[:u.size2(),0] # + mux # What about the mux term?
+    f1 = lgrad[:u.size1(),0] # + mux # What about the mux term?
 
     # Definition of xdot
-    xdotdef = lgrad[u.size2():,0]
+    xdotdef = lgrad[u.size1():,0]
     
     # Reverse direction of x
     xdot[:,0] = SXMatrix(list(reversed(list(xdot))))
@@ -190,7 +190,7 @@ for (i,x0) in enumerate([0.08]):
   G.init()
 
   # Difference vector d
-  d = ssym("d",xdef.size2())
+  d = ssym("d",xdef.size1())
 
   # Substitute out the x from the zdef
   z = xdef-d
@@ -359,7 +359,7 @@ for (i,x0) in enumerate([0.08]):
     viol_gmin = sum(max(i,0)**2 for i in g_min-f2_k)
     norm_viol = sqrt(viol_umax + viol_umin + viol_gmax + viol_gmin)
 
-    # Print progress (including the header every 10 cols)
+    # Print progress (including the header every 10 rows)
     if k % 10 == 0:
       print " %4s" % "iter", " %20s" % "norm_res", " %20s" % "norm_step", " %20s" % "norm_viol"
     print   " %4d" %  k,     " %20e" %  norm_res,  " %20e" %  norm_step,  " %20e" %  norm_viol
@@ -378,8 +378,8 @@ for (i,x0) in enumerate([0.08]):
       break
 
     # Plot the progress
-    plotx = horzcat([x0,x_k[:nk]])
-    plott = NP.linspace(0,1,plotx.size2())
+    plotx = vertcat([x0,x_k[:nk]])
+    plott = NP.linspace(0,1,plotx.size1())
     plt.plot(plott,plotx,'*-')
     leg.append(str(k))
 

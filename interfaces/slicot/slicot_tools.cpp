@@ -113,14 +113,22 @@ if (dwork==0) {
      }
   }
   
-   void slicot_periodic_schur(int n, int K, const std::vector< double > & a, std::vector< double > & t,  std::vector< double > & z) {
+   void slicot_periodic_schur(int n, int K, const std::vector< double > & a, std::vector< double > & t,  std::vector< double > & z,std::vector<double> &eig_real, std::vector<double> &eig_imag) {
      std::vector<double> dwork(std::max(n+K-2,4*n));
-     slicot_periodic_schur(n,K,a,t,z,dwork);
+     slicot_periodic_schur(n,K,a,t,z,dwork,eig_real,eig_imag);
    }
 
-   void slicot_periodic_schur(int n, int K, const std::vector< double > & a, std::vector< double > & t,  std::vector< double > & z, std::vector<double> &dwork) {
+   void slicot_periodic_schur(int n, int K, const std::vector< double > & a, std::vector< double > & t,  std::vector< double > & z, std::vector<double> &dwork,std::vector<double> &eig_real, std::vector<double> &eig_imag) {
     int mem_base = std::max(n+K-2,4*n);
-    int mem_needed = mem_base+(n-1)*K+2*n;
+    int mem_needed = mem_base+(n-1)*K;
+    
+    if (eig_real.size()!=n) {
+      eig_real.resize(n);
+    }
+    
+    if (eig_imag.size()!=n) {
+      eig_imag.resize(n);
+    }
     
     if (dwork.size()==0) {
       dwork.resize(mem_needed);
@@ -139,18 +147,18 @@ if (dwork==0) {
     slicot_mb03vd(n,K,1,n, &z[0], n, n,&dwork[mem_base],n-1, &dwork[0]);
     t = z;
     
-    slicot_mb03vy(n,K,1,n, &z[0], n, n,&dwork[mem_base],n-1, &dwork[0],mem_needed-((n-1)*K+2*n));
+    slicot_mb03vy(n,K,1,n, &z[0], n, n,&dwork[mem_base],n-1, &dwork[0],mem_needed);
     
-    slicot_mb03wd('S','V',n,K,1,n,1,n,&t[0],n,n,&z[0],n,n,&dwork[mem_base+(n-1)*K],&dwork[mem_base+(n-1)*K+n],&dwork[0],mem_needed-((n-1)*K+2*n));
+    slicot_mb03wd('S','V',n,K,1,n,1,n,&t[0],n,n,&z[0],n,n,&eig_real[0],&eig_imag[0],&dwork[0],mem_needed);
     
   }
   
-  void slicot_periodic_schur(const std::vector< Matrix<double> > & a, std::vector< Matrix<double> > & t, std::vector< Matrix<double> > & z) {
+  void slicot_periodic_schur(const std::vector< Matrix<double> > & a, std::vector< Matrix<double> > & t, std::vector< Matrix<double> > & z, std::vector< double > & eig_real, std::vector< double > & eig_imag) {
     int K = a.size();
-    int n = a[0].size2();
+    int n = a[0].size1();
     for (int k=0;k<K;++k) {
-      casadi_assert_message(a[k].size2()==a[k].size1(), "a must be square");
-      casadi_assert_message(a[k].size2()==n, "a must be n-by-n");
+      casadi_assert_message(a[k].size1()==a[k].size2(), "a must be square");
+      casadi_assert_message(a[k].size1()==n, "a must be n-by-n");
       casadi_assert_message(a[k].dense(), "a must be dense");
     }
     
@@ -164,7 +172,7 @@ if (dwork==0) {
     std::vector<double> t_data(n*n*K);
     std::vector<double> z_data(n*n*K);
     
-    slicot_periodic_schur(n,K,a_data,t_data,z_data);
+    slicot_periodic_schur(n,K,a_data,t_data,z_data,eig_real,eig_imag);
     
     t.resize(K);
     z.resize(K);

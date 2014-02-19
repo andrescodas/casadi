@@ -292,7 +292,7 @@ void MultipleShooting::writeOctaveOutput( ostream & f, vector<double> & xopt )
 
      // start/end times
      f << "% time\n";
-     SXFunction timeFcn( dv, horzcat( SXMatrix(t0), SXMatrix(tf) ) );
+     SXFunction timeFcn( dv, vertcat( SXMatrix(t0), SXMatrix(tf) ) );
      timeFcn.init();
      timeFcn.setInput( xopt );
      timeFcn.evaluate();

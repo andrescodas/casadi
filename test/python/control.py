@@ -54,41 +54,41 @@ class ControlTests(casadiTestCase):
           print (n,K)
           A_ = [DMatrix(numpy.random.random((n,n))) for i in range(K)]
           
-          V_ = [mul(v.T,v) for v in [DMatrix(numpy.random.random((n,n))) for i in range(K)]]
+          V_ = [mul(v,v.T) for v in [DMatrix(numpy.random.random((n,n))) for i in range(K)]]
           
           
           solver = Solver([sp_dense(n,n) for i in range(K)],[sp_dense(n,n) for i in range(K)])
           solver.setOption(options)
           solver.setOption("ad_mode","forward")
           solver.init()
-          solver.setInput(horzcat(A_),DPLE_A)
-          solver.setInput(horzcat(V_),DPLE_V)
+          solver.setInput(vertcat(A_),DPLE_A)
+          solver.setInput(vertcat(V_),DPLE_V)
           
-          As = msym("A",n,K*n)
-          Vs = msym("V",n,K*n)
+          As = msym("A",K*n,n)
+          Vs = msym("V",K*n,n)
           
-          Vss = horzcat([(i+i.T)/2 for i in horzsplit(Vs,n) ])
+          Vss = vertcat([(i+i.T)/2 for i in vertsplit(Vs,n) ])
           
           
-          AA = blkdiag([c.kron(i,i) for i in horzsplit(As,n)])
+          AA = blkdiag([c.kron(i,i) for i in vertsplit(As,n)])
 
-          A_total = DMatrix.eye(n*n*K) - horzcat([AA[-n*n:,:],AA[:-n*n,:]])
+          A_total = DMatrix.eye(n*n*K) - vertcat([AA[-n*n:,:],AA[:-n*n,:]])
           
           
-          Pf = solve(A_total.T,vec(horzcat([Vss[-n:,:],Vss[:-n,:]])),CSparse).T
-          P = Pf.reshape((n,K*n))
+          Pf = solve(A_total,flatten(vertcat([Vss[-n:,:],Vss[:-n,:]])),CSparse)
+          P = Pf.reshape((K*n,n))
           #P = (P+P.T)/2
           
           refsol = MXFunction([As,Vs],[P])
           refsol.init()
           
-          refsol.setInput(horzcat(A_),DPLE_A)
-          refsol.setInput(horzcat(V_),DPLE_V)
+          refsol.setInput(vertcat(A_),DPLE_A)
+          refsol.setInput(vertcat(V_),DPLE_V)
           
           solver.evaluate()
-          X = list(horzsplit(solver.output(),n))
+          X = list(vertsplit(solver.output(),n))
           
-          a0 = (mul([blkdiag(A_).T,blkdiag(X),blkdiag(A_)])+blkdiag(V_))
+          a0 = (mul([blkdiag(A_),blkdiag(X),blkdiag(A_).T])+blkdiag(V_))
           
           def sigma(a):
             return a[1:] + [a[0]]
@@ -97,8 +97,7 @@ class ControlTests(casadiTestCase):
 
           self.checkarray(a0,a1)
 
-          
-          self.checkfx(solver,refsol,sens_der=False,hessian=False,evals=False)
+          self.checkfx(solver,refsol,sens_der=False,hessian=False,evals=1)
   
   @memory_heavy()
   def test_dple_large(self):
@@ -111,19 +110,19 @@ class ControlTests(casadiTestCase):
           print (n,K)
           A_ = [DMatrix(numpy.random.random((n,n))) for i in range(K)]
           
-          V_ = [mul(v.T,v) for v in [DMatrix(numpy.random.random((n,n))) for i in range(K)]]
+          V_ = [mul(v,v.T) for v in [DMatrix(numpy.random.random((n,n))) for i in range(K)]]
           
           
           solver = Solver([sp_dense(n,n) for i in range(K)],[sp_dense(n,n) for i in range(K)])
           solver.setOption(options)
           solver.init()
-          solver.setInput(horzcat(A_),DPLE_A)
-          solver.setInput(horzcat(V_),DPLE_V)
+          solver.setInput(vertcat(A_),DPLE_A)
+          solver.setInput(vertcat(V_),DPLE_V)
           
           solver.evaluate()
-          X = list(horzsplit(solver.output(),n))
+          X = list(vertsplit(solver.output(),n))
           
-          a0 = (mul([blkdiag(A_).T,blkdiag(X),blkdiag(A_)])+blkdiag(V_))
+          a0 = (mul([blkdiag(A_),blkdiag(X),blkdiag(A_).T])+blkdiag(V_))
           
           def sigma(a):
             return a[1:] + [a[0]]

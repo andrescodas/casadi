@@ -32,23 +32,23 @@ A.printMatrix()
 
 #! Ruin the nice structure
 numpy.random.seed(0)
-p1 = numpy.random.permutation(A.size2())
-p2 = numpy.random.permutation(A.size1())
+p1 = numpy.random.permutation(A.size1())
+p2 = numpy.random.permutation(A.size2())
 
 S = A[p1,:]
 #S = A[p1,p2]
 
 print "randomly permuted: "
 S.printMatrix()
-nb, colperm, rowperm, colblock, rowblock, coarse_colblock, coarse_rowblock = S.sparsity().dulmageMendelsohn()
+nb, rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock = S.sparsity().dulmageMendelsohn()
 
 print "number of blocks: ", nb
-print "colperm: ", colperm
 print "rowperm: ", rowperm
+print "colperm: ", colperm
 print "restored:"
-S[colperm,rowperm].printMatrix()
-print "colblock: ", colblock
+S[rowperm,colperm].printMatrix()
 print "rowblock: ", rowblock
-print "coarse_colblock: ", coarse_colblock
+print "colblock: ", colblock
 print "coarse_rowblock: ", coarse_rowblock
+print "coarse_colblock: ", coarse_colblock
 

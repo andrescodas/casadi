@@ -4,7 +4,7 @@ from casadi import *
 A = 2*DMatrix.ones(sp_diag(3)); A[1,0] = 1; A[2,0] = 1; A[2,1] = 1 # lower triangular
 
 # Permute
-A = horzcat((A[1,:],A[2,:],A[0,:]))
+A = vertcat((A[1,:],A[2,:],A[0,:]))
 
 print "A = "
 A.printDense()

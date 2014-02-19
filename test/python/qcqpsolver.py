@@ -36,10 +36,10 @@ except:
 class QCQPSolverTests(casadiTestCase):
 
   def testboundsviol(self):
-    H = 1e-6*DMatrix([[1,0],[0,1]]).T
+    H = 1e-6*DMatrix([[1,0],[0,1]])
     G = DMatrix([2,1])
-    A = DMatrix.sparse(2,0)
-    P = 2*DMatrix([[1,0],[0,2]]).T
+    A = DMatrix(0,2)
+    P = 2*DMatrix([[1,0],[0,2]])
     Q = DMatrix([2,3])
     R = DMatrix([-7])
     LBX = DMatrix([ -inf,-3 ])
@@ -67,10 +67,10 @@ class QCQPSolverTests(casadiTestCase):
     #   x,y
     #
     #  s.t.  x^2 + 2y^2 + 2*x + 3*y - 7 <= 0
-    H = 1e-6*DMatrix([[1,0],[0,1]]).T
+    H = 1e-6*DMatrix([[1,0],[0,1]])
     G = DMatrix([2,1])
-    A = DMatrix.sparse(2,0)
-    P = 2*DMatrix([[1,0],[0,2]]).T
+    A = DMatrix(0,2)
+    P = 2*DMatrix([[1,0],[0,2]])
     Q = DMatrix([2,3])
     R = DMatrix([-7])
     LBX = DMatrix([ -inf, -inf ])
@@ -101,18 +101,18 @@ class QCQPSolverTests(casadiTestCase):
 
       self.checkarray(solver.getOutput("lam_a"),DMatrix([]),str(qcqpsolver),digits=5)
       
-      self.checkarray(solver.getOutput("cost"),mul(solver.getOutput(),G.T),str(qcqpsolver),digits=4)
+      self.checkarray(solver.getOutput("cost"),mul(G.T,solver.getOutput()),str(qcqpsolver),digits=4)
 
   def test_qp(self):
     #  min  1/2 x' H x + 2 x + y
     #   x,y
     #
-    H = DMatrix([[1,0],[0,1]]).T
+    H = DMatrix([[1,0],[0,1]])
     G = DMatrix([2,1])
-    A = DMatrix.sparse(2,0)
-    P = DMatrix.sparse(2,0)
-    Q = DMatrix.sparse(1,0)
-    R = DMatrix.sparse(1,0)
+    A = DMatrix(0,2)
+    P = DMatrix(0,2)
+    Q = DMatrix(0,1)
+    R = DMatrix(0,1)
     LBX = DMatrix([ -inf, -inf ])
     UBX = DMatrix([ inf, inf ])
     

@@ -15,10 +15,10 @@ void myEvaluate(CustomFunction &f, void* user_data) {
 int main(int argc, char *argv[])
 {
   
-  std::vector<CCSSparsity> ins;
+  std::vector<CRSSparsity> ins;
   ins.push_back(sp_dense(1,1));
   
-  std::vector<CCSSparsity> outs;
+  std::vector<CRSSparsity> outs;
   outs.push_back(sp_dense(1,1));
   
   CustomFunction f(myEvaluate,ins,outs);

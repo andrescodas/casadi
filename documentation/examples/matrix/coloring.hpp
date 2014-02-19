@@ -6,7 +6,7 @@
 *
 * \sa
 * \code
-* CasADi::CCSSparsity::unidirectionalColoring();
+* CasADi::CRSSparsity::unidirectionalColoring();
 * \endcode
 *
 */

@@ -34,7 +34,7 @@ namespace CasADi{
 
 using namespace std;
 
-CplexInternal::CplexInternal(const std::vector<CCSSparsity>& st) : QPSolverInternal(st){
+CplexInternal::CplexInternal(const std::vector<CRSSparsity>& st) : QPSolverInternal(st){
   // Options available
   addOption("qp_method",    OT_STRING, "automatic", "Determines which CPLEX algorithm to use.","automatic|primal_simplex|dual_simplex|network|barrier|sifting|concurrent|crossover");
   addOption("dump_to_file",   OT_BOOLEAN,        false, "Dumps QP to file in CPLEX format.");
@@ -46,14 +46,14 @@ CplexInternal::CplexInternal(const std::vector<CCSSparsity>& st) : QPSolverInter
   addOption("warm_start",      OT_BOOLEAN,            false, "Use warm start with simplex methods (affects only the simplex methods).");
   addOption("convex",          OT_BOOLEAN,             true, "Indicates if the QP is convex or not (affects only the barrier method).");
   
-  const CCSSparsity& A = st_[QP_STRUCT_A];
-  const CCSSparsity& H = st_[QP_STRUCT_H];
+  const CRSSparsity& A = st_[QP_STRUCT_A];
+  const CRSSparsity& H = st_[QP_STRUCT_H];
   
   // Initializing members
   // Number of vars
-  NUMROWS_ = H.size2();
+  NUMCOLS_ = H.size1();
   // Number of constraints
-  NUMCOLS_ = A.size2();
+  NUMROWS_ = A.size1();
   // Setting warm-start flag
   is_warm_ = false;
 
@@ -134,17 +134,17 @@ void CplexInternal::init(){
 
   // Allocation of data
   // Type of constraint
-  sense_.resize(NUMCOLS_);
+  sense_.resize(NUMROWS_);
   // Right-hand side of constraints
-  rhs_.resize(NUMCOLS_);
+  rhs_.resize(NUMROWS_);
   // Range value for lower AND  upper bounded constraints
-  rngval_.resize(NUMCOLS_);
+  rngval_.resize(NUMROWS_);
   // Basis for primal variables
-  cstat_.resize(NUMROWS_);
-  rstat_.resize(NUMCOLS_);
+  cstat_.resize(NUMCOLS_);
+  rstat_.resize(NUMROWS_);
 
   // Matrix A (Cplex reqests its transpose)
-  CCSSparsity AT_sparsity = input(QP_SOLVER_A).sparsity().transpose(AT_nonzero_mapping_);
+  CRSSparsity AT_sparsity = input(QP_SOLVER_A).sparsity().transpose(AT_nonzero_mapping_);
   toCplexSparsity(AT_sparsity,matbeg_,matcnt_,matind_);
   matval_.resize(input(QP_SOLVER_A).size());
   
@@ -188,7 +188,7 @@ void CplexInternal::evaluate(){
   ub_ = input(QP_SOLVER_UBX).ptr();
 
   // Looping over constraints
-  for(int i = 0; i < NUMCOLS_; ++i){
+  for(int i = 0; i < NUMROWS_; ++i){
     // CPX_INFBOUND
   
     // Equality
@@ -225,7 +225,7 @@ void CplexInternal::evaluate(){
   }
   
   // Copying objective, constraints, and bounds.
-  status = CPXcopylp (env_, lp_, NUMROWS_, NUMCOLS_, objsen_, obj_, rhs_.data(),
+  status = CPXcopylp (env_, lp_, NUMCOLS_, NUMROWS_, objsen_, obj_, rhs_.data(),
        sense_.data(), matbeg_.data(), matcnt_.data(), matind_.data(), matval_.data(), lb_, ub_, rngval_.data()); 
 
   // Preparing coefficient matrix Q
@@ -256,7 +256,7 @@ void CplexInternal::evaluate(){
   int solstat; 
   
   std::vector<double> slack;
-  slack.resize(NUMCOLS_);
+  slack.resize(NUMROWS_);
   status = CPXsolution (env_, lp_, &solstat,
    output(QP_SOLVER_COST).ptr(), 
    output(QP_SOLVER_X).ptr(), 
@@ -357,24 +357,24 @@ void CplexInternal::freeCplex(){
   }
 }
 
-void CplexInternal::toCplexSparsity(const CCSSparsity& sp_trans, vector<int> &matbeg, vector<int>& matcnt, vector<int>& matind){
+void CplexInternal::toCplexSparsity(const CRSSparsity& sp_trans, vector<int> &matbeg, vector<int>& matcnt, vector<int>& matind){
   // Get sparsity
-  int nrow = sp_trans.size2();
-  //int ncol = sp_trans.size1();
-  const std::vector<int>& rowind = sp_trans.colind();
-  const std::vector<int>& col = sp_trans.row();
+  int ncol = sp_trans.size1();
+  //int nrow = sp_trans.size2();
+  const std::vector<int>& colind = sp_trans.rowind();
+  const std::vector<int>& row = sp_trans.col();
 
-  // The col for each nonzero
-  matind.resize(col.size());
-  copy(col.begin(),col.end(),matind.begin());
+  // The row for each nonzero
+  matind.resize(row.size());
+  copy(row.begin(),row.end(),matind.begin());
   
-  // The beginning of each row
-  matbeg.resize(nrow);
-  copy(rowind.begin(),rowind.begin()+nrow,matbeg.begin());
+  // The beginning of each column
+  matbeg.resize(ncol);
+  copy(colind.begin(),colind.begin()+ncol,matbeg.begin());
   
-  // The number of elements in each row
-  matcnt.resize(nrow);
-  transform(rowind.begin()+1,rowind.end(),rowind.begin(),matcnt.begin(),minus<int>());
+  // The number of elements in each column
+  matcnt.resize(ncol);
+  transform(colind.begin()+1,colind.end(),colind.begin(),matcnt.begin(),minus<int>());
 }
 
 } // end namespace CasADi

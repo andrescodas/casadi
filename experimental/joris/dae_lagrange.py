@@ -28,8 +28,8 @@ u = ssym("[u v]",2)
 du = ssym("[du dv]",2)
 ddx = ssym("[ddx ddy]",2)
 
-q = horzcat([x,u])
-dq = horzcat([dx,du])
+q = vertcat([x,u])
+dq = vertcat([dx,du])
 ddq = ssym("[ddx,ddy,ddu,ddv]",4)
 
 [m,g,L] = ssym("[m,g,L]",3)
@@ -75,7 +75,7 @@ print
 print "But we want a first-order ODE, so we will introduce helper variables " ,u
 
 
-U = horzcat([substitute(U,horzcat([dx,ddx]),horzcat([u,du])),u-dx])
+U = vertcat([substitute(U,vertcat([dx,ddx]),vertcat([u,du])),u-dx])
 
 g = C
 
@@ -143,7 +143,7 @@ for i in range(1,4):
   
   
 print ""
-sys = horzcat([U,g])
+sys = vertcat([U,g])
 print "So we end up with this %s residual: " % (str(sys.shape))
 
 print sys
@@ -153,7 +153,7 @@ print "We are screwed"
 
 print "Check that there's no second derivatives left: ", jacobian(sys,ddq).size()==0
 
-dae = SXFunction({'NUM': DAE_NUM_IN, DAE_Y: horzcat([q,lambd]), DAE_YDOT: horzcat([dq,SX("dlambda")]), DAE_P: horzcat([length,m,gravity])},[sys])
+dae = SXFunction({'NUM': DAE_NUM_IN, DAE_Y: vertcat([q,lambd]), DAE_YDOT: vertcat([dq,SX("dlambda")]), DAE_P: vertcat([length,m,gravity])},[sys])
 dae.init()
 
 p_ = [5,1,10]

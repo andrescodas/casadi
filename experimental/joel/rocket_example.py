@@ -89,7 +89,7 @@ for k in range(nu):
 F = inner_prod(U,U)
 
 # Terminal constraints
-G = horzcat((X[0],X[1]))
+G = vertcat((X[0],X[1]))
 
 # Create the NLP
 ffcn = MXFunction([U],[F]) # objective function

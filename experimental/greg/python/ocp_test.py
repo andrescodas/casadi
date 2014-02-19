@@ -125,9 +125,9 @@ g = [];  g_min = []; g_max = []
 # Build up a graph of integrator calls
 for k in range(nk):
   # Local state/action vectors
-  Xk      = horzcat([V[stateIdx( j, k  )] for j in range(numStates)])
-  Xk_next = horzcat([V[stateIdx( j, k+1)] for j in range(numStates)])
-  Uk      = horzcat([V[actionIdx(j, k  )] for j in range(numActions)])
+  Xk      = vertcat([V[stateIdx( j, k  )] for j in range(numStates)])
+  Xk_next = vertcat([V[stateIdx( j, k+1)] for j in range(numStates)])
+  Uk      = vertcat([V[actionIdx(j, k  )] for j in range(numActions)])
 
   # Call the integrator
   [Xk_end,Xp] = f_d.call([Xk,Uk,Xp])
@@ -141,7 +141,7 @@ for k in range(nk):
 F = MXFunction([V],[V[stateIdx(numStates-1,nk)]])
 
 # Terminal constraints: 0<=[x(T);y(T)]<=0
-G = MXFunction([V],[horzcat(g)])
+G = MXFunction([V],[vertcat(g)])
 
 # Create NLP solver instance
 solver = IpoptSolver(F,G)

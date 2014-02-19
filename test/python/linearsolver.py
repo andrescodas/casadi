@@ -69,11 +69,11 @@ class LinearSolverTests(casadiTestCase):
   def test_nullspace(self):
   
     for A in  [
-                  DMatrix([[1,1.3],[2,5],[1,0.5],[1.8,1.7]]).T,
-                  DMatrix([[1,1.3],[2,5],[1,0.5]]).T,
-                  DMatrix([[1,1.3],[2,5],[1,0.5],[0.2,0.3],[-0.3,0.7]]).T,
-                  DMatrix([[1,0],[0,0],[0,1],[0,0]]).T,
-                  DMatrix([[1.3,0,0.4,1],[0.2,0.1,11,0],[0,1,0,0],[0.7,0.9,0,0],[1.1,0.99,0,0]]).T
+                  DMatrix([[1,1.3],[2,5],[1,0.5],[1.8,1.7]]),
+                  DMatrix([[1,1.3],[2,5],[1,0.5]]),
+                  DMatrix([[1,1.3],[2,5],[1,0.5],[0.2,0.3],[-0.3,0.7]]),
+                  DMatrix([[1,0],[0,0],[0,1],[0,0]]),
+                  DMatrix([[1.3,0,0.4,1],[0.2,0.1,11,0],[0,1,0,0],[0.7,0.9,0,0],[1.1,0.99,0,0]])
               ]:
       n ,m = A.shape
       for Solver, options in nsolvers:
@@ -84,8 +84,8 @@ class LinearSolverTests(casadiTestCase):
 
         solver.evaluate()
         
-        self.checkarray(mul(solver.output(),A.T),DMatrix.zeros(n-m,m))
-        self.checkarray(mul(solver.output(),solver.output().T),DMatrix.eye(n-m))
+        self.checkarray(mul(A.T,solver.output()),DMatrix.zeros(m,n-m))
+        self.checkarray(mul(solver.output().T,solver.output()),DMatrix.eye(n-m))
         
         solver.setOption("ad_mode","forward")
         solver.init()
@@ -105,7 +105,7 @@ class LinearSolverTests(casadiTestCase):
         Jf.evaluate()
         Jb.evaluate()
 
-        self.checkarray(Jf.output().T,Jb.output().T)
+        self.checkarray(Jf.output(),Jb.output())
         self.checkarray(Jf.output(1),Jb.output(1))
         
         d = solver.derivative(1,0)
@@ -133,19 +133,19 @@ class LinearSolverTests(casadiTestCase):
         
         #print exact, fd
         
-        #print numpy.linalg.svd(vertcat([exact, fd]).T)[1]
+        #print numpy.linalg.svd(horzcat([exact, fd]).T)[1]
         
-        #print "fd:", mul(fd,fd.T), numpy.linalg.eig(mul(fd,fd.T))[0]
-        #print "exact:", mul(exact,exact.T), numpy.linalg.eig(mul(exact,exact.T))[0]
         #print "fd:", mul(fd.T,fd), numpy.linalg.eig(mul(fd.T,fd))[0]
         #print "exact:", mul(exact.T,exact), numpy.linalg.eig(mul(exact.T,exact))[0]
+        #print "fd:", mul(fd,fd.T), numpy.linalg.eig(mul(fd,fd.T))[0]
+        #print "exact:", mul(exact,exact.T), numpy.linalg.eig(mul(exact,exact.T))[0]
         
         V = numpy.random.rand(A.shape[0]-A.shape[1],A.shape[0]-A.shape[1])
         V = V+V.T
         print V
         #V = DMatrix.eye(A.shape[0]-A.shape[1])
-        a = mul([fd.T,V,nom])+mul([nom.T,V,fd])
-        b = mul([exact.T,V,nom])+mul([nom.T,V,exact])
+        a = mul([nom,V,fd.T])+mul([fd,V,nom.T])
+        b = mul([nom,V,exact.T])+mul([exact,V,nom.T])
         
         print "here:", a-b
         
@@ -154,13 +154,13 @@ class LinearSolverTests(casadiTestCase):
         V = numpy.random.rand(A.shape[0],A.shape[0])
         V = V+V.T
         V = DMatrix.eye(A.shape[0])
-        a = mul([fd,V,nom.T])+mul([nom,V,fd.T])
-        b = mul([exact,V,nom.T])+mul([nom,V,exact.T])
+        a = mul([nom.T,V,fd])+mul([fd.T,V,nom])
+        b = mul([nom.T,V,exact])+mul([exact.T,V,nom])
         
         self.checkarray(a,b,digits=5)
   
   def test_simple_solve(self):
-    A_ = DMatrix([[3,7],[1,2]]).T
+    A_ = DMatrix([[3,7],[1,2]])
     b_ = DMatrix([1,0.5])
     
     A = msym("A",A_.sparsity())
@@ -168,7 +168,7 @@ class LinearSolverTests(casadiTestCase):
     
     for Solver, options in lsolvers:
       print Solver.creator
-      C = solve(A.T,b.T,Solver,options).T
+      C = solve(A,b,Solver,options)
       
       f = MXFunction([A,b],[C])
       f.init()
@@ -194,19 +194,19 @@ class LinearSolverTests(casadiTestCase):
       f.setInput(A_,0)
       f.evaluate()
       
-      self.checkarray(mul(f.output(),A_),DMatrix.eye(4))
+      self.checkarray(mul(A_,f.output()),DMatrix.eye(4))
       
       f = SXFunction([As],[pinv(As)])
       f.init()
       f.setInput(A_,0)
       f.evaluate()
       
-      self.checkarray(mul(f.output(),A_),DMatrix.eye(4))
+      self.checkarray(mul(A_,f.output()),DMatrix.eye(4))
       
-      solve(mul(trans(A),A),A.T,Solver,options)
+      trans(solve(mul(A,trans(A)),A,Solver,options))
       pinv(A_,Solver,options)
       
-      #self.checkarray(mul(pinv(A_,Solver,options),A_),DMatrix.eye(4))
+      #self.checkarray(mul(A_,pinv(A_,Solver,options)),DMatrix.eye(4))
       
     A_ = DMatrix(numpy.random.rand(3,5))
     
@@ -222,29 +222,29 @@ class LinearSolverTests(casadiTestCase):
       f.setInput(A_,0)
       f.evaluate()
       
-      self.checkarray(mul(f.output(),A_),DMatrix.eye(3)) 
+      self.checkarray(mul(A_,f.output()),DMatrix.eye(3)) 
       
       f = SXFunction([As],[pinv(As)])
       f.init()
       f.setInput(A_,0)
       f.evaluate()
       
-      self.checkarray(mul(f.output(),A_),DMatrix.eye(3))
+      self.checkarray(mul(A_,f.output()),DMatrix.eye(3))
       
-      #self.checkarray(mul(A_,pinv(A_,Solver,options)),DMatrix.eye(3))
+      #self.checkarray(mul(pinv(A_,Solver,options),A_),DMatrix.eye(3))
       
   def test_simple_solve_dmatrix(self):
-    A = DMatrix([[3,7],[1,2]]).T
+    A = DMatrix([[3,7],[1,2]])
     b = DMatrix([1,0.5])
     for Solver, options in lsolvers:
       print Solver.creator
-      C = solve(A.T,b.T,Solver,options).T
+      C = solve(A,b,Solver,options)
       
       self.checkarray(C,DMatrix([1.5,-0.5]))
       
     
   def test_simple_trans(self):
-    A = DMatrix([[3,7],[1,2]]).T
+    A = DMatrix([[3,7],[1,2]])
     for Solver, options in lsolvers:
       solver = Solver(A.sparsity())
       solver.setOption(options)
@@ -263,7 +263,7 @@ class LinearSolverTests(casadiTestCase):
       #   result' = A\b'               Ax = b
 
   def test_simple(self):
-    A = DMatrix([[3,7],[1,2]]).T
+    A = DMatrix([[3,7],[1,2]])
     for Solver, options in lsolvers:
       print Solver
       solver = Solver(A.sparsity())
@@ -283,7 +283,7 @@ class LinearSolverTests(casadiTestCase):
       #   result' = A'\b'             Ax = b
 
   def test_simple_fx_direct(self):
-    A_ = DMatrix([[3,7],[1,2]]).T
+    A_ = DMatrix([[3,7],[1,2]])
     A = msym("A",A_.sparsity())
     b_ = DMatrix([1,0.5]).T
     b = msym("b",b_.sparsity())
@@ -304,7 +304,7 @@ class LinearSolverTests(casadiTestCase):
       b_0 = b[0]
       b_1 = b[1]
       
-      solution = MXFunction(linsolIn(A=A,B=b),[vertcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
+      solution = MXFunction(linsolIn(A=A,B=b),[horzcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
       solution.init()
       
       solution.setInput(A_,"A")
@@ -313,7 +313,7 @@ class LinearSolverTests(casadiTestCase):
       self.checkfx(solver,solution,fwd=False,adj=False,jacobian=False,evals=False)
        
   def test_simple_fx_indirect(self):
-    A_ = DMatrix([[3,7],[1,2]]).T
+    A_ = DMatrix([[3,7],[1,2]])
     A = msym("A",A_.sparsity())
     b_ = DMatrix([1,0.5]).T
     b = msym("b",b_.sparsity())
@@ -340,7 +340,7 @@ class LinearSolverTests(casadiTestCase):
       b_0 = b[0]
       b_1 = b[1]
       
-      solution = MXFunction(linsolIn(A=A,B=b),[vertcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
+      solution = MXFunction(linsolIn(A=A,B=b),[horzcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
       solution.init()
       
       solution.setInput(A_,"A")
@@ -349,7 +349,7 @@ class LinearSolverTests(casadiTestCase):
       self.checkfx(solver,solution,fwd=False,adj=False,jacobian=False,evals=False)
 
   def test_simple_solve_node(self):
-    A_ = DMatrix([[3,7],[1,2]]).T
+    A_ = DMatrix([[3,7],[1,2]])
     A = msym("A",A_.sparsity())
     b_ = DMatrix([1,0.5]).T
     b = msym("b",b_.sparsity())
@@ -380,7 +380,7 @@ class LinearSolverTests(casadiTestCase):
         b_0 = b[0]
         b_1 = b[1]
         
-        solution = MXFunction([A,b],[vertcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
+        solution = MXFunction([A,b],[horzcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
         solution.init()
         
         solution.setInput(A_,0)
@@ -390,7 +390,7 @@ class LinearSolverTests(casadiTestCase):
 
 
   def test_simple_solve_node_sparseA(self):
-    A_ = DMatrix([[3,7],[0,2]]).T
+    A_ = DMatrix([[3,7],[0,2]])
     makeSparse(A_)
     A = msym("A",A_.sparsity())
     print A.size(), A_.size()
@@ -423,7 +423,7 @@ class LinearSolverTests(casadiTestCase):
         b_0 = b[0]
         b_1 = b[1]
         
-        solution = MXFunction([A,b],[vertcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
+        solution = MXFunction([A,b],[horzcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
         solution.init()
         
         solution.setInput(A_,0)
@@ -432,7 +432,7 @@ class LinearSolverTests(casadiTestCase):
         self.checkfx(f,solution,sens_der=False,digits_sens=7)
 
   def test_simple_solve_node_sparseB(self):
-    A_ = DMatrix([[3,7],[1,2]]).T
+    A_ = DMatrix([[3,7],[1,2]])
     A = msym("A",A_.sparsity())
     b_ = DMatrix([1,0]).T
     makeSparse(b_)
@@ -464,7 +464,7 @@ class LinearSolverTests(casadiTestCase):
         b_0 = b[0,0]
         b_1 = b[0,1]
         
-        solution = MXFunction([A,b],[vertcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
+        solution = MXFunction([A,b],[horzcat([(((A_3/((A_0*A_3)-(A_2*A_1)))*b_0)+(((-A_1)/((A_0*A_3)-(A_2*A_1)))*b_1)),((((-A_2)/((A_0*A_3)-(A_2*A_1)))*b_0)+((A_0/((A_0*A_3)-(A_2*A_1)))*b_1))])])
         solution.init()
         
         solution.setInput(A_,0)
@@ -477,7 +477,7 @@ class LinearSolverTests(casadiTestCase):
     random.seed(1)
     n = 10
     L = self.randDMatrix(n,n,sparsity=0.2) +  c.diag(range(n))
-    M = mul(L.T,L)
+    M = mul(L,L.T)
 
     S = CSparseCholesky(M.sparsity())
 
@@ -491,7 +491,7 @@ class LinearSolverTests(casadiTestCase):
     random.seed(0)
     n = 10
     L = c.diag(range(n))
-    M = mul(L.T,L)
+    M = mul(L,L.T)
 
     print L
     S = CSparseCholesky(M.sparsity())

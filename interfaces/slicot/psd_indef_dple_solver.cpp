@@ -31,7 +31,7 @@ namespace CasADi{
   
   }
   
-  PsdIndefDpleSolver::PsdIndefDpleSolver(const std::vector< CCSSparsity > & A, const std::vector< CCSSparsity > &V) {
+  PsdIndefDpleSolver::PsdIndefDpleSolver(const std::vector< CRSSparsity > & A, const std::vector< CRSSparsity > &V) {
     assignNode(new PsdIndefDpleInternal(A,V));
   }
 

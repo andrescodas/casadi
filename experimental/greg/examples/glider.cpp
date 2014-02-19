@@ -167,7 +167,7 @@ main()
 	cout << "optimal time: " << cost << endl;
 
 	// Print the optimal solution
-	vector<double>xopt(ocp.designVariables.size2());
+	vector<double>xopt(ocp.designVariables.size1());
 	solver.getOutput(xopt,"x");
 	cout << "optimal solution: " << xopt << endl;
 

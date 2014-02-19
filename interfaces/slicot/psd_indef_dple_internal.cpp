@@ -38,7 +38,7 @@ OUTPUTSCHEME(DPLEOutput)
 using namespace std;
 namespace CasADi{
 
-  PsdIndefDpleInternal::PsdIndefDpleInternal(const std::vector< CCSSparsity > & A, const std::vector< CCSSparsity > &V, int nfwd, int nadj) : DpleInternal(A,V, nfwd, nadj) {
+  PsdIndefDpleInternal::PsdIndefDpleInternal(const std::vector< CRSSparsity > & A, const std::vector< CRSSparsity > &V, int nfwd, int nadj) : DpleInternal(A,V, nfwd, nadj) {
   
     // set default options
     setOption("name","unnamed_psd_indef_dple_solver"); // name of the function 
@@ -62,7 +62,7 @@ namespace CasADi{
     casadi_assert_message(!pos_def_,"pos_def option set to True: Solver only handles the indefinite case.");
     casadi_assert_message(const_dim_,"const_dim option set to False: Solver only handles the True case.");
     
-    n_ = A_[0].size2();
+    n_ = A_[0].size1();
     
     // Allocate data structures
     VZ_.resize(n_*n_*K_);
@@ -75,6 +75,9 @@ namespace CasADi{
     
     nnKa_.resize(K_,DMatrix::zeros(n_,n_));
     nnKb_.resize(K_,DMatrix::zeros(n_,n_));
+    
+    eig_real_.resize(n_);
+    eig_imag_.resize(n_);
     
     
     F_.resize(2*2*n_*K_);
@@ -100,32 +103,32 @@ namespace CasADi{
       for (int i=0;i<3;++i) {
         int np = std::pow(2,i);
           
-        CCSSparsity sp;
+        CRSSparsity sp;
         if (K_==1) {
           sp = sp_dense(np,np);
         } else {
-          std::vector<int> col_ind = range(0,np*(np+1)*K_+np+1,np+1);
-          std::vector<int> row(np*(np+1)*K_);
+          std::vector<int> row_ind = range(0,np*(np+1)*K_+np+1,np+1);
+          std::vector<int> col(np*(np+1)*K_);
 
           int k = 0;
           for (int l=0;l<np;++l) {
-            row[np*(np+1)*k+l*(np+1)] = l;
+            col[np*(np+1)*k+l*(np+1)] = l;
             for (int m=0;m<np;++m) {
-              row[np*(np+1)*k+l*(np+1)+m+1] = (K_-1)*np+m;
+              col[np*(np+1)*k+l*(np+1)+m+1] = (K_-1)*np+m;
             }
           }
           
           for (k=1;k<K_;++k) {
             for (int l=0;l<np;++l) {
               for (int m=0;m<np;++m) {
-                row[np*(np+1)*k+l*(np+1)+m] = (k-1)*np+m;
+                col[np*(np+1)*k+l*(np+1)+m] = (k-1)*np+m;
               }
-              row[np*(np+1)*k+l*(np+1)+np] = k*np +l;
+              col[np*(np+1)*k+l*(np+1)+np] = k*np +l;
             }
             
           }
  
-          sp = CCSSparsity(np*K_,np*K_,col_ind,row);
+          sp = CRSSparsity(np*K_,np*K_,col,row_ind);
         }
         LinearSolver solver = linear_solver_creator(sp,1);
         solver.init();
@@ -187,7 +190,14 @@ namespace CasADi{
   
   void PsdIndefDpleInternal::evaluate(){
     // Obtain a periodic Schur form
-    slicot_periodic_schur(n_,K_,input(DPLE_A).data(),T_,Z_,dwork_);
+    slicot_periodic_schur(n_,K_,input(DPLE_A).data(),T_,Z_,dwork_,eig_real_,eig_imag_);
+    
+    if (error_unstable_) {
+      for (int i=0;i<n_;++i) {
+        double modulus = sqrt(eig_real_[i]*eig_real_[i]+eig_imag_[i]*eig_imag_[i]);
+        casadi_assert_message(modulus+eps_unstable_ <= 1,"PsdIndefDpleInternal: system is unstable. Found an eigenvalue " << eig_real_[i] << " + " << eig_imag_[i] << "j, with modulus " << modulus << " (corresponding eps= " << 1-modulus << ")." << std::endl << "Use options and 'error_unstable' and 'eps_unstable' to influence this message.");
+      }
+    }
     
     // Find a block partition of the T hessenberg form
     partition_.resize(1,0);
@@ -649,6 +659,7 @@ namespace CasADi{
     
     for (int d=0;d<nadj_;++d) {
     
+      DMatrix &P_bar = input(DPLE_NUM_IN*(nfwd_+1)+DPLE_NUM_OUT*d+DPLE_P);
       std::vector<double> &Vbar = output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*d+DPLE_V).data();
       std::fill(Vbar.begin(),Vbar.end(),0);
       
@@ -663,7 +674,7 @@ namespace CasADi{
         nnKa_[k].set(0.0);
         
         // nnKa[k] <- nnKb*Z[k]
-        dense_mul_nt(n_,n_,n_,&input(DPLE_NUM_IN*(nfwd_+1)+DPLE_NUM_OUT*d+DPLE_P).data()[n_*n_*k],&Z_[k*n_*n_],&nnKa_[k].data()[0]);
+        dense_mul_nt(n_,n_,n_,&P_bar.data()[n_*n_*k],&Z_[k*n_*n_],&nnKa_[k].data()[0]);
         // Xbar <- Z[k]*V[k]*Z[k]'
         dense_mul_nn(n_,n_,n_,&Z_[k*n_*n_],&nnKa_[k].data()[0],&Xbar_[k*n_*n_]);
       }
@@ -759,7 +770,7 @@ namespace CasADi{
                 for (int ii=0;ii<na1;++ii) {
                   for (int jj=0;jj<nb2;++jj) {
                     for (int kk=0;kk<na2;++kk) {
-                      Xbar_[partindex(i,l,k,kk,jj)] += T_[partindex(r,i,k,ii,kk)]*FF_[k*4+2*ii+kk];
+                      Xbar_[partindex(i,l,k,kk,jj)] += T_[partindex(r,i,k,ii,kk)]*FF_[k*4+2*ii+jj];
                     }
                   }
                 }
@@ -865,7 +876,7 @@ namespace CasADi{
         }
       }
       
-      //  [mul([vb+vb.T,a,x]) for vb,x,a in zip(V_bar,X,As)]
+      // A_bar = [mul([vb+vb.T,a,x]) for vb,x,a in zip(V_bar,X,As)]
       for(int k=0;k<K_;++k) {
         std::fill(nnKa_[k].begin(),nnKa_[k].end(),0);
         dense_mul_nn(n_,n_,n_,&input(DPLE_A).data()[n_*n_*k],&output(DPLE_P).data()[n_*n_*k],&nnKa_[k].data()[0]);
@@ -874,6 +885,7 @@ namespace CasADi{
         dense_mul_tn(n_,n_,n_,&Vbar[n_*n_*k],&nnKa_[k].data()[0],&Abar[n_*n_*k]);
       }
       
+      std::fill(P_bar.data().begin(),P_bar.data().end(),0);
  
     }
     

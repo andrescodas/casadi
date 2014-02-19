@@ -61,8 +61,8 @@
 
 \paragraph{Concatentation}
 \begin{verbatim}
-  x = horzcat([a,b,c])
   x = vertcat([a,b,c])
+  x = horzcat([a,b,c])
 \end{verbatim}
 
 \paragraph{Reshaping}
@@ -80,7 +80,7 @@
 
 \paragraph{Calculus}
 \begin{verbatim}
-  jacobian(sin(a)*b + c,horzcat([a,b,c]))
+  jacobian(sin(a)*b + c,vertcat([a,b,c]))
 \end{verbatim}
 
 \paragraph{Function SISO}
@@ -92,7 +92,7 @@
 
 \paragraph{Function MIMO}
 \begin{verbatim}
-  g = SXFunction([x,y],[x**2,x*y,horzcat([x,2*x])])
+  g = SXFunction([x,y],[x**2,x*y,vertcat([x,2*x])])
   g.init()
 \end{verbatim}
 

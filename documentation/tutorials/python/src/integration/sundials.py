@@ -31,7 +31,7 @@ from pylab import *
 u = ssym("u")
 x = ssym("x")
 y = ssym("y")
-f  = SXFunction([horzcat([x,y]),u], [horzcat([(1-y*y)*x-y+u,x])])
+f  = SXFunction([vertcat([x,y]),u], [vertcat([(1-y*y)*x-y+u,x])])
 #! Manipulate the function to adhere to the integrator's
 #! input/output signature
 #! f(time;states;parameters)

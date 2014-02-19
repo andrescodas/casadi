@@ -58,7 +58,7 @@ k_     = 0.2
 params_ = [0.1,0.1,alpha_,k_,sigma_]
 
 #! We create a NewtonImplicitSolver instance
-f=SXFunction([horzcat([a,gamma]),horzcat(params)],[horzcat([res0,res1])])
+f=SXFunction([vertcat([a,gamma]),vertcat(params)],[vertcat([res0,res1])])
 s=NewtonImplicitSolver(f)
 s.setOption("abstol",1e-14)
 s.setOption("linear_solver",CSparse)

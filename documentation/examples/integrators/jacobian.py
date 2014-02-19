@@ -40,9 +40,9 @@ k     = ssym("k")
 sigma = ssym("sigma")
 Omega = 2 + eps*sigma
 
-params = horzcat([eps,mu,alpha,k,sigma])
-states = horzcat([u,v])
-rhs    = horzcat([v,-u-eps*(2*mu*v+alpha*u**3+2*k*u*cos(Omega*t))])
+params = vertcat([eps,mu,alpha,k,sigma])
+states = vertcat([u,v])
+rhs    = vertcat([v,-u-eps*(2*mu*v+alpha*u**3+2*k*u*cos(Omega*t))])
 
 f=SXFunction(daeIn(x=states,p=params,t=t),daeOut(ode=rhs))
 f.init()

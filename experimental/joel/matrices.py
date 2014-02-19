@@ -63,7 +63,7 @@ print "jac_f = ", jac_f
 print "nnz(jac_f) = ", jac_f.size()
 
 # Create a numpy array for continued symbolic processing (should be done with a typemap!)
-J = zeros((jac_f.size2(),jac_f.size1()),dtype=SX)
+J = zeros((jac_f.size1(),jac_f.size2()),dtype=SX)
 for i in range(size(J,0)):
   for j in range(size(J,1)):
     J[i,j] = jac_f[i,j]

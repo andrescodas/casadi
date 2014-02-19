@@ -94,8 +94,8 @@ int main(){
   }
 
   // Gather least square terms and constraints
-  MX f = horzcat(ff);
-  MX g = horzcat(gg);
+  MX f = vertcat(ff);
+  MX g = vertcat(gg);
     
   // Use Gauss-Newton?
   bool gauss_newton = true;

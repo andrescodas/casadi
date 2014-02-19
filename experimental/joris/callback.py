@@ -25,7 +25,7 @@ import numpy as NP
 x = ssym("x")
 y = ssym("y")
 z = ssym("z")
-v = horzcat([x,y,z])
+v = vertcat([x,y,z])
 
 f = SXFunction([v],[x**2 + 100*z**2])
 g = SXFunction([v],[z + (1-x)**2 - y])

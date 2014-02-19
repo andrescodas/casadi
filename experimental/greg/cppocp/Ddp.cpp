@@ -145,7 +145,7 @@ void Ddp::setupQFunctions()
 	  simplify(Q_xu_k);
 	  simplify(Q_uu_k);
 
-	  // workaround bug where size() != size2()*size1()
+	  // workaround bug where size() != size1()*size2()
 	  makeDense(Q_0_k);
 	  makeDense(Q_x_k);
 	  makeDense(Q_u_k);
@@ -202,7 +202,7 @@ void Ddp::setupBackwardSweepFunction()
      SXMatrix V_xx_k = Q_xx - mul( Q_xu, mul( Q_uu_inv, Q_xu.trans() ) );
 
      /*************** backwardSweepFcn ****************/
-     // workaround bug where size() != size2()*size1()
+     // workaround bug where size() != size1()*size2()
      makeDense( u_feedforward_k );
      makeDense( feedbackGain_k );
      makeDense( V_0_k );

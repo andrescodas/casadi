@@ -105,8 +105,8 @@ namespace CasADi{
 
       // Get results
       const DMatrix& H = hessLag.output();
-      const vector<int>& colind = H.colind();
-      const vector<int>& row = H.row();
+      const vector<int>& rowind = H.rowind();
+      const vector<int>& col = H.col();
       const vector<double>& data = H.data();
       
       if(monitored("eval_h")){
@@ -150,10 +150,10 @@ namespace CasADi{
       // Transpose the result
       const DMatrix& J = jacG.output(JACG_JAC);
       const vector<double>& J_data = J.data();
-      const vector<int>& J_colind = J.colind();
-      const vector<int>& JT_row = spJacG_T_.row();
-      copy(J_colind.begin(),J_colind.end(),jacG_tmp_.begin());
-      for(vector<int>::const_iterator i=JT_row.begin(); i!=JT_row.end(); ++i){
+      const vector<int>& J_rowind = J.rowind();
+      const vector<int>& JT_col = spJacG_T_.col();
+      copy(J_rowind.begin(),J_rowind.end(),jacG_tmp_.begin());
+      for(vector<int>::const_iterator i=JT_col.begin(); i!=JT_col.end(); ++i){
         *values++ = J_data[jacG_tmp_[*i]++];
       }
     

@@ -154,20 +154,20 @@ namespace CasADi{
     int status;
   
     // Jacobian sparsity
-    vector<int> Jrow = jacG_.output().row();
-    vector<int> Jcol = jacG_.output().sparsity().getCol();
+    vector<int> Jcol = jacG_.output().col();
+    vector<int> Jrow = jacG_.output().sparsity().getRow();
 
     // Hessian sparsity
-    int nnzH = hessLag_.isNull() ? 0 : hessLag_.output().sizeU();
-    vector<int> Hrow(nnzH), Hcol(nnzH);
+    int nnzH = hessLag_.isNull() ? 0 : hessLag_.output().sizeL();
+    vector<int> Hcol(nnzH), Hrow(nnzH);
     if(nnzH>0){
-      const vector<int> &colind = hessLag_.output().colind();
-      const vector<int> &row = hessLag_.output().row();
+      const vector<int> &rowind = hessLag_.output().rowind();
+      const vector<int> &col = hessLag_.output().col();
       int nz=0;
-      for(int r=0; r<colind.size()-1; ++r){
-	for(int el=colind[r]; el<colind[r+1] && row[el]<=r; ++el){
-	  Hrow[nz] = r;
-	  Hcol[nz] = row[el];
+      for(int r=0; r<rowind.size()-1; ++r){
+	for(int el=rowind[r]; el<rowind[r+1] && col[el]<=r; ++el){
+	  Hcol[nz] = r;
+	  Hrow[nz] = col[el];
 	  nz++;
 	}
       }
@@ -224,10 +224,10 @@ namespace CasADi{
     status = KTR_init_problem(kc_handle_, nx_, KTR_OBJGOAL_MINIMIZE, KTR_OBJTYPE_GENERAL,
                               &input(NLP_SOLVER_LBX).front(), &input(NLP_SOLVER_UBX).front(),
                               ng_, &cType.front(), &input(NLP_SOLVER_LBG).front(), &input(NLP_SOLVER_UBG).front(),
-                              Jrow.size(), &Jrow.front(), &Jcol.front(),
+                              Jcol.size(), &Jcol.front(), &Jrow.front(),
                               nnzH,
-                              getPtr(Hcol),
                               getPtr(Hrow),
+                              getPtr(Hcol),
                               &input(NLP_SOLVER_X0).front(),
                               0); // initial lambda
     casadi_assert_message(status==0, "KTR_init_problem failed");
