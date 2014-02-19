@@ -475,8 +475,12 @@ namespace CasADi{
     } else {
       stream.unsetf(std::ios::scientific);
     }
-  
-    stream << toScalar();
+    
+    if(size()==0){
+      stream << "00";
+    } else {
+      stream << toScalar();
+    }
   
     stream.precision(precision);
     stream.width(width);
@@ -601,7 +605,7 @@ namespace CasADi{
   void Matrix<T>::print(std::ostream &stream) const{
     if(empty()){
       stream << "[]";
-    } else if(numel()==1 && size()==1){
+    } else if(numel()==1){
       printScalar(stream);
     } else if(vector()){
       printVector(stream);
