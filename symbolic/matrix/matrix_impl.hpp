@@ -526,7 +526,7 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::printMatrix(std::ostream &stream) const{
+  void Matrix<T>::printDense(std::ostream &stream) const{
     // Print as a single line
     bool oneliner=this->size1()<=1;
   
@@ -544,15 +544,16 @@ namespace CasADi{
 
     // Index counter for each column
     std::vector<int> cind = colind();
-    
-    // Beginning of matrix
-    stream << "[";
 
     // Loop over rows
     for(int rr=0; rr<size1(); ++rr){
       // Beginning of row
-      if(!oneliner) stream << std::endl;
-      stream << "[";
+      if(rr==0){
+        if(!oneliner) stream << std::endl;
+        stream << "[[";
+      } else {
+        stream << " [";
+      }
       
       // Loop over columns
       for(int cc=0; cc<size2(); ++cc){
@@ -568,47 +569,44 @@ namespace CasADi{
       }
     
       // End of row
-      stream << "]";
+      if(rr<size1()-1){
+        stream << "],";
+        if(!oneliner) stream << std::endl;
+      } else {
+        stream << "]]";
+      }
     }
-    
-    // End of matrix
-    if(!oneliner) stream << std::endl;
-    stream << "]";
-    
+        
     stream.precision(precision);
     stream.width(width);
     stream.flags(flags);
   }
 
   template<class T>
-  void Matrix<T>::printDense(std::ostream &stream) const{
-    stream << className() << "(rows = " << size1() << ", columns = " << size2() << "):" << std::endl;
-    printMatrix(stream);
-  }
-
-
-  template<class T>
   void Matrix<T>::printSparse(std::ostream &stream) const {
-    stream << className() << "(rows = " << size1() << ", columns = " << size2() << ", nnz = " << size() << ")";
-    if (size()>0) stream << ":" << std::endl;
-    for(int cc=0; cc<size2(); ++cc){
-      for(int el=colind(cc); el<colind(cc+1); ++el){
-        int rr=row(el);
-        stream << "[" << rr << "," << cc << "] -> " << data()[el] << std::endl;
+    if(size()==0){
+      stream << "all zero sparse: " << size1() << "-by-" << size2();
+    } else {
+      stream << "sparse: " << size1() << "-by-" << size2() << ", " << size() << " nnz" << std::endl;
+      for(int cc=0; cc<size2(); ++cc){
+        for(int el=colind(cc); el<colind(cc+1); ++el){
+          int rr=row(el);
+          stream << " (" << rr << "," << cc << ") -> " << at(el) << std::endl;
+        }
       }
     }
   }
 
   template<class T>
   void Matrix<T>::print(std::ostream &stream) const{
-    if(dense()){
-      if (size()==1){
-        printScalar(stream);
-      } else if (vector()){
-        printVector(stream);
-      } else {
-        printDense(stream);
-      }
+    if(empty()){
+      stream << "[]";
+    } else if(numel()==1 && size()==1){
+      printScalar(stream);
+    } else if(vector()){
+      printVector(stream);
+    } else if(std::max(size1(),size2())<=10 || double(size())/numel()>=0.5){ // if "small" or "dense"
+      printDense(stream);
     } else {
       printSparse(stream);
     }
@@ -617,15 +615,7 @@ namespace CasADi{
   template<class T>
   void Matrix<T>::repr(std::ostream &stream) const{
     stream << className() << "(";
-    if (empty()){
-      stream << "[]";
-    } else if (numel()==1 && size()==1){
-      printScalar(stream);
-    } else if (vector()){
-      printVector(stream);
-    } else {
-      printMatrix(stream);
-    }
+    print(stream);
     stream << ")";
   }
 
