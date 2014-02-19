@@ -11,6 +11,8 @@ def isInteger(a):
 def isString(a):
   return isinstance(a,str) or isinstance(a,unicode)
   
+def isIterable(a):
+  return isinstance(a,list) or isinstance(a,tuple)
   
 # StructIndex :tuple/list of strings
 # canonicalIndex : tuple/list of string or numbers
@@ -64,9 +66,9 @@ def canonical(ind,s):
   else:
     return ind
     
-def vec(e):
+def flatten(e):
   if any(isinstance(i,list) for i in e):
-    return sum(map(vec,e),[])
+    return sum(map(flatten,e),[])
   else:
     return e
     
@@ -115,7 +117,7 @@ nesteddict = NestedDictLiteral()
 def payloadUnpack(payload,i):
   if isString(i):
     raise Exception("Got string %s where number expected."% i)
-  if isinstance(payload,list):
+  if isIterable(payload):
     if i>=len(payload):
       raise Exception("Rhs out of range. Got list index %s but rhs list is only of length %s." % (i,len(payload)))
     return payload[i]
@@ -422,7 +424,7 @@ class CasadiStructureDerivable:
       except:
         raise Exception("Call to Structure has weird argument: expecting DMatrix-like")
     if a.shape[0] == 1 and a.shape[1] == 1 and self.size>1:
-      a = DMatrix.ones(1,self.size)*a
+      a = DMatrix.ones(self.size,1)*a
     return DMatrixStruct(self,data=a)
     
   def repeated(self,arg=0):
@@ -700,7 +702,7 @@ class CasadiStructure(Structure,CasadiStructureDerivable):
       k += sp.size()
       it = tuple(i)
       self.map[it] = m
-      self.lookuptable+=[(it,kk,p) for kk,p in enumerate(zip(sp.row(),sp.getCol()))]
+      self.lookuptable+=[(it,kk,p) for kk,p in enumerate(zip(sp.col(),sp.getRow()))]
       for a in canonicalIndexAncestors(it)[1:]:
         if a in hmap:
           hmap[a].append(m)
@@ -708,7 +710,7 @@ class CasadiStructure(Structure,CasadiStructureDerivable):
           hmap[a] = [m]
     self.size = k
     for k,v in hmap.iteritems():
-      hmap[k] = vecNZcat(v).T
+      hmap[k] = flattenNZcat(v)
     
     self.map.update(hmap)
     
@@ -724,7 +726,7 @@ class CasadiStructure(Structure,CasadiStructureDerivable):
     class FlatIndexGetter(StructureGetter):
       @properGetitem
       def __getitem__(self,powerIndex):
-        return vec(self.struct.traverseByPowerIndex(powerIndex,dispatcher=CasadiStructure.FlatIndexDispatcher(struct=self.struct)))
+        return flatten(self.struct.traverseByPowerIndex(powerIndex,dispatcher=CasadiStructure.FlatIndexDispatcher(struct=self.struct)))
             
     self.i = IMatrixGetter(self)
     self.f = FlatIndexGetter(self)
@@ -819,7 +821,7 @@ class CasadiStructured(Structured,CasadiStructureDerivable):
     return (self.size,1)
 
   def sparsity(self):
-    return sp_dense(1,self.size)
+    return sp_dense(self.size,1)
     
   def getCanonicalIndex(self,*args,**kwargs):
     return self.struct.lookup(*args,**kwargs)
@@ -838,9 +840,9 @@ class ssymStruct(CasadiStructured,MasterGettable):
     s = []
     for i in self.struct.traverseCanonicalIndex():
       e = self.struct.getStructEntryByCanonicalIndex(i)
-      s.append(ssym("_".join(map(str,i)),1,e.sparsity.size()))
+      s.append(ssym("_".join(map(str,i)),e.sparsity.size()))
         
-    self.master = vecNZcat(s).T
+    self.master = flattenNZcat(s)
 
     for e in self.entries:
       if e.sym is not None:
@@ -859,7 +861,7 @@ class msymStruct(CasadiStructured,MasterGettable):
     if any(e.sym is not None for e in self.entries):
       raise Exception("struct_msym does not accept entries with an 'sym' argument.")
 
-    self.master = msym("V",1,self.size)
+    self.master = msym("V",self.size,1)
     
  
     ks = []
@@ -872,14 +874,14 @@ class msymStruct(CasadiStructured,MasterGettable):
       if e.isPrimitive():
         sp = sp_dense(1,1) if e.sparsity is None else e.sparsity
       else:
-        sp = sp_dense(1,e.struct.size)
+        sp = sp_dense(e.struct.size,1)
       ks.append(k)
       it = tuple(i)
       its.append(it)
       sps.append(sp)
       k += sp.size()
       
-    for it, k, sp in zip(its,horzsplit(self.master,ks),sps):
+    for it, k, sp in zip(its,vertsplit(self.master,ks),sps):
       self.priority_object_map[it] = k if k.sparsity()==sp else k[IMatrix(sp,range(sp.size()))] #.reshape(sp)
       
 
@@ -904,7 +906,7 @@ class MatrixStruct(CasadiStructured,MasterGettable,MasterSettable):
     if isinstance(data,mtype):
       self.master = data
     elif data is None:
-      self.master = mtype.nan(1,self.size)
+      self.master = mtype.nan(self.size,1)
     else:
       self.master = mtype(data)
       
@@ -979,9 +981,9 @@ class MXFlattencatStruct(CasadiStructured,MasterGettable):
         
     def inject(payload,canonicalIndex,extraIndex=None,entry=None):
       if extraIndex is not None:
-        raise Exception("An MX veccat structure does not accept indexing on MX level for __setitem__.")
+        raise Exception("An MX flattencat structure does not accept indexing on MX level for __setitem__.")
       if not hasattr(self,"sparsity"):
-        raise Exception("An MX veccat structure __setitem__ accepts only objects that have sparsity.")
+        raise Exception("An MX flattencat structure __setitem__ accepts only objects that have sparsity.")
       
       if canonicalIndex in self.mapping:
         if self.struct.map[canonicalIndex].sparsity()!=payload.sparsity():
@@ -1000,10 +1002,10 @@ class MXFlattencatStruct(CasadiStructured,MasterGettable):
     if any(e is None for e in self.storage):
       missing = filter(lambda k: self.storage[self.mapping[k]] is None,self.mapping.keys())
       
-      raise Exception("Problem in MX flattenNZcat structure cat: missing expressions. The following entries are missing: %s" % str(missing))
+      raise Exception("Problem in MX vecNZcat structure cat: missing expressions. The following entries are missing: %s" % str(missing))
       
     if self.dirty:
-      self.master_cached = vecNZcat(self.storage).T
+      self.master_cached = flattenNZcat(self.storage)
 
     return self.master_cached
     
@@ -1077,12 +1079,12 @@ class CasadiStructEntry(StructEntry):
     if 'shape' in kwargs:
       shape = kwargs["shape"]
       if isInteger(shape) :
-        self.sparsity = sp_dense(1,shape)
+        self.sparsity = sp_dense(shape,1)
       elif isinstance(shape,list) or isinstance(shape,tuple):
         if len(shape)==0 or len(shape)>2:
           raise Exception("The 'shape' argument, if present, must be an integer, a tuple of 1 or 2 integers, a sparsity pattern.")
         else:
-          self.sparsity = sp_dense(1,shape[0]) if len(shape)==1 else sp_dense(shape[1],shape[0])
+          self.sparsity = sp_dense(*shape)
       elif isinstance(shape,CCSSparsity):
         self.sparsity = shape
       else:
@@ -1104,9 +1106,7 @@ class CasadiStructEntry(StructEntry):
         raise Exception("The 'shapestruct' argument, if present, must be a structure or a tuple of at most structures")
       
       if 'shape' not in kwargs:
-        sp_dense_arg = [e if isInteger(e) else e.size for e in self.shapestruct]
-        if len(sp_dense_arg) not in (1,2): raise Exception("quick hack failed")
-        self.sparsity = sp_dense(1,sp_dense_arg[0]) if len(sp_dense_arg)==1 else sp_dense(sp_dense_arg[1],sp_dense_arg[0])
+        self.sparsity = sp_dense(*[e if isInteger(e) else e.size for e in self.shapestruct])
         
     #     sym    argument
     self.sym = None
@@ -1153,10 +1153,10 @@ class CasadiStructEntry(StructEntry):
       if self.type not in allowedclass:
         raise Exception("You supplied a type argument '%s' but it is not recognised. Use one of %s" % (str(self.type,str(allowedclass))))
       if self.type=="symm":
-        if self.sparsity.size2() != self.sparsity.size1():
+        if self.sparsity.size1() != self.sparsity.size2():
           raise Exception("You supplied a type 'symm', but matrix is not square. Got " % self.sparsity.dimString() + ".")
         self.originalsparsity = self.sparsity
-        self.sparsity = self.sparsity*sp_triu(self.sparsity.size2())
+        self.sparsity = self.sparsity*sp_tril(self.sparsity.size1())
         
          
       

@@ -75,10 +75,6 @@ def dot(self,*args):
 %pythoncode %{
     @property
     def shape(self):
-        return (self.size2(),self.size1())
-
-    @property
-    def shapeQQQ(self):
         return (self.size1(),self.size2())
         
     def reshape(self,arg):
@@ -156,8 +152,8 @@ def dot(self,*args):
   
   std::vector<int> __dims__() const {
     std::vector<int> ret(2);
-    ret[0] = $self->size2();
-    ret[1] = $self->size1();
+    ret[0] = $self->size1();
+    ret[1] = $self->size2();
     return ret;
   }
   
@@ -179,8 +175,8 @@ def dot(self,*args):
 %rename(__paren__) indexed;
 %rename(__paren_asgn__) indexed_one_based_assignment;
 %rename(__paren_asgn__) indexed_assignment;
-%rename(__horzcat__) horzcat;
 %rename(__vertcat__) vertcat;
+%rename(__horzcat__) horzcat;
 #endif
 #ifdef SWIGPYTHON
 %rename(__Cgetitem__) indexed_zero_based;
@@ -196,18 +192,18 @@ namespace CasADi{
 /// Create a 2D contiguous NP_DOUBLE numpy.ndarray
 
 octave_value toSparse() {
-  int nz = (*$self).size(), nr = (*$self).size2(), nc = (*$self).size1();
+  int nz = (*$self).size(), nr = (*$self).size1(), nc = (*$self).size2();
   
   Array<int> Ar(nz);
   Array<int> Ac(nz);
   
-  std::vector<int> vr = (*$self).sparsity().getCol();
+  std::vector<int> vr = (*$self).sparsity().getRow();
   Array<double> mydata(nz);
   const std::vector<double> &cdata = (*$self).data();
   
   for (int k=0;k<nz;k++) {
     Ar(k)=vr[k];
-    Ac(k)=(*$self).sparsity().row()[k];
+    Ac(k)=(*$self).sparsity().col()[k];
     mydata(k)=cdata[k];
   }
   
@@ -249,8 +245,8 @@ PyObject* arrayView() {
   if ($self->size()!=$self->numel()) 
     throw  CasADi::CasadiException("Matrix<double>::arrayview() can only construct arrayviews for dense DMatrices.");
   npy_intp dims[2];
-  dims[0] = $self->size2();
-  dims[1] = $self->size1();
+  dims[0] = $self->size1();
+  dims[1] = $self->size2();
   std::vector<double> &v = $self->data();
   return PyArray_SimpleNewFromData(2, dims, NPY_DOUBLE, &v[0]);
 }
@@ -264,7 +260,7 @@ PyObject* arrayView() {
         raise Expection("toArray(shared=True) only possible for dense arrays.")
       return self.arrayView()
     else:
-      r = n.zeros((self.size2(),self.size1()))
+      r = n.zeros((self.size1(),self.size2()))
       self.get(r)
     return r
 %}
@@ -289,7 +285,7 @@ PyObject* arrayView() {
   def toCsr_matrix(self):
     import numpy as n
     from scipy.sparse import csr_matrix
-    return csr_matrix( (list(self.data()),self.sparsity().row(),self.sparsity().colind()), shape = (self.size2(),self.size1()), dtype=n.double )
+    return csr_matrix( (list(self.data()),self.sparsity().col(),self.sparsity().rowind()), shape = (self.size1(),self.size2()), dtype=n.double )
 %}
 
 %pythoncode %{
@@ -337,10 +333,10 @@ binopsFull(const CasADi::MX & b,,CasADi::MX,CasADi::MX)
   %pythoncode %{
     def toArray(self):
       import numpy as n
-      r = n.zeros((self.size2(),self.size1()))
+      r = n.zeros((self.size1(),self.size2()))
       for i in range(r.shape[0]):
         for j in range(r.shape[1]):
-          r[i,j] = self.elem(j,i)
+          r[i,j] = self.elem(i,j)
       return r
   %}
   
@@ -379,13 +375,13 @@ binopsFull(const CasADi::MX & b,,CasADi::MX,CasADi::MX)
   %pythoncode %{
     def __setstate__(self, state):
         if state:
-          self.__init__(state["nrow"],state["ncol"],state["colind"],state["row"])
+          self.__init__(state["nrow"],state["ncol"],state["col"],state["rowind"])
         else:
           self.__init__()
 
     def __getstate__(self):
         if self.isNull(): return {}
-        return {"nrow": self.size1(), "ncol": self.size2(), "colind": numpy.array(self.colind(),dtype=int), "row": numpy.array(self.row(),dtype=int)}
+        return {"nrow": self.size1(), "ncol": self.size2(), "col": numpy.array(self.col(),dtype=int), "rowind": numpy.array(self.rowind(),dtype=int)}
   %}
   
 }
@@ -580,11 +576,11 @@ Accepts: 2D numpy.ndarray, numpy.matrix (contiguous, native byte order, datatype
 	    }
 	    
 			if (array_numdims(p)==2) {
-				if (!(array_size(p,0)==arg1->size2() && array_size(p,1)==arg1->size1()) ) {
+				if (!(array_size(p,0)==arg1->size1() && array_size(p,1)==arg1->size2()) ) {
 				  std::stringstream s;
 				  s << "SWIG::typemap(in) (double *val,int len,Sparsity sp) " << std::endl;
 				  s << "Array is not of correct shape.";
-				  s << "Expecting shape (" << arg1->size2() << "," << arg1->size1() << ")" << ", but got shape (" << array_size(p,0) << "," << array_size(p,1) <<") instead.";
+				  s << "Expecting shape (" << arg1->size1() << "," << arg1->size2() << ")" << ", but got shape (" << array_size(p,0) << "," << array_size(p,1) <<") instead.";
           const std::string tmp(s.str());
           const char* cstr = tmp.c_str();
 			    SWIG_exception_fail(SWIG_TypeError,  cstr);
@@ -642,11 +638,11 @@ Accepts: 2D numpy.ndarray, numpy.matrix (any setting of contiguous, native byte 
 	if (is_array(p)) {
 			array = obj_to_array_contiguous_allow_conversion(p,NPY_DOUBLE,&array_is_new_object);
 			if (array_numdims(array)==2) {
-				if (!(array_size(array,0)==arg1->size2() && array_size(array,1)==arg1->size1()) ) {
+				if (!(array_size(array,0)==arg1->size1() && array_size(array,1)==arg1->size2()) ) {
 				  std::stringstream s;
 				  s << "SWIG::typemap(in) (const double *val,int len,Sparsity sp) " << std::endl;
 				  s << "Array is not of correct shape.";
-				  s << "Expecting shape (" << arg1->size2() << "," << arg1->size1() << ")" << ", but got shape (" << array_size(array,0) << "," << array_size(array,1) <<") instead.";
+				  s << "Expecting shape (" << arg1->size1() << "," << arg1->size2() << ")" << ", but got shape (" << array_size(array,0) << "," << array_size(array,1) <<") instead.";
           const std::string tmp(s.str());
           const char* cstr = tmp.c_str();
 			    SWIG_exception_fail(SWIG_TypeError,  cstr);

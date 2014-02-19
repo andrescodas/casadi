@@ -123,7 +123,7 @@ template <>
 int meta< CasADi::Matrix<double> >::as(const octave_value& p,CasADi::Matrix<double> &m) {
   NATIVERETURN(CasADi::Matrix<double>,m)
   if((p.is_real_matrix() && p.is_numeric_type() && p.is_sparse_type())){
-    // Note: octave uses row-major storage
+    // Note: octave uses column-major storage
     SparseMatrix mat = p.sparse_matrix_value();
     
     int size = mat.nnz();
@@ -136,7 +136,7 @@ int meta< CasADi::Matrix<double> >::as(const octave_value& p,CasADi::Matrix<doub
     for (int k=0;k<cidx.size();k++) cidx[k]=mat.cidx(k);
     for (int k=0;k<ridx.size();k++) ridx[k]=mat.ridx(k);
     
-    CasADi::CCSSparsity A(mat.rows(),mat.cols(),cidx,ridx);
+    CasADi::CCSSparsity A = CasADi::CCSSparsity(mat.cols(),mat.rows(),ridx,cidx);
     CasADi::Matrix<double> ret = CasADi::Matrix<double>(A,data);
     
     m = ret.trans();
