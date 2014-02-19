@@ -75,21 +75,21 @@ void DirectSingleShootingInternal::init(){
   // .....
   // nx x 1  (controls in interval i=nk-1)
   
-  MX V = msym("V",1,NV);
+  MX V = msym("V",NV);
   int offset = 0;
 
   // Global parameters
-  MX P = V(0,Slice(0,np_));
+  MX P = V[Slice(0,np_)];
   offset += np_;
 
   // Initial state
-  MX X0 = V(0,Slice(offset,offset+nx_));
+  MX X0 = V[Slice(offset,offset+nx_)];
   offset += nx_;
   
   // Control for each shooting interval
   vector<MX> U(nk_);
   for(int k=0; k<nk_; ++k){ // interior nodes
-    U[k] = V(0,range(offset,offset+nu_));
+    U[k] = V[range(offset,offset+nu_)];
     offset += nu_;
   }
   
@@ -109,7 +109,7 @@ void DirectSingleShootingInternal::init(){
   // For all shooting nodes
   for(int k=0; k<nk_; ++k){
     // Integrate
-    vector<MX> int_out = integrator_.call(integratorIn("x0",X,"p",horzcat(P,U[k])));
+    vector<MX> int_out = integrator_.call(integratorIn("x0",X,"p",vertcat(P,U[k])));
 
     // Store expression for state trajectory
     X = int_out[INTEGRATOR_XF];
@@ -129,7 +129,7 @@ void DirectSingleShootingInternal::init(){
   nlp_j += jk;
 
   // NLP
-  nlp_ = MXFunction(nlpIn("x",V),nlpOut("f",nlp_j,"g",horzcat(nlp_g)));
+  nlp_ = MXFunction(nlpIn("x",V),nlpOut("f",nlp_j,"g",vertcat(nlp_g)));
   nlp_.setOption("name","nlp");
   nlp_.init();
     
@@ -160,18 +160,18 @@ void DirectSingleShootingInternal::getGuess(vector<double>& V_init) const{
   
   // Pass guess for parameters
   for(int i=0; i<np_; ++i){
-    V_init[el++] = p_init.elem(0,i);
+    V_init[el++] = p_init.elem(i);
   }
   
   // Pass guess for the initial state
   for(int i=0; i<nx_; ++i){
-    V_init[el++] = x_init.elem(0,i);
+    V_init[el++] = x_init.elem(i,0);
   }
   
   // Pass guess for control
   for(int k=0; k<nk_; ++k){
     for(int i=0; i<nu_; ++i){
-      V_init[el++] = u_init.elem(k,i);
+      V_init[el++] = u_init.elem(i,k);
     }
   }
   
@@ -193,21 +193,21 @@ void DirectSingleShootingInternal::getVariableBounds(vector<double>& V_min, vect
   
   // Pass bounds on parameters
   for(int i=0; i<np_; ++i){
-    V_min[min_el++] = p_min.elem(0,i);
-    V_max[max_el++] = p_max.elem(0,i);
+    V_min[min_el++] = p_min.elem(i);
+    V_max[max_el++] = p_max.elem(i);
   }
 
   // Pass bounds on initial state
   for(int i=0; i<nx_; ++i){
-    V_min[min_el++] = x_min.elem(0,i);
-    V_max[max_el++] = x_max.elem(0,i);
+    V_min[min_el++] = x_min.elem(i,0);
+    V_max[max_el++] = x_max.elem(i,0);
   }
   
   // Pass bounds on control
   for(int k=0; k<nk_; ++k){
     for(int i=0; i<nu_; ++i){
-      V_min[min_el++] = u_min.elem(k,i);
-      V_max[max_el++] = u_max.elem(k,i);
+      V_min[min_el++] = u_min.elem(i,k);
+      V_max[max_el++] = u_max.elem(i,k);
     }
   }
 
@@ -226,13 +226,13 @@ void DirectSingleShootingInternal::getConstraintBounds(vector<double>& G_min, ve
   
   for(int k=0; k<nk_; ++k){
     for(int i=0; i<nx_; ++i){
-      G_min[min_el++] = x_min.elem(k+1,i);
-      G_max[max_el++] = x_max.elem(k+1,i);
+      G_min[min_el++] = x_min.elem(i,k+1);
+      G_max[max_el++] = x_max.elem(i,k+1);
     }
     
     for(int i=0; i<nh_; ++i){
-      G_min[min_el++] = h_min.elem(k,i);
-      G_max[max_el++] = h_max.elem(k,i);
+      G_min[min_el++] = h_min.elem(i,k);
+      G_max[max_el++] = h_max.elem(i,k);
     }
   }
   casadi_assert(min_el==G_min.size() && max_el==G_max.size());
@@ -249,18 +249,18 @@ void DirectSingleShootingInternal::setOptimalSolution(const vector<double> &V_op
 
   // Pass optimized parameters
   for(int i=0; i<np_; ++i){
-    p_opt(0,i) = V_opt[el++];
+    p_opt(i) = V_opt[el++];
   }
     
   // Pass optimized initial state
   for(int i=0; i<nx_; ++i){
-    x_opt(0,i) = V_opt[el++];
+    x_opt(i,0) = V_opt[el++];
   }
   
   // Pass optimized control
   for(int k=0; k<nk_; ++k){
     for(int i=0; i<nu_; ++i){
-      u_opt(k,i) = V_opt[el++];
+      u_opt(i,k) = V_opt[el++];
     }
   }
   casadi_assert(el==V_opt.size());
@@ -274,7 +274,7 @@ void DirectSingleShootingInternal::setOptimalSolution(const vector<double> &V_op
 
     // Get the state trajectory
     for(int i=0; i<nx_; ++i){
-      x_opt(k+1,i) = g_opt[el++];
+      x_opt(i,k+1) = g_opt[el++];
     }
     
     // Skip the path constraints (for now)

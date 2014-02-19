@@ -79,10 +79,10 @@ void DirectMultipleShootingInternal::init(){
   // ------
   // nx x 1  (states at time i=nk)
   
-  MX V = msym("V",1,NV);
+  MX V("V",NV);
 
   // Global parameters
-  MX P = V(0,Slice(0,np_));
+  MX P = V(Slice(0,np_));
 
   // offset in the variable vector
   int v_offset=np_; 
@@ -91,14 +91,14 @@ void DirectMultipleShootingInternal::init(){
   vector<MX> X(nk_+1), U(nk_);
   for(int k=0; k<=nk_; ++k){ // interior nodes
     // Local state
-    X[k] = V(0,Slice(v_offset,v_offset+nx_));
+    X[k] = V[Slice(v_offset,v_offset+nx_)];
     v_offset += nx_;
     
     // Variables below do not appear at the end point
     if(k==nk_) break;
     
     // Local control
-    U[k] = V(0,Slice(v_offset,v_offset+nu_));
+    U[k] = V[Slice(v_offset,v_offset+nu_)];
     v_offset += nu_;
   }
   
@@ -109,7 +109,7 @@ void DirectMultipleShootingInternal::init(){
   vector<vector<MX> > int_in(nk_);
   for(int k=0; k<nk_; ++k){
     int_in[k].resize(INTEGRATOR_NUM_IN);
-    int_in[k][INTEGRATOR_P] = horzcat(P,U[k]);
+    int_in[k][INTEGRATOR_P] = vertcat(P,U[k]);
     int_in[k][INTEGRATOR_X0] = X[k];
   }
 
@@ -118,7 +118,7 @@ void DirectMultipleShootingInternal::init(){
   for(int k=0; k<nk_; ++k){
     fcn_in[k].resize(DAE_NUM_IN);
     fcn_in[k][DAE_T] = (k*tf_)/nk_;
-    fcn_in[k][DAE_P] = horzcat(P,U.at(k));
+    fcn_in[k][DAE_P] = vertcat(P,U.at(k));
     fcn_in[k][DAE_X] = X[k];
   }
 
@@ -151,7 +151,7 @@ void DirectMultipleShootingInternal::init(){
   }
 
   // Terminal constraints
-  MX g = horzcat(gg);
+  MX g = vertcat(gg);
 
   // Objective function
   MX f;
@@ -196,24 +196,24 @@ void DirectMultipleShootingInternal::getGuess(vector<double>& V_init) const{
   
   // Pass guess for parameters
   for(int i=0; i<np_; ++i){
-    V_init[el++] = p_init.elem(0,i);
+    V_init[el++] = p_init.elem(i);
   }
   
   for(int k=0; k<nk_; ++k){
     // Pass guess for state
     for(int i=0; i<nx_; ++i){
-      V_init[el++] = x_init.elem(k,i);
+      V_init[el++] = x_init.elem(i,k);
     }
     
     // Pass guess for control
     for(int i=0; i<nu_; ++i){
-      V_init[el++] = u_init.elem(k,i);
+      V_init[el++] = u_init.elem(i,k);
     }
   }
   
   // Pass guess for final state
   for(int i=0; i<nx_; ++i){
-    V_init[el++] = x_init.elem(nk_,i);
+    V_init[el++] = x_init.elem(i,nk_);
   }
   
   casadi_assert(el==V_init.size());
@@ -234,28 +234,28 @@ void DirectMultipleShootingInternal::getVariableBounds(vector<double>& V_min, ve
   
   // Pass bounds on parameters
   for(int i=0; i<np_; ++i){
-    V_min[min_el++] = p_min.elem(0,i);
-    V_max[max_el++] = p_max.elem(0,i);
+    V_min[min_el++] = p_min.elem(i);
+    V_max[max_el++] = p_max.elem(i);
   }
 
   for(int k=0; k<nk_; ++k){
     // Pass bounds on state
     for(int i=0; i<nx_; ++i){
-      V_min[min_el++] = x_min.elem(k,i);
-      V_max[max_el++] = x_max.elem(k,i);
+      V_min[min_el++] = x_min.elem(i,k);
+      V_max[max_el++] = x_max.elem(i,k);
     }
     
     // Pass bounds on control
     for(int i=0; i<nu_; ++i){
-      V_min[min_el++] = u_min.elem(k,i);
-      V_max[max_el++] = u_max.elem(k,i);
+      V_min[min_el++] = u_min.elem(i,k);
+      V_max[max_el++] = u_max.elem(i,k);
     }
   }
 
   // Pass bounds on final state
   for(int i=0; i<nx_; ++i){
-    V_min[min_el++] = x_min.elem(nk_,i);
-    V_max[max_el++] = x_max.elem(nk_,i);
+    V_min[min_el++] = x_min.elem(i,nk_);
+    V_max[max_el++] = x_max.elem(i,nk_);
   }
   
   casadi_assert(min_el==V_min.size() && max_el==V_max.size());
@@ -276,8 +276,8 @@ void DirectMultipleShootingInternal::getConstraintBounds(vector<double>& G_min, 
     }
     
     for(int i=0; i<nh_; ++i){
-      G_min[min_el++] = h_min.elem(k,i);
-      G_max[max_el++] = h_max.elem(k,i);
+      G_min[min_el++] = h_min.elem(i,k);
+      G_max[max_el++] = h_max.elem(i,k);
     }
   }
   casadi_assert(min_el==G_min.size() && max_el==G_max.size());
@@ -294,25 +294,25 @@ void DirectMultipleShootingInternal::setOptimalSolution(const vector<double> &V_
 
   // Pass optimized state
   for(int i=0; i<np_; ++i){
-    p_opt(0,i) = V_opt[el++];
+    p_opt(i) = V_opt[el++];
   }
     
   for(int k=0; k<nk_; ++k){
     
     // Pass optimized state
     for(int i=0; i<nx_; ++i){
-      x_opt(k,i) = V_opt[el++];
+      x_opt(i,k) = V_opt[el++];
     }
     
     // Pass optimized control
     for(int i=0; i<nu_; ++i){
-      u_opt(k,i) = V_opt[el++];
+      u_opt(i,k) = V_opt[el++];
     }
   }
 
   // Pass optimized terminal state
   for(int i=0; i<nx_; ++i){
-    x_opt(nk_,i) = V_opt[el++];
+    x_opt(i,nk_) = V_opt[el++];
   }
   casadi_assert(el==V_opt.size());
 }

@@ -222,7 +222,7 @@ void SymbolicOCP::parseFMI(const std::string& filename, const Dictionary& option
       // Add binding equation
       var.setBinding(bexpr);
       y.push_back(var); // legacy
-      dep.appendColumns(bexpr); // legacy
+      dep.append(bexpr); // legacy
     }
     
     // Resort the dependant parameters
@@ -244,9 +244,9 @@ void SymbolicOCP::parseFMI(const std::string& filename, const Dictionary& option
       bool has_der = false;
       SX de_new = readExpr(dnode[0],has_der,eliminate_dependent);
       if(has_der){
-        ode.appendColumns(de_new);
+        ode.append(de_new);
       } else {
-        alg.appendColumns(de_new);
+        alg.append(de_new);
       }
     }
   }
@@ -265,7 +265,7 @@ void SymbolicOCP::parseFMI(const std::string& filename, const Dictionary& option
       // Add the differential equations
       for(int i=0; i<inode.size(); ++i){
         bool has_der = false;
-        initial.appendColumns(readExpr(inode[i],has_der,eliminate_dependent));
+        initial.append(readExpr(inode[i],has_der,eliminate_dependent));
       }
     }
   }
@@ -334,7 +334,7 @@ void SymbolicOCP::parseFMI(const std::string& filename, const Dictionary& option
             bool has_der = false;
             SX v = readExpr(var,has_der,eliminate_dependent);
             casadi_assert(!has_der);
-            mterm.appendColumns(v);
+            mterm.append(v);
           }
         } catch(exception& ex){
           if(verbose){
@@ -353,7 +353,7 @@ void SymbolicOCP::parseFMI(const std::string& filename, const Dictionary& option
             // Read expression
             bool has_der = false;
             SX v = readExpr(var,has_der,eliminate_dependent);
-            lterm.appendColumns(v);
+            lterm.append(v);
           }
         } catch(exception& ex){
           throw CasadiException(std::string("addIntegrandObjectiveFunction failed: ") + ex.what());
@@ -372,21 +372,21 @@ void SymbolicOCP::parseFMI(const std::string& filename, const Dictionary& option
           if(constr_i.checkName("opt:ConstraintLeq")){
             SX ex = readExpr(constr_i[0],has_der,eliminate_dependent);
             SX ub = readExpr(constr_i[1],has_der,eliminate_dependent);
-            point.appendColumns(ex-ub);
-            point_min.appendColumns(-numeric_limits<double>::infinity());
-            point_max.appendColumns(0.);
+            point.append(ex-ub);
+            point_min.append(-numeric_limits<double>::infinity());
+            point_max.append(0.);
           } else if(constr_i.checkName("opt:ConstraintGeq")){
             SX ex = readExpr(constr_i[0],has_der,eliminate_dependent);
             SX lb = readExpr(constr_i[1],has_der,eliminate_dependent);
-            point.appendColumns(ex-lb);
-            point_min.appendColumns(0.);
-            point_max.appendColumns(numeric_limits<double>::infinity());
+            point.append(ex-lb);
+            point_min.append(0.);
+            point_max.append(numeric_limits<double>::infinity());
           } else if(constr_i.checkName("opt:ConstraintEq")){
             SX ex = readExpr(constr_i[0],has_der,eliminate_dependent);
             SX eq = readExpr(constr_i[1],has_der,eliminate_dependent);
-            point.appendColumns(ex-eq);
-            point_min.appendColumns(0.);
-            point_max.appendColumns(0.);
+            point.append(ex-eq);
+            point_min.append(0.);
+            point_max.append(0.);
           } else {
             cerr << "unknown constraint type" << constr_i.getName() << endl;
             throw CasadiException("SymbolicOCP::addConstraints");
@@ -401,21 +401,21 @@ void SymbolicOCP::parseFMI(const std::string& filename, const Dictionary& option
           if(constr_i.checkName("opt:ConstraintLeq")){
             SX ex = readExpr(constr_i[0],has_der,eliminate_dependent);
             SX ub = readExpr(constr_i[1],has_der,eliminate_dependent);
-            path.appendColumns(ex-ub);
-            path_min.appendColumns(-numeric_limits<double>::infinity());
-            path_max.appendColumns(0.);
+            path.append(ex-ub);
+            path_min.append(-numeric_limits<double>::infinity());
+            path_max.append(0.);
           } else if(constr_i.checkName("opt:ConstraintGeq")){
             SX ex = readExpr(constr_i[0],has_der,eliminate_dependent);
             SX lb = readExpr(constr_i[1],has_der,eliminate_dependent);
-            path.appendColumns(ex-lb);
-            path_min.appendColumns(0.);
-            path_max.appendColumns(numeric_limits<double>::infinity());
+            path.append(ex-lb);
+            path_min.append(0.);
+            path_max.append(numeric_limits<double>::infinity());
           } else if(constr_i.checkName("opt:ConstraintEq")){
             SX ex = readExpr(constr_i[0],has_der,eliminate_dependent);
             SX eq = readExpr(constr_i[1],has_der,eliminate_dependent);
-            path.appendColumns(ex-eq);
-            path_min.appendColumns(0.);
-            path_max.appendColumns(0.);
+            path.append(ex-eq);
+            path_min.append(0.);
+            path_max.append(0.);
           } else {
             cerr << "unknown constraint type" << constr_i.getName() << endl;
             throw CasadiException("SymbolicOCP::addConstraints");
@@ -731,10 +731,10 @@ void SymbolicOCP::eliminateLagrangeTerms(){
     q.push_back(qv);
 
     // Add the Lagrange term to the list of quadratures
-    quad.appendColumns(*it);
+    quad.append(*it);
     
     // Add to the list of Mayer terms
-    mterm.appendColumns(qv.var());
+    mterm.append(qv.var());
   }
   
   // Remove the Lagrange terms
@@ -748,7 +748,7 @@ void SymbolicOCP::eliminateQuadratureStates(){
   q.clear();
   
   // Move the equations to the list of ODEs
-  ode.appendColumns(quad);
+  ode.append(quad);
   quad.clear();
 }
 
@@ -766,13 +766,13 @@ void SymbolicOCP::scaleVariables(){
   
   // Collect all the variables
   Matrix<SX> v;
-  v.appendColumns(t);
-  v.appendColumns(_x);
-  v.appendColumns(_xdot);
-  v.appendColumns(_z);
-  v.appendColumns(_pi);
-  v.appendColumns(_pf);
-  v.appendColumns(_u);
+  v.append(t);
+  v.append(_x);
+  v.append(_xdot);
+  v.append(_z);
+  v.append(_pi);
+  v.append(_pf);
+  v.append(_u);
   
   // Nominal values
   Matrix<SX> t_n = 1.;
@@ -784,13 +784,13 @@ void SymbolicOCP::scaleVariables(){
   
   // Get all the old variables in expressed in the nominal ones
   Matrix<SX> v_old;
-  v_old.appendColumns(t*t_n);
-  v_old.appendColumns(_x*x_n);
-  v_old.appendColumns(_xdot*x_n);
-  v_old.appendColumns(_z*z_n);
-  v_old.appendColumns(_pi*pi_n);
-  v_old.appendColumns(_pf*pf_n);
-  v_old.appendColumns(_u*u_n);
+  v_old.append(t*t_n);
+  v_old.append(_x*x_n);
+  v_old.append(_xdot*x_n);
+  v_old.append(_z*z_n);
+  v_old.append(_pi*pi_n);
+  v_old.append(_pf*pf_n);
+  v_old.append(_u*u_n);
   
   // Temporary variable
   Matrix<SX> temp;
@@ -828,13 +828,13 @@ void SymbolicOCP::scaleEquations(){
 
   // Create the jacobian of the implicit equations with respect to [x,z,p,u] 
   Matrix<SX> xz;
-  xz.appendColumns(v[X]);
-  xz.appendColumns(v[Z]);
-  xz.appendColumns(v[PI]);
-  xz.appendColumns(v[PF]);
-  xz.appendColumns(v[U]);
+  xz.append(v[X]);
+  xz.append(v[Z]);
+  xz.append(v[PI]);
+  xz.append(v[PF]);
+  xz.append(v[U]);
   SXFunction fcn = SXFunction(xz,ode);
-  SXFunction J(v,trans(fcn.jac()));
+  SXFunction J(v,fcn.jac());
 
   // Evaluate the Jacobian in the starting point
   J.init();
@@ -847,31 +847,33 @@ void SymbolicOCP::scaleEquations(){
   J.setInput(getStart(u,true),U);
   J.evaluate();
   
-  // Get the maximum of every col
+  // Get the maximum of every row
   Matrix<double> &J0 = J.output();
-  vector<double> scale(J0.size2(),0.0); // scaling factors
-  for(int i=0; i<J0.size2(); ++i){
-    // Loop over non-zero entries of the col
-    for(int el=J0.colind(i); el<J0.colind(i+1); ++el){
+  vector<double> scale(J0.size1(),0.0); // scaling factors
+  for(int cc=0; cc<J0.size2(); ++cc){
+    // Loop over non-zero entries of the column
+    for(int el=J0.colind(cc); el<J0.colind(cc+1); ++el){
       // Row
-      //int j=J0.row(el);
+      int rr=J0.row(el);
       
       // The scaling factor is the maximum norm, ignoring not-a-number entries
       if(!isnan(J0.at(el))){
-        scale[i] = max(scale[i],fabs(J0.at(el)));
+        scale[rr] = max(scale[rr],fabs(J0.at(el)));
       }
     }
-    
-    // Make sure 
-    if(scale[i]==0){
-      cout << "Warning: Could not generate a scaling factor for equation " << i << "(0 == " << ode.at(i) << "), selecting 1." << endl;
-      scale[i]=1.;
+  }
+  
+  // Make sure nonzero factor found
+  for(int rr=0; rr<J0.size1(); ++rr){
+    if(scale[rr]==0){
+      cout << "Warning: Could not generate a scaling factor for equation " << rr << "(0 == " << ode.at(rr) << "), selecting 1." << endl;
+      scale[rr]=1.;
     }
   }
   
   // Scale the equations
   for(int i=0; i<ode.size(); ++i){
-    ode.at(i) /= scale.at(i);
+    ode[i] /= scale[i];
   }
   
   double time2 = clock();
@@ -886,23 +888,24 @@ void SymbolicOCP::sortODE(){
   // Find out which differential equation depends on which differential state
   SXFunction f(der(x),ode);
   f.init();
-  CCSSparsity sp = f.jacSparsity().transpose();
+  CCSSparsity sp = f.jacSparsity();
   
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  sp.dulmageMendelsohn(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock);
+  //  sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  sp.transpose().dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
 
   // Permute equations
   vector<SX> ode_new(ode.size());
   for(int i=0; i<ode.size(); ++i){
-    ode_new[i] = ode.at(colperm[i]);
+    ode_new[i] = ode.at(rowperm[i]);
   }
   ode_new.swap(ode.data());
   
   // Permute variables
   vector<Variable> x_new(x.size());
   for(int i=0; i<x.size(); ++i){
-    x_new[i]= x[rowperm[i]];
+    x_new[i]= x[colperm[i]];
   }
   x_new.swap(x);
 }
@@ -914,23 +917,24 @@ void SymbolicOCP::sortALG(){
   // Find out which algebraic equation depends on which algebraic state
   SXFunction f(var(z),alg);
   f.init();
-  CCSSparsity sp = f.jacSparsity().transpose();
+  CCSSparsity sp = f.jacSparsity();
   
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  //  sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  sp.transpose().dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
 
   // Permute equations
   vector<SX> alg_new(alg.size());
   for(int i=0; i<alg.size(); ++i){
-    alg_new[i] = alg.at(colperm[i]);
+    alg_new[i] = alg.at(rowperm[i]);
   }
   alg_new.swap(alg.data());
   
   // Permute variables
   vector<Variable> z_new(z.size());
   for(int i=0; i<z.size(); ++i){
-    z_new[i]= z[rowperm[i]];
+    z_new[i]= z[colperm[i]];
   }
   z_new.swap(z);
 }
@@ -943,16 +947,17 @@ void SymbolicOCP::sortDependentParameters(){
   SXMatrix v = var(pd);
   SXFunction f(v,v-binding(pd));
   f.init();
-  CCSSparsity sp = f.jacSparsity().transpose();
+  CCSSparsity sp = f.jacSparsity();
   
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  //  sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  sp.transpose().dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
 
   // Permute variables
   vector<Variable> pd_new(pd.size());
   for(int i=0; i<pd.size(); ++i){
-    pd_new[i]= pd[rowperm[i]];
+    pd_new[i]= pd[colperm[i]];
   }
   pd_new.swap(pd);  
 }
@@ -972,16 +977,17 @@ void SymbolicOCP::makeExplicit(){
   f.init();
 
   // Get the sparsity of the Jacobian which can be used to determine which variable can be calculated from which other
-  CCSSparsity sp = f.jacSparsity().transpose();
+  CCSSparsity sp = f.jacSparsity();
 
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  int nb = sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  //  int nb = sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  int nb = sp.transpose().dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
 
   // Permute equations
   vector<SX> ode_new(ode.size());
   for(int i=0; i<ode.size(); ++i){
-    ode_new[i] = ode.at(colperm[i]);
+    ode_new[i] = ode.at(rowperm[i]);
   }
   ode_new.swap(ode.data());
   ode_new.clear();
@@ -989,7 +995,7 @@ void SymbolicOCP::makeExplicit(){
   // Permute variables
   vector<Variable> x_new(x.size());
   for(int i=0; i<x.size(); ++i){
-    x_new[i]= x[rowperm[i]];
+    x_new[i]= x[colperm[i]];
   }
   x_new.swap(x);
   x_new.clear();
@@ -999,7 +1005,7 @@ void SymbolicOCP::makeExplicit(){
   f.init();
 
   // Get the Jacobian
-  SXMatrix J = trans(f.jac());
+  SXMatrix J = f.jac();
   
   // Block variables and equations
   vector<Variable> xb, xdb, xab;
@@ -1012,17 +1018,17 @@ void SymbolicOCP::makeExplicit(){
   for(int b=0; b<nb; ++b){
     
     // Block size
-    int bs = colblock[b+1] - colblock[b];
+    int bs = rowblock[b+1] - rowblock[b];
     
     // Get variables in the block
     xb.clear();
-    for(int i=rowblock[b]; i<rowblock[b+1]; ++i){
+    for(int i=colblock[b]; i<colblock[b+1]; ++i){
       xb.push_back(x[i]);
     }
 
     // Get equations in the block
     fb.clear();
-    for(int i=colblock[b]; i<colblock[b+1]; ++i)
+    for(int i=rowblock[b]; i<rowblock[b+1]; ++i)
       fb.push_back(ode.at(i));
 
     // Get local Jacobian
@@ -1032,16 +1038,16 @@ void SymbolicOCP::makeExplicit(){
     casadi_assert_message(!dependsOn(Jb,der(xb)),"Cannot find an explicit expression for variable(s) " << xb);
       
     // Divide fb into a part which depends on vb and a part which doesn't according to "fb == mul(Jb,vb) + fb_res"
-    SXMatrix fb_res = substitute(fb,der(xb),SXMatrix::zeros(1,xb.size())).data();
+    SXMatrix fb_res = substitute(fb,der(xb),SXMatrix::zeros(xb.size())).data();
     SXMatrix fb_exp;
       
     // Solve for vb
     if (bs <= 3){
       // Calculate inverse and multiply for very small matrices
-      fb_exp = mul(-fb_res,inv(Jb));
+      fb_exp = mul(inv(Jb),-fb_res);
     } else {
       // QR factorization
-      fb_exp = trans(solve(trans(Jb),-trans(fb_res)));
+      fb_exp = solve(Jb,-fb_res);
     }
 
     // Add to explicitly determined equations and variables
@@ -1064,16 +1070,17 @@ void SymbolicOCP::eliminateAlgebraic(){
   f.init();
 
   // Get the sparsity of the Jacobian which can be used to determine which variable can be calculated from which other
-  CCSSparsity sp = f.jacSparsity().transpose();
+  CCSSparsity sp = f.jacSparsity();
 
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  int nb = sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  //  int nb = sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  int nb = sp.transpose().dulmageMendelsohn(colperm,rowperm,colblock,rowblock,coarse_colblock,coarse_rowblock);
 
   // Permute equations
   vector<SX> alg_new(alg.size());
   for(int i=0; i<alg.size(); ++i){
-    alg_new[i] = alg.at(colperm[i]);
+    alg_new[i] = alg.at(rowperm[i]);
   }
   alg_new.swap(alg.data());
   alg_new.clear();
@@ -1081,7 +1088,7 @@ void SymbolicOCP::eliminateAlgebraic(){
   // Permute variables
   vector<Variable> z_new(z.size());
   for(int i=0; i<z.size(); ++i){
-    z_new[i]= z[rowperm[i]];
+    z_new[i]= z[colperm[i]];
   }
   z_new.swap(z);
   z_new.clear();
@@ -1091,7 +1098,7 @@ void SymbolicOCP::eliminateAlgebraic(){
   f.init();
 
   // Get the Jacobian
-  SXMatrix J = trans(f.jac());
+  SXMatrix J = f.jac();
   
   // Block variables and equations
   vector<Variable> zb;
@@ -1107,17 +1114,17 @@ void SymbolicOCP::eliminateAlgebraic(){
   for(int b=0; b<nb; ++b){
     
     // Block size
-    int bs = colblock[b+1] - colblock[b];
+    int bs = rowblock[b+1] - rowblock[b];
     
     // Get local variables
     zb.clear();
-    for(int i=rowblock[b]; i<rowblock[b+1]; ++i){
+    for(int i=colblock[b]; i<colblock[b+1]; ++i){
       zb.push_back(z[i]);
     }
 
     // Get local equations
     fb.clear();
-    for(int i=colblock[b]; i<colblock[b+1]; ++i)
+    for(int i=rowblock[b]; i<rowblock[b+1]; ++i)
       fb.push_back(alg.at(i));
 
     // Get local Jacobian
@@ -1135,16 +1142,16 @@ void SymbolicOCP::eliminateAlgebraic(){
     } else { // The variables that we wish to determine enter linearly
       
       // Divide fb into a part which depends on vb and a part which doesn't according to "fb == mul(Jb,vb) + fb_res"
-      SXMatrix fb_res = substitute(fb,var(zb),SXMatrix::zeros(1,zb.size())).data();
+      SXMatrix fb_res = substitute(fb,var(zb),SXMatrix::zeros(zb.size())).data();
       SXMatrix fb_exp;
       
       // Solve for vb
       if (bs <= 3){
         // Calculate inverse and multiply for very small matrices
-        fb_exp = mul(-fb_res,inv(Jb));
+        fb_exp = mul(inv(Jb),-fb_res);
       } else {
         // QR factorization
-        fb_exp = trans(solve(trans(Jb),-trans(fb_res)));
+        fb_exp = solve(Jb,-fb_res);
       }
 
       // Add to explicitly determined equations and variables
@@ -1160,7 +1167,7 @@ void SymbolicOCP::eliminateAlgebraic(){
 
   // Add to the beginning of the dependent variables (since the other dependent variable might depend on them)
   y.insert(y.begin(),z_exp.begin(),z_exp.end());
-  dep = horzcat(SXMatrix(f_exp),dep);
+  dep = vertcat(SXMatrix(f_exp),dep);
   
   // Save new algebraic equations
   z = z_imp;
@@ -1183,7 +1190,7 @@ void SymbolicOCP::makeAlgebraic(const Variable& v){
       
       // Add to list of algebraic variables and to the list of algebraic equations
       z.push_back(v);
-      alg.appendColumns(ode.at(k));
+      alg.append(ode.at(k));
       
       // Remove from list of differential variables and the list of differential equations
       x.erase(x.begin()+k);

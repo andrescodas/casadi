@@ -62,13 +62,13 @@ void DirectCollocationInternal::init(){
   vector<vector<MX> > C(deg_+1,vector<MX>(deg_+1));
 
   // Coefficients of the collocation equation as DMatrix
-  DMatrix C_num = DMatrix::zeros(deg_+1,deg_+1);
+  DMatrix C_num = DMatrix(deg_+1,deg_+1,0);
 
   // Coefficients of the continuity equation
   vector<MX> D(deg_+1);
 
   // Coefficients of the collocation equation as DMatrix
-  DMatrix D_num = DMatrix::zeros(1,deg_+1);
+  DMatrix D_num = DMatrix(deg_+1,1,0);
 
   // Collocation point
   SXMatrix tau = ssym("tau");
@@ -90,7 +90,7 @@ void DirectCollocationInternal::init(){
     lfcn.setInput(1.0);
     lfcn.evaluate();
     D[j] = lfcn.output();
-    D_num(0,j) = lfcn.output();
+    D_num(j) = lfcn.output();
 
     // Evaluate the time derivative of the polynomial at all collocation points to get the coefficients of the continuity equation
     FX tfcn = lfcn.tangent();
@@ -99,11 +99,11 @@ void DirectCollocationInternal::init(){
       tfcn.setInput(tau_root[j2]);
       tfcn.evaluate();
       C[j][j2] = tfcn.output();
-      C_num(j2,j) = tfcn.output();
+      C_num(j,j2) = tfcn.output();
     }
   }
 
-  C_num(ALL,std::vector<int>(1,0)) = 0;
+  C_num(std::vector<int>(1,0),ALL) = 0;
   C_num(0,0)   = 1;
 
   // All collocation time points
@@ -122,7 +122,7 @@ void DirectCollocationInternal::init(){
   nlp_nx += nx_;                       // Final state
 
   // NLP variable vector
-  MX nlp_x = msym("x",1,nlp_nx);
+  MX nlp_x = msym("x",nlp_nx);
   int offset = 0;
 
   // Get collocated states and parametrized control
@@ -130,21 +130,21 @@ void DirectCollocationInternal::init(){
   vector<MX> U(nk_);
   for(int k=0; k<nk_; ++k){
     // Collocated states
-    X[k].resize(deg_+1);
+        X[k].resize(deg_+1);
     for(int j=0; j<=deg_; ++j){
-      // Get the expression for the state vector
-      X[k][j] = nlp_x(0,Slice(offset,offset+nx_));
-      offset += nx_;
+        // Get the expression for the state vector
+        X[k][j] = nlp_x[Slice(offset,offset+nx_)];
+        offset += nx_;
     }
-    
+
     // Parametrized controls
-    U[k] = nlp_x(0,Slice(offset,offset+nu_));
+    U[k] = nlp_x[Slice(offset,offset+nu_)];
     offset += nu_;
   }
 
   // State at end time
   X[nk_].resize(1);
-  X[nk_][0] = nlp_x(0,Slice(offset,offset+nx_));
+  X[nk_][0] = nlp_x[Slice(offset,offset+nx_)];
   offset += nx_;
   casadi_assert(offset==nlp_nx);
 
@@ -196,7 +196,7 @@ void DirectCollocationInternal::init(){
   nlp_j += Jk;
 
   // Objective function of the NLP
-  nlp_ = MXFunction(nlpIn("x",nlp_x), nlpOut("f",nlp_j,"g",horzcat(nlp_g)));
+  nlp_ = MXFunction(nlpIn("x",nlp_x), nlpOut("f",nlp_j,"g",vertcat(nlp_g)));
 
   // Get the NLP creator function
   NLPSolverCreator nlp_solver_creator = getOption("nlp_solver");
@@ -225,26 +225,26 @@ void DirectCollocationInternal::getGuess(vector<double>& V_init) const{
   
   // Pass guess for parameters
   for(int i=0; i<np_; ++i){
-    V_init[el++] = p_init.elem(0,i);
+    V_init[el++] = p_init.elem(i);
   }
   
   for(int k=0; k<nk_; ++k){
     // Pass guess for state
     for(int j=0; j<=deg_; ++j){
       for(int i=0; i<nx_; ++i){
-        V_init[el++] = x_init.elem(k,i);
+         V_init[el++] = x_init.elem(i,k);
       }
     }
     
     // Pass guess for control
     for(int i=0; i<nu_; ++i){
-      V_init[el++] = u_init.elem(k,i);
+      V_init[el++] = u_init.elem(i,k);
     }
   }
 
   // Pass guess for final state
   for(int i=0; i<nx_; ++i){
-    V_init[el++] = x_init.elem(nk_,i);
+    V_init[el++] = x_init.elem(i,nk_);
   }
   
   casadi_assert(el==V_init.size());
@@ -264,37 +264,37 @@ void DirectCollocationInternal::getVariableBounds(vector<double>& V_min, vector<
   
   // Pass bounds on parameters
   for(int i=0; i<np_; ++i){
-    V_min[min_el++] = p_min.elem(0,i);
-    V_max[max_el++] = p_max.elem(0,i);
+    V_min[min_el++] = p_min.elem(i);
+    V_max[max_el++] = p_max.elem(i);
   }
 
   for(int k=0; k<nk_; ++k){
     
     // Pass bounds on state
     for(int i=0; i<nx_; ++i){
-      V_min[min_el++] = x_min.elem(k,i);
-      V_max[max_el++] = x_max.elem(k,i);
+      V_min[min_el++] = x_min.elem(i,k);
+      V_max[max_el++] = x_max.elem(i,k);
     }
     
     // Pass bounds on collocation points
     for(int j=0; j<deg_; ++j){
       for(int i=0; i<nx_; ++i){
-        V_min[min_el++] = std::min(x_min.elem(k,i),x_min.elem(k+1,i));
-        V_max[max_el++] = std::max(x_max.elem(k,i),x_max.elem(k+1,i));
+        V_min[min_el++] = std::min(x_min.elem(i,k),x_min.elem(i,k+1));
+        V_max[max_el++] = std::max(x_max.elem(i,k),x_max.elem(i,k+1));
       }
     }
 
     // Pass bounds on control
     for(int i=0; i<nu_; ++i){
-      V_min[min_el++] = u_min.elem(k,i);
-      V_max[max_el++] = u_max.elem(k,i);
+      V_min[min_el++] = u_min.elem(i,k);
+      V_max[max_el++] = u_max.elem(i,k);
     }
   }
 
   // Pass bounds on final state
   for(int i=0; i<nx_; ++i){
-    V_min[min_el++] = x_min.elem(nk_,i);
-    V_max[max_el++] = x_max.elem(nk_,i);
+    V_min[min_el++] = x_min.elem(i,nk_);
+    V_max[max_el++] = x_max.elem(i,nk_);
   }
   
   casadi_assert(min_el==V_min.size() && max_el==V_max.size());
@@ -317,8 +317,8 @@ void DirectCollocationInternal::getConstraintBounds(vector<double>& G_min, vecto
     }
     
     for(int i=0; i<nh_; ++i){
-      G_min[min_el++] = h_min.elem(k,i);
-      G_max[max_el++] = h_max.elem(k,i);
+      G_min[min_el++] = h_min.elem(i,k);
+      G_max[max_el++] = h_max.elem(i,k);
     }
   }
   casadi_assert(min_el==G_min.size() && max_el==G_max.size());
@@ -335,14 +335,14 @@ void DirectCollocationInternal::setOptimalSolution( const vector<double> &V_opt 
 
   // Pass optimized state
   for(int i=0; i<np_; ++i){
-    p_opt(0,i) = V_opt[el++];
+    p_opt(i) = V_opt[el++];
   }
     
   for(int k=0; k<nk_; ++k){
     
     // Pass optimized state
     for(int i=0; i<nx_; ++i){
-      x_opt(k,i) = V_opt[el++];
+      x_opt(i,k) = V_opt[el++];
     }
     
     // Skip collocation points
@@ -350,13 +350,13 @@ void DirectCollocationInternal::setOptimalSolution( const vector<double> &V_opt 
 
     // Pass optimized control
     for(int i=0; i<nu_; ++i){
-      u_opt(k,i) = V_opt[el++];
+      u_opt(i,k) = V_opt[el++];
     }
   }
 
   // Pass optimized terminal state
   for(int i=0; i<nx_; ++i){
-    x_opt(nk_,i) = V_opt[el++];
+    x_opt(i,nk_) = V_opt[el++];
   }
   casadi_assert(el==V_opt.size());
 }
