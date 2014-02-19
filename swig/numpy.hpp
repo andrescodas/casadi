@@ -19,11 +19,20 @@
 #define NPY_ALIGNED NPY_ARRAY_ALIGNED
 #endif
 
+
+#ifndef NPY_ARRAY_F_CONTIGUOUS
+#define NPY_ARRAY_F_CONTIGUOUS NPY_F_CONTIGUOUS
+#endif
+
+#ifndef NPY_ARRAY_CARRAY
+#define NPY_ARRAY_CARRAY NPY_CARRAY
+#endif
 /* Macros to extract array attributes.
  */
 #define is_array(a)            ((a) && PyArray_Check((PyArrayObject *)a))
 #define array_type(a)          (int)(PyArray_TYPE((PyArrayObject *)a))
 #define array_is_contiguous(a) (PyArray_ISCONTIGUOUS((PyArrayObject *)a))
+#define array_is_fortran_contiguous(a) (PyArray_ISFORTRAN((PyArrayObject *)a))
 #define array_is_native(a)     (PyArray_ISNOTSWAPPED((PyArrayObject *)a))
 
 #if NDARRAY_VERSION < 0x01000009
@@ -189,6 +198,33 @@ PyArrayObject* make_contiguous(PyArrayObject* ary, int* is_new_object,
   return result;
 }
 
+#define PyArray_FortranContiguousFromObject(op, type, min_depth, max_depth) \
+PyArray_FromAny(op, PyArray_DescrFromType(type), min_depth, \
+max_depth, NPY_ARRAY_DEFAULT | \
+NPY_ARRAY_ENSUREARRAY | NPY_ARRAY_F_CONTIGUOUS, NULL)
+
+/* Given a PyArrayObject, check to see if it is contiguous.  If so,
+ * return the input pointer and flag it as not a new object.  If it is
+ * not contiguous, create a new PyArrayObject using the original data,
+ * flag it as a new object and return the pointer.
+ */
+PyArrayObject* make_fortran_contiguous(PyArrayObject* ary, int* is_new_object,
+                               int min_dims, int max_dims) {
+  PyArrayObject* result;
+  if (array_is_fortran_contiguous(ary)) {
+    result = ary;
+    *is_new_object = 0;
+  }
+  else {
+    result = (PyArrayObject*) PyArray_FortranContiguousFromObject((PyObject*)ary, 
+							   array_type(ary), 
+							   min_dims,
+							   max_dims);
+    *is_new_object = 1;
+  }
+  return result;
+}
+
 /* Convert a given PyObject to a contiguous PyArrayObject of the
  * specified type.  If the input object is not a contiguous
  * PyArrayObject, a new one will be created and the new object flag
@@ -213,6 +249,31 @@ PyArrayObject* obj_to_array_contiguous_allow_conversion(PyObject* input,
   return ary1;
 }
 
+
+/* Convert a given PyObject to a contiguous PyArrayObject of the
+ * specified type.  If the input object is not a contiguous
+ * PyArrayObject, a new one will be created and the new object flag
+ * will be set.
+ */
+PyArrayObject* obj_to_array_fortran_contiguous_allow_conversion(PyObject* input,
+                                                        int typecode,
+                                                        int* is_new_object) {
+  int is_new1 = 0;
+  int is_new2 = 0;
+  PyArrayObject* ary2;
+  PyArrayObject* ary1 = obj_to_array_allow_conversion(input, typecode, 
+						      &is_new1);
+  if (ary1) {
+    ary2 = make_fortran_contiguous(ary1, &is_new2, 0, 0);
+    if ( is_new1 && is_new2) {
+      Py_DECREF(ary1);
+    }
+    ary1 = ary2;    
+  }
+  *is_new_object = is_new1 || is_new2;
+  return ary1;
+}
+
 /* Test whether a python object is contiguous.  If array is
  * contiguous, return 1.  Otherwise, set the python error string and
  * return 0.
@@ -220,6 +281,21 @@ PyArrayObject* obj_to_array_contiguous_allow_conversion(PyObject* input,
 int require_contiguous(PyArrayObject* ary) {
   int contiguous = 1;
   if (!array_is_contiguous(ary)) {
+    PyErr_SetString(PyExc_TypeError,
+		    "Array must be contiguous.  A non-contiguous array was given");
+    contiguous = 0;
+  }
+  return contiguous;
+}
+
+
+/* Test whether a python object is contiguous.  If array is
+ * contiguous, return 1.  Otherwise, set the python error string and
+ * return 0.
+ */
+int require_fortran_contiguous(PyArrayObject* ary) {
+  int contiguous = 1;
+  if (!array_is_fortran_contiguous(ary)) {
     PyErr_SetString(PyExc_TypeError,
 		    "Array must be contiguous.  A non-contiguous array was given");
     contiguous = 0;

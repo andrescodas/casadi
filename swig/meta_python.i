@@ -345,7 +345,7 @@ int meta< std::vector< double > >::as(PyObject * p,std::vector<double > &m) {
       SWIG_Error_return(SWIG_TypeError, "std::vector<double>: array byte order should be native.");
     // Make sure we have a contigous array with double datatype
     int array_is_new_object;
-    PyArrayObject* array = obj_to_array_contiguous_allow_conversion(p,NPY_DOUBLE,&array_is_new_object);
+    PyArrayObject* array = obj_to_array_fortran_contiguous_allow_conversion(p,NPY_DOUBLE,&array_is_new_object);
     if (!array) { PyErr_Print() ; SWIG_Error_return(SWIG_TypeError, "asMatrixDouble: no luck converting numpy array to double"); }
     double* d=(double*) array_data(array);
     
@@ -379,9 +379,9 @@ int meta< std::vector< int > >::as(PyObject * p,std::vector< int > &m) {
       
     // Make sure we have a contigous array with int datatype
     int array_is_new_object;
-    PyArrayObject* array = obj_to_array_contiguous_allow_conversion(p,NPY_INT,&array_is_new_object);
+    PyArrayObject* array = obj_to_array_fortran_contiguous_allow_conversion(p,NPY_INT,&array_is_new_object);
     if (!array) { // Trying LONG
-      array = obj_to_array_contiguous_allow_conversion(p,NPY_LONG,&array_is_new_object);
+      array = obj_to_array_fortran_contiguous_allow_conversion(p,NPY_LONG,&array_is_new_object);
       if (!array) { PyErr_Print() ; SWIG_Error_return(SWIG_TypeError, "std::vector<int>: no luck converting numpy array to int. Better don't use unsigned datatypes."); }
       long* temp=(long*) array_data(array);
       m.resize(size);
@@ -786,7 +786,7 @@ int meta< CasADi::Matrix<double> >::as(PyObject * p,CasADi::Matrix<double> &m) {
       SWIG_Error_return(SWIG_TypeError, "asMatrixDouble: array byte order should be native.");
     // Make sure we have a contigous array with double datatype
     int array_is_new_object;
-    PyArrayObject* array = obj_to_array_contiguous_allow_conversion(p,NPY_DOUBLE,&array_is_new_object);
+    PyArrayObject* array = obj_to_array_fortran_contiguous_allow_conversion(p,NPY_DOUBLE,&array_is_new_object);
     if (!array) { PyErr_Print() ; SWIG_Error_return(SWIG_TypeError, "asMatrixDouble: no luck converting numpy array to double"); }
     
     double* d=(double*) array_data(array);
