@@ -892,7 +892,7 @@ void SymbolicOCP::sortODE(){
   
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  sp.dulmageMendelsohnQQQ(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
 
   // Permute equations
   vector<SX> ode_new(ode.size());
@@ -920,7 +920,7 @@ void SymbolicOCP::sortALG(){
   
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  sp.dulmageMendelsohnQQQ(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
 
   // Permute equations
   vector<SX> alg_new(alg.size());
@@ -949,7 +949,7 @@ void SymbolicOCP::sortDependentParameters(){
   
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  sp.dulmageMendelsohnQQQ(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
 
   // Permute variables
   vector<Variable> pd_new(pd.size());
@@ -978,7 +978,7 @@ void SymbolicOCP::makeExplicit(){
 
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  int nb = sp.dulmageMendelsohnQQQ(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  int nb = sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
 
   // Permute equations
   vector<SX> ode_new(ode.size());
@@ -1070,7 +1070,7 @@ void SymbolicOCP::eliminateAlgebraic(){
 
   // BLT transformation
   vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-  int nb = sp.dulmageMendelsohnQQQ(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
+  int nb = sp.dulmageMendelsohn(rowperm,colperm,rowblock,colblock,coarse_rowblock,coarse_colblock);
 
   // Permute equations
   vector<SX> alg_new(alg.size());
