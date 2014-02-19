@@ -428,7 +428,7 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T>::Matrix(const std::vector<T>& x) : sparsity_(CCSSparsity(1,x.size(),true)), data_(x){
+  Matrix<T>::Matrix(int dum1, int dum2, int dum3, const std::vector<T>& x) : sparsity_(CCSSparsity(x.size(),1,true)), data_(x){
   }
 
   template<class T>

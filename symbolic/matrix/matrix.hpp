@@ -139,7 +139,7 @@ namespace CasADi{
      * Thanks to implicit conversion, you can pretend that Matrix(const SX& x); exists.
      * Note: above remark applies only to C++, not python or octave interfaces
      */
-    Matrix(const std::vector<T>& x);
+    Matrix(int dum1, int dum2, int dum3, const std::vector<T>& x);
     
     /// Construct dense matrix from a vector with the elements in column major ordering
     Matrix(int dum1, int dum2, int dum3, const std::vector<T>& x, int nrow, int ncol);

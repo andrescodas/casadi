@@ -91,7 +91,7 @@ int main(){
   X0[2] = 1; // initial mass
 
   // Integrate over all intervals
-  MX X=X0;
+  MX X=DMatrix(00,00,00,X0);
   for(int k=0; k<nu; ++k){
     // Assemble the input
     vector<MX> input(2);

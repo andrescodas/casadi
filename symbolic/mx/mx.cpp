@@ -50,8 +50,8 @@ namespace CasADi{
     assignNode(ConstantMX::create(x));
   }
 
-  MX::MX(const vector<double>& x){
-    assignNode(ConstantMX::create(x));
+  MX::MX(int dum1, int dum2, int dum3, const vector<double>& x){
+    assignNode(ConstantMX::create(DMatrix(00,00,00,x)));
   }
 
   MX::MX(int dum1, int dum2, int dum3, const string& name, int nrow, int ncol){

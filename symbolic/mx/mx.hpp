@@ -75,7 +75,7 @@ namespace CasADi{
     MX(const MX& x);
 
     /** \brief  Create vector constant (also implicit type conversion) */
-    MX(const std::vector<double> &x);
+    MX(int dum1, int dum2, int dum3, const std::vector<double> &x);
     
     /** \brief  Create sparse matrix constant (also implicit type conversion) */
     MX(const Matrix<double> &x);

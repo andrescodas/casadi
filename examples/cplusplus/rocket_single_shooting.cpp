@@ -123,7 +123,7 @@ int main(){
   MX U = msym("U",nu); 
 
   // Integrate over all intervals
-  MX X=X0;
+  MX X=DMatrix(00,00,00,X0);
   for(int k=0; k<nu; ++k){
     // Assemble the input
     vector<MX> input(INTEGRATOR_NUM_IN);
