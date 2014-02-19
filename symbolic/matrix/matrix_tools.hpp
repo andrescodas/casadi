@@ -1129,7 +1129,7 @@ namespace CasADi{
     
       // Make a BLT transformation of A
       std::vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
-      A.sparsity().dulmageMendelsohn(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock);
+      A.sparsity().dulmageMendelsohnQQQ(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock);
 
       // Permute the right hand side
       Matrix<T> bperm = b(rowperm,ALL);
