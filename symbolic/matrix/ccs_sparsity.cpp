@@ -661,5 +661,12 @@ namespace CasADi{
     getCache().clear();
   }
 
+  CCSSparsity CCSSparsity::lower(bool includeDiagonal) const{
+    return (*this)->lower(includeDiagonal);
+  }
+
+  CCSSparsity CCSSparsity::upper(bool includeDiagonal) const{
+    return (*this)->upper(includeDiagonal);
+  }
 
 } // namespace CasADi

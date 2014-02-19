@@ -184,6 +184,12 @@ namespace CasADi{
     /// is upper triangular?
     bool triu() const;
 
+    /// Get lower triangular part
+    CCSSparsity lower(bool includeDiagonal) const;
+
+    /// Get lower triangular part
+    CCSSparsity upper(bool includeDiagonal) const;
+
     /// Get the dimension as a string
     std::string dimString() const;
 

@@ -204,34 +204,12 @@ namespace CasADi{
     return a.transpose();
   }
 
+  CCSSparsity upperSparsity(const CCSSparsity& a, bool includeDiagonal){
+    return a.upper(includeDiagonal);
+  }
 
-  CCSSparsity upperSparsity(const CCSSparsity& a, bool includeDiagonal) {
-    const std::vector<int> & row= a.row();
-    std::vector<int> col = a.getCol();
-  
-
-    std::vector<int> new_row;   // new row
-    std::vector<int> new_col;   // new col
-  
-    int offset = (includeDiagonal ? 1 : 0);
-  
-    // Find size
-    int n=0;
-    for (int k=0;k<col.size();k++) n+= col[k] + offset > row[k];
-    new_row.resize(n);
-    new_col.resize(n);
-  
-    // populate return vector
-    int cnt=0;
-    for (int k=0;k<col.size();k++) {
-      if (col[k] + offset > row[k]) {
-        new_row[cnt]=row[k];
-        new_col[cnt]=col[k];
-        cnt++;
-      }
-    }
-    return sp_triplet(a.size1(), a.size2(), new_row, new_col);
-  
+  CCSSparsity lowerSparsity(const CCSSparsity& a, bool includeDiagonal){
+    return a.lower(includeDiagonal);
   }
 
   std::vector<int> upperNZ(const CCSSparsity& a) {

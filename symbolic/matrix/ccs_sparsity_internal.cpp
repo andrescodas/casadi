@@ -3514,6 +3514,38 @@ namespace CasADi{
     return true;
   }
 
+  CCSSparsity CCSSparsityInternal::lower(bool includeDiagonal) const{
+    vector<int> colind, row;
+    colind.reserve(ncol_+1);
+    colind.push_back(0);
+    for(int cc=0; cc<ncol_; ++cc){
+      for(int el=colind_[cc]; el<colind_[cc+1]; ++el){
+        int rr=row_[el];
+        if(rr>cc || (includeDiagonal && rr==cc)){
+          row.push_back(rr);
+        }
+      }
+      colind.push_back(row.size());
+    }
+    return CCSSparsity(nrow_,ncol_,colind,row);
+  }
+
+  CCSSparsity CCSSparsityInternal::upper(bool includeDiagonal) const{
+    vector<int> colind, row;
+    colind.reserve(ncol_+1);
+    colind.push_back(0);
+    for(int cc=0; cc<ncol_; ++cc){
+      for(int el=colind_[cc]; el<colind_[cc+1]; ++el){
+        int rr=row_[el];
+        if(rr<cc || (includeDiagonal && rr==cc)){
+          row.push_back(rr);
+        }
+      }
+      colind.push_back(row.size());
+    }
+    return CCSSparsity(nrow_,ncol_,colind,row);
+  }
+
   
 } // namespace CasADi
 

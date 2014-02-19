@@ -372,8 +372,14 @@ namespace CasADi{
     /// Is lower triangular?
     bool tril() const;
 
-    /// is upper triangular?
+    /// Is upper triangular?
     bool triu() const;
+
+    /// Get lower triangular part
+    CCSSparsity lower(bool includeDiagonal=true) const;
+
+    /// Get lower triangular part
+    CCSSparsity upper(bool includeDiagonal=true) const;
 
     /// Do the rows appear sequentially on each column (if strictly==true, then do not allow multiple entries)
     bool rowsSequential(bool strictly=true) const;

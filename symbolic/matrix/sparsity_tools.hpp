@@ -136,12 +136,17 @@ namespace CasADi{
   
   /**
    * \brief Return the upper part of the sparsity pattern
-   * 
    * \param includeDiagonal specify wether the diagonal must be part of the result
-   *
    * \see sp_triu
    */
   CCSSparsity upperSparsity(const CCSSparsity& a, bool includeDiagonal = true);
+
+  /**
+   * \brief Return the lower part of the sparsity pattern
+   * \param includeDiagonal specify wether the diagonal must be part of the result
+   * \see sp_tril
+   */
+  CCSSparsity lowerSparsity(const CCSSparsity& a, bool includeDiagonal = true);
   
   /**
    * \brief Return the non-zero entries that make up the upper part of the provided matrix
