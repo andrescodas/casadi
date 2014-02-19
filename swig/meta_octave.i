@@ -117,7 +117,7 @@ bool meta< CasADi::GenericType >::couldbe(const octave_value& p) {
 }
 
 /// CasADi::Matrix<double>
-template<> char meta< CasADi::Matrix<double> >::expected_message[] = "Expecting numpy.array2D, numpy.matrix, csr_matrix, DMatrix";
+template<> char meta< CasADi::Matrix<double> >::expected_message[] = "Expecting numpy.array2D, numpy.matrix, csc_matrix, DMatrix";
 
 template <>
 int meta< CasADi::Matrix<double> >::as(const octave_value& p,CasADi::Matrix<double> &m) {

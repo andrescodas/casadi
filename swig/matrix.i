@@ -282,10 +282,10 @@ PyObject* arrayView() {
 %}
 
 %pythoncode %{
-  def toCsr_matrix(self):
+  def toCsc_matrix(self):
     import numpy as n
-    from scipy.sparse import csr_matrix
-    return csr_matrix( (list(self.data()),self.sparsity().col(),self.sparsity().rowind()), shape = (self.size1(),self.size2()), dtype=n.double )
+    from scipy.sparse import csc_matrix
+    return csc_matrix( (list(self.data()),self.row(),self.colind()), shape = self.shape, dtype=n.double )
 %}
 
 %pythoncode %{
@@ -375,13 +375,13 @@ binopsFull(const CasADi::MX & b,,CasADi::MX,CasADi::MX)
   %pythoncode %{
     def __setstate__(self, state):
         if state:
-          self.__init__(state["nrow"],state["ncol"],state["col"],state["rowind"])
+          self.__init__(state["nrow"],state["ncol"],state["colind"],state["row"])
         else:
           self.__init__()
 
     def __getstate__(self):
         if self.isNull(): return {}
-        return {"nrow": self.size1(), "ncol": self.size2(), "col": numpy.array(self.col(),dtype=int), "rowind": numpy.array(self.rowind(),dtype=int)}
+        return {"nrow": self.size1(), "ncol": self.size2(), "colind": numpy.array(self.colind(),dtype=int), "row": numpy.array(self.row(),dtype=int)}
   %}
   
 }
@@ -555,7 +555,7 @@ template<> swig_type_info** meta< CasADi::IndexList >::name = &SWIGTYPE_p_CasADi
 
 Accepts: 2D numpy.ndarray, numpy.matrix (contiguous, native byte order, datatype double)   - DENSE
          1D numpy.ndarray, numpy.matrix (contiguous, native byte order, datatype double)   - SPARSE
-         2D scipy.csr_matrix
+         2D scipy.csc_matrix
 */
 
 %typemap(in,numinputs=1) (double * val,int len,int stride1, int stride2,Sparsity sp)  {
@@ -604,16 +604,16 @@ Accepts: 2D numpy.ndarray, numpy.matrix (contiguous, native byte order, datatype
 			} else {
 			  SWIG_exception_fail(SWIG_TypeError, "Expecting 1D or 2D numpy.ndarray");
 			}
-	} else if (PyObjectHasClassName(p,"csr_matrix")) {
+	} else if (PyObjectHasClassName(p,"csc_matrix")) {
 			$5 = CasADi::SPARSE;
 			PyObject * narray=PyObject_GetAttrString( p, "data"); // narray needs to be decref'ed
 			if (!(array_is_contiguous(narray) && array_is_native(narray) && array_type(narray)==NPY_DOUBLE))
-			  SWIG_exception_fail(SWIG_TypeError, "csr_matrix should be contiguous, native & of datatype double");
+			  SWIG_exception_fail(SWIG_TypeError, "csc_matrix should be contiguous, native & of datatype double");
 			$2 = array_size(narray,0);
 			if (!(array_size(narray,0)==arg1->size() ) ) {
 					std::stringstream s;
 				  s << "SWIG::typemap(in) (double *val,int len,Sparsity sp) " << std::endl;
-				  s << "csr_matrix does not have correct number of non-zero elements.";
+				  s << "csc_matrix does not have correct number of non-zero elements.";
 				  s << "Expecting " << arg1->size() << " non-zeros, but got " << array_size(narray,0) << " instead.";
           const std::string tmp(s.str());
           const char* cstr = tmp.c_str();
@@ -631,7 +631,7 @@ Accepts: 2D numpy.ndarray, numpy.matrix (contiguous, native byte order, datatype
 /**
 Accepts: 2D numpy.ndarray, numpy.matrix (any setting of contiguous, native byte order, datatype)  - DENSE
          1D numpy.ndarray, numpy.matrix (any setting of contiguous, native byte order, datatype double) - SPARSE
-         2D scipy.csr_matrix (any setting of contiguous, native byte order, datatype double) 
+         2D scipy.csc_matrix (any setting of contiguous, native byte order, datatype double) 
 */
 %typemap(in,numinputs=1) (const double *val,int len,Sparsity sp) (PyArrayObject* array, int array_is_new_object=0)  {
 	PyObject* p = $input;
@@ -666,14 +666,14 @@ Accepts: 2D numpy.ndarray, numpy.matrix (any setting of contiguous, native byte 
 			} else {
 			  SWIG_exception_fail(SWIG_TypeError, "Expecting 1D or 2D numpy.ndarray");
 			}
-	} else if (PyObjectHasClassName(p,"csr_matrix")) {
+	} else if (PyObjectHasClassName(p,"csc_matrix")) {
 			$3 = CasADi::SPARSE;
 			PyObject * narray=PyObject_GetAttrString( p, "data"); // narray needs to be decref'ed
 			$2 = array_size(narray,0);
 			if (!(array_size(narray,0)==arg1->size() ) ) {
 					std::stringstream s;
 				  s << "SWIG::typemap(in) (const double *val,int len,Sparsity sp) " << std::endl;
-				  s << "csr_matrix does not have correct number of non-zero elements.";
+				  s << "csc_matrix does not have correct number of non-zero elements.";
 				  s << "Expecting " << arg1->size() << " non-zeros, but got " << array_size(narray,0) << " instead.";
           const std::string tmp(s.str());
           const char* cstr = tmp.c_str();
@@ -696,7 +696,7 @@ Accepts: 2D numpy.ndarray, numpy.matrix (any setting of contiguous, native byte 
 
 %typemap(typecheck,precedence=SWIG_TYPECHECK_INTEGER) (double * val,int len,int stride1, int stride2,Sparsity sp) {
   PyObject* p = $input;
-  if (((is_array(p) && array_numdims(p) < 3)  && array_type(p)!=NPY_OBJECT)|| PyObjectHasClassName(p,"csr_matrix")) {
+  if (((is_array(p) && array_numdims(p) < 3)  && array_type(p)!=NPY_OBJECT)|| PyObjectHasClassName(p,"csc_matrix")) {
     $1=1;
   } else {
     $1=0;
@@ -705,7 +705,7 @@ Accepts: 2D numpy.ndarray, numpy.matrix (any setting of contiguous, native byte 
 
 %typemap(typecheck,precedence=SWIG_TYPECHECK_INTEGER) (const double * val,int len,Sparsity sp) {
   PyObject* p = $input;
-  if (((is_array(p) && array_numdims(p) < 3)  && array_type(p)!=NPY_OBJECT)|| PyObjectHasClassName(p,"csr_matrix")) {
+  if (((is_array(p) && array_numdims(p) < 3)  && array_type(p)!=NPY_OBJECT)|| PyObjectHasClassName(p,"csc_matrix")) {
     $1=1;
   } else {
     $1=0;

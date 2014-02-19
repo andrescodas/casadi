@@ -715,7 +715,7 @@ bool meta< CasADi::SX >::couldbe(PyObject * p) {
 
 
 /// CasADi::Matrix<int>
-template<> char meta< CasADi::Matrix<int> >::expected_message[] = "Expecting numpy.array2D, numpy.matrix, csr_matrix, IMatrix";
+template<> char meta< CasADi::Matrix<int> >::expected_message[] = "Expecting numpy.array2D, numpy.matrix, csc_matrix, IMatrix";
 
 template <>
 int meta< CasADi::Matrix<int> >::as(PyObject * p,CasADi::Matrix<int> &m) {
@@ -754,7 +754,7 @@ meta_vector(CasADi::Matrix<int>)
 meta_vector(std::vector< CasADi::Matrix<int> >)
 
 /// CasADi::Matrix<double>
-template<> char meta< CasADi::Matrix<double> >::expected_message[] = "Expecting numpy.array2D, numpy.matrix, csr_matrix, DMatrix";
+template<> char meta< CasADi::Matrix<double> >::expected_message[] = "Expecting numpy.array2D, numpy.matrix, csc_matrix, DMatrix";
 
 template <>
 int meta< CasADi::Matrix<double> >::as(PyObject * p,CasADi::Matrix<double> &m) {
@@ -797,7 +797,7 @@ int meta< CasADi::Matrix<double> >::as(PyObject * p,CasADi::Matrix<double> &m) {
     // Free memory
     if (array_is_new_object)
       Py_DECREF(array); 
-  } else if(PyObjectHasClassName(p,"csr_matrix")) { // scipy's csr_matrix will be cast to sparse Matrix<double>
+  } else if(PyObjectHasClassName(p,"csc_matrix")) { // scipy's csc_matrix will be cast to sparse Matrix<double>
     PyObject * narray=PyObject_GetAttrString( p, "data"); // need's to be decref'ed
     if (!(is_array(narray) && array_numdims(narray)==1))
       SWIG_Error_return(SWIG_TypeError, "asMatrixDouble: data should be numpy array");
@@ -808,27 +808,27 @@ int meta< CasADi::Matrix<double> >::as(PyObject * p,CasADi::Matrix<double> &m) {
     double* d=(double*) array_data(array);
     std::vector<double> v(d,d+size);
 
-    // Get the dimensions of the csr_matrix
+    // Get the dimensions of the csc_matrix
     PyObject * shape = PyObject_GetAttrString( p, "shape"); // need's to be decref'ed
     int nrows=PyInt_AsLong(PyTuple_GetItem(shape,0));
     int ncols=PyInt_AsLong(PyTuple_GetItem(shape,1));
 		
-    // Construct the 'col' vector needed for initialising the correct sparsity
-    PyObject * col = PyObject_GetAttrString(p,"indices"); // need's to be decref'ed
-    if (!(is_array(col) && array_numdims(col)==1 && array_type(col)==NPY_INT)) { PyErr_Print(); SWIG_Error_return(SWIG_TypeError, "asMatrixDouble: data.indices should be numpy array");}
+    // Construct the 'row' vector needed for initialising the correct sparsity
+    PyObject * row = PyObject_GetAttrString(p,"indices"); // need's to be decref'ed
+    if (!(is_array(row) && array_numdims(row)==1 && array_type(row)==NPY_INT)) { PyErr_Print(); SWIG_Error_return(SWIG_TypeError, "asMatrixDouble: data.indices should be numpy array");}
     
-    int* cold=(int*) array_data(col);
-    std::vector<int> colv(cold,cold+size);
+    int* rowd=(int*) array_data(row);
+    std::vector<int> rowv(rowd,rowd+size);
     
-    // Construct the 'rowind' vector needed for initialising the correct sparsity
-    PyObject * rowind = PyObject_GetAttrString(p,"indptr"); // need's to be decref'ed
-    if (!(is_array(rowind) && array_numdims(rowind)==1 && array_type(rowind)==NPY_INT)) { PyErr_Print();   SWIG_Error_return(SWIG_TypeError, "asMatrixDouble: data.indptr should be numpy array");}
-    int* rowindd=(int*) array_data(rowind);
-    std::vector<int> rowindv(rowindd,rowindd+(nrows+1));
+    // Construct the 'colind' vector needed for initialising the correct sparsity
+    PyObject * colind = PyObject_GetAttrString(p,"indptr"); // need's to be decref'ed
+    if (!(is_array(colind) && array_numdims(colind)==1 && array_type(colind)==NPY_INT)) { PyErr_Print();   SWIG_Error_return(SWIG_TypeError, "asMatrixDouble: data.indptr should be numpy array");}
+    int* colindd=(int*) array_data(colind);
+    std::vector<int> colindv(colindd,colindd+(ncols+1));
     
-    m = CasADi::Matrix<double>(nrows,ncols,colv,rowindv, v);
+    m = CasADi::Matrix<double>(nrows,ncols,colindv,rowv, v);
     
-    Py_DECREF(narray);Py_DECREF(shape);Py_DECREF(col);Py_DECREF(rowind);
+    Py_DECREF(narray);Py_DECREF(shape);Py_DECREF(colind);Py_DECREF(row);
     
     if (array_is_new_object)
       Py_DECREF(array);
@@ -863,7 +863,7 @@ int meta< CasADi::Matrix<double> >::as(PyObject * p,CasADi::Matrix<double> &m) {
 // Disallow 1D numpy arrays. Allowing them may introduce conflicts with other typemaps or overloaded methods
 template <>
 bool meta< CasADi::Matrix<double> >::couldbe(PyObject * p) {
-  return meta< double >::couldbe(p) || (((is_array(p) && array_numdims(p)==2) && array_type(p)!=NPY_OBJECT) || PyObjectHasClassName(p,"csr_matrix") || PyObjectHasClassName(p,"DMatrix")) || meta< double >::couldbe_sequence(p) || meta< CasADi::Matrix<int> >::couldbe(p) || PyObject_HasAttrString(p,"__DMatrix__");
+  return meta< double >::couldbe(p) || (((is_array(p) && array_numdims(p)==2) && array_type(p)!=NPY_OBJECT) || PyObjectHasClassName(p,"csc_matrix") || PyObjectHasClassName(p,"DMatrix")) || meta< double >::couldbe_sequence(p) || meta< CasADi::Matrix<int> >::couldbe(p) || PyObject_HasAttrString(p,"__DMatrix__");
 }
 
 meta_vector(CasADi::Matrix<double>)
