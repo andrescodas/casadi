@@ -38,14 +38,14 @@ namespace CasADi{
     const CCSSparsity& A = st_[QP_STRUCT_A];
     const CCSSparsity& H = st_[QP_STRUCT_H];
   
-    n_ = H.size1();
-    nc_ = A.isNull() ? 0 : A.size2();
+    n_ = H.size2();
+    nc_ = A.isNull() ? 0 : A.size1();
   
     if (!A.isNull()) {
-      casadi_assert_message(A.size1()==n_,
+      casadi_assert_message(A.size2()==n_,
                             "Got incompatible dimensions.   min          x'Hx + G'x s.t.   LBA <= Ax <= UBA :" << std::endl <<
                             "H: " << H.dimString() << " - A: " << A.dimString() << std::endl <<
-                            "We need: H.size1()==A.size1()" << std::endl
+                            "We need: H.size2()==A.size2()" << std::endl
                             );
     } 
   
@@ -56,8 +56,8 @@ namespace CasADi{
                           );
 
     // Sparsity
-    CCSSparsity x_sparsity = sp_dense(1,n_);
-    CCSSparsity bounds_sparsity = sp_dense(1,nc_);
+    CCSSparsity x_sparsity = sp_dense(n_,1);
+    CCSSparsity bounds_sparsity = sp_dense(nc_,1);
   
     // Input arguments
     setNumInputs(QP_SOLVER_NUM_IN);
