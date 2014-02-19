@@ -78,6 +78,13 @@ namespace CasADi{
   CCSSparsity sp_triu(int n);
 
   /**
+     \brief Create a lower triangular square sparsity pattern
+     
+     \see lowerSparsity
+  **/
+  CCSSparsity sp_tril(int n);
+
+  /**
      \brief Create diagonal square sparsity pattern
   **/
   CCSSparsity sp_diag(int n);

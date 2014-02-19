@@ -47,26 +47,45 @@ namespace CasADi{
   }
 
   CCSSparsity sp_triu(int n) {
-    if (n<0)
-      throw CasadiException("sp_triu expects a positive integer as argument");
-
-    int c=0;
-    int t=0;
-    std::vector< int >          row((n*(n+1))/2,0);
-    for (int i=0;i<(n*(n+1))/2;i++) {
-      row[i]=t++;
-      if (t>c) {
-        t=0;
-        c++;
+    casadi_assert_message(n>=0,"sp_triu expects a positive integer as argument");
+    int nrow=n, ncol=n;
+    std::vector<int> colind, row;
+    colind.reserve(ncol+1);
+    row.reserve((n*(n+1))/2);
+    
+    // Loop over columns
+    colind.push_back(0);
+    for(int cc=0; cc<ncol; ++cc){
+      // Loop over rows for the upper triangular half
+      for(int rr=0; rr<=cc; ++rr){
+        row.push_back(rr);
       }
+      colind.push_back(row.size());
     }
 
-    std::vector< int >          colind(n+1,0);
-    c=0;
-    for (int i=1;i<n+1;i++)
-      colind[i]=colind[i-1]+1+(c++);
+    // Return the pattern
+    return CCSSparsity(nrow,ncol,colind,row);
+  }
 
-    return CCSSparsity(n,n,colind,row);
+  CCSSparsity sp_tril(int n) {
+    casadi_assert_message(n>=0,"sp_tril expects a positive integer as argument");
+    int nrow=n, ncol=n;
+    std::vector<int> colind, row;
+    colind.reserve(ncol+1);
+    row.reserve((n*(n+1))/2);
+    
+    // Loop over columns
+    colind.push_back(0);
+    for(int cc=0; cc<ncol; ++cc){
+      // Loop over rows for the lower triangular half
+      for(int rr=cc; rr<nrow; ++rr){
+        row.push_back(rr);
+      }
+      colind.push_back(row.size());
+    }
+
+    // Return the pattern
+    return CCSSparsity(nrow,ncol,colind,row);
   }
 
   CCSSparsity sp_diag(int n){
