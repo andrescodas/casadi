@@ -54,7 +54,7 @@ class typemaptests(casadiTestCase):
       
   def test_1(self):
     self.message("DMatrix -> DMatrix")
-    arrays = [DMatrix(00,00,00,4,3,[0,2,2,3],[1,2,1],[3,2.3,8])]
+    arrays = [DMatrix(4,3,[0,2,2,3],[1,2,1],[3,2.3,8])]
     for i in range(len(arrays)):
       m = arrays[i]
       zt=trans(trans(m))
@@ -84,7 +84,7 @@ class typemaptests(casadiTestCase):
   def test_setget(self):
     self.message("DMatrix set/get")
     data = n.array([3,2.3,8])
-    dm=DMatrix(00,00,00,4,3,[0,2,2,3],[1,2,1],[3,2.3,8])
+    dm=DMatrix(4,3,[0,2,2,3],[1,2,1],[3,2.3,8])
     
     if scipy_available:
       c=dm.toCsr_matrix()
@@ -130,7 +130,7 @@ class typemaptests(casadiTestCase):
 
   def test_conversion(self):
     self.message("DMatrix conversions")
-    w = DMatrix(00,00,00,4,3,[0,2,2,3],[1,2,1],[3,2.3,8])
+    w = DMatrix(4,3,[0,2,2,3],[1,2,1],[3,2.3,8])
     d = array([[1,2,3],[4,5,6]])
     
     list(w.data())
@@ -152,7 +152,7 @@ class typemaptests(casadiTestCase):
   def test_autoconversion(self):
     self.message("Auto conversion DMatrix")
     x=array([2.3])
-    s = DMatrix(00,00,00,[[1,3],[2,4]])
+    s = DMatrix([[1,3],[2,4]])
     n = array(s)
     
     self.checkarray(x[0]*s,s*x[0],"")
@@ -216,7 +216,7 @@ class typemaptests(casadiTestCase):
 
   def test_autoconversionMX(self):
     self.message("Auto conversion MX")
-    s = DMatrix(00,00,00,[[1,3],[2,4]])
+    s = DMatrix([[1,3],[2,4]])
     x = SX(3)
     y = MX(3)
     
@@ -300,7 +300,7 @@ class typemaptests(casadiTestCase):
       doit(z,s,lambda z,s: copysign(z,s))
       doit(z,s,lambda z,s: copysign(s,z))
 
-    nums = [array([[1,2],[3,4]]),DMatrix(00,00,00,[[1,3],[2,4]]), DMatrix(4), array(4),4.0,4]
+    nums = [array([[1,2],[3,4]]),DMatrix([[1,3],[2,4]]), DMatrix(4), array(4),4.0,4]
         
     ## numeric & SXMatrix
     for s in nums:
@@ -378,7 +378,7 @@ class typemaptests(casadiTestCase):
       doit(z,s,lambda z,s: s==z)
       doit(z,s,lambda z,s: s!=z)
       
-    nums = [array([[1,2],[3,4]]),DMatrix(00,00,00,[[1,3],[2,4]]), DMatrix(4), array(4),4.0,4]
+    nums = [array([[1,2],[3,4]]),DMatrix([[1,3],[2,4]]), DMatrix(4), array(4),4.0,4]
         
     ## numeric & SXMatrix
     for s in nums:
@@ -589,14 +589,14 @@ class typemaptests(casadiTestCase):
   def test_DMatrixSXMatrixcast(self):
     self.message("Casting DMatrix to SXMatrix")
     
-    W = SXMatrix(DMatrix(00,00,00,[[1,4],[2,5],[3,6]]))
+    W = SXMatrix(DMatrix([[1,4],[2,5],[3,6]]))
 
     self.assertEqual(W.size2(),2)
     self.assertEqual(W.size1(),3)
 
   def test_DMatrixMXcast(self):
     self.message("Casting DMatrix to MX")
-    W = MX(DMatrix(00,00,00,[[1,4],[2,5],[3,6]]))
+    W = MX(DMatrix([[1,4],[2,5],[3,6]]))
     
     self.assertEqual(W.size2(),2)
     self.assertEqual(W.size1(),3)
@@ -604,7 +604,7 @@ class typemaptests(casadiTestCase):
   def test_DMatrixSXMatrix(self):
     self.message("Casting DMatrix to SXMatrix")
     
-    w = DMatrix(00,00,00,[[1,4],[2,5],[3,6]])
+    w = DMatrix([[1,4],[2,5],[3,6]])
     x = SX("x")
     
     f = SXFunction([x],[w])
@@ -615,7 +615,7 @@ class typemaptests(casadiTestCase):
 
   def test_DMatrixMX(self):
     self.message("Casting DMatrix to MX")
-    w = DMatrix(00,00,00,[[1,4],[2,5],[3,6]])
+    w = DMatrix([[1,4],[2,5],[3,6]])
     x = msym("x")
     
     f = MXFunction([x],[w])
@@ -626,7 +626,7 @@ class typemaptests(casadiTestCase):
     self.assertEqual(W.size1(),3)
 
   def test_sharedarray(self):
-    w = DMatrix(00,00,00,[[1,3],[2,4]])
+    w = DMatrix([[1,3],[2,4]])
     W = w.toArray(shared=True)
     self.checkarray(w,W,"shared")
     
@@ -639,7 +639,7 @@ class typemaptests(casadiTestCase):
   def test_setgetslicetransp(self):
     self.message("set/get on DMatrix using tranpose")
     
-    w = DMatrix(00,00,00,[[0,0],[0,0]])
+    w = DMatrix([[0,0],[0,0]])
 
     A = matrix([[1.0,2],[3,4]])
     B = matrix([[4.0,5],[6,7]])
@@ -652,7 +652,7 @@ class typemaptests(casadiTestCase):
   def test_setgetslice(self):
     self.message("set/get on DMatrix using slices")
     
-    w = DMatrix(00,00,00,[[0],[0]])
+    w = DMatrix([[0],[0]])
 
     A = matrix([[1.0,2],[3,4]])
     B = matrix([[4.0,5],[6,7]])
@@ -662,7 +662,7 @@ class typemaptests(casadiTestCase):
     w.get(B[0,:])
     self.checkarray(B[0,:],A[0,:],"get")
     
-    w = DMatrix(00,00,00,[[0,0]])
+    w = DMatrix([[0,0]])
 
 
     w.set(A[:,0])
@@ -670,7 +670,7 @@ class typemaptests(casadiTestCase):
     w.get(B[:,0])
     self.checkarray(B[:,0],A[:,0],"get")
     
-    w = DMatrix(00,00,00,[[1,3],[2,4]])
+    w = DMatrix([[1,3],[2,4]])
     A = zeros((8,7))
     B = zeros((8,7))
     w.get(A[2:7:3,:7:4])
@@ -707,13 +707,13 @@ class typemaptests(casadiTestCase):
     self.message("std::vector<double> typemap.")
     a = array([0,2,2,3])
     b = array([0.738,0.39,0.99])
-    DMatrix(00,00,00,4,3,[0,2,2,3],[1,2,1],[0.738,0.39,0.99])
-    DMatrix(00,00,00,4,3,(0,2,2,3),[1,2,1],[0.738,0.39,0.99])
-    DMatrix(00,00,00,4,3,list(a),[1,2,1],[0.738,0.39,0.99])
-    DMatrix(00,00,00,4,3,a,[1,2,1],[0.738,0.39,0.99])
-    DMatrix(00,00,00,4,3,[0,2,2,3],[1,2,1],(0.738,0.39,0.99))
-    DMatrix(00,00,00,4,3,[0,2,2,3],[1,2,1],list(b))
-    DMatrix(00,00,00,4,3,[0,2,2,3],[1,2,1],b)
+    DMatrix(4,3,[0,2,2,3],[1,2,1],[0.738,0.39,0.99])
+    DMatrix(4,3,(0,2,2,3),[1,2,1],[0.738,0.39,0.99])
+    DMatrix(4,3,list(a),[1,2,1],[0.738,0.39,0.99])
+    DMatrix(4,3,a,[1,2,1],[0.738,0.39,0.99])
+    DMatrix(4,3,[0,2,2,3],[1,2,1],(0.738,0.39,0.99))
+    DMatrix(4,3,[0,2,2,3],[1,2,1],list(b))
+    DMatrix(4,3,[0,2,2,3],[1,2,1],b)
     
   def test_imatrix(self):
     self.message("IMatrix")
@@ -776,13 +776,13 @@ class typemaptests(casadiTestCase):
 
     class Foo:
       def __IMatrix__(self):
-        return IMatrix(00,00,00,[[4,2],[6,4]])
+        return IMatrix([[4,2],[6,4]])
         
     self.assertEqual(det(Foo()),4)
 
     class Foo:
       def __IMatrix__(self):
-        return SXMatrix(00,00,00,[[4,2],[6,4]])
+        return SXMatrix([[4,2],[6,4]])
         
     self.assertRaises(TypeError,lambda :det(Foo()))
     

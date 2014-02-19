@@ -36,10 +36,10 @@ except:
 class QCQPSolverTests(casadiTestCase):
 
   def testboundsviol(self):
-    H = 1e-6*DMatrix(00,00,00,[[1,0],[0,1]]).T
+    H = 1e-6*DMatrix([[1,0],[0,1]]).T
     G = DMatrix([2,1])
     A = DMatrix.sparse(2,0)
-    P = 2*DMatrix(00,00,00,[[1,0],[0,2]]).T
+    P = 2*DMatrix([[1,0],[0,2]]).T
     Q = DMatrix([2,3])
     R = DMatrix([-7])
     LBX = DMatrix([ -inf,-3 ])
@@ -67,10 +67,10 @@ class QCQPSolverTests(casadiTestCase):
     #   x,y
     #
     #  s.t.  x^2 + 2y^2 + 2*x + 3*y - 7 <= 0
-    H = 1e-6*DMatrix(00,00,00,[[1,0],[0,1]]).T
+    H = 1e-6*DMatrix([[1,0],[0,1]]).T
     G = DMatrix([2,1])
     A = DMatrix.sparse(2,0)
-    P = 2*DMatrix(00,00,00,[[1,0],[0,2]]).T
+    P = 2*DMatrix([[1,0],[0,2]]).T
     Q = DMatrix([2,3])
     R = DMatrix([-7])
     LBX = DMatrix([ -inf, -inf ])
@@ -107,7 +107,7 @@ class QCQPSolverTests(casadiTestCase):
     #  min  1/2 x' H x + 2 x + y
     #   x,y
     #
-    H = DMatrix(00,00,00,[[1,0],[0,1]]).T
+    H = DMatrix([[1,0],[0,1]]).T
     G = DMatrix([2,1])
     A = DMatrix.sparse(2,0)
     P = DMatrix.sparse(2,0)

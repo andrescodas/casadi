@@ -763,7 +763,7 @@ int meta< CasADi::Matrix<double> >::as(PyObject * p,CasADi::Matrix<double> &m) {
     int* colindd=(int*) array_data(colind);
     std::vector<int> colindv(colindd,colindd+(ncols+1));
     
-    m = CasADi::Matrix<double>(00,00,00,nrows,ncols,colindv,rowv,v);
+    m = CasADi::Matrix<double>(nrows,ncols,colindv,rowv,v);
     
     Py_DECREF(narray);Py_DECREF(shape);Py_DECREF(row);Py_DECREF(colind);
     
@@ -845,7 +845,7 @@ int meta< CasADi::Matrix<CasADi::SX> >::as(PyObject * p,CasADi::Matrix<CasADi::S
 		  PyArray_ITER_NEXT(it);
 		}
     Py_DECREF(it);
-    m = CasADi::Matrix< CasADi::SX >(00,00,00,v,nrows,ncols);
+    m = CasADi::Matrix< CasADi::SX >(v,nrows,ncols);
   } else if (PyObject_HasAttrString(p,"__SXMatrix__")) {
     char name[] = "__SXMatrix__";
     PyObject *cr = PyObject_CallMethod(p, name,0);

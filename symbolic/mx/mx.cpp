@@ -50,23 +50,23 @@ namespace CasADi{
     assignNode(ConstantMX::create(x));
   }
 
-  MX::MX(int dum1, int dum2, int dum3, const vector<double>& x){
-    assignNode(ConstantMX::create(DMatrix(00,00,00,x)));
+  MX::MX(const vector<double>& x){
+    assignNode(ConstantMX::create(DMatrix(x)));
   }
 
-  MX::MX(int dum1, int dum2, int dum3, const string& name, int nrow, int ncol){
+  MX::MX(const string& name, int nrow, int ncol){
     assignNode(new SymbolicMX(name,nrow,ncol));
   }
 
-  MX::MX(int dum1, int dum2, int dum3, const std::string& name,const std::pair<int,int>& rc) {
+  MX::MX(const std::string& name,const std::pair<int,int>& rc) {
     assignNode(new SymbolicMX(name,rc.first,rc.second));
   }
 
-  MX::MX(int dum1, int dum2, int dum3, const string& name, const CCSSparsity& sp){
+  MX::MX(const string& name, const CCSSparsity& sp){
     assignNode(new SymbolicMX(name,sp));
   }
 
-  MX::MX(int dum1, int dum2, int dum3, int nrow, int ncol){
+  MX::MX(int nrow, int ncol){
     assignNode(new Constant<CompiletimeConst<0> >(CCSSparsity(nrow,ncol)));
   }
 
@@ -505,7 +505,7 @@ namespace CasADi{
 
   MX MX::repmat(const MX& x, int nrow, int ncol){
     if(x.scalar()){
-      return MX(00,00,00,nrow,ncol,x);
+      return MX(nrow,ncol,x);
     } else {
       casadi_assert_message(0,"not implemented");
       return MX();
@@ -513,7 +513,7 @@ namespace CasADi{
   }
 
   MX MX::sparse(int nrow, int ncol){
-    return MX(00,00,00,nrow,ncol);
+    return MX(nrow,ncol);
   }
 
   MX MX::sparse(const std::pair<int, int> &rc){
@@ -621,7 +621,7 @@ namespace CasADi{
     *this = ret;
   }
 
-  MX::MX(int dum1, int dum2, int dum3, int nrow, int ncol, const MX& val){
+  MX::MX(int nrow, int ncol, const MX& val){
     // Make sure that val is scalar
     casadi_assert(val.scalar());
     casadi_assert(val.dense());

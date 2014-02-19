@@ -51,13 +51,13 @@ class SDPtests(casadiTestCase):
     
     c = DMatrix([48,-8,20])
 
-    F = -horzcat([DMatrix(00,00,00,[[10,4],[4,0]]).T,DMatrix(00,00,00,[[0,0],[0,-8]]).T,DMatrix(00,00,00,[[0,-8],[-8,-2]]).T])
+    F = -horzcat([DMatrix([[10,4],[4,0]]).T,DMatrix([[0,0],[0,-8]]).T,DMatrix([[0,-8],[-8,-2]]).T])
 
     makeSparse(F)
 
     F.printMatrix()
 
-    G = -DMatrix(00,00,00,[[-11,0],[0,23]]).T
+    G = -DMatrix([[-11,0],[0,23]]).T
 
     makeSparse(G)
     
@@ -71,13 +71,13 @@ class SDPtests(casadiTestCase):
     
     c = DMatrix([48,-8,20])
 
-    F = -horzcat([DMatrix(00,00,00,[[10,4],[4,0]]).T,DMatrix(00,00,00,[[0,0],[0,-8]]).T,DMatrix(00,00,00,[[0,-8],[-8,-2]]).T])
+    F = -horzcat([DMatrix([[10,4],[4,0]]).T,DMatrix([[0,0],[0,-8]]).T,DMatrix([[0,-8],[-8,-2]]).T])
 
     makeSparse(F)
 
     F.printMatrix()
 
-    G = -DMatrix(00,00,00,[[-11,0],[0,23]]).T
+    G = -DMatrix([[-11,0],[0,23]]).T
 
     makeSparse(G)
 
@@ -124,9 +124,9 @@ class SDPtests(casadiTestCase):
     #     ->    -2 <= x <= 2 
     #  
     c = DMatrix([1])
-    Fi = [DMatrix(00,00,00,[[0,1],[1,0]]).T]
+    Fi = [DMatrix([[0,1],[1,0]]).T]
     F = horzcat(Fi)
-    G = DMatrix(00,00,00,[[2,0],[0,2]]).T
+    G = DMatrix([[2,0],[0,2]]).T
     for sdpsolver, sdp_options in sdpsolvers:
       sdp = sdpsolver(sdpStruct(a=A.sparsity(),g=G.sparsity(),f=F.sparsity()))
       sdp.setOption(sdp_options)
@@ -165,9 +165,9 @@ class SDPtests(casadiTestCase):
     #
     #  [-1 0;0 0] x + [0 0;0 -1] y - [0 -2; -2 0]
     c = DMatrix([2,1])
-    Fi = [DMatrix(00,00,00,[[-1,0],[0,0]]),DMatrix(00,00,00,[[0,0],[0,-1]])]
+    Fi = [DMatrix([[-1,0],[0,0]]),DMatrix([[0,0],[0,-1]])]
     F = horzcat(Fi)
-    G = DMatrix(00,00,00,[[0,-2],[-2,0]]).T
+    G = DMatrix([[0,-2],[-2,0]]).T
     for sdpsolver, sdp_options in sdpsolvers:
       sdp = sdpsolver(sdpStruct(a=A.sparsity(),g=G.sparsity(),f=F.sparsity()))
       sdp.setOption(sdp_options)
@@ -289,9 +289,9 @@ class SDPtests(casadiTestCase):
       self.checkarray(sdp.getOutput("cost"),DMatrix(2),digits=5)
       self.checkarray(sdp.getOutput("dual_cost"),DMatrix(2),digits=5)
       self.checkarray(sdp.getOutput("x"),DMatrix([1,0]),digits=5)
-      self.checkarray(sdp.getOutput("p"),DMatrix(00,00,00,[[0,0,0],[0,1,0],[0,0,0]]).T,digits=5)
+      self.checkarray(sdp.getOutput("p"),DMatrix([[0,0,0],[0,1,0],[0,0,0]]).T,digits=5)
       
-      self.checkarray(sdp.getOutput("dual"),DMatrix(00,00,00,[[2,0,0],[0,0,0],[0,0,1]]).T,digits=5)
+      self.checkarray(sdp.getOutput("dual"),DMatrix([[2,0,0],[0,0,0],[0,0,1]]).T,digits=5)
 
   def test_linear_interpolation1_bounds(self):
     self.message("linear interpolation1")
@@ -333,7 +333,7 @@ class SDPtests(casadiTestCase):
 
   def test_linear_interpolation1_A_boundsviol(self):
 
-    A = DMatrix(00,00,00,[[1,1]]).T
+    A = DMatrix([[1,1]]).T
     c = DMatrix([2,3])
     
     for sdpsolver, sdp_options in sdpsolvers:
@@ -369,7 +369,7 @@ class SDPtests(casadiTestCase):
     #                 
     #  solution: x0=1, x1=0
     
-    A = DMatrix(00,00,00,[[1,1]]).T
+    A = DMatrix([[1,1]]).T
     c = DMatrix([2,3])
     
     for sdpsolver, sdp_options in sdpsolvers:
@@ -420,8 +420,8 @@ class SDPtests(casadiTestCase):
       self.checkarray(sdp.getOutput("cost"),DMatrix(0),digits=5)
       self.checkarray(sdp.getOutput("dual_cost"),DMatrix(0),digits=5)
       self.checkarray(sdp.getOutput("x"),DMatrix([0,0]),digits=5)
-      self.checkarray(sdp.getOutput("p"),DMatrix(00,00,00,[[1,0,0],[0,0,0],[0,0,0]]).T,digits=5)
-      self.checkarray(sdp.getOutput("dual"),DMatrix(00,00,00,[[0,0,0],[0,2,0],[0,0,3]]).T,digits=5)
+      self.checkarray(sdp.getOutput("p"),DMatrix([[1,0,0],[0,0,0],[0,0,0]]).T,digits=5)
+      self.checkarray(sdp.getOutput("dual"),DMatrix([[0,0,0],[0,2,0],[0,0,3]]).T,digits=5)
 
   def test_linear_interpolation(self):
     self.message("linear interpolation")
@@ -472,7 +472,7 @@ class SDPtests(casadiTestCase):
     
     A = DMatrix.sparse(3,0)
     
-    Fi = [-DMatrix(00,00,00,[[10,4],[4,0]]).T,-DMatrix(00,00,00,[[0,0],[0,-8]]).T,-DMatrix(00,00,00,[[0,-8],[-8,-2]]).T]
+    Fi = [-DMatrix([[10,4],[4,0]]).T,-DMatrix([[0,0],[0,-8]]).T,-DMatrix([[0,-8],[-8,-2]]).T]
 
     F = horzcat(Fi)
 
@@ -480,7 +480,7 @@ class SDPtests(casadiTestCase):
 
     F.printMatrix()
 
-    G = -DMatrix(00,00,00,[[-11,0],[0,23]]).T
+    G = -DMatrix([[-11,0],[0,23]]).T
 
     makeSparse(G)
 
@@ -499,7 +499,7 @@ class SDPtests(casadiTestCase):
       self.checkarray(sdp.getOutput("dual_cost"),DMatrix(-41.9),digits=5)
       self.checkarray(sdp.getOutput("x"),DMatrix([-1.1,-2.7375,-0.55]),digits=5)
       
-      self.checkarray(sdp.getOutput("dual"),DMatrix(00,00,00,[[5.9,-1.375],[-1.375,1]]).T,digits=5)
+      self.checkarray(sdp.getOutput("dual"),DMatrix([[5.9,-1.375],[-1.375,1]]).T,digits=5)
       self.checkarray(sdp.getOutput("p"),DMatrix.zeros(2,2),digits=5)
       
       try:
@@ -542,7 +542,7 @@ class SDPtests(casadiTestCase):
 
     A = DMatrix.sparse(5,0)
 
-    G = -blkdiag([DMatrix(00,00,00,[[-1.4,-3.2],[-3.2,-28]]).T,DMatrix(00,00,00,[[15,-12,2.1],[-12,16,-3.8],[2.1,-3.8,15]]).T,1.8,-4.0]);
+    G = -blkdiag([DMatrix([[-1.4,-3.2],[-3.2,-28]]).T,DMatrix([[15,-12,2.1],[-12,16,-3.8],[2.1,-3.8,15]]).T,1.8,-4.0]);
     
     sp = G.sparsity()
     
@@ -584,7 +584,7 @@ class SDPtests(casadiTestCase):
     perm = [5,2,1,0,6,3,4]
     permi = lookupvector(perm,len(perm))
     
-    G = -blkdiag([DMatrix(00,00,00,[[-1.4,-3.2],[-3.2,-28]]).T,DMatrix(00,00,00,[[15,-12,2.1],[-12,16,-3.8],[2.1,-3.8,15]]).T,1.8,-4.0]);
+    G = -blkdiag([DMatrix([[-1.4,-3.2],[-3.2,-28]]).T,DMatrix([[15,-12,2.1],[-12,16,-3.8],[2.1,-3.8,15]]).T,1.8,-4.0]);
 
     sp = G.sparsity()
     
@@ -640,11 +640,11 @@ class SDPtests(casadiTestCase):
     #     <=>    xy >= 4
     #
     #  [-1 0;0 0] x + [0 0;0 -1] y - [0 -2; -2 0]
-    h = DMatrix(00,00,00,[[3,0.25],[0.25,1]]).T*2
+    h = DMatrix([[3,0.25],[0.25,1]]).T*2
     c = DMatrix([2,1])
-    Fi = [DMatrix(00,00,00,[[-1,0],[0,0]]).T,DMatrix(00,00,00,[[0,0],[0,-1]]).T]
+    Fi = [DMatrix([[-1,0],[0,0]]).T,DMatrix([[0,0],[0,-1]]).T]
     F = horzcat(Fi)
-    G = DMatrix(00,00,00,[[0,-2],[-2,0]]).T
+    G = DMatrix([[0,-2],[-2,0]]).T
     for sdqpsolver, sdqp_options in sdqpsolvers:
       sdqp = sdqpsolver(sdqpStruct(h=h.sparsity(),a=A.sparsity(),g=G.sparsity(),f=F.sparsity()))
       sdqp.setOption(sdqp_options)
@@ -660,7 +660,7 @@ class SDPtests(casadiTestCase):
       
       self.checkarray(sdqp.getOutput("x"),DMatrix([1.50958,2.64975]),digits=5)
       self.checkarray(sdqp.getOutput("cost"),DMatrix([21.52654031]),digits=5)
-      self.checkarray(sdqp.getOutput("dual"),DMatrix(00,00,00,[[12.38233609,9.346044429],[9.346044429,7.054286514]]).T,digits=3)
+      self.checkarray(sdqp.getOutput("dual"),DMatrix([[12.38233609,9.346044429],[9.346044429,7.054286514]]).T,digits=3)
       
   def test_simple_sdqp_inactive(self):
     self.message("scalar")
@@ -686,11 +686,11 @@ class SDPtests(casadiTestCase):
     #     <=>    xy >= 4
     #
     #  [-1 0;0 0] x + [0 0;0 -1] y - [0 -2; -2 0]
-    h = DMatrix(00,00,00,[[3,0.25],[0.25,1]]).T*2
+    h = DMatrix([[3,0.25],[0.25,1]]).T*2
     c = DMatrix([-8,-10])
-    Fi = [DMatrix(00,00,00,[[-1,0],[0,0]]).T,DMatrix(00,00,00,[[0,0],[0,-1]]).T]
+    Fi = [DMatrix([[-1,0],[0,0]]).T,DMatrix([[0,0],[0,-1]]).T]
     F = horzcat(Fi)
-    G = DMatrix(00,00,00,[[0,-2],[-2,0]]).T
+    G = DMatrix([[0,-2],[-2,0]]).T
     for sdqpsolver, sdqp_options in sdqpsolvers:
       sdqp = sdqpsolver(sdqpStruct(h=h.sparsity(),a=A.sparsity(),g=G.sparsity(),f=F.sparsity()))
       sdqp.setOption(sdqp_options)
@@ -706,7 +706,7 @@ class SDPtests(casadiTestCase):
       
       self.checkarray(sdqp.getOutput("x"),DMatrix([0.9361702353,4.765957454]),digits=5)
       self.checkarray(sdqp.getOutput("cost"),DMatrix([-27.57446808]),digits=5)
-      self.checkarray(sdqp.getOutput("dual"),DMatrix(00,00,00,[[0,0],[0,0]]).T,digits=5)
+      self.checkarray(sdqp.getOutput("dual"),DMatrix([[0,0],[0,0]]).T,digits=5)
       
 if __name__ == '__main__':
     unittest.main()

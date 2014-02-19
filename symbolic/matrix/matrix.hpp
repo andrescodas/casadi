@@ -108,16 +108,16 @@ namespace CasADi{
 #endif // SWIG
     
     /// Empty n-by-m matrix constructor
-    Matrix(int dum1, int dum2, int dum3, int nrow, int ncol);
+    Matrix(int nrow, int ncol);
     
     /// Dense n-by-m matrix filled with val constructor
-    Matrix(int dum1, int dum2, int dum3, int nrow, int ncol, const T& val);
+    Matrix(int nrow, int ncol, const T& val);
 
     /// Sparse n-by-m matrix filled with given sparsity
-    Matrix(int dum1, int dum2, int dum3, int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row, const std::vector<T>& d=std::vector<T>());
+    Matrix(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row, const std::vector<T>& d=std::vector<T>());
 
     /// Dense matrix constructor with data given as vector of vectors
-    explicit Matrix(int dum1, int dum2, int dum3, const std::vector< std::vector<T> >& m);
+    explicit Matrix(const std::vector< std::vector<T> >& m);
     
     /// Sparse matrix with a given sparsity
     explicit Matrix(const CCSSparsity& sparsity, const T& val=0);
@@ -139,10 +139,10 @@ namespace CasADi{
      * Thanks to implicit conversion, you can pretend that Matrix(const SX& x); exists.
      * Note: above remark applies only to C++, not python or octave interfaces
      */
-    Matrix(int dum1, int dum2, int dum3, const std::vector<T>& x);
+    Matrix(const std::vector<T>& x);
     
     /// Construct dense matrix from a vector with the elements in column major ordering
-    Matrix(int dum1, int dum2, int dum3, const std::vector<T>& x, int nrow, int ncol);
+    Matrix(const std::vector<T>& x, int nrow, int ncol);
 
     /// Convert to scalar type
     const T toScalar() const;

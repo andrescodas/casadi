@@ -119,7 +119,7 @@ class casadiTestCase(unittest.TestCase):
       else:
         return ret
     else:
-      ret = DMatrix(00,00,00,[valuegenerator() for i in range(n*m)],m,n)
+      ret = DMatrix([valuegenerator() for i in range(n*m)],m,n)
       if symm:
         return (ret + ret.T)/2
       else:

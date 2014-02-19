@@ -57,13 +57,13 @@ namespace CasADi{
     MX();
 
     /** \brief  Construct a symbolic matrix (matrix variable) */
-    explicit MX(int dum1, int dum2, int dum3, const std::string& name, int nrow=1, int ncol=1);
+    explicit MX(const std::string& name, int nrow=1, int ncol=1);
 
     /** \brief  Construct a symbolic matrix (matrix variable) */
-    explicit MX(int dum1, int dum2, int dum3, const std::string& name, const std::pair<int,int> &rc);
+    explicit MX(const std::string& name, const std::pair<int,int> &rc);
 
     /** \brief  Construct a symbolic matrix (matrix variable) */
-    explicit MX(int dum1, int dum2, int dum3, const std::string& name, const CCSSparsity & sp);
+    explicit MX(const std::string& name, const CCSSparsity & sp);
 
     /** \brief  Construct MX with a given sparsity */
     explicit MX(const CCSSparsity& sp, const MX& val=0);
@@ -75,16 +75,16 @@ namespace CasADi{
     MX(const MX& x);
 
     /** \brief  Create vector constant (also implicit type conversion) */
-    MX(int dum1, int dum2, int dum3, const std::vector<double> &x);
+    MX(const std::vector<double> &x);
     
     /** \brief  Create sparse matrix constant (also implicit type conversion) */
     MX(const Matrix<double> &x);
 
     /** \brief  Matrix with all zeros */
-    MX(int dum1, int dum2, int dum3, int nrow, int ncol);
+    MX(int nrow, int ncol);
     
     /** \brief  Dense matrix filled with value val */
-    MX(int dum1, int dum2, int dum3, int nrow, int ncol, const MX& val);
+    MX(int nrow, int ncol, const MX& val);
     
     /** \brief  Destructor */
     virtual ~MX();

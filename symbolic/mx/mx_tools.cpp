@@ -508,11 +508,11 @@ namespace CasADi{
   }
 
   MX msym(const std::string& name, int nrow, int ncol){
-    return MX(00,00,00,name,nrow,ncol);
+    return MX(name,nrow,ncol);
   }
 
   MX msym(const std::string& name, const std::pair<int,int> & rc) {
-    return MX(00,00,00,name,rc.first,rc.second);
+    return MX(name,rc.first,rc.second);
   }
 
   MX msym(const Matrix<double>& x){
@@ -520,7 +520,7 @@ namespace CasADi{
   }
 
   MX msym(const std::string& name, const CCSSparsity& sp) {
-    return MX(00,00,00,name,sp);
+    return MX(name,sp);
   }
 
   bool isEqual(const MX& ex1,const MX &ex2){

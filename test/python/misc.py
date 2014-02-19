@@ -59,7 +59,7 @@ class Misctests(casadiTestCase):
     print_sparsity()
     
   def test_sanity(self):
-    DMatrix(00,00,00,4,3,[0,2,2,3],[1,2,1],[0.738,0.39,0.99])
+    DMatrix(4,3,[0,2,2,3],[1,2,1],[0.738,0.39,0.99])
     self.assertRaises(RuntimeError,lambda : DMatrix(4,4,[1,2,1],[0,2,2,3],[0.738,0.39,0.99]))
     self.assertRaises(RuntimeError,lambda : DMatrix(3,4,[1,2,1],[0,2,2,12],[0.738,0.39,0.99]))
     self.assertRaises(RuntimeError,lambda : DMatrix(3,4,[1,2,1],[-10,2,2,3],[0.738,0.39,0.99]))

@@ -44,7 +44,7 @@ except:
 class LPSolverTests(casadiTestCase):
 
   def testboundsviol(self):
-    A = DMatrix(00,00,00,[[-1,1],[1,1],[1,-2]]).T
+    A = DMatrix([[-1,1],[1,1],[1,-2]]).T
     LBA = DMatrix([ -inf, 2, -inf ])
     UBA = DMatrix([ 1, -inf, 4 ])
     LBX = DMatrix([ -inf, 0 ])
@@ -69,7 +69,7 @@ class LPSolverTests(casadiTestCase):
       with self.assertRaises(Exception):
         solver.solve()
 
-    A = DMatrix(00,00,00,[[-1,1],[1,1],[1,-2]]).T
+    A = DMatrix([[-1,1],[1,1],[1,-2]]).T
     LBA = DMatrix([ -inf, 2, -inf ])
     UBA = DMatrix([ 1, inf, 4 ])
     LBX = DMatrix([ -inf, 0 ])
@@ -227,7 +227,7 @@ class LPSolverTests(casadiTestCase):
     #         0 <=     y       
     #
 
-    A = DMatrix(00,00,00,[[-1,1],[1,1],[1,-2]]).T
+    A = DMatrix([[-1,1],[1,1],[1,-2]]).T
     LBA = DMatrix([ -inf, 2, -inf ])
     UBA = DMatrix([ 1, inf, 4 ])
     LBX = DMatrix([ -inf, 0 ])
