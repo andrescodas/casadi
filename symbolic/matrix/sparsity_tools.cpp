@@ -137,44 +137,19 @@ namespace CasADi{
     return ret;
   }
 
-  CCSSparsity sp_colrow(const std::vector<int>& row_, const std::vector<int>& col_, int nrow, int ncol) {
-    std::vector<int> col = col_;
-    std::vector<int> row = row_;
-    
-    std::vector<int> colind(ncol+1);
-    std::vector<int> row_new(col.size()*row.size());
-    
-    std::sort(col.begin(),col.end());
-    std::sort(row.begin(),row.end());
-  
-    // resulting row: the entries of row are repeated col.size() times
-    for (int i=0;i<col.size();i++)
-      std::copy(row.begin(),row.end(),row_new.begin()+row.size()*i);
-
-    // resulting colind: first entry is always zero
-    int cnt=0;
-    int z=0;
-    colind[0]=0;
-    int k=0;
-    try {
-      for (k=0; k < col.size(); k++) {
-        // resulting colind: fill up colind entries with copies
-        while (z<col[k])
-          colind.at(++z)=cnt;
-        
-        // resulting colind: add row.size() at each col[k]
-        colind.at(col[k]+1)=(cnt+=row.size());
+  CCSSparsity sp_rowcol(const std::vector<int>& row, const std::vector<int>& col, int nrow, int ncol) {
+    std::vector<int> all_rows, all_cols;
+    all_rows.reserve(row.size()*col.size());
+    all_cols.reserve(row.size()*col.size());
+    for(vector<int>::const_iterator c_it=col.begin(); c_it!=col.end(); ++c_it){
+      casadi_assert_message(*c_it>=0 && *c_it<ncol, "sp_rowcol: Column index out of bounds");
+      for(vector<int>::const_iterator r_it=row.begin(); r_it!=row.end(); ++r_it){
+        casadi_assert_message(*r_it>=0 && *r_it<nrow, "sp_rowcol: Row index out of bounds");
+        all_rows.push_back(*r_it);
+        all_cols.push_back(*c_it);
       }
-      while (z<ncol)
-        colind.at(++z)=cnt;                 
     }
-    catch (out_of_range& oor) {
-      casadi_error(
-                   "sp_colrow: out-of-range error." << endl <<
-                   "The " << k << "th entry of col (" << col[k] << ") was bigger or equal to the specified total number of cols (" << ncol << ")"
-                   );
-    }
-    return CCSSparsity(nrow, ncol, colind, row_new);
+    return sp_triplet(nrow,ncol,all_rows,all_cols);
   }
 
   std::vector<int> getNZDense(const CCSSparsity &sp) {

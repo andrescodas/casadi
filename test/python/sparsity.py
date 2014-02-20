@@ -87,13 +87,13 @@ class Sparsitytests(casadiTestCase):
     
     c=a.patternIntersection(b)
     for k in range(c.size()):
-      ind = (c.getRow()[k],c.col(k))
+      ind = (c.row(k),c.getCol()[k])
       self.assertTrue(ind in nza and ind in nzb)
         
     c = a * b
     self.assertEquals(c.size(),len(nza.intersection(nzb)))
     for k in range(c.size()):
-      ind = (c.getRow()[k],c.col(k))
+      ind = (c.row(k),c.getCol()[k])
       self.assertTrue(ind in nza and ind in nzb)
        
   def test_getNZDense(self):
@@ -127,7 +127,7 @@ class Sparsitytests(casadiTestCase):
 
     self.checkarray(DMatrix(sp,1),z,"enlarge")
     self.message(":sparse")
-    sp = CCSSparsity(3,4,[1,2,1],[0,2,2,3])
+    sp = CCSSparsity(4,3,[0,2,2,3],[1,2,1]).T
     n = DMatrix(sp,1)
     z = numpy.zeros((7,8))
     for i in range(3):
@@ -404,13 +404,13 @@ class Sparsitytests(casadiTestCase):
 
       Ar = AP[rowperm,colperm]
       
-      ST = Ar.T.sparsity()
+      ST = Ar.sparsity()
       
       blocks = []
       acc = -1
       mc = 0
       for i in range(0,Ar.size1()):
-        mc = max(ST.col()[ST.rowind()[i+1]-1],mc)
+        mc = max(ST.row()[ST.colind()[i+1]-1],mc)
         if mc==i:
           blocks.append(i-acc)
           acc = i

@@ -106,10 +106,10 @@ namespace CasADi{
      **/
   CCSSparsity sp_banded(int n, int p);
   
-  /** \brief Construct a block sparsity pattern from (col,row) vectors
+  /** \brief Construct a block sparsity pattern from (row,col) vectors
       
    */
-  CCSSparsity sp_colrow(const std::vector<int>& row, const std::vector<int>& col, int nrow, int ncol);
+  CCSSparsity sp_rowcol(const std::vector<int>& row, const std::vector<int>& col, int nrow, int ncol);
   
   
   /** \brief Get the indices of all non-zero elements as they would appear in a Dense matrix  
