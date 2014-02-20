@@ -39,11 +39,11 @@ class Sparsitytests(casadiTestCase):
              (0,0),
              (2,2)])
     
-    a = CRSSparsity(4,5)
+    a = CCSSparsity(4,5)
     for i in nza:
       a.getNZ(i[0],i[1])
       
-    b = CRSSparsity(4,5)  
+    b = CCSSparsity(4,5)  
     for i in nzb:
       b.getNZ(i[0],i[1])
       
@@ -77,11 +77,11 @@ class Sparsitytests(casadiTestCase):
              (2,2),
              (2,3)])
     
-    a = CRSSparsity(4,5)
+    a = CCSSparsity(4,5)
     for i in nza:
       a.getNZ(i[0],i[1])
       
-    b = CRSSparsity(4,5)  
+    b = CCSSparsity(4,5)  
     for i in nzb:
       b.getNZ(i[0],i[1])
     
@@ -100,7 +100,7 @@ class Sparsitytests(casadiTestCase):
     self.message("getNZDense")
     nza = set([  (0,0),(0,1),(2,0),(3,1)])
     
-    a = CRSSparsity(4,5)
+    a = CCSSparsity(4,5)
     for i in nza:
       a.getNZ(i[0],i[1])
       
@@ -113,8 +113,8 @@ class Sparsitytests(casadiTestCase):
     self.message("enlarge")
     import numpy
     self.message(":dense")
-    #sp = CRSSparsity(3,4,[1,2,1],[0,2,2,3])
-    sp = CRSSparsity(3,4,True)
+    #sp = CCSSparsity(3,4,[1,2,1],[0,2,2,3])
+    sp = CCSSparsity(3,4,True)
     
     col = [1,2,4]
     row = [0,3,4,6]
@@ -127,7 +127,7 @@ class Sparsitytests(casadiTestCase):
 
     self.checkarray(DMatrix(sp,1),z,"enlarge")
     self.message(":sparse")
-    sp = CRSSparsity(3,4,[1,2,1],[0,2,2,3])
+    sp = CCSSparsity(3,4,[1,2,1],[0,2,2,3])
     n = DMatrix(sp,1)
     z = numpy.zeros((7,8))
     for i in range(3):
@@ -152,7 +152,7 @@ class Sparsitytests(casadiTestCase):
              (2,4),
              (3,1)]
     
-    a = CRSSparsity(4,5)
+    a = CCSSparsity(4,5)
     for i in nza:
       a.getNZ(i[0],i[1])
       
@@ -164,7 +164,7 @@ class Sparsitytests(casadiTestCase):
     
     r = [0,1,3]
     c = [1,4]
-    a = CRSSparsity(4,5)
+    a = CCSSparsity(4,5)
     for i in r:
       for j in c:
         a.getNZ(i,j)
@@ -181,7 +181,7 @@ class Sparsitytests(casadiTestCase):
              (2,4),
              (3,1)])
     
-    a = CRSSparsity(4,5)
+    a = CCSSparsity(4,5)
     for i in nza:
       a.getNZ(i[0],i[1])
       
@@ -201,7 +201,7 @@ class Sparsitytests(casadiTestCase):
              (2,4),
              (3,1)])
     
-    a = CRSSparsity(4,5)
+    a = CCSSparsity(4,5)
     for i in nza:
       a.getNZ(i[0],i[1])
       
@@ -218,7 +218,7 @@ class Sparsitytests(casadiTestCase):
       self.assertEqual(s.numel(),16)
       
   def test_splower(self):
-    sp = CRSSparsity(3,4,[1,2,1],[0,2,2,3])
+    sp = CCSSparsity(3,4,[1,2,1],[0,2,2,3])
     print array(sp)
     print array(lowerSparsity(sp))
     print lowerNZ(sp)
@@ -226,7 +226,7 @@ class Sparsitytests(casadiTestCase):
     
   def test_diag(self):
     self.message("diag")
-    A = CRSSparsity(5,5)
+    A = CCSSparsity(5,5)
     A.getNZ(1,1)
     A.getNZ(2,4)
     A.getNZ(3,3)
@@ -239,7 +239,7 @@ class Sparsitytests(casadiTestCase):
     
     #print B
     
-    A = CRSSparsity(5,1)
+    A = CCSSparsity(5,1)
     A.getNZ(1,0)
     A.getNZ(2,0)
     A.getNZ(4,0)
@@ -251,7 +251,7 @@ class Sparsitytests(casadiTestCase):
     
     self.checkarray(array([0,1,2]),array(list(mapping)),"diag(vector)")
     
-    A = CRSSparsity(1,5)
+    A = CCSSparsity(1,5)
     A.getNZ(0,1)
     A.getNZ(0,2)
     A.getNZ(0,4)
@@ -312,7 +312,7 @@ class Sparsitytests(casadiTestCase):
              (3,1),
              (4,1)])
     
-    a = CRSSparsity(5,5)
+    a = CCSSparsity(5,5)
     for i in nza:
       a.getNZ(i[0],i[1])
       
@@ -345,7 +345,7 @@ class Sparsitytests(casadiTestCase):
              (3,1),
              (4,1)])
     
-    a = CRSSparsity(5,5)
+    a = CCSSparsity(5,5)
     for i in nza:
       a.getNZ(i[0],i[1])
       
@@ -375,7 +375,7 @@ class Sparsitytests(casadiTestCase):
              (2,4),
              (3,1)])
     
-    a = CRSSparsity(4,5)
+    a = CCSSparsity(4,5)
     for i in nza:
       a.getNZ(i[0],i[1])
       
