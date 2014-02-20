@@ -1771,7 +1771,7 @@ namespace CasADi{
   CCSSparsity CCSSparsityInternal::diag(std::vector<int>& mapping) const{
     if (ncol_==nrow_) {
       // Return object
-      CCSSparsity ret(1,0);
+      CCSSparsity ret(0,1);
       ret.reserve(std::min(size(),ncol_),ncol_);
     
       // Mapping
@@ -1781,7 +1781,7 @@ namespace CasADi{
       for(int i=0; i<ncol_; ++i){
       
         // Enlarge the return matrix
-        ret.resize(1,i+1);
+        ret.resize(i+1,1);
     
         // Get to the right nonzero of the col
         int el = colind_[i];
@@ -1793,7 +1793,7 @@ namespace CasADi{
       
         // Add element if nonzero on diagonal
         if(row_[el]==i){
-          ret.getNZ(0,i);
+          ret.getNZ(i,0);
           mapping.push_back(el);
         }
       }
