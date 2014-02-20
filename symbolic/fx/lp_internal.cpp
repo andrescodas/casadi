@@ -36,25 +36,25 @@ LPSolverInternal::LPSolverInternal(const std::vector<CCSSparsity> &st) : st_(st)
   
   const CCSSparsity& A = st_[LP_STRUCT_A];
  
-  n_ = A.size1();
-  nc_ = A.size2();
+  n_ = A.size2();
+  nc_ = A.size1();
   
 
   // Input arguments
   setNumInputs(LP_SOLVER_NUM_IN);
-  input(LP_SOLVER_A) = DMatrix::zeros(A);
-  input(LP_SOLVER_C) = DMatrix::zeros(1,n_);
-  input(LP_SOLVER_LBA) = -DMatrix::inf(1,nc_);
-  input(LP_SOLVER_UBA) = DMatrix::inf(1,nc_);
-  input(LP_SOLVER_LBX) = -DMatrix::inf(1,n_);
-  input(LP_SOLVER_UBX) = DMatrix::inf(1,n_);
+  input(LP_SOLVER_A) = DMatrix(A);
+  input(LP_SOLVER_C) = DMatrix::zeros(n_);
+  input(LP_SOLVER_LBA) = -DMatrix::inf(nc_);
+  input(LP_SOLVER_UBA) = DMatrix::inf(nc_);
+  input(LP_SOLVER_LBX) = -DMatrix::inf(n_);
+  input(LP_SOLVER_UBX) = DMatrix::inf(n_);
   
   // Output arguments
   setNumOutputs(LP_SOLVER_NUM_OUT);
-  output(LP_SOLVER_X) = DMatrix::zeros(1,n_);
+  output(LP_SOLVER_X) = DMatrix::zeros(n_);
   output(LP_SOLVER_COST) = 0.0;
-  output(LP_SOLVER_LAM_X) = DMatrix::zeros(1,n_);
-  output(LP_SOLVER_LAM_A) = DMatrix::zeros(1,nc_);
+  output(LP_SOLVER_LAM_X) = DMatrix::zeros(n_);
+  output(LP_SOLVER_LAM_A) = DMatrix::zeros(nc_);
   
   input_.scheme = SCHEME_LPSolverInput;
   output_.scheme = SCHEME_LPSolverOutput;

@@ -46,28 +46,28 @@ SDPSolverInternal::SDPSolverInternal(const std::vector<CCSSparsity> &st) : st_(s
   
   casadi_assert_message(G==G.transpose(),"SDPSolverInternal: Supplied G sparsity must symmetric but got " << G.dimString());
   
-  m_ = G.size2();
+  m_ = G.size1();
   
-  nc_ = A.size2();
-  n_ = A.size1();
+  nc_ = A.size1();
+  n_ = A.size2();
   
-  casadi_assert_message(F.size1()==m_,"SDPSolverInternal: Supplied F sparsity: number of rows (" << F.size1() <<  ")  must match m (" << m_ << ")");
+  casadi_assert_message(F.size2()==m_,"SDPSolverInternal: Supplied F sparsity: number of columns (" << F.size2() <<  ")  must match m (" << m_ << ")");
   
-  casadi_assert_message(F.size2()%n_==0,"SDPSolverInternal: Supplied F sparsity: number of cols (" << F.size1() <<  ")  must be an integer multiple of n (" << n_ << "), but got remainder " << F.size2()%n_);
+  casadi_assert_message(F.size1()%n_==0,"SDPSolverInternal: Supplied F sparsity: number of rows (" << F.size2() <<  ")  must be an integer multiple of n (" << n_ << "), but got remainder " << F.size1()%n_);
   
   // Input arguments
   setNumInputs(SDP_SOLVER_NUM_IN);
-  input(SDP_SOLVER_G) = DMatrix::zeros(G);
-  input(SDP_SOLVER_F) = DMatrix::zeros(F);
-  input(SDP_SOLVER_A) = DMatrix::zeros(A);
-  input(SDP_SOLVER_C) = DMatrix::zeros(1,n_);
-  input(SDP_SOLVER_LBX) = -DMatrix::inf(1,n_);
-  input(SDP_SOLVER_UBX) = DMatrix::inf(1,n_);
-  input(SDP_SOLVER_LBA) = -DMatrix::inf(1,nc_);
-  input(SDP_SOLVER_UBA) = DMatrix::inf(1,nc_);
+  input(SDP_SOLVER_G) = DMatrix(G,0);
+  input(SDP_SOLVER_F) = DMatrix(F,0);
+  input(SDP_SOLVER_A) = DMatrix(A,0);
+  input(SDP_SOLVER_C) = DMatrix::zeros(n_);
+  input(SDP_SOLVER_LBX) = -DMatrix::inf(n_);
+  input(SDP_SOLVER_UBX) = DMatrix::inf(n_);
+  input(SDP_SOLVER_LBA) = -DMatrix::inf(nc_);
+  input(SDP_SOLVER_UBA) = DMatrix::inf(nc_);
 
   for (int i=0;i<n_;i++) {
-    CCSSparsity s = input(SDP_SOLVER_F)(ALL,range(i*m_,(i+1)*m_)).sparsity();
+    CCSSparsity s = input(SDP_SOLVER_F)(range(i*m_,(i+1)*m_),ALL).sparsity();
     casadi_assert_message(s==s.transpose(),"SDPSolverInternal: Each supplied Fi must be symmetric. But got " << s.dimString() <<  " for i = " << i << ".");
   }
   
@@ -87,7 +87,7 @@ void SDPSolverInternal::init() {
   // Find aggregate sparsity pattern
   CCSSparsity aggregate = input(SDP_SOLVER_G).sparsity();
   for (int i=0;i<n_;++i) {
-    aggregate = aggregate + input(SDP_SOLVER_F)(ALL,range(i*m_,(i+1)*m_)).sparsity();
+    aggregate = aggregate + input(SDP_SOLVER_F)(range(i*m_,(i+1)*m_),ALL).sparsity();
   }
   
   // Detect block diagonal structure in this sparsity pattern
@@ -124,7 +124,7 @@ void SDPSolverInternal::init() {
       out[j] = G(p,p)(range(r[j],r[j+1]),range(r[j],r[j+1]));
     }
     for (int i=0;i<n_;++i) {
-      SXMatrix Fi = F(ALL,range(i*m_,(i+1)*m_))(p,p);
+      SXMatrix Fi = F(range(i*m_,(i+1)*m_),ALL)(p,p);
       for (int j=0;j<nb_;++j) {
         out[(i+1)*nb_+j] = Fi(range(r[j],r[j+1]),range(r[j],r[j+1]));
       }
@@ -135,13 +135,13 @@ void SDPSolverInternal::init() {
 
   // Output arguments
   setNumOutputs(SDP_SOLVER_NUM_OUT);
-  output(SDP_SOLVER_X) = DMatrix::zeros(1,n_);
+  output(SDP_SOLVER_X) = DMatrix::zeros(n_,1);
   output(SDP_SOLVER_P) = calc_p_? DMatrix(Pmapper_.output().sparsity(),0) : DMatrix();
   output(SDP_SOLVER_DUAL) = calc_dual_? DMatrix(Pmapper_.output().sparsity(),0) : DMatrix();
   output(SDP_SOLVER_COST) = 0.0;
   output(SDP_SOLVER_DUAL_COST) = 0.0;
-  output(SDP_SOLVER_LAM_X) = DMatrix::zeros(1,n_);
-  output(SDP_SOLVER_LAM_A) = DMatrix::zeros(1,nc_);
+  output(SDP_SOLVER_LAM_X) = DMatrix::zeros(n_,1);
+  output(SDP_SOLVER_LAM_A) = DMatrix::zeros(nc_,1);
   
 }
 

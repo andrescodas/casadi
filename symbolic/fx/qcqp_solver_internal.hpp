@@ -61,7 +61,7 @@ class QCQPSolverInternal : public FXInternal{
     /// Number of decision variables
     int n_;
     
-    /// The number of linear constraints (counting both equality and inequality) == A.size2()
+    /// The number of linear constraints (counting both equality and inequality) == A.size1()
     int nc_; 
     
     /// The number of quadratic constraints

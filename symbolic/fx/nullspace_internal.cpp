@@ -49,14 +49,14 @@ namespace CasADi{
     
     casadi_assert(!dense_ || A_sp_.dense());
     
-    m_ = A_sp_.size2();
-    n_ = A_sp_.size1();
+    m_ = A_sp_.size1();
+    n_ = A_sp_.size2();
     
     casadi_assert(m_<=n_);
     
     CCSSparsity dense;
     if (dense_) {
-      dense = sp_dense(n_-m_,n_);
+      dense = sp_dense(n_,n_-m_);
     }
   
     FXInternal::init();

@@ -58,10 +58,10 @@ namespace CasADi{
     /// Storage for input structure
     CCSSparsity A_sp_;
 
-    /// number of cols
+    /// number of rows
     int m_;
     
-    /// number of rows
+    /// number of columns
     int n_;
   
   };

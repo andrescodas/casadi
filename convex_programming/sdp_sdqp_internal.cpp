@@ -96,8 +96,8 @@ void SDPSDQPInternal::init(){
   cholesky_ = CSparseCholesky(st_[SDQP_STRUCT_H]);
   cholesky_.init();
   
-  MX g_socp = msym("x",cholesky_.getFactorizationSparsity(true));
-  MX h_socp = msym("h",1,n_);
+  MX g_socp = msym("x", cholesky_.getFactorizationSparsity(true));
+  MX h_socp = msym("h", n_);
   
   MX f_socp = sqrt(inner_prod(h_socp,h_socp));
   MX en_socp = 0.5/f_socp;
@@ -106,20 +106,20 @@ void SDPSDQPInternal::init(){
   MX g_sdqp = msym("g",input(SDQP_SOLVER_G).sparsity());
   
   std::vector<MX> fi(n_+1);
-  MX znp = DMatrix::sparse(n_+1,n_+1);
+  MX znp = DMatrix(n_+1,n_+1);
   for (int k=0;k<n_;++k) {
-    MX gk = horzcat(g_socp(k,ALL),DMatrix::sparse(1,1));
-    MX fk = -blockcat(znp,gk,trans(gk),DMatrix::sparse(1,1));
+    MX gk = vertcat(g_socp(ALL,k),DMatrix(1,1));
+    MX fk = -blockcat(znp,gk,trans(gk),DMatrix(1,1));
     // TODO: replace with ALL
-    fi.push_back(blkdiag(f_sdqp(range(f_sdqp.size1()),range(f_sdqp.size1()*k,f_sdqp.size1()*(k+1))),fk));
+    fi.push_back(blkdiag(f_sdqp(range(f_sdqp.size2()*k,f_sdqp.size2()*(k+1)),range(f_sdqp.size2())),fk));
   }
   MX fin = en_socp*DMatrix::eye(n_+2);
-  fin(n_+1,n_) = en_socp;
   fin(n_,n_+1) = en_socp;
+  fin(n_+1,n_) = en_socp;
   
-  fi.push_back(blkdiag(DMatrix::sparse(f_sdqp.size1(),f_sdqp.size1()),-fin));
+  fi.push_back(blkdiag(DMatrix(f_sdqp.size2(),f_sdqp.size2()),-fin));
   
-  MX h0 = horzcat(h_socp,DMatrix::sparse(1,1));
+  MX h0 = vertcat(h_socp,DMatrix(1,1));
   MX g = blockcat(f_socp*DMatrix::eye(n_+1),h0,trans(h0),f_socp);
   
   g = blkdiag(g_sdqp,g);
@@ -127,12 +127,12 @@ void SDPSDQPInternal::init(){
   IOScheme mappingIn("g_socp","h_socp","f_sdqp","g_sdqp");
   IOScheme mappingOut("f","g");
   
-  mapping_ = MXFunction(mappingIn("g_socp",g_socp,"h_socp",h_socp,"f_sdqp",f_sdqp,"g_sdqp",g_sdqp),mappingOut("f",horzcat(fi),"g",g));
+  mapping_ = MXFunction(mappingIn("g_socp",g_socp,"h_socp",h_socp,"f_sdqp",f_sdqp,"g_sdqp",g_sdqp),mappingOut("f",vertcat(fi),"g",g));
   mapping_.init();
 
   // Create an sdpsolver instance
   SDPSolverCreator sdpsolver_creator = getOption("sdp_solver");
-  sdpsolver_ = sdpsolver_creator(sdpStruct("g",mapping_.output("g").sparsity(),"f",mapping_.output("f").sparsity(),"a",vertcat(input(SDQP_SOLVER_A).sparsity(),sp_sparse(1,nc_))));
+  sdpsolver_ = sdpsolver_creator(sdpStruct("g",mapping_.output("g").sparsity(),"f",mapping_.output("f").sparsity(),"a",horzcat(input(SDQP_SOLVER_A).sparsity(),sp_sparse(nc_,1))));
 
   if(hasSetOption("sdp_solver_options")){
     sdpsolver_.setOption(getOption("sdp_solver_options"));
@@ -145,15 +145,15 @@ void SDPSDQPInternal::init(){
   
   // Output arguments
   setNumOutputs(SDQP_SOLVER_NUM_OUT);
-  output(SDQP_SOLVER_X) = DMatrix::zeros(1,n_);
+  output(SDQP_SOLVER_X) = DMatrix::zeros(n_,1);
   
-  std::vector<int> r = range(input(SDQP_SOLVER_G).size2());
+  std::vector<int> r = range(input(SDQP_SOLVER_G).size1());
   output(SDQP_SOLVER_P) = sdpsolver_.output(SDP_SOLVER_P).empty() ? DMatrix() : sdpsolver_.output(SDP_SOLVER_P)(r,r);
   output(SDQP_SOLVER_DUAL) = sdpsolver_.output(SDP_SOLVER_DUAL).empty() ? DMatrix() : sdpsolver_.output(SDP_SOLVER_DUAL)(r,r);
   output(SDQP_SOLVER_COST) = 0.0;
   output(SDQP_SOLVER_DUAL_COST) = 0.0;
-  output(SDQP_SOLVER_LAM_X) = DMatrix::zeros(1,n_);
-  output(SDQP_SOLVER_LAM_A) = DMatrix::zeros(1,nc_);
+  output(SDQP_SOLVER_LAM_X) = DMatrix::zeros(n_,1);
+  output(SDQP_SOLVER_LAM_A) = DMatrix::zeros(nc_,1);
  
 }
 

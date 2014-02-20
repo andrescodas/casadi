@@ -121,7 +121,7 @@ void SDPSOCPInternal::init(){
     i_start = 0;
     // Loop over all SOCP constraints
     for (int i=0;i<ni_.size();++i) {
-      MX Gik = G(k,range(i_start,i_start+ni_[i]));
+      MX Gik = G(range(i_start,i_start+ni_[i]),k);
       MX Eik = E[n_*i+k];
       Fi_d.push_back(blockcat(Eik*MX::eye(ni_[i]),Gik,trans(Gik),Eik));
       i_start += ni_[i];
@@ -135,13 +135,13 @@ void SDPSOCPInternal::init(){
   // Loop over all SOCP constraints
   for (int i=0;i<ni_.size();++i) {
     MX Fi  = F[i];
-    MX Hi  = trans(H[range(i_start,i_start+ni_[i])]);
+    MX Hi  = H[range(i_start,i_start+ni_[i])];
     G_d.push_back(blockcat(Fi*MX::eye(ni_[i]),Hi,trans(Hi),Fi));
     i_start += ni_[i];
   }
   
   std::vector<MX> out;
-  out.push_back(-horzcat(Fi));
+  out.push_back(-vertcat(Fi));
   out.push_back(blkdiag(G_d));
   
   std::vector<MX> syms;

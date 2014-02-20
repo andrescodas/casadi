@@ -58,7 +58,7 @@ class LPSolverInternal : public FXInternal{
     /// Number of decision variables
     int n_;
     
-    /// The number of constraints (counting both equality and inequality) == A.size2()
+    /// The number of constraints (counting both equality and inequality) == A.size1()
     int nc_; 
 };
 

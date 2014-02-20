@@ -56,33 +56,33 @@ void SOCPSolverInternal::init() {
   const CCSSparsity& G = st_[SOCP_STRUCT_G];
   
   N_ = std::accumulate(ni_.begin(), ni_.end(), 0);
-  casadi_assert_message(N_==G.size2(),"SOCPSolverInternal: Supplied G sparsity: number of cols (" << G.size2() <<  ")  must match sum of vector provided with option 'ni' (" << N_ << ").");
+  casadi_assert_message(N_==G.size1(),"SOCPSolverInternal: Supplied G sparsity: number of rows (" << G.size1() <<  ")  must match sum of vector provided with option 'ni' (" << N_ << ").");
   
-  nc_ = A.size2();
-  n_ = A.size1();
+  nc_ = A.size1();
+  n_ = A.size2();
   
-  casadi_assert_message(n_==G.size1(),"SOCPSolverInternal: Supplied G sparsity: number of rows (" << G.size1() <<  ")  must match number of decision variables (rows of A): " << n_ << ".");
+  casadi_assert_message(n_==G.size2(),"SOCPSolverInternal: Supplied G sparsity: number of cols (" << G.size2() <<  ")  must match number of decision variables (cols of A): " << n_ << ".");
   
   
   // Input arguments
   setNumInputs(SOCP_SOLVER_NUM_IN);
-  input(SOCP_SOLVER_G) = DMatrix::zeros(G);
-  input(SOCP_SOLVER_H) = DMatrix::zeros(1,N_);
-  input(SOCP_SOLVER_E) = DMatrix::zeros(1,n_*m_);
-  input(SOCP_SOLVER_F) = DMatrix::zeros(1,m_);
-  input(SOCP_SOLVER_A) = DMatrix::zeros(A);
-  input(SOCP_SOLVER_C) = DMatrix::zeros(1,n_);
-  input(SOCP_SOLVER_LBX) = -DMatrix::inf(1,n_);
-  input(SOCP_SOLVER_UBX) = DMatrix::inf(1,n_);
-  input(SOCP_SOLVER_LBA) = -DMatrix::inf(1,nc_);
-  input(SOCP_SOLVER_UBA) = DMatrix::inf(1,nc_);
+  input(SOCP_SOLVER_G) = DMatrix(G,0);
+  input(SOCP_SOLVER_H) = DMatrix::zeros(N_,1);
+  input(SOCP_SOLVER_E) = DMatrix::zeros(n_*m_,1);
+  input(SOCP_SOLVER_F) = DMatrix::zeros(m_,1);
+  input(SOCP_SOLVER_A) = DMatrix(A,0);
+  input(SOCP_SOLVER_C) = DMatrix::zeros(n_);
+  input(SOCP_SOLVER_LBX) = -DMatrix::inf(n_);
+  input(SOCP_SOLVER_UBX) = DMatrix::inf(n_);
+  input(SOCP_SOLVER_LBA) = -DMatrix::inf(nc_);
+  input(SOCP_SOLVER_UBA) = DMatrix::inf(nc_);
 
   // Output arguments
   setNumOutputs(SOCP_SOLVER_NUM_OUT);
-  output(SOCP_SOLVER_X) = DMatrix::zeros(1,n_);
+  output(SOCP_SOLVER_X) = DMatrix::zeros(n_,1);
   output(SOCP_SOLVER_COST) = 0.0;
-  output(SOCP_SOLVER_LAM_X) = DMatrix::zeros(1,n_);
-  output(SOCP_SOLVER_LAM_A) = DMatrix::zeros(1,nc_);
+  output(SOCP_SOLVER_LAM_X) = DMatrix::zeros(n_,1);
+  output(SOCP_SOLVER_LAM_A) = DMatrix::zeros(nc_,1);
   
 }
 
