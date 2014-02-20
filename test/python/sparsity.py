@@ -51,7 +51,7 @@ class Sparsitytests(casadiTestCase):
     c=a.patternUnion(b,w)
     self.assertEquals(w.size(),len(nza.union(nzb)))
     for k in range(w.size()):
-      ind = (c.getRow()[k],c.col(k))
+      ind = (c.row(k),c.getCol()[k])
       if (ind in nza and ind in nzb):
         self.assertEquals(w[k],1 | 2)
       elif (ind in nza):
@@ -62,7 +62,7 @@ class Sparsitytests(casadiTestCase):
     c = a + b
     self.assertEquals(c.size(),len(nza.union(nzb)))
     for k in range(c.size()):
-      ind = (c.getRow()[k],c.col(k))
+      ind = (c.row(k),c.getCol()[k])
       self.assertTrue(ind in nza or ind in nzb)
 
   def test_intersection(self):
@@ -187,7 +187,7 @@ class Sparsitytests(casadiTestCase):
       
     A=self.tomatrix(a).toArray()
     B=self.tomatrix(casadi.reshape(a,2,10)).toArray()
-    B_=numpy.reshape(A,(2,10))
+    B_=numpy.reshape(A.T,(10,2)).T
     
     self.checkarray(B,B_,"reshape")
     
@@ -218,7 +218,7 @@ class Sparsitytests(casadiTestCase):
       self.assertEqual(s.numel(),16)
       
   def test_splower(self):
-    sp = CCSSparsity(3,4,[1,2,1],[0,2,2,3])
+    sp = CCSSparsity(4,3,[0,2,2,3],[1,2,1])
     print array(sp)
     print array(lowerSparsity(sp))
     print lowerNZ(sp)
@@ -235,7 +235,7 @@ class Sparsitytests(casadiTestCase):
     B = DMatrix(sp,1)
     
     self.checkarray(array([[0],[1],[0],[1],[0]]),B,"diag(matrix)")
-    self.checkarray(array([0,2]),array(list(mapping)),"diag(vector)")
+    self.checkarray(array([0,1]),array(list(mapping)),"diag(vector)")
     
     #print B
     
@@ -444,13 +444,13 @@ class Sparsitytests(casadiTestCase):
       #print "permute"
       #Ar.sparsity().spy()
        
-      ST = Ar.T.sparsity()
+      ST = Ar.sparsity()
       
       blocks = []
       acc = -1
       mc = 0
       for i in range(0,Ar.size1()):
-        mc = max(ST.col()[ST.rowind()[i+1]-1],mc)
+        mc = max(ST.row()[ST.colind()[i+1]-1],mc)
         if mc==i:
           blocks.append(i-acc)
           acc = i
@@ -562,9 +562,9 @@ class Sparsitytests(casadiTestCase):
   def test_sp_rowcol(self):
     n = 3
     
-    s = sp_rowcol([0,n-1],[n-1,0],n,n)
-    self.checkarray(IMatrix(s.rowind()),IMatrix([0,2,2,4]))
-    self.checkarray(IMatrix(s.col()),IMatrix([0,2,0,2]))
+    s = sp_rowcol([n-1,0],[0,n-1],n,n)
+    self.checkarray(IMatrix(s.colind()),IMatrix([0,2,2,4]))
+    self.checkarray(IMatrix(s.row()),IMatrix([0,2,0,2]))
 
   def test_inverse(self):
     numpy.random.seed(0)

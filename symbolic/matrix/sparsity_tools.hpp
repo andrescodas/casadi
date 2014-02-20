@@ -148,10 +148,11 @@ namespace CasADi{
    */
   CCSSparsity lowerSparsity(const CCSSparsity& a, bool includeDiagonal = true);
   
-  /**
-   * \brief Return the non-zero entries that make up the upper part of the provided matrix
-   */
+  /** \brief Return the non-zero entries that make up the upper part of the provided matrix */
   std::vector<int> upperNZ(const CCSSparsity& a);
+
+  /** \brief Return the non-zero entries that make up the lower part of the provided matrix */
+  std::vector<int> lowerNZ(const CCSSparsity& a);
   
   /**
      \brief Create a sparsity pattern given the nonzeros in sparse triplet form

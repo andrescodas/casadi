@@ -2030,19 +2030,17 @@ namespace CasADi{
 
   int CCSSparsityInternal::sizeL() const{
     int nnz = 0;
-    for(int r=0; r<ncol_; ++r){
-      for(int el = colind_[r]; el < colind_[r+1]; ++el){
-        nnz += row_[el]>=r;
-      }
+    for(int cc=0; cc<ncol_; ++cc){
+      for(int el = colind_[cc+1]-1; el>=colind_[cc] && row_[el]>=cc; ++el) nnz++;
     }
     return nnz;
   }
   
   int CCSSparsityInternal::sizeD() const{
     int nnz = 0;
-    for(int r=0; r<ncol_; ++r){
-      for(int el = colind_[r]; el < colind_[r+1]; ++el){
-        nnz += row_[el]==r;
+    for(int cc=0; cc<ncol_; ++cc){
+      for(int el = colind_[cc]; el < colind_[cc+1]; ++el){
+        nnz += row_[el]==cc;
       }
     }
     return nnz;
@@ -2050,10 +2048,8 @@ namespace CasADi{
 
   int CCSSparsityInternal::sizeU() const{
     int nnz = 0;
-    for(int r=0; r<ncol_; ++r){
-      for(int el = colind_[r]; el < colind_[r+1] && row_[el]<=r; ++el){
-        nnz ++;
-      }
+    for(int cc=0; cc<ncol_; ++cc){
+      for(int el = colind_[cc]; el < colind_[cc+1] && row_[el]<=cc; ++el) nnz ++;
     }
     return nnz;
   }
@@ -3546,6 +3542,27 @@ namespace CasADi{
     return CCSSparsity(nrow_,ncol_,colind,row);
   }
 
+  std::vector<int> CCSSparsityInternal::lowerNZ() const{
+    vector<int> ret;
+    for(int cc=0; cc<ncol_; ++cc){
+      for(int el = colind_[cc]; el<colind_[cc+1]; ++el){
+        if(row_[el]>=cc){
+          ret.push_back(el);
+        }
+      }
+    }
+    return ret;
+  }
+
+  std::vector<int> CCSSparsityInternal::upperNZ() const{
+    vector<int> ret;
+    for(int cc=0; cc<ncol_; ++cc){
+      for(int el = colind_[cc]; el<colind_[cc+1] && row_[el]<=cc; ++el){
+        ret.push_back(el);
+      }
+    }
+    return ret;
+  }
   
 } // namespace CasADi
 

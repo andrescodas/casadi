@@ -381,6 +381,12 @@ namespace CasADi{
     /// Get lower triangular part
     CCSSparsity upper(bool includeDiagonal=true) const;
 
+    /// Get nonzeros in lower triangular part
+    std::vector<int> lowerNZ() const;
+
+    /// Get nonzeros in upper triangular part
+    std::vector<int> upperNZ() const;
+
     /// Do the rows appear sequentially on each column (if strictly==true, then do not allow multiple entries)
     bool rowsSequential(bool strictly=true) const;
 

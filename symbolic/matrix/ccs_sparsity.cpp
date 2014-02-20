@@ -669,4 +669,13 @@ namespace CasADi{
     return (*this)->upper(includeDiagonal);
   }
 
+  std::vector<int> CCSSparsity::lowerNZ() const{
+    return (*this)->lowerNZ();
+  }
+
+  std::vector<int> CCSSparsity::upperNZ() const{
+    return (*this)->upperNZ();
+  }
+
+
 } // namespace CasADi

@@ -190,6 +190,12 @@ namespace CasADi{
     /// Get lower triangular part
     CCSSparsity upper(bool includeDiagonal) const;
 
+    /// Get nonzeros in lower triangular part
+    std::vector<int> lowerNZ() const;
+
+    /// Get nonzeros in upper triangular part
+    std::vector<int> upperNZ() const;
+
     /// Get the dimension as a string
     std::string dimString() const;
 

@@ -188,24 +188,11 @@ namespace CasADi{
   }
 
   std::vector<int> upperNZ(const CCSSparsity& a) {
-    const std::vector<int> & row= a.row();
-    std::vector<int> col = a.getCol();
-  
-    // Return vector
-    std::vector<int> ret;
-  
-    // Find size of return vector
-    int n=0;
-    for (int k=0;k<col.size();k++) n+= (col[k] >= row[k]);
-    ret.resize(n);
-  
-    // populate return vector
-    int cnt=0;
-    for (int k=0;k<col.size();k++) {
-      if (col[k] >= row[k]) ret[cnt++]=k;
-    }
-  
-    return ret;
+    return a.upperNZ();
+  }
+
+  std::vector<int> lowerNZ(const CCSSparsity& a) {
+    return a.lowerNZ();
   }
 
   CCSSparsity sp_triplet(int nrow, int ncol, const std::vector<int>& row, const std::vector<int>& col, std::vector<int>& mapping, bool invert_mapping){
