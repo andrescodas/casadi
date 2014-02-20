@@ -248,7 +248,7 @@ PyObject* arrayView() {
   dims[0] = $self->size1();
   dims[1] = $self->size2();
   std::vector<double> &v = $self->data();
-  return PyArray_New(&PyArray_Type, 2, dims, NPY_DOUBLE, NULL, &v[0], 0, NPY_ARRAY_CARRAY | NPY_ARRAY_F_CONTIGUOUS, NULL);
+  return PyArray_New(&PyArray_Type, 2, dims, NPY_DOUBLE, NULL, &v[0], 0, NPY_ARRAY_FARRAY, NULL);
 }
 #endif // WITH_NUMPY
     
@@ -286,6 +286,10 @@ PyObject* arrayView() {
     import numpy as n
     from scipy.sparse import csc_matrix
     return csc_matrix( (list(self.data()),self.row(),self.colind()), shape = self.shape, dtype=n.double )
+
+  def tocsc(self):
+    return self.toCsc_matrix()
+
 %}
 
 %pythoncode %{

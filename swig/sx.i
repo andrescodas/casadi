@@ -218,9 +218,9 @@ namespace CasADi {
       import numpy as n
       r = n.array((),dtype=object)
       r.resize(self.size1(),self.size2())
-      for i in range(self.size1()):  # loop over rows
-        for el in range(self.rowind(i),self.rowind(i+1)): # loop over the non-zero elements
-          j=self.col(el)  # column
+      for j in range(self.size2()):  # loop over columns
+        for el in range(self.colind(j),self.colind(j+1)): # loop over the non-zero elements
+          i=self.row(el)  # column
           r[i,j] = self.at(el) # add the non-zero element
 
       return r

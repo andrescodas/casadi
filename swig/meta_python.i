@@ -832,6 +832,13 @@ int meta< CasADi::Matrix<double> >::as(PyObject * p,CasADi::Matrix<double> &m) {
     
     if (array_is_new_object)
       Py_DECREF(array);
+  } else if(PyObject_HasAttrString(p,"tocsc")) {
+    char name[] = "tocsc";
+    PyObject *cr = PyObject_CallMethod(p, name,0);
+    if (!cr) { return false; }
+    int result = meta< CasADi::Matrix<double> >::as(cr,m);
+    Py_DECREF(cr);
+    return result;
   } else if (meta< double >::couldbe(p)) {
     double t;
     int res = meta< double >::as(p,t);
@@ -863,7 +870,7 @@ int meta< CasADi::Matrix<double> >::as(PyObject * p,CasADi::Matrix<double> &m) {
 // Disallow 1D numpy arrays. Allowing them may introduce conflicts with other typemaps or overloaded methods
 template <>
 bool meta< CasADi::Matrix<double> >::couldbe(PyObject * p) {
-  return meta< double >::couldbe(p) || (((is_array(p) && array_numdims(p)==2) && array_type(p)!=NPY_OBJECT) || PyObjectHasClassName(p,"csc_matrix") || PyObjectHasClassName(p,"DMatrix")) || meta< double >::couldbe_sequence(p) || meta< CasADi::Matrix<int> >::couldbe(p) || PyObject_HasAttrString(p,"__DMatrix__");
+  return meta< double >::couldbe(p) || (((is_array(p) && array_numdims(p)==2) && array_type(p)!=NPY_OBJECT) || PyObjectHasClassName(p,"csc_matrix") || PyObject_HasAttrString(p,"tocsc") || PyObjectHasClassName(p,"DMatrix")) || meta< double >::couldbe_sequence(p) || meta< CasADi::Matrix<int> >::couldbe(p) || PyObject_HasAttrString(p,"__DMatrix__");
 }
 
 meta_vector(CasADi::Matrix<double>)
