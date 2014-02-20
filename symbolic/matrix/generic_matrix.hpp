@@ -33,7 +33,7 @@
 namespace CasADi{
 
   /** Sparsity format for getting and setting inputs and outputs */
-  enum Sparsity{SPARSE,SPARSESYM,DENSE,DENSESYM};
+  enum Sparsity{SPARSE,SPARSESYM,DENSE,DENSESYM,DENSETRANS};
 
   /** \brief Matrix base class
       This is a common base class for MX and Matrix<>, introducing a uniform syntax and implementing

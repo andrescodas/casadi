@@ -912,56 +912,70 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::set(const T* val, Sparsity sp){
-    int len = sp==SPARSE ? size() : sp==DENSE ? numel() : sp==SPARSESYM ? sizeU() : -1;
+    int len = sp==SPARSE ? size() : sp==DENSE || sp==DENSETRANS ? numel() : sp==SPARSESYM ? sizeU() : -1;
     setArray(val,len,sp);
   }
 
   template<class T>
   void Matrix<T>::get(T* val, Sparsity sp) const{
-    int len = sp==SPARSE ? size() : sp==DENSE ? numel() : sp==SPARSESYM ? sizeU() : -1;
+    int len = sp==SPARSE ? size() : sp==DENSE || sp==DENSETRANS ? numel() : sp==SPARSESYM ? sizeU() : -1;
     getArray(val,len,sp);
   }
 
   template<class T>
   void Matrix<T>::getArray(T* val, int len, Sparsity sp) const{
-    const std::vector<T> &v = data();
+    // Get references to data for quick access
+    const std::vector<T> &data = this->data();
+    const int size1 = this->size1();
+    const int size2 = this->size2();
+    const std::vector<int>& colind = this->colind();
+    const std::vector<int>& row = this->row();
+    
     if(sp==SPARSE || (sp==DENSE && dense())){
       casadi_assert_message(len==size(),
-                            "Matrix<T>::getArray: Dimension mismatch." << std::endl <<
-                            "I am a matrix of shape " << size2() << " x " << size1() << " = " << numel() << " ready to fill something up with " << size() << " non-zero elements," << std::endl <<
-                            "but you supplied something with " << len << " non-zero elements."); 
-      copy(v.begin(),v.end(),val);
+                            "Matrix<T>::getArray: Dimension mismatch." << std::endl <<  
+                            "Trying to fetch " << len << " elements from a " << dimString() << " matrix with " << size() << " non-zeros.");
+      copy(data.begin(),data.end(),val);
     } else if(sp==DENSE){
       casadi_assert_message(len==numel(),
-                            "Matrix<T>::getArray: Dimension mismatch." << std::endl <<
-                            "I am a dense matrix of shape " << size2() << " x " << size1() << " ready to fill something up with " << numel() << " elements," << std::endl <<
-                            "but you supplied something with " << len << " elements."); 
-      int k=0; // index of the result
-      for(int i=0; i<size2(); ++i) // loop over cols
-        for(int el=colind(i); el<colind(i+1); ++el){ // loop over the non-zero elements
-          int j=row(el);  // row
-          for(; k<i*size1()+j; ++k)
-            val[k] = 0; // add zeros before the non-zero element
-
-          // add the non-zero element
-          val[k] = v[el];
-          k++;
+                            "Matrix<T>::getArray: Dimension mismatch." << std::endl <<  
+                            "Trying to fetch " << len << " elements from a " << dimString() << " matrix with " << numel() << " entries.");
+      // Begin with all zeros
+      std::fill(val,val+len,0);
+     
+      // Add the nonzeros
+      for(int cc=0; cc<size2; ++cc){ // loop over columns
+        for(int el=colind[cc]; el<colind[cc+1]; ++el){ // loop over the non-zero elements
+          int rr=row[el];
+          val[rr+cc*size1] = data[el];
         }
-      // add sparse zeros at the end of the matrix
-      for(; k<numel(); ++k)
-        val[k] = 0;
+      }
+    } else if(sp==DENSETRANS){
+      casadi_assert_message(len==numel(),
+                            "Matrix<T>::getArray: Dimension mismatch." << std::endl <<  
+                            "Trying to fetch " << len << " elements from a " << dimString() << " matrix with " << numel() << " entries.");
+      // Begin with all zeros
+      std::fill(val,val+len,0);
+     
+      // Add the nonzeros
+      for(int cc=0; cc<size2; ++cc){ // loop over columns
+        for(int el=colind[cc]; el<colind[cc+1]; ++el){ // loop over the non-zero elements
+          int rr=row[el];
+          val[cc+rr*size2] = data[el];
+        }
+      }
     } else if(sp==SPARSESYM){
       // copy to the result vector
       int nz = 0;
-      for(int col=0; col<size2(); ++col){
+      for(int cc=0; cc<size2; ++cc){
         // Loop over the elements in the col
-        for(int el=colind(col); el<colind(col+1); ++el){ // loop over the non-zero elements
-          if(row(el) > col) break; // break inner loop (only lower triangular part is used)
-          val[nz++] = v[el];
+        for(int el=colind[cc]; el<colind[cc+1]; ++el){ // loop over the non-zero elements
+          if(row[el] > cc) break; // break inner loop (only upper triangular part is used)
+          val[nz++] = data[el];
         }
       }
     } else {
-      casadi_error("Matrix<T>::getArray: not SPARSE, SPARSESYM  or DENSE");
+      casadi_error("Matrix<T>::getArray: not SPARSE, SPARSESYM, DENSE or DENSETRANS");
     }
   }
 
@@ -994,41 +1008,56 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::setArray(const T* val, int len, Sparsity sp){
-    std::vector<T> &v = data();
+    // Get references to data for quick access
+    std::vector<T> &data = this->data();
+    const int size1 = this->size1();
+    const int size2 = this->size2();
+    const std::vector<int>& colind = this->colind();
+    const std::vector<int>& row = this->row();
+
     if(sp==SPARSE || (sp==DENSE && numel()==size())){
       casadi_assert_message(len==size(),
-                            "Matrix<T>::setArray: Dimension mismatch." << std::endl <<
-                            "I am a matrix of shape " << size2() << " x " << size1() << " = " << numel() << " ready to be filled up with " << size() << " non-zero elements," << std::endl <<
-                            "but you supplied something with " << len << " non-zero elements."); 
-      copy(val,val+len,v.begin());
+                            "Matrix<T>::setArray: Dimension mismatch." << std::endl <<  
+                            "Trying to pass " << len << " elements to a " << dimString() << " matrix with " << size() << " non-zeros.");
+      copy(val,val+len,data.begin());
     } else if(sp==DENSE){
       casadi_assert_message(len==numel(),
-                            "Matrix<T>::setArray: Dimension mismatch." << std::endl <<
-                            "I am a dense matrix of shape " << size2() << " x " << size1() << " ready to be filled up with " << numel() << " elements," << std::endl <<
-                            "but you supplied something with " << len << " elements."); 
-      for(int i=0; i<size2(); ++i) // loop over cols
-        for(int el=colind(i); el<colind(i+1); ++el){ // loop over the non-zero elements
-          // row
-          int j=row(el);
-        
-          // Set the element
-          v[el] = val[i*size1()+j];
+                            "Matrix<T>::setArray: Dimension mismatch." << std::endl <<  
+                            "Trying to pass " << len << " elements to a " << dimString() << " matrix with " << numel() << " entries.");
+      // Get the nonzeros
+      for(int cc=0; cc<size2; ++cc){ // loop over columns
+        for(int el=colind[cc]; el<colind[cc+1]; ++el){ // loop over the non-zero elements
+          int rr=row[el];
+          data[el] = val[rr+cc*size1];
         }
+      }
+    } else if(sp==DENSETRANS){
+      casadi_assert_message(len==numel(),
+                            "Matrix<T>::setArray: Dimension mismatch." << std::endl <<  
+                            "Trying to pass " << len << " elements to a " << dimString() << " matrix with " << numel() << " entries.");
+      // Get the nonzeros
+      for(int cc=0; cc<size2; ++cc){ // loop over columns
+        for(int el=colind[cc]; el<colind[cc+1]; ++el){ // loop over the non-zero elements
+          int rr=row[el];
+          data[el] = val[cc+rr*size2];
+        }
+      }
     } else if(sp==SPARSESYM) {
+      // NOTE: Has to be rewritten! sparsity().transpose(...) involves memory allocation and is not threadsafe!!!
+      // This routines is supposed to be used inside threadsafe code.
       std::vector<int> mapping;
       sparsity().transpose(mapping,false);
       // copy to the result vector
       int nz = 0;
-      for(int col=0; col<size2(); ++col){
+      for(int cc=0; cc<size2; ++cc){
         // Loop over the elements in the col
-        for(int el=colind(col); el<colind(col+1); ++el){ // loop over the non-zero elements
-          if(row(el) > col) break; // break inner loop (only lower triangular part is used)
-          v[el] = val[nz++];
-          v[mapping[el]] = v[el];
+        for(int el=colind[cc]; el<colind[cc+1]; ++el){ // loop over the non-zero elements
+          if(row[el] > cc) break; // break inner loop (only lower triangular part is used)
+          data[mapping[el]] = data[el] = val[nz++];
         }
       }
     } else {
-      throw CasadiException("Matrix<T>::setArray: not SPARSE, SPARSESYM or DENSE");
+      throw CasadiException("Matrix<T>::setArray: not SPARSE, SPARSESYM, DENSE or DENSETRANS");
     }
   }
 

@@ -187,17 +187,7 @@ void QPOasesInternal::evaluate() {
   // Copy A to a row-major dense vector
   const double* a=0;
   if(nc_>0){
-    const vector<int>& colind = input(QP_SOLVER_A).colind();
-    const vector<int>& row = input(QP_SOLVER_A).row();
-    const vector<double>& data = input(QP_SOLVER_A).data();
-    int ncol = colind.size()-1;
-    fill(a_data_.begin(),a_data_.end(),0);
-    for(int cc=0; cc<ncol; ++cc){
-      for(int el=colind[cc]; el<colind[cc+1]; ++el){
-        int rr=row[el];
-        a_data_[cc+rr*ncol] = data[el];
-      }
-    }
+    input(QP_SOLVER_A).get(a_data_,DENSETRANS);
     a = getPtr(a_data_);
   }
   
