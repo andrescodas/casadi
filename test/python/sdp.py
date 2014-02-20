@@ -55,7 +55,7 @@ class SDPtests(casadiTestCase):
 
     makeSparse(F)
 
-    F.printMatrix()
+    F.printDense()
 
     G = -DMatrix([[-11,0],[0,23]])
 
@@ -75,7 +75,7 @@ class SDPtests(casadiTestCase):
 
     makeSparse(F)
 
-    F.printMatrix()
+    F.printDense()
 
     G = -DMatrix([[-11,0],[0,23]])
 
@@ -478,7 +478,7 @@ class SDPtests(casadiTestCase):
 
     makeSparse(F)
 
-    F.printMatrix()
+    F.printDense()
 
     G = -DMatrix([[-11,0],[0,23]])
 
