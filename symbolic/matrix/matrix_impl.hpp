@@ -415,11 +415,6 @@ namespace CasADi{
   }
 
   template<class T>
-  bool Matrix<T>::vector() const{
-    return sparsity().vector();
-  }
-
-  template<class T>
   Matrix<T>::Matrix() : sparsity_(CCSSparsity(0,0,false)){
   }
 

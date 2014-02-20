@@ -762,28 +762,27 @@ namespace CasADi{
     return ret;
   }
 
-
   template<class T>
-  Matrix<T> flattenNZ(const Matrix<T>& a){
-    return trans(Matrix<T>(flatten(a).data()));
+  Matrix<T> vecNZ(const Matrix<T>& a){
+    return Matrix<T>(a.data());
   }
   
   template<class T>
-  Matrix<T> vecNZ(const Matrix<T>& a){
-    return trans(Matrix<T>(a.data()));
+  Matrix<T> flattenNZ(const Matrix<T>& a){
+    return Matrix<T>(trans(a).data());
   }
 
   template<class T>
   Matrix<T> blockcat(const std::vector< std::vector<Matrix<T> > > &v) {
     std::vector< Matrix<T> > ret;
     for(int i=0; i<v.size(); ++i)
-      ret.push_back(vertcat(v[i]));
-    return horzcat(ret);
+      ret.push_back(horzcat(v[i]));
+    return vertcat(ret);
   }
 
   template<class T>
   Matrix<T> blockcat(const Matrix<T> &A,const Matrix<T> &B,const Matrix<T> &C,const Matrix<T> &D) {
-    return horzcat(vertcat(A,B),vertcat(C,D));
+    return vertcat(horzcat(A,B),horzcat(C,D));
   }
 
   template<class T>
@@ -864,10 +863,10 @@ namespace CasADi{
 
   template<class T>
   std::vector< std::vector< Matrix<T> > > blocksplit(const Matrix<T>& x, const std::vector<int>& vert_offset, const std::vector<int>& horz_offset) {
-    std::vector< Matrix<T> > cols = horzsplit(x,vert_offset);
+    std::vector< Matrix<T> > rows = vertsplit(x,vert_offset);
     std::vector< std::vector< Matrix<T> > > ret;
-    for (int i=0;i<cols.size();++i) {
-      ret.push_back(vertsplit(cols[i],horz_offset));
+    for (int i=0;i<rows.size();++i) {
+      ret.push_back(horzsplit(rows[i],horz_offset));
     }
     return ret;
   }
@@ -876,7 +875,7 @@ namespace CasADi{
   std::vector< std::vector< Matrix<T> > > blocksplit(const Matrix<T>& x, int vert_incr, int horz_incr) {
     casadi_assert(horz_incr>=1);
     casadi_assert(vert_incr>=1);
-    return blocksplit(x,range(0,x.size2(),vert_incr),range(0,x.size1(),horz_incr));
+    return blocksplit(x,range(0,x.size1(),vert_incr),range(0,x.size2(),horz_incr));
   }
 
   template<class T>
@@ -1185,10 +1184,10 @@ namespace CasADi{
   Matrix<T> kron(const Matrix<T>& a, const Matrix<T>& b) {
     const CCSSparsity &a_sp = a.sparsity();
     Matrix<T> filler = Matrix<T>::sparse(b.shape());
-    std::vector< std::vector< Matrix<T> > > blocks(a.size2(),std::vector< Matrix<T> >(a.size1(),filler));
-    for (int i=0;i<a.size2();++i) {
-      for (int j=0;j<a.size1();++j) {
-        int k = a_sp.getNZ(j,i);
+    std::vector< std::vector< Matrix<T> > > blocks(a.size1(),std::vector< Matrix<T> >(a.size2(),filler));
+    for (int i=0;i<a.size1();++i) {
+      for (int j=0;j<a.size2();++j) {
+        int k = a_sp.getNZ(i,j);
         if (k!=-1) {
           blocks[i][j] = a[k]*b;
         }

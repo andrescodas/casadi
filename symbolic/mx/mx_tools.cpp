@@ -77,10 +77,10 @@ namespace CasADi{
   }
   
   std::vector< std::vector<MX > > blocksplit(const MX& x, const std::vector<int>& vert_offset, const std::vector<int>& horz_offset) {
-    std::vector<MX > cols = horzsplit(x,vert_offset);
+    std::vector<MX > rows = vertsplit(x,vert_offset);
     std::vector< std::vector<MX > > ret;
-    for (int i=0;i<cols.size();++i) {
-      ret.push_back(vertsplit(cols[i],horz_offset));
+    for (int i=0;i<rows.size();++i) {
+      ret.push_back(horzsplit(rows[i],horz_offset));
     }
     return ret;
   }
@@ -88,7 +88,7 @@ namespace CasADi{
   std::vector< std::vector<MX > > blocksplit(const MX& x, int vert_incr, int horz_incr) {
     casadi_assert(horz_incr>=1);
     casadi_assert(vert_incr>=1);
-    return blocksplit(x,range(0,x.size2(),vert_incr),range(0,x.size1(),horz_incr));
+    return blocksplit(x,range(0,x.size1(),vert_incr),range(0,x.size2(),horz_incr));
   }
 
   MX horzcat(const MX& a, const MX& b){
@@ -230,7 +230,7 @@ namespace CasADi{
   }
 
   MX flatten(const MX &x) {
-    if(x.size2()==1){
+    if(x.vector()){
       return x;
     } else {
       return reshape(trans(x),x.numel(),1);
@@ -238,7 +238,7 @@ namespace CasADi{
   }
 
   MX vec(const MX& x) {
-    if(x.size2()==1){
+    if(x.vector()){
       return x;
     } else {
       return reshape(x,x.numel(),1);
@@ -938,12 +938,12 @@ namespace CasADi{
   MX blockcat(const std::vector< std::vector<MX > > &v) {
     std::vector< MX > ret;
     for(int i=0; i<v.size(); ++i)
-      ret.push_back(vertcat(v[i]));
-    return horzcat(ret);
+      ret.push_back(horzcat(v[i]));
+    return vertcat(ret);
   }
   
   MX blockcat(const MX &A,const MX &B,const MX &C,const MX &D) {
-    return horzcat(vertcat(A,B),vertcat(C,D));
+    return vertcat(horzcat(A,B),horzcat(C,D));
   }
 
   MX det(const MX& A){
@@ -1008,10 +1008,10 @@ namespace CasADi{
   MX kron(const MX& a, const MX& b) {
     const CCSSparsity &a_sp = a.sparsity();
     MX filler = MX::sparse(b.shape());
-    std::vector< std::vector< MX > > blocks(a.size2(),std::vector< MX >(a.size1(),filler));
-    for (int i=0;i<a.size2();++i) {
-      for (int j=0;j<a.size1();++j) {
-        int k = a_sp.getNZ(j,i);
+    std::vector< std::vector< MX > > blocks(a.size1(),std::vector< MX >(a.size2(),filler));
+    for (int i=0;i<a.size1();++i) {
+      for (int j=0;j<a.size2();++j) {
+        int k = a_sp.getNZ(i,j);
         if (k!=-1) {
           blocks[i][j] = a[k]*b;
         }

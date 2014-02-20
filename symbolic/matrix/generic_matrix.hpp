@@ -109,6 +109,9 @@ namespace CasADi{
     /** \brief  Check if the matrix expression is square */
     bool square() const;
 
+    /** \brief  Check if the matrix is a vector (i.e. size2()==1) */
+    bool vector() const;
+
     /** \brief Get the sparsity pattern */
     const CCSSparsity& sparsity() const;
 
@@ -248,6 +251,11 @@ namespace CasADi{
   template<typename MatType>
   bool GenericMatrix<MatType>::square() const{
     return sparsity().square();
+  }
+
+  template<typename MatType>
+  bool GenericMatrix<MatType>::vector() const{
+    return sparsity().vector();
   }
 
   template<typename MatType>

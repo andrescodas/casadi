@@ -165,6 +165,7 @@ namespace CasADi{
     using B::empty;
     using B::scalar;
     using B::dense;
+    using B::vector;
     using B::dimString;
     using B::operator[];
     using B::operator();
@@ -228,11 +229,6 @@ namespace CasADi{
     }
 #endif // HAVE_UBLAS
 #endif // SWIG
-
-    //@{
-    /// Check type of matrix
-    bool vector() const; // is the matrix a vector
-    //@}
 
 
 #ifndef SWIG
