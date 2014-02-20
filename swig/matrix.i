@@ -245,10 +245,10 @@ PyObject* arrayView() {
   if ($self->size()!=$self->numel()) 
     throw  CasADi::CasadiException("Matrix<double>::arrayview() can only construct arrayviews for dense DMatrices.");
   npy_intp dims[2];
-  dims[0] = $self->size1();
-  dims[1] = $self->size2();
+  dims[0] = $self->size2();
+  dims[1] = $self->size1();
   std::vector<double> &v = $self->data();
-  return PyArray_New(&PyArray_Type, 2, dims, NPY_DOUBLE, NULL, &v[0], 0, NPY_ARRAY_FARRAY, NULL);
+  return PyArray_Transpose((PyArrayObject*) PyArray_New(&PyArray_Type, 2, dims, NPY_DOUBLE, NULL, &v[0], 0, NPY_ARRAY_CARRAY, NULL),NULL);
 }
 #endif // WITH_NUMPY
     
@@ -260,7 +260,7 @@ PyObject* arrayView() {
         raise Expection("toArray(shared=True) only possible for dense arrays.")
       return self.arrayView()
     else:
-      r = n.zeros((self.size1(),self.size2()),order="F")
+      r = n.zeros((self.size1(),self.size2()))
       self.get(r)
     return r
 %}
@@ -570,7 +570,7 @@ Accepts: 2D numpy.ndarray, numpy.matrix (contiguous, native byte order, datatype
 			if (!(array_is_native(p) && array_type(p)==NPY_DOUBLE))
 			  SWIG_exception_fail(SWIG_TypeError, "Array should be native & of datatype double");
 			  
-	    if (!(array_is_fortran_contiguous(p))) {
+	    if (!(array_is_contiguous(p))) {
 	      if (PyArray_CHKFLAGS((PyArrayObject *) p,NPY_ALIGNED)) {
 	        $3 = PyArray_STRIDE((PyArrayObject *) p,0)/sizeof(double);
 	        $4 = PyArray_STRIDE((PyArrayObject *) p,1)/sizeof(double);
@@ -589,7 +589,7 @@ Accepts: 2D numpy.ndarray, numpy.matrix (contiguous, native byte order, datatype
           const char* cstr = tmp.c_str();
 			    SWIG_exception_fail(SWIG_TypeError,  cstr);
 			  }
-			  $5 = CasADi::DENSE;
+			  $5 = CasADi::DENSETRANS;
 			  $2 = array_size(p,0)*array_size(p,1);
 			  $1 = (double*) array_data(p);
 			} else if (array_numdims(p)==1) {
@@ -640,7 +640,7 @@ Accepts: 2D numpy.ndarray, numpy.matrix (any setting of contiguous, native byte 
 %typemap(in,numinputs=1) (const double *val,int len,Sparsity sp) (PyArrayObject* array, int array_is_new_object=0)  {
 	PyObject* p = $input;
 	if (is_array(p)) {
-			array = obj_to_array_fortran_contiguous_allow_conversion(p,NPY_DOUBLE,&array_is_new_object);
+			array = obj_to_array_contiguous_allow_conversion(p,NPY_DOUBLE,&array_is_new_object);
 			if (array_numdims(array)==2) {
 				if (!(array_size(array,0)==arg1->size1() && array_size(array,1)==arg1->size2()) ) {
 				  std::stringstream s;
@@ -651,7 +651,7 @@ Accepts: 2D numpy.ndarray, numpy.matrix (any setting of contiguous, native byte 
           const char* cstr = tmp.c_str();
 			    SWIG_exception_fail(SWIG_TypeError,  cstr);
 			  }
-			  $3 = CasADi::DENSE;
+			  $3 = CasADi::DENSETRANS;
 			  $2 = array_size(array,0)*array_size(array,1);
 			  $1 = (double*) array_data(array);
 			} else if (array_numdims(array)==1) {
