@@ -2031,7 +2031,7 @@ namespace CasADi{
   int CCSSparsityInternal::sizeL() const{
     int nnz = 0;
     for(int cc=0; cc<ncol_; ++cc){
-      for(int el = colind_[cc+1]-1; el>=colind_[cc] && row_[el]>=cc; ++el) nnz++;
+      for(int el = colind_[cc+1]-1; el>=colind_[cc] && row_[el]>=cc; --el) nnz++;
     }
     return nnz;
   }

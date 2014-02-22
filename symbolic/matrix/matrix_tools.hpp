@@ -221,8 +221,8 @@ namespace CasADi{
 
 
   /** \brief  chop up into blocks
-   * \brief vert_offset Defines the boundaries of the block cols
-   * \brief horz_offset Defines the boundaries of the block rows
+   * \brief vert_offset Defines the boundaries of the block rows
+   * \brief horz_offset Defines the boundaries of the block columns
    *
    *   blockcat(blocksplit(x,...,...)) = x
    */
@@ -230,8 +230,8 @@ namespace CasADi{
   std::vector< std::vector< Matrix<T> > > blocksplit(const Matrix<T>& x, const std::vector<int>& vert_offset, const std::vector<int>& horz_offset);
 
   /** \brief  chop up into blocks
-   * \brief vert_incr Defines the increment for block boundaries in col dimension
-   * \brief horz_incr Defines the increment for block boundaries in row dimension
+   * \brief vert_incr Defines the increment for block boundaries in row dimension
+   * \brief horz_incr Defines the increment for block boundaries in column dimension
    *
    *   blockcat(blocksplit(x,...,...)) = x
    */
@@ -240,10 +240,10 @@ namespace CasADi{
 
 #ifndef SWIG
   template<class T>
-  Matrix<T> horzcat(const Matrix<T> &x, const Matrix<T> &y);
+  Matrix<T> vertcat(const Matrix<T> &x, const Matrix<T> &y);
 
   template<class T>
-  Matrix<T> vertcat(const Matrix<T> &x, const Matrix<T> &y);
+  Matrix<T> horzcat(const Matrix<T> &x, const Matrix<T> &y);
 #endif // SWIG
 
   template<class T>

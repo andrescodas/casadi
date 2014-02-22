@@ -937,7 +937,7 @@ class Matrixtests(casadiTestCase):
     self.checkarray(v[2],DMatrix([[0,0],[0,0],[0,0],[9,0],[13,14]]))
     
   def test_blocksplit(self):
-    a = DMatrix(sp_tril(5),range(5*6/2))
+    a = DMatrix(sp_triu(5),range(5*6/2)).T
     v = blocksplit(a,[0,2,4],[0,1,3])
     
     self.checkarray(v[0][0],DMatrix([0,1]))
