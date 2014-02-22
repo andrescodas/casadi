@@ -721,14 +721,14 @@ SXMatrix taylor(const SXMatrix& ex,const SXMatrix& x, const SXMatrix& a, int ord
   casadi_assert(x.scalar() && a.scalar());
   if (ex.size()!=ex.numel())
    throw CasadiException("taylor: not implemented for sparse matrices");
-  SXMatrix ff = trans(flatten(ex));
+  SXMatrix ff = vec(ex);
   
   SXMatrix result = substitute(ff,x,a);
   double nf=1; 
   SXMatrix dx = (x-a);
   SXMatrix dxa = (x-a);
   for (int i=1;i<=order;i++) {
-    ff = trans(jacobian(ff,x));
+    ff = jacobian(ff,x);
     nf*=i;
     result+=1/nf * substitute(ff,x,a) * dxa;
     dxa*=dx;
@@ -746,7 +746,7 @@ SXMatrix mtaylor_recursive(const SXMatrix& ex,const SXMatrix& x, const SXMatrix&
   for (int i=0;i<x.size();i++) {
     if (order_contributions[i]<=order) {
       result += mtaylor_recursive(
-                  trans(jacobian(ex,x.at(i))),
+                  jacobian(ex,x.at(i)),
                   x,a,
                   order-order_contributions[i],
                   order_contributions,
@@ -765,7 +765,7 @@ SXMatrix mtaylor(const SXMatrix& ex,const SXMatrix& x, const SXMatrix& a,int ord
     "mtaylor: number of non-zero elements in x (" <<  x.size() << ") must match size of order_contributions (" << order_contributions.size() << ")"
   );
 
-  return trans(reshape(mtaylor_recursive(trans(flatten(ex)),x,a,order,order_contributions),ex.size2(),ex.size1()));
+  return trans(reshape(mtaylor_recursive(vec(ex),x,a,order,order_contributions),ex.size2(),ex.size1()));
 }
 
 int countNodes(const SXMatrix& A){
@@ -1238,8 +1238,8 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
     int mult = 1;
     bool success = false;
     for (int i=0;i<1000;++i) {
-      ret.appendColumns(f.eval(casadi_limits<SX>::zero)/mult);
-      SXMatrix j = trans(f.jac());
+      ret.append(f.eval(casadi_limits<SX>::zero)/mult);
+      SXMatrix j = f.jac();
       if (j.size()==0) {
         success = true;
         break;
@@ -1259,30 +1259,30 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
   }
   
   SXMatrix poly_roots(const SXMatrix& p) {
-    casadi_assert_message(p.size1()==1,"poly_root(): supplied paramter must be row vector but got " << p.dimString() << ".");
+    casadi_assert_message(p.size2()==1,"poly_root(): supplied paramter must be column vector but got " << p.dimString() << ".");
     casadi_assert(p.dense());
-    if (p.size2()==2) { // a*x + b
-      SXMatrix a = p(0,0);
-      SXMatrix b = p(0,1);
+    if (p.size1()==2) { // a*x + b
+      SXMatrix a = p(0);
+      SXMatrix b = p(1);
       return -b/a;
-    } else if (p.size2()==3) { // a*x^2 + b*x + c
-      SXMatrix a = p(0,0);
-      SXMatrix b = p(0,1);
-      SXMatrix c = p(0,2);
+    } else if (p.size1()==3) { // a*x^2 + b*x + c
+      SXMatrix a = p(0);
+      SXMatrix b = p(1);
+      SXMatrix c = p(2);
       SXMatrix ds = sqrt(b*b-4*a*c);
       SXMatrix bm = -b;
       SXMatrix a2 = 2*a;
       SXMatrix ret;
-      ret.appendColumns((bm-ds)/a2);
-      ret.appendColumns((bm+ds)/a2);
+      ret.append((bm-ds)/a2);
+      ret.append((bm+ds)/a2);
       return ret;
-    } else if (p.size2()==4) {
+    } else if (p.size1()==4) {
       // www.cs.iastate.edu/~cs577/handouts/polyroots.pdf
-      SXMatrix ai = 1/p(0,0);
+      SXMatrix ai = 1/p(0);
        
-      SXMatrix p_ = p(0,1)*ai;
-      SXMatrix q  = p(0,2)*ai;
-      SXMatrix r  = p(0,3)*ai;
+      SXMatrix p_ = p(1)*ai;
+      SXMatrix q  = p(2)*ai;
+      SXMatrix r  = p(3)*ai;
       
       SXMatrix pp = p_*p_;
       
@@ -1294,33 +1294,33 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
       SXMatrix phi = acos(-b/2/sqrt(-a3*a3*a3));
       
       SXMatrix ret;
-      ret.appendColumns(cos(phi/3));
-      ret.appendColumns(cos((phi+2*M_PI)/3));
-      ret.appendColumns(cos((phi+4*M_PI)/3));
+      ret.append(cos(phi/3));
+      ret.append(cos((phi+2*M_PI)/3));
+      ret.append(cos((phi+4*M_PI)/3));
       ret*= 2*sqrt(-a3);
       
       ret-= p_/3;
       return ret;
-    } else if (p.size2()==5) {
-      SXMatrix ai = 1/p(0,0);
-      SXMatrix b = p(0,1)*ai;
-      SXMatrix c = p(0,2)*ai;
-      SXMatrix d = p(0,3)*ai;
-      SXMatrix e = p(0,4)*ai;
+    } else if (p.size1()==5) {
+      SXMatrix ai = 1/p(0);
+      SXMatrix b = p(1)*ai;
+      SXMatrix c = p(2)*ai;
+      SXMatrix d = p(3)*ai;
+      SXMatrix e = p(4)*ai;
       
       SXMatrix bb= b*b;
       SXMatrix f = c - (3*bb/8);
       SXMatrix g = d + (bb*b / 8) - b*c/2;
       SXMatrix h = e - (3*bb*bb/256) + (bb * c/16) - ( b*d/4);
       SXMatrix poly;
-      poly.appendColumns(1);
-      poly.appendColumns(f/2);
-      poly.appendColumns((f*f -4*h)/16);
-      poly.appendColumns(-g*g/64);
+      poly.append(1);
+      poly.append(f/2);
+      poly.append((f*f -4*h)/16);
+      poly.append(-g*g/64);
       SXMatrix y = poly_roots(poly);
       
-      SXMatrix r0 = y(0,0);
-      SXMatrix r1 = y(0,2);
+      SXMatrix r0 = y(0);
+      SXMatrix r1 = y(2);
 
       SXMatrix p = sqrt(r0); // two non-zero-roots
       SXMatrix q = sqrt(r1);
@@ -1330,24 +1330,24 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
       SXMatrix s = b/4;
       
       SXMatrix ret;
-      ret.appendColumns(p + q + r -s);
-      ret.appendColumns(p - q - r -s);
-      ret.appendColumns(-p + q - r -s );
-      ret.appendColumns(-p - q + r -s);
+      ret.append(p + q + r -s);
+      ret.append(p - q - r -s);
+      ret.append(-p + q - r -s );
+      ret.append(-p - q + r -s);
 
       return ret;
-    } else if (p(0,p.size()-1).at(0).isEqual(0)) {
-      SXMatrix ret = poly_roots(p(0,range(p.size()-1)));
-      ret.appendColumns(0);
+    } else if (p(p.size()-1).at(0).isEqual(0)) {
+      SXMatrix ret = poly_roots(p(range(p.size()-1)));
+      ret.append(0);
       return ret;
     } else {
-      casadi_error("poly_root(): can only solve cases for first or second order polynomial. Got order " << p.size2()-1 << ".");
+      casadi_error("poly_root(): can only solve cases for first or second order polynomial. Got order " << p.size1()-1 << ".");
     }
     
   }
   
   SXMatrix eig_symbolic(const SXMatrix& m) {
-    casadi_assert_message(m.size2()==m.size1(),"eig(): supplied matrix must be square");
+    casadi_assert_message(m.size1()==m.size2(),"eig(): supplied matrix must be square");
     
     SXMatrix ret;
     
@@ -1363,7 +1363,7 @@ void printCompact(const SXMatrix& ex, std::ostream &stream){
     for (int k=0;k<nb;++k) {
       std::vector<int> r = range(index.at(k),index.at(k+1));
       // det(lambda*I-m) = 0
-      ret.appendColumns(poly_roots(poly_coeff(det(SXMatrix::eye(r.size())*l-m_perm(r,r)),l)));
+      ret.append(poly_roots(poly_coeff(det(SXMatrix::eye(r.size())*l-m_perm(r,r)),l)));
     }
 		
     return ret;

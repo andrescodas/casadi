@@ -208,13 +208,13 @@ class SXtests(casadiTestCase):
       x=SX("x")
       y=SX("y")
       z=SX("z")
-      x=SXMatrix(3,4,[1,2,1],[0,2,2,3],[x,y,z])
+      x=SXMatrix(4,3,[0,2,2,3],[1,2,1],[x,y,z])
       if scipy_available:
-        x0=DMatrix(3,4,[1,2,1],[0,2,2,3],[0.738,0.1,0.99]).toCsr_matrix()
+        x0=DMatrix(4,3,[0,2,2,3],[1,2,1],[0.738,0.1,0.99]).toCsc_matrix()
       
         self.numpyEvaluationCheckPool(self.pool,[x],array(x0.todense()),name="SXMatrix",setx0=x0,excludeflags={'nozero'})
       else:
-        x0=DMatrix(3,4,[1,2,1],[0,2,2,3],[0.738,0.1,0.99]).toArray()
+        x0=DMatrix(4,3,[0,2,2,3],[1,2,1],[0.738,0.1,0.99]).toArray()
       
         self.numpyEvaluationCheckPool(self.pool,[x],x0,name="SXMatrix",setx0=x0)
       
@@ -235,17 +235,17 @@ class SXtests(casadiTestCase):
       x2=SX("x2")
       y2=SX("y2")
       z2=SX("z2")
-      xx=SXMatrix(3,4,[1,2,1],[0,2,2,3],[x,y,z])
-      yy=SXMatrix(3,4,[0,2,3],[0,2,2,3],[x2,z2,y2])
+      xx=SXMatrix(4,3,[0,2,2,3],[1,2,1],[x,y,z])
+      yy=SXMatrix(4,3,[0,2,2,3],[0,2,3],[x2,z2,y2])
       
       if scipy_available:
-        x0=DMatrix(3,4,[1,2,1],[0,2,2,3],[0.738,0.1,0.99]).toCsr_matrix()
-        y0=DMatrix(3,4,[0,2,3],[0,2,2,3],[1.738,0.7,-6]).toCsr_matrix()
+        x0=DMatrix(4,3,[0,2,2,3],[1,2,1],[0.738,0.1,0.99]).toCsc_matrix()
+        y0=DMatrix(4,3,[0,2,2,3],[0,2,3],[1.738,0.7,-6]).toCsc_matrix()
         
         self.numpyEvaluationCheckPool(self.matrixbinarypool,[xx,yy],[array(x0.todense()),array(y0.todense())],name="SXMatrix",setx0=[x0,y0])
       else:
-        x0=DMatrix(3,4,[1,2,1],[0,2,2,3],[0.738,0.1,0.99]).toArray()
-        y0=DMatrix(3,4,[0,2,3],[0,2,2,3],[1.738,0.7,-6]).toArray()
+        x0=DMatrix(4,3,[0,2,2,3],[1,2,1],[0.738,0.1,0.99]).toArray()
+        y0=DMatrix(4,3,[0,2,2,3],[0,2,3],[1.738,0.7,-6]).toArray()
         
         self.numpyEvaluationCheckPool(self.matrixbinarypool,[xx,yy],[x0,y0],name="SXMatrix",setx0=[x0,y0])
       self.assertRaises(RuntimeError, lambda : mul(xx,yy))
@@ -270,20 +270,20 @@ class SXtests(casadiTestCase):
       self.numpyEvaluationCheck(lambda x: x[0][0:-2,0:-1], lambda x: matrix(x)[0:-2,0:-1],[x],x0,name="x[0:-2,0:-1]") 
       self.numpyEvaluationCheck(lambda x: x[0][0:2,0:2], lambda x: matrix(x)[0:2,0:2],[x],x0,name="x[0:2,0:2]")
       self.numpyEvaluationCheck(lambda x: x[0][[0,1],0:2], lambda x: matrix(x)[[0,1],0:2],[x],x0,name="x[[0,1],0:2]")
-      self.numpyEvaluationCheck(lambda x: x[0][[0,2,3]], lambda x: matrix([x[0,0],x[1,0],x[1,1]]).T,[x],x0,name="x[[0,2,3]]")
+      self.numpyEvaluationCheck(lambda x: x[0][[0,2,3]], lambda x: matrix([x[0,0],x[2,0],x[0,1]]).T,[x],x0,name="x[[0,2,3]]")
       
       myarray=array([0,2,3])
       mylist=list(myarray)
       #self.numpyEvaluationCheck(lambda x: x[0][mylist], lambda x: matrix([x[0,0],x[1,0],x[1,1]]).T,[x],x0,name="x[[0,2,3]]")
-      self.numpyEvaluationCheck(lambda x: x[0][0:2], lambda x: matrix(x.ravel()[0:2]).T,[x],x0,name="x[0:2] on dense matrix")
-      self.numpyEvaluationCheck(lambda x: x[0][1], lambda x: matrix(x.ravel()[1]).T,[x],x0,name="x[1]")
+      self.numpyEvaluationCheck(lambda x: x[0][0:2], lambda x: matrix(x.T.ravel()[0:2]).T,[x],x0,name="x[0:2] on dense matrix")
+      self.numpyEvaluationCheck(lambda x: x[0][1], lambda x: matrix(x.T.ravel()[1]).T,[x],x0,name="x[1]")
       self.numpyEvaluationCheck(lambda x: x[0][-1], lambda x: matrix(x.ravel()[-1]).T,[x],x0,name="x[-1]")
 
       self.message(":sparse")
       
-      x=SXMatrix(3,4,[1,2,1],[0,2,2,3],[SX("x"),SX("y"),SX("z")])
+      x=SXMatrix(4,3,[0,2,2,3],[1,2,1],[SX("x"),SX("y"),SX("z")]).T
       sx0=[0.738,0.39,0.99]
-      x0=DMatrix(3,4,[1,2,1],[0,2,2,3],[0.738,0.39,0.99]).toArray()
+      x0=DMatrix(4,3,[0,2,2,3],[1,2,1],[0.738,0.39,0.99]).T.toArray()
       self.numpyEvaluationCheck(lambda x: SXMatrix(x[0][0,0]), lambda x: matrix(x)[0,0],[x],x0,name="x[0,0]",setx0=[sx0])
       self.numpyEvaluationCheck(lambda x: SXMatrix(x[0][0,0]), lambda x: matrix(x)[0,0],[x],x0,name="x[0,0]",setx0=[sx0])
       self.numpyEvaluationCheck(lambda x: SXMatrix(x[0][1,0]), lambda x: matrix(x)[1,0],[x],x0,name="x[1,0]",setx0=[sx0])
@@ -518,13 +518,13 @@ class SXtests(casadiTestCase):
     y[kl]=1.0
     s=y.sparsity()
     for k in kl:
-      z[s.getRow()[k],s.col()[k]]=1.0
+      z[s.row()[k],s.getCol()[k]]=1.0
     self.checkarray(y,z,"nonzero scalar assignment")
     y[kl]=DMatrix(kl)
     
     cnt=0
     for k in kl:
-      z[s.getRow()[k],s.col()[k]]=kl[cnt]
+      z[s.row()[k],s.getCol()[k]]=kl[cnt]
       cnt+=1
     self.checkarray(y,z,"nonzero range assignment")
     
