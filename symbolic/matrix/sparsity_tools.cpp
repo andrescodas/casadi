@@ -406,7 +406,7 @@ namespace CasADi{
   int rank(const CCSSparsity& a) {
     std::vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
     a.dulmageMendelsohn(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock);
-    return coarse_rowblock.at(3);
+    return coarse_colblock.at(3);
   }
 
   bool isSingular(const CCSSparsity& a) {

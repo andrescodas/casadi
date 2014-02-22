@@ -68,33 +68,33 @@ T linspace(const GenericMatrix<T> &a_, const GenericMatrix<T> &b_, int nsteps){
 #ifndef SWIG
 template<typename T>
 T cross(const GenericMatrix<T> &a, const GenericMatrix<T> &b, int dim) {
-  casadi_assert_message(a.size2()==b.size2() && a.size1()==b.size1(),"cross(a,b): Inconsistent dimensions. Dimension of a (" << a.dimString() << " ) must equal that of b (" << b.dimString() << ").");
+  casadi_assert_message(a.size1()==b.size1() && a.size2()==b.size2(),"cross(a,b): Inconsistent dimensions. Dimension of a (" << a.dimString() << " ) must equal that of b (" << b.dimString() << ").");
   
-  casadi_assert_message(a.size2()==3 || a.size1()==3,"cross(a,b): One of the dimensions of a should have length 3, but got " << a.dimString() << ".");
+  casadi_assert_message(a.size1()==3 || a.size2()==3,"cross(a,b): One of the dimensions of a should have length 3, but got " << a.dimString() << ".");
   casadi_assert_message(dim==-1 || dim==1 || dim==2,"cross(a,b,dim): Dim must be 1, 2 or -1 (automatic).");
   
   
   std::vector<T> ret(3);
   
   
-  bool t = a.size2()==3;
+  bool t = a.size1()==3;
   
   if (dim==1) t = true;
   if (dim==2) t = false;
   
-  T a1 = t ? a(ALL,0) : a(0,ALL);
-  T a2 = t ? a(ALL,1) : a(1,ALL);
-  T a3 = t ? a(ALL,2) : a(2,ALL);
+  T a1 = t ? a(0,ALL) : a(ALL,0);
+  T a2 = t ? a(1,ALL) : a(ALL,1);
+  T a3 = t ? a(2,ALL) : a(ALL,2);
 
-  T b1 = t ? b(ALL,0) : b(0,ALL);
-  T b2 = t ? b(ALL,1) : b(1,ALL);
-  T b3 = t ? b(ALL,2) : b(2,ALL);
+  T b1 = t ? b(0,ALL) : b(ALL,0);
+  T b2 = t ? b(1,ALL) : b(ALL,1);
+  T b3 = t ? b(2,ALL) : b(ALL,2);
     
   ret[0] = a2*b3-a3*b2;
   ret[1] = a3*b1-a1*b3;
   ret[2] = a1*b2-a2*b1;
     
-  return t ? horzcat(ret) : vertcat(ret);
+  return t ? vertcat(ret) : horzcat(ret);
   
 }
 

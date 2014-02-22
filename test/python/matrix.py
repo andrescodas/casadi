@@ -837,7 +837,7 @@ class Matrixtests(casadiTestCase):
     self.assertEqual(sparse(DMatrix([[1,1,0],[1,0,1],[0,0,0]])).sizeU(),3)
     
   def test_tril2symm(self):
-    a = DMatrix(sp_tril(3),range(sp_tril(3).size()))
+    a = DMatrix(sp_triu(3),range(sp_triu(3).size())).T
     s = tril2symm(a)
     self.checkarray(s,DMatrix([[0,1,3],[1,2,4],[3,4,5]]))
     
@@ -877,7 +877,7 @@ class Matrixtests(casadiTestCase):
     self.assertEqual(v.size2(),0)
   
   def test_vertsplit(self):
-    a = DMatrix(sp_tril(5),range(5*6/2))
+    a = DMatrix(sp_triu(5),range(5*6/2)).T
     v = vertsplit(a,[0,2,4])
     
     self.assertEqual(len(v),3)
@@ -907,7 +907,7 @@ class Matrixtests(casadiTestCase):
     self.checkarray(v[2],DMatrix([[6,7,8,9,0],[10,11,12,13,14]]))
     
   def test_horzsplit(self):
-    a = DMatrix(sp_tril(5),range(5*6/2))
+    a = DMatrix(sp_triu(5),range(5*6/2)).T
     v = horzsplit(a,[0,2,4])
     
     self.assertEqual(len(v),3)
