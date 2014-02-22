@@ -166,63 +166,65 @@ namespace CasADi{
     (*this)->resize(nrow,ncol);
   }
 
-  int CCSSparsity::getNZ(int j, int i){
-    casadi_assert_message(i<size2() && j<size1(),"Indices out of bounds");
+  int CCSSparsity::getNZ(int rr, int cc){
+    // If negative index, count from the back
+    if(rr<0) rr += size1();
+    if(cc<0) cc += size2();
 
-    if (i<0) i += size2();
-    if (j<0) j += size1();
-  
+    // Check consistency
+    casadi_assert_message(rr>=0 && rr<size1(), "Row index out of bounds");
+    casadi_assert_message(cc>=0 && cc<size2(), "Column index out of bounds");
+
     // Quick return if matrix is dense
-    if(numel()==size())
-      return j+i*size1();
+    if(dense()) return rr+cc*size1();
   
     // Quick return if we are adding an element to the end
-    if(colind(i)==size() || (colind(i+1)==size() && row().back()<j)){
+    if(colind(cc)==size() || (colind(cc+1)==size() && row().back()<rr)){
       std::vector<int>& rowv = rowRef();
       std::vector<int>& colindv = colindRef();
-      rowv.push_back(j);
-      for(int ii=i; ii<size2(); ++ii){
-        colindv[ii+1]++;
+      rowv.push_back(rr);
+      for(int c=cc; c<size2(); ++c){
+        colindv[c+1]++;
       }
       return rowv.size()-1;
     }
 
     // go to the place where the element should be
     int ind;
-    for(ind=colind(i); ind<colind(i+1); ++ind){ // better: loop from the back to the front
-      if(row(ind) == j){
+    for(ind=colind(cc); ind<colind(cc+1); ++ind){ // better: loop from the back to the front
+      if(row(ind) == rr){
         return ind; // element exists
-      } else if(row(ind) > j)
+      } else if(row(ind) > rr){
         break;                // break at the place where the element should be added
+      }
     }
   
-    // Make sure that there no other objects are affected
-    makeUnique();
-  
     // insert the element
-    rowRef().insert(rowRef().begin()+ind,j);
-    for(int col=i+1; col<size2()+1; ++col)
-      colindRef()[col]++;
+    std::vector<int>& rowv = rowRef();
+    std::vector<int>& colindv = colindRef();
+    rowv.insert(rowv.begin()+ind,rr);
+    for(int c=cc+1; c<size2()+1; ++c)
+      colindv[c]++;
   
     // Return the location of the new element
     return ind;
   }
 
-  bool CCSSparsity::hasNZ(int j, int i) const {
-    return (*this)->getNZ(j,i)!=-1;
+  bool CCSSparsity::hasNZ(int rr, int cc) const {
+    return (*this)->getNZ(rr,cc)!=-1;
   }
 
 
-  int CCSSparsity::getNZ(int j, int i) const{
-    return (*this)->getNZ(j,i);
+  int CCSSparsity::getNZ(int rr, int cc) const{
+    return (*this)->getNZ(rr,cc);
   }
 
   CCSSparsity CCSSparsity::reshape(int nrow, int ncol) const{
     return (*this)->reshape(nrow,ncol);
   }
 
-  std::vector<int> CCSSparsity::getNZ(const std::vector<int>& jj, const std::vector<int>& ii) const{
-    return (*this)->getNZ(jj,ii);
+  std::vector<int> CCSSparsity::getNZ(const std::vector<int>& rr, const std::vector<int>& cc) const{
+    return (*this)->getNZ(rr,cc);
   }
 
   bool CCSSparsity::scalar(bool scalar_and_dense) const{

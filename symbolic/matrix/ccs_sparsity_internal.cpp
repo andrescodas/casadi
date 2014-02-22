@@ -2579,29 +2579,29 @@ namespace CasADi{
     return CCSSparsity(nrow_,ncol_,true);
   }
 
-  int CCSSparsityInternal::getNZ(int j, int i) const{
-    casadi_assert_message(i<ncol_,"First index (" << j  << ") out of bounds. Attempting to slice [" << j << "," << i << " ] out of shape " << dimString() << ".");
-    casadi_assert_message(j<nrow_,"Second index (" << i  << ") out of bounds.  Attempting to slice [" << j << "," << i << " ] out of shape " << dimString() << ".");
-  
-    if (i<0) i += ncol_;
-    if (j<0) j += nrow_;
-  
+  int CCSSparsityInternal::getNZ(int rr, int cc) const{
+    // If negative index, count from the back
+    if(rr<0) rr += nrow_;
+    if(cc<0) cc += ncol_;
+
+    // Check consistency
+    casadi_assert_message(rr>=0 && rr<nrow_, "Row index " << rr << " out of bounds [0," << nrow_ << ")");
+    casadi_assert_message(cc>=0 && cc<ncol_, "Column index " << cc << " out of bounds [0," << ncol_ << ")");
+
     // Quick return if matrix is dense
-    if(numel()==size())
-      return j+i*nrow_;
-  
+    if(dense()) return rr+cc*nrow_;
+
     // Quick return if past the end
-    if(colind_[i]==size() || (colind_[i+1]==size() && row_.back()<j)){
-      return -1;
-    }
+    if(colind_[cc]==size() || (colind_[cc+1]==size() && row_.back()<rr)) return -1;
 
     // Find sparse element
-    for(int ind=colind_[i]; ind<colind_[i+1]; ++ind){
-      if(row_[ind] == j){
+    for(int ind=colind_[cc]; ind<colind_[cc+1]; ++ind){
+      if(row_[ind] == rr){
         return ind;     // element exists
       }
-      else if(row_[ind] > j)
-        break;                // break at the place where the element should be added
+      else if(row_[ind] > rr){
+        break;          // break at the place where the element should be added
+      }
     }
     return -1;
   }

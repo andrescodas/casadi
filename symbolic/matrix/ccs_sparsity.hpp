@@ -225,18 +225,18 @@ namespace CasADi{
     
     /** \brief Get the index of a non-zero element
         Add the element if it does not exist and copy object if it's not unique */
-    int getNZ(int j, int i);
+    int getNZ(int rr, int cc);
     
     /** \brief Get the index of an existing non-zero element
         return -1 if the element does not exists */
-    int getNZ(int j, int i) const;
+    int getNZ(int rr, int cc) const;
 
-    /// Returns true if the pattern has a non-zero at location i,j
-    bool hasNZ(int j, int i) const;
+    /// Returns true if the pattern has a non-zero at location rr,cc
+    bool hasNZ(int rr, int cc) const;
 
     /** \brief Get a set of non-zero element
         return -1 if the element does not exists */
-    std::vector<int> getNZ(const std::vector<int>& jj, const std::vector<int>& ii) const;
+    std::vector<int> getNZ(const std::vector<int>& rr, const std::vector<int>& cc) const;
 
     /** \brief Get the nonzero index for a set of elements
         The index vector is used both for input and outputs and must be sorted by increasing

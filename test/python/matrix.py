@@ -765,8 +765,8 @@ class Matrixtests(casadiTestCase):
       M = c.diag(D)
       makeSparse(M)
       
-      self.checkarray(m.sparsity().rowind(),M.sparsity().rowind())
-      self.checkarray(m.sparsity().col(),M.sparsity().col())
+      self.checkarray(m.sparsity().colind(),M.sparsity().colind())
+      self.checkarray(m.sparsity().row(),M.sparsity().row())
 
   def test_sprank(self):
     self.message("sprank")
