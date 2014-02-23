@@ -281,9 +281,9 @@ class SXtests(casadiTestCase):
 
       self.message(":sparse")
       
-      x=SXMatrix(4,3,[0,2,2,3],[1,2,1],[SX("x"),SX("y"),SX("z")]).T
+      x=SXMatrix(4,3,[0,2,2,3],[1,2,1],[SX("x"),SX("y"),SX("z")])
       sx0=[0.738,0.39,0.99]
-      x0=DMatrix(4,3,[0,2,2,3],[1,2,1],[0.738,0.39,0.99]).T.toArray()
+      x0=DMatrix(4,3,[0,2,2,3],[1,2,1],[0.738,0.39,0.99]).toArray()
       self.numpyEvaluationCheck(lambda x: SXMatrix(x[0][0,0]), lambda x: matrix(x)[0,0],[x],x0,name="x[0,0]",setx0=[sx0])
       self.numpyEvaluationCheck(lambda x: SXMatrix(x[0][0,0]), lambda x: matrix(x)[0,0],[x],x0,name="x[0,0]",setx0=[sx0])
       self.numpyEvaluationCheck(lambda x: SXMatrix(x[0][1,0]), lambda x: matrix(x)[1,0],[x],x0,name="x[1,0]",setx0=[sx0])
@@ -298,7 +298,7 @@ class SXtests(casadiTestCase):
       self.numpyEvaluationCheck(lambda x: x[0][0:-2,0:-1], lambda x: matrix(x)[0:-2,0:-1],[x],x0,name="x[0:-2,0:-1]",setx0=[sx0])
       self.numpyEvaluationCheck(lambda x: x[0][0:2,0:2], lambda x: matrix(x)[0:2,0:2],[x],x0,name="x[0:2,0:2]",setx0=[sx0])
       self.numpyEvaluationCheck(lambda x: x[0][[0,1],0:2], lambda x: matrix(x)[[0,1],0:2],[x],x0,name="x[[0,1],0:2]",setx0=[sx0])
-      self.numpyEvaluationCheck(lambda x: x[0][[2,1]], lambda x: matrix([x[2,1],x[0,2]]).T,[x],x0,name="x[[2,1]]")
+      self.numpyEvaluationCheck(lambda x: x[0][[2,1]], lambda x: matrix([x[1,2],x[2,0]]).T,[x],x0,name="x[[2,1]]")
       self.numpyEvaluationCheck(lambda x: x[0][0:2], lambda x: matrix(sx0[0:2]).T,[x],x0,name="x[0:2] on dense matrix")
       self.numpyEvaluationCheck(lambda x: x[0][1], lambda x: matrix(sx0[1]).T,[x],x0,name="x[1]",setx0=[sx0])
       self.numpyEvaluationCheck(lambda x: x[0][-1], lambda x: matrix(sx0[-1]).T,[x],x0,name="x[-1]",setx0=[sx0])
@@ -1047,8 +1047,8 @@ class SXtests(casadiTestCase):
     self.checkarray(f.output(),DMatrix([0.67732,2.02268,3,7]),digits=5)
 
     x = ssym("x",3,3)
-    x[0,2] = 0
-    x[0,1] = 0
+    x[2,0] = 0
+    x[1,0] = 0
 
     makeSparse(x)
 
@@ -1063,9 +1063,9 @@ class SXtests(casadiTestCase):
     
     
     x = ssym("x",3,3)
-    x[0,2] = 0
-    x[0,1] = 0
-    x[1,2] = 0
+    x[2,0] = 0
+    x[1,0] = 0
+    x[2,1] = 0
     
     makeSparse(x)
 
@@ -1078,7 +1078,7 @@ class SXtests(casadiTestCase):
     f.evaluate()
     self.checkarray(f.output(),DMatrix([1,3,6]),digits=5)
 
-    x = ssym("x",sp_tril(5))
+    x = ssym("x",sp_triu(5))
   
     f = SXFunction([x],[eig_symbolic(x)])
     f.init()
