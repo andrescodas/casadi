@@ -214,7 +214,7 @@ namespace CasADi{
       }
     
       // Lagrange multipliers for the nonlinear constraints
-      g_lam = msym("g_lam",1,ng_);
+      g_lam = msym("g_lam",ng_);
 
       if(verbose_){
         cout << "Allocated intermediate variables." << endl;
@@ -387,7 +387,7 @@ namespace CasADi{
     lgrad.init();
   
     // Jacobian of the constraints
-    MX jac = trans(lgrad.jac(mod_x_,mod_g_));
+    MX jac = lgrad.jac(mod_x_,mod_g_);
     log("Formed Jacobian of the constraints.");
 
     // Hessian of the Lagrangian
@@ -455,22 +455,22 @@ namespace CasADi{
     vec_fcn_out.push_back(b_g);                               vec_g_ = n++;  
     casadi_assert(n==vec_fcn_out.size());
   
-    MXFunction flatten_fcn(mfcn_in,vec_fcn_out);
-    flatten_fcn.setOption("name","flatten_fcn");
-    flatten_fcn.init();
+    MXFunction vec_fcn(mfcn_in,vec_fcn_out);
+    vec_fcn.setOption("name","vec_fcn");
+    vec_fcn.init();
     if(verbose_){
-      cout << "Generated linearization function ( " << flatten_fcn.getAlgorithmSize() << " nodes)." << endl;
+      cout << "Generated linearization function ( " << vec_fcn.getAlgorithmSize() << " nodes)." << endl;
     }
   
     // Generate c code and load as DLL
     if(codegen_){
-      vec_fcn_ = dynamicCompilation(flatten_fcn,"flatten_fcn","linearization function",compiler);
+      vec_fcn_ = dynamicCompilation(vec_fcn,"vec_fcn","linearization function",compiler);
     } else {
-      vec_fcn_ = flatten_fcn;
+      vec_fcn_ = vec_fcn;
     }
 
     // Expression a + A*du in Lifted Newton (Section 2.1 in Alberspeyer2010)
-    MX du = msym("du",1,nx_);   // Step in u
+    MX du = msym("du",nx_);   // Step in u
     MX g_dlam;               // Step lambda_g
     if(!gauss_newton_){
       g_dlam = msym("g_dlam",g_lam.sparsity());
@@ -525,10 +525,10 @@ namespace CasADi{
     } else {
       exp_fcn_ = exp_fcn;
     }  
-  
+
     // Allocate QP data
-    CCSSparsity sp_tr_B_obj = mat_fcn_.output(mat_hes_).sparsity().transpose();
-    qpH_ = DMatrix(sp_tr_B_obj.patternProduct(sp_tr_B_obj));
+    CCSSparsity sp_B_obj = mat_fcn_.output(mat_hes_).sparsity();
+    qpH_ = DMatrix(sp_B_obj.patternProduct(sp_B_obj));
     qpA_ = mat_fcn_.output(mat_jac_);
     qpB_.resize(ng_);
 
@@ -890,11 +890,11 @@ namespace CasADi{
       // Gauss-Newton Hessian
       const DMatrix& B_obj =  mat_fcn_.output(mat_hes_);
       fill(qpH_.begin(),qpH_.end(),0);
-      DMatrix::mul_no_alloc_nt(B_obj,B_obj,qpH_);
+      DMatrix::mul_no_alloc_tn(B_obj,B_obj,qpH_);
 
       // Gradient of the objective in Gauss-Newton
       fill(gf_.begin(),gf_.end(),0);
-      DMatrix::mul_no_alloc_nn(B_obj,b_gn_,gf_);
+      DMatrix::mul_no_alloc_tn(B_obj,b_gn_,gf_);
     } else {
       // Exact Hessian
       mat_fcn_.getOutput(qpH_,mat_hes_);
@@ -905,9 +905,10 @@ namespace CasADi{
     const vector<int> &qpA_colind = qpA_.colind();
     const vector<int> &qpA_row = qpA_.row();
     for(int i=0; i<nx_; ++i)  gL_[i] = gf_[i] + x_lam_[i];
-    for(int i=0; i<ng_; ++i){
-      for(int el=qpA_colind[i]; el<qpA_colind[i+1]; ++el){
-        gL_[qpA_row[el]] += qpA_data[el]*g_lam_[i];
+    for(int cc=0; cc<qpA_colind.size()-1; ++cc){
+      for(int el=qpA_colind[cc]; el<qpA_colind[cc+1]; ++el){
+        int rr = qpA_row[el];
+        gL_[cc] += qpA_data[el]*g_lam_[rr];
       }
     }
 
@@ -1013,8 +1014,8 @@ namespace CasADi{
   
     // Check the smallest eigenvalue of the Hessian
     double a = qpH_.elem(0,0);
-    double b = qpH_.elem(1,0);
-    double c = qpH_.elem(0,1);
+    double b = qpH_.elem(0,1);
+    double c = qpH_.elem(1,0);
     double d = qpH_.elem(1,1);
   
     // Make sure no not a numbers
@@ -1023,7 +1024,7 @@ namespace CasADi{
     // Make sure symmetric
     if(b!=c){
       casadi_assert_warning(fabs(b-c)<1e-10,"Hessian is not symmetric: " << b << " != " << c);
-      qpH_.elem(0,1) = c = b;
+      qpH_.elem(1,0) = c = b;
     }
   
     double eig_smallest = (a+d)/2 - std::sqrt(4*b*c + (a-d)*(a-d))/2;
