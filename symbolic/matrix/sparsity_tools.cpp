@@ -354,8 +354,8 @@ namespace CasADi{
   std::size_t hash_sparsity(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row){
     // Condense the sparsity pattern to a single, deterministric number
     std::size_t ret=0;
-    hash_combine(ret,ncol);
     hash_combine(ret,nrow);
+    hash_combine(ret,ncol);
     hash_combine(ret,colind);
     hash_combine(ret,row);
     return ret;
@@ -371,8 +371,8 @@ namespace CasADi{
     // Create compressed pattern
     vector<int> ret;
     ret.reserve(1 + 1 + colind.size() + row.size());
-    ret.push_back(ncol);
     ret.push_back(nrow);
+    ret.push_back(ncol);
     ret.insert(ret.end(),colind.begin(),colind.end());
     ret.insert(ret.end(),row.begin(),row.end());
     return ret;
@@ -381,8 +381,8 @@ namespace CasADi{
   CCSSparsity sp_compress(const std::vector<int>& v){
     // Check consistency
     casadi_assert(v.size() >= 2);
-    int ncol = v[0];
-    //int nrow = v[1];
+    //int nrow = v[0];
+    int ncol = v[1];
     casadi_assert(v.size() >= 2 + ncol+1);
     int nnz = v[2 + ncol];
     casadi_assert(v.size() == 2 + ncol+1 + nnz);
@@ -393,8 +393,8 @@ namespace CasADi{
   
   CCSSparsity sp_compress(const int* v){
     // Get sparsity pattern
-    int ncol = v[0];
-    int nrow = v[1];
+    int nrow = v[0];
+    int ncol = v[1];
     const int *colind = v+2;
     int nnz = colind[ncol];
     const int *row = v + 2 + ncol+1;

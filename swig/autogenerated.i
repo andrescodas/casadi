@@ -60,8 +60,8 @@ def dpleIn(*dummy,**kwargs):
   Input arguments of a dple solver
   
   Keyword arguments:
-    a -- A matrices (vertcat when const_dim, blkdiag otherwise) [DPLE_A]
-    v -- V matrices (vertcat when const_dim, blkdiag otherwise) [DPLE_V]
+    a -- A matrices (horzcat when const_dim, blkdiag otherwise) [DPLE_A]
+    v -- V matrices (horzcat when const_dim, blkdiag otherwise) [DPLE_V]
   """
   if(len(dummy)>0 and len(kwargs)>0): raise Exception("Cannot mix two use cases of dpleIn. Either use keywords or non-keywords ")
   if len(dummy)>0: return [ dummy[0][getSchemeEntryEnum(SCHEME_DPLEInput,n)] for n in dummy[1:]]
@@ -106,7 +106,7 @@ def dpleOut(*dummy,**kwargs):
   Output arguments of a dple solver
   
   Keyword arguments:
-    p -- Lyapunov matrix (vertcat when const_dim, blkdiag otherwise) (cholesky of P if pos_def) [DPLE_P]
+    p -- Lyapunov matrix (horzcat when const_dim, blkdiag otherwise) (cholesky of P if pos_def) [DPLE_P]
   """
   if(len(dummy)>0 and len(kwargs)>0): raise Exception("Cannot mix two use cases of dpleOut. Either use keywords or non-keywords ")
   if len(dummy)>0: return [ dummy[0][getSchemeEntryEnum(SCHEME_DPLEOutput,n)] for n in dummy[1:]]
@@ -617,7 +617,7 @@ def linsolIn(*dummy,**kwargs):
   
   Keyword arguments:
     A -- The square matrix A: sparse, (n x n). [LINSOL_A]
-    B -- The right-hand-side matrix b: dense,  (m x n) [LINSOL_B]
+    B -- The right-hand-side matrix b: dense,  (n x m) [LINSOL_B]
   """
   if(len(dummy)>0 and len(kwargs)>0): raise Exception("Cannot mix two use cases of linsolIn. Either use keywords or non-keywords ")
   if len(dummy)>0: return [ dummy[0][getSchemeEntryEnum(SCHEME_LinsolInput,n)] for n in dummy[1:]]

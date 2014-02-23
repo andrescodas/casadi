@@ -2164,7 +2164,7 @@ namespace CasADi{
     }
 
     // Function that returns the sparsity pattern
-    s << "int getSparsity(int i, int *ncol, int *nrow, int **colind, int **row){" << endl;
+    s << "int getSparsity(int i, int *nrow, int *ncol, int **colind, int **row){" << endl;
     
     // Get the sparsity index using a switch
     s << "  int* sp;" << endl;
@@ -2191,8 +2191,8 @@ namespace CasADi{
     s << "  }" << endl << endl;
     
     // Decompress the sparsity pattern
-    s << "  *ncol = sp[0];" << endl;
-    s << "  *nrow = sp[1];" << endl;
+    s << "  *nrow = sp[0];" << endl;
+    s << "  *ncol = sp[1];" << endl;
     s << "  *colind = sp + 2;" << endl;
     s << "  *row = sp + 2 + (*ncol + 1);" << endl;
     s << "  return 0;" << endl;

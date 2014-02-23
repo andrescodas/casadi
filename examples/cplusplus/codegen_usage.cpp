@@ -144,7 +144,7 @@ int usage_c_unknown_signature(){
 
     int nrow,ncol;
     int *colind, *row;
-    getSparsity(ind,&ncol,&nrow,&colind,&row);
+    getSparsity(ind,&nrow,&ncol,&colind,&row);
 
     printf("  Dimension: %d-by-%d\n",nrow,ncol);
     printf("  Nonzeros: {");

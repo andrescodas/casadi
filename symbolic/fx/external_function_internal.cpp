@@ -74,8 +74,8 @@ ExternalFunctionInternal::ExternalFunctionInternal(const std::string& bin_name) 
   // Get the sparsity pattern
   for(int i=0; i<n_in+n_out; ++i){
     // Get sparsity from file
-    int ncol, nrow, *colind, *row;
-    flag = getSparsity(i,&ncol,&nrow,&colind,&row);
+    int nrow, ncol, *colind, *row;
+    flag = getSparsity(i,&nrow,&ncol,&colind,&row);
     if(flag) throw CasadiException("ExternalFunctionInternal: \"getSparsity\" failed");
 
     // Col offsets
