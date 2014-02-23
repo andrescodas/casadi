@@ -88,11 +88,11 @@ namespace CasADi{
 
     // Allocate a QP solver
     CCSSparsity H_sparsity = exact_hessian_ ? hessLag().output().sparsity() : sp_dense(nx_,nx_);
-    H_sparsity = H_sparsity + DMatrix::eye(nx_).sparsity();
+    H_sparsity = H_sparsity + sp_diag(nx_);
     CCSSparsity A_sparsity = jacG().isNull() ? CCSSparsity(0,nx_,false) : jacG().output().sparsity();
 
     QPSolverCreator qp_solver_creator = getOption("qp_solver");
-    qp_solver_ = qp_solver_creator(qpStruct("h",H_sparsity,"a",A_sparsity.transpose()));
+    qp_solver_ = qp_solver_creator(qpStruct("h",H_sparsity,"a",A_sparsity));
 
     // Set options if provided
     if(hasSetOption("qp_solver_options")){
@@ -149,7 +149,7 @@ namespace CasADi{
     
       SXMatrix sk = x - x_old;
       SXMatrix yk = gLag - gLag_old;
-      SXMatrix qk = mul(sk, Bk);
+      SXMatrix qk = mul(Bk, sk);
     
       // Calculating theta
       SXMatrix skBksk = inner_prod(sk, qk);
@@ -159,7 +159,7 @@ namespace CasADi{
       yk = omega * yk + (1 - omega) * qk;
       SXMatrix theta = 1. / inner_prod(sk, yk);
       SXMatrix phi = 1. / inner_prod(qk, sk);
-      SXMatrix Bk_new = Bk + theta * mul(trans(yk),yk) - phi * mul(trans(qk),qk);
+      SXMatrix Bk_new = Bk + theta * mul(yk, trans(yk)) - phi * mul(qk, trans(qk));
     
       // Inputs of the BFGS update function
       vector<SXMatrix> bfgs_in(BFGS_NUM_IN);
@@ -484,12 +484,12 @@ namespace CasADi{
         // BFGS with careful updates and restarts
         if (iter % lbfgs_memory_ == 0){
           // Reset Hessian approximation by dropping all off-diagonal entries
-          const vector<int>& colind = Bk_.colind();      // Access sparsity (col offset)
+          const vector<int>& colind = Bk_.colind();      // Access sparsity (column offset)
           const vector<int>& row = Bk_.row();            // Access sparsity (row)
           vector<double>& data = Bk_.data();             // Access nonzero elements
-          for(int i=0; i<colind.size()-1; ++i){          // Loop over the cols of the Hessian
-            for(int el=colind[i]; el<colind[i+1]; ++el){ // Loop over the nonzero elements of the col
-              if(i!=row[el]) data[el] = 0;               // Remove if off-diagonal entries
+          for(int cc=0; cc<colind.size()-1; ++cc){          // Loop over the columns of the Hessian
+            for(int el=colind[cc]; el<colind[cc+1]; ++el){ // Loop over the nonzero elements of the column
+              if(cc!=row[el]) data[el] = 0;               // Remove if off-diagonal entries
             }
           }
         }
@@ -601,7 +601,7 @@ namespace CasADi{
 
   double SQPInternal::quad_form(const std::vector<double>& x, const DMatrix& A){
     // Assert dimensions
-    casadi_assert(x.size()==A.size2() && x.size()==A.size1());
+    casadi_assert(x.size()==A.size1() && x.size()==A.size2());
   
     // Access the internal data of A
     const std::vector<int> &A_colind = A.colind();
@@ -611,15 +611,15 @@ namespace CasADi{
     // Return value
     double ret=0;
 
-    // Loop over the cols of A
-    for(int i=0; i<x.size(); ++i){
+    // Loop over the columns of A
+    for(int cc=0; cc<x.size(); ++cc){
       // Loop over the nonzeros of A
-      for(int el=A_colind[i]; el<A_colind[i+1]; ++el){
+      for(int el=A_colind[cc]; el<A_colind[cc+1]; ++el){
         // Get row
-        int j = A_row[el];
+        int rr = A_row[el];
       
         // Add contribution
-        ret += x[i]*A_data[el]*x[j];
+        ret += x[cc]*A_data[el]*x[rr];
       }
     }
   
@@ -644,11 +644,11 @@ namespace CasADi{
     const vector<int>& row = H.row();
     const vector<double>& data = H.data();
     double reg_param = 0;
-    for(int i=0; i<colind.size()-1; ++i){
+    for(int cc=0; cc<colind.size()-1; ++cc){
       double mineig = 0;
-      for(int el=colind[i]; el<colind[i+1]; ++el){
-        int j = row[el];
-        if(i == j){
+      for(int el=colind[cc]; el<colind[cc+1]; ++el){
+        int rr = row[el];
+        if(rr == cc){
           mineig += data[el];
         } else {
           mineig -= fabs(data[el]);
@@ -664,10 +664,10 @@ namespace CasADi{
     const vector<int>& row = H.row();
     vector<double>& data = H.data();
     
-    for(int i=0; i<colind.size()-1; ++i){
-      for(int el=colind[i]; el<colind[i+1]; ++el){
-        int j = row[el];
-        if(i==j){
+    for(int cc=0; cc<colind.size()-1; ++cc){
+      for(int el=colind[cc]; el<colind[cc+1]; ++el){
+        int rr = row[el];
+        if(rr==cc){
           data[el] += reg;
         }
       }
@@ -871,7 +871,7 @@ namespace CasADi{
 
     // Pass linear bounds
     if(ng_>0){
-      qp_solver_.setInput(trans(A), QP_SOLVER_A);
+      qp_solver_.setInput(A, QP_SOLVER_A);
       qp_solver_.setInput(lbA, QP_SOLVER_LBA);
       qp_solver_.setInput(ubA, QP_SOLVER_UBA);
     }
