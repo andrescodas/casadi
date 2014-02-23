@@ -114,7 +114,7 @@ namespace CasADi{
     
     // Get/generate required functions
     gradF();
-    jjacG();
+    jacG();
     if(exact_hessian_){
       hessLag();
     }
@@ -122,7 +122,7 @@ namespace CasADi{
     // Allocate a QP solver
     CCSSparsity H_sparsity = exact_hessian_ ? hessLag().output().sparsity() : sp_dense(nx_,nx_);
     H_sparsity = H_sparsity + DMatrix::eye(nx_).sparsity();
-    CCSSparsity A_sparsity = jjacG().isNull() ? CCSSparsity(0,nx_,false) : jjacG().output().sparsity();
+    CCSSparsity A_sparsity = jacG().isNull() ? CCSSparsity(0,nx_,false) : jacG().output().sparsity();
 
     StabilizedQPSolverCreator stabilized_qp_solver_creator = getOption("stabilized_qp_solver");
     stabilized_qp_solver_ = stabilized_qp_solver_creator(qpStruct("h",H_sparsity,"a",A_sparsity.transpose()));
@@ -919,18 +919,18 @@ namespace CasADi{
       if(ng_==0) return;
     
       // Get function
-      FX& jjacG = this->jjacG();
+      FX& jacG = this->jacG();
 
       // Pass the argument to the function
-      jjacG.setInput(x,NL_X);
-      jjacG.setInput(input(NLP_SOLVER_P),NL_P);
+      jacG.setInput(x,NL_X);
+      jacG.setInput(input(NLP_SOLVER_P),NL_P);
       
       // Evaluate the function
-      jjacG.evaluate();
+      jacG.evaluate();
       
       // Get the output
-      jjacG.output(1+NL_G).get(g,DENSE);
-      jjacG.output().get(J);
+      jacG.output(1+NL_G).get(g,DENSE);
+      jacG.output().get(J);
 
       if (monitored("eval_jac_g")) {
         cout << "x = " << x << endl;

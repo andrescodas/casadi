@@ -162,7 +162,7 @@ namespace CasADi{
 
     // Get/generate required functions
     gradF();
-    jjacG();
+    jacG();
     if(exact_hessian_){
       hessLag();
     }
@@ -527,13 +527,13 @@ namespace CasADi{
       }
       
       // Get function
-      FX& jjacG = this->jjacG();
+      FX& jacG = this->jacG();
     
       double time1 = clock();
       if (values == NULL) {
         int nz=0;
-        const vector<int>& colind = jjacG.output().colind();
-        const vector<int>& row = jjacG.output().row();
+        const vector<int>& colind = jacG.output().colind();
+        const vector<int>& row = jacG.output().row();
         for(int cc=0; cc<colind.size()-1; ++cc)
           for(int el=colind[cc]; el<colind[cc+1]; ++el){
             int rr = row[el];
@@ -543,21 +543,21 @@ namespace CasADi{
           }
       } else {
         // Pass the argument to the function
-        jjacG.setInput(x,NL_X);
-        jjacG.setInput(input(NLP_SOLVER_P),NL_P);
+        jacG.setInput(x,NL_X);
+        jacG.setInput(input(NLP_SOLVER_P),NL_P);
       
         // Evaluate the function
-        jjacG.evaluate();
+        jacG.evaluate();
 
         // Get the output
-        jjacG.getOutput(values);
+        jacG.getOutput(values);
       
         if(monitored("eval_jac_g")){
-          cout << "x = " << jjacG.input(NL_X).data() << endl;
+          cout << "x = " << jacG.input(NL_X).data() << endl;
           cout << "J = " << endl;
-          jjacG.output().printSparse();
+          jacG.output().printSparse();
         }
-        if (regularity_check_ && !isRegular(jjacG.output().data())) casadi_error("IpoptInternal::jac_g: NaN or Inf detected.");
+        if (regularity_check_ && !isRegular(jacG.output().data())) casadi_error("IpoptInternal::jac_g: NaN or Inf detected.");
       }
     
       double time2 = clock();
@@ -747,7 +747,7 @@ namespace CasADi{
       if(nlp_.output(NL_G).size()==0)
         nnz_jac_g = 0;
       else
-        nnz_jac_g = jjacG().output().size();
+        nnz_jac_g = jacG().output().size();
 
       // Get Hessian sparsity pattern
       if(exact_hessian_)

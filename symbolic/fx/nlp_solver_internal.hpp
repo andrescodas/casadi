@@ -77,7 +77,7 @@ namespace CasADi{
     FX& gradF();
 
     /// Access the Jacobian of the constraint function
-    FX& jjacG();
+    FX& jacG();
 
     /// Access the Hessian of the Lagrangian function
     FX& hessLag();
@@ -110,7 +110,7 @@ namespace CasADi{
     FX gradF_;
     
     // Jacobian of the constraints
-    FX jjacG_;
+    FX jacG_;
     
     // Hessian of the Lagrangian
     FX hessLag_;

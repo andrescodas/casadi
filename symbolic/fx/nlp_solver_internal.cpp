@@ -195,34 +195,34 @@ namespace CasADi{
     return gradF;
   }
 
-  FX& NLPSolverInternal::jjacG(){
-    if(jjacG_.isNull()){
-      jjacG_ = getJacG();
+  FX& NLPSolverInternal::jacG(){
+    if(jacG_.isNull()){
+      jacG_ = getJacG();
     }
-    return jjacG_;
+    return jacG_;
   }
 
   FX NLPSolverInternal::getJacG(){
-    FX jjacG;
+    FX jacG;
     
     // Return null if no constraints
-    if(ng_==0) return jjacG;
+    if(ng_==0) return jacG;
     
     if(hasSetOption("jac_g")){
-      jjacG = getOption("jac_g");
+      jacG = getOption("jac_g");
     } else {
       log("Generating constraint Jacobian");
-      jjacG = nlp_.jacobian(NL_X,NL_G);
+      jacG = nlp_.jacobian(NL_X,NL_G);
       log("Jacobian function generated");
     }
-    jjacG.setOption("name","jac_g");
-    jjacG.init(false);
-    casadi_assert_message(jjacG.getNumInputs()==JACG_NUM_IN, "Wrong number of inputs to the Jacobian function. Note: The Jacobian signature was changed in #544");
-    casadi_assert_message(jjacG.getNumOutputs()==JACG_NUM_OUT, "Wrong number of outputs to the Jacobian function. Note: The Jacobian signature was changed in #544");
-    jjacG.setInputScheme(SCHEME_JacGInput);
-    jjacG.setOutputScheme(SCHEME_JacGOutput);
+    jacG.setOption("name","jac_g");
+    jacG.init(false);
+    casadi_assert_message(jacG.getNumInputs()==JACG_NUM_IN, "Wrong number of inputs to the Jacobian function. Note: The Jacobian signature was changed in #544");
+    casadi_assert_message(jacG.getNumOutputs()==JACG_NUM_OUT, "Wrong number of outputs to the Jacobian function. Note: The Jacobian signature was changed in #544");
+    jacG.setInputScheme(SCHEME_JacGInput);
+    jacG.setOutputScheme(SCHEME_JacGOutput);
     log("Jacobian function initialized");
-    return jjacG;
+    return jacG;
   }
 
   FX& NLPSolverInternal::gradLag(){
