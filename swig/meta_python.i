@@ -794,7 +794,6 @@ int meta< CasADi::Matrix<double> >::as(PyObject * p,CasADi::Matrix<double> &m) {
     
     m = CasADi::Matrix<double>(nrows, ncols,0);
     m.set(d,CasADi::DENSETRANS);
-    std::cout << "test" << std::endl;
                   
     // Free memory
     if (array_is_new_object)

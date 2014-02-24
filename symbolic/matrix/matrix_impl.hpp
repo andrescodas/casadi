@@ -991,12 +991,18 @@ namespace CasADi{
           val[i*stride1+j*stride2] = v[i*size1()+j];
         }
       }
+    } else if(sp==DENSETRANS && numel()==v.size()) {
+      for (int i=0;i<size2();i++) {
+        for (int j=0;j<size1();j++) {
+          val[i*stride1+j*stride2] = v[j*size2()+i];
+        }
+      }
     } else if(sp==DENSE){
-      throw CasadiException("Matrix<T>::getArray: strided sparse DMatrix->dense not implemented");
+      throw CasadiException("Matrix<T>::getStridedArray: strided sparse DMatrix->dense not implemented");
     } else if(sp==SPARSESYM){
-      throw CasadiException("Matrix<T>::getArray: strided SPARSESYM not implemented");
+      throw CasadiException("Matrix<T>::getStridedArray: strided SPARSESYM not implemented");
     } else {
-      throw CasadiException("Matrix<T>::getArray: not SPARSE or DENSE");
+      throw CasadiException("Matrix<T>::getStridedArray: not SPARSE or DENSE");
     }
 
   }
