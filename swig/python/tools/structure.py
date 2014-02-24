@@ -66,9 +66,9 @@ def canonical(ind,s):
   else:
     return ind
     
-def flatten(e):
+def vec(e):
   if any(isinstance(i,list) for i in e):
-    return sum(map(flatten,e),[])
+    return sum(map(vec,e),[])
   else:
     return e
     
@@ -487,7 +487,7 @@ class GetterDispatcher(Dispatcher):
         if type is None:
           return r
         elif type=="symm":
-          return tril2symm(r)
+          return triu2symm(r)
         else:
           raise Exception("Cannot handle type '%s'." % entry.type)
        
@@ -497,7 +497,7 @@ class GetterDispatcher(Dispatcher):
         if type is None:
           return self.master[i]
         elif type=="symm":
-          return tril2symm(self.master[i])
+          return triu2symm(self.master[i])
         else:
           raise Exception("Cannot handle type '%s'." % entry.type)
       except Exception as e:
@@ -702,7 +702,7 @@ class CasadiStructure(Structure,CasadiStructureDerivable):
       k += sp.size()
       it = tuple(i)
       self.map[it] = m
-      self.lookuptable+=[(it,kk,p) for kk,p in enumerate(zip(sp.col(),sp.getRow()))]
+      self.lookuptable+=[(it,kk,p) for kk,p in enumerate(zip(sp.getCol(),sp.row()))]
       for a in canonicalIndexAncestors(it)[1:]:
         if a in hmap:
           hmap[a].append(m)
@@ -710,7 +710,7 @@ class CasadiStructure(Structure,CasadiStructureDerivable):
           hmap[a] = [m]
     self.size = k
     for k,v in hmap.iteritems():
-      hmap[k] = flattenNZcat(v)
+      hmap[k] = vecNZcat(v)
     
     self.map.update(hmap)
     
@@ -726,7 +726,7 @@ class CasadiStructure(Structure,CasadiStructureDerivable):
     class FlatIndexGetter(StructureGetter):
       @properGetitem
       def __getitem__(self,powerIndex):
-        return flatten(self.struct.traverseByPowerIndex(powerIndex,dispatcher=CasadiStructure.FlatIndexDispatcher(struct=self.struct)))
+        return vec(self.struct.traverseByPowerIndex(powerIndex,dispatcher=CasadiStructure.FlatIndexDispatcher(struct=self.struct)))
             
     self.i = IMatrixGetter(self)
     self.f = FlatIndexGetter(self)
@@ -842,7 +842,7 @@ class ssymStruct(CasadiStructured,MasterGettable):
       e = self.struct.getStructEntryByCanonicalIndex(i)
       s.append(ssym("_".join(map(str,i)),e.sparsity.size()))
         
-    self.master = flattenNZcat(s)
+    self.master = vecNZcat(s)
 
     for e in self.entries:
       if e.sym is not None:
@@ -957,7 +957,7 @@ class MXStruct(MatrixStruct):
   def __MX__(self):
     return self.cat
 
-class MXFlattencatStruct(CasadiStructured,MasterGettable):
+class MXVeccatStruct(CasadiStructured,MasterGettable):
   description = "Partially mutable MX"
   def __init__(self,arg,order=None):
     CasadiStructured.__init__(self,arg,order=order)
@@ -981,9 +981,9 @@ class MXFlattencatStruct(CasadiStructured,MasterGettable):
         
     def inject(payload,canonicalIndex,extraIndex=None,entry=None):
       if extraIndex is not None:
-        raise Exception("An MX flattencat structure does not accept indexing on MX level for __setitem__.")
+        raise Exception("An MX veccat structure does not accept indexing on MX level for __setitem__.")
       if not hasattr(self,"sparsity"):
-        raise Exception("An MX flattencat structure __setitem__ accepts only objects that have sparsity.")
+        raise Exception("An MX veccat structure __setitem__ accepts only objects that have sparsity.")
       
       if canonicalIndex in self.mapping:
         if self.struct.map[canonicalIndex].sparsity()!=payload.sparsity():
@@ -1005,7 +1005,7 @@ class MXFlattencatStruct(CasadiStructured,MasterGettable):
       raise Exception("Problem in MX vecNZcat structure cat: missing expressions. The following entries are missing: %s" % str(missing))
       
     if self.dirty:
-      self.master_cached = flattenNZcat(self.storage)
+      self.master_cached = vecNZcat(self.storage)
 
     return self.master_cached
     
@@ -1014,7 +1014,7 @@ struct_ssym = ssymStruct
 struct_msym = msymStruct
 struct_SX = SXMatrixStruct
 struct_MX_mutable = MXStruct
-struct_MX = MXFlattencatStruct
+struct_MX = MXVeccatStruct
 struct = CasadiStructured
 
 
@@ -1156,7 +1156,7 @@ class CasadiStructEntry(StructEntry):
         if self.sparsity.size1() != self.sparsity.size2():
           raise Exception("You supplied a type 'symm', but matrix is not square. Got " % self.sparsity.dimString() + ".")
         self.originalsparsity = self.sparsity
-        self.sparsity = self.sparsity*sp_tril(self.sparsity.size1())
+        self.sparsity = self.sparsity*sp_triu(self.sparsity.size1())
         
          
       
