@@ -84,7 +84,7 @@ class typemaptests(casadiTestCase):
   def test_setget(self):
     self.message("DMatrix set/get")
     data = n.array([3,2.3,8])
-    dm=DMatrix(4,3,[0,2,2,3],[1,2,1],[3,2.3,8]).T
+    dm=DMatrix(3,4,[0,0,2,3,3],[0,2,0],[3,2.3,8])
     
     if scipy_available:
       c=dm.toCsc_matrix()
