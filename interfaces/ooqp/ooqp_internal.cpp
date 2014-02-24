@@ -172,7 +172,10 @@ namespace CasADi {
     // Loop over constraints
     int nA=0, nC=0, mz=0, nnzA=0, nnzC=0;
     for(int j=0; j<nc_; ++j){
-      if(lba[j]==uba[j]){
+      if(lba[j]==-numeric_limits<double>::infinity() && uba[j]==numeric_limits<double>::infinity()){
+        // Redundant constraint
+        c_index_[j] = 0;
+      } else if(lba[j]==uba[j]){
         // Equality constraint
         bA_[nA] = lba[j];
         
@@ -221,7 +224,7 @@ namespace CasADi {
             dC_[nnzC++] = AT[el];
           }
         }
-        c_index_[j] = nC++;
+        c_index_[j] = 1+nC++;
       }
     }
 
@@ -289,10 +292,12 @@ namespace CasADi {
     vector<double>& lam_a = output(QP_SOLVER_LAM_A).data();
     for(int j=0; j<nc_; ++j){
       int jj = c_index_[j];
-      if(jj<0){
+      if(jj==0){
+        lam_a[j] = 0;
+      } else if(jj<0){
         lam_a[j] = -y_[-1-jj];
       } else {
-        lam_a[j] = pi_[jj]-lambda_[jj];
+        lam_a[j] = pi_[-1+jj]-lambda_[-1+jj];
       }
     }
   }
