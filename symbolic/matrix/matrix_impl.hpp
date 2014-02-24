@@ -979,22 +979,29 @@ namespace CasADi{
   */
   template<class T>
   void Matrix<T>::getStridedArray(T* val, int len, int stride1, int stride2, Sparsity sp) const{
-    if (stride1==0 || stride2==0 || (stride2==1 && stride1==size1())) 
-      return getArray(val, len, sp);
+    if (stride1==0 || stride2==0 || (stride2==1 && stride1==size1())) return getArray(val, len, sp);
+
+    // Get references to data for quick access
+    const std::vector<T> &data = this->data();
+    const int size1 = this->size1();
+    const int size2 = this->size2();
+    const std::vector<int>& colind = this->colind();
+    const std::vector<int>& row = this->row();
     
-    const std::vector<T> &v = data();
     if(sp==SPARSE){
       throw CasadiException("Matrix<T>::getArray: strided SPARSE not implemented");
-    } else if(sp==DENSE && numel()==v.size()) {
-      for (int i=0;i<size2();i++) {
-        for (int j=0;j<size1();j++) {
-          val[i*stride1+j*stride2] = v[i*size1()+j];
+    } else if(sp==DENSE && dense()) {
+      for(int cc=0; cc<size2; ++cc){ // loop over columns
+        for(int el=colind[cc]; el<colind[cc+1]; ++el){ // loop over the non-zero elements
+          int rr=row[el];
+          val[rr*stride2 + cc*stride1] = data[el];
         }
       }
-    } else if(sp==DENSETRANS && numel()==v.size()) {
-      for (int i=0;i<size2();i++) {
-        for (int j=0;j<size1();j++) {
-          val[i*stride1+j*stride2] = v[j*size2()+i];
+    } else if(sp==DENSETRANS && dense()) {
+      for(int cc=0; cc<size2; ++cc){ // loop over columns
+        for(int el=colind[cc]; el<colind[cc+1]; ++el){ // loop over the non-zero elements
+          int rr=row[el];
+          val[cc*stride2 + rr*stride1] = data[el];
         }
       }
     } else if(sp==DENSE){
