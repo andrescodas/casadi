@@ -29,91 +29,85 @@
 
 namespace CasADi{
 
-/** Internal class for CplexSolver
-  @copydoc QPSolver_doc
- */
-class CplexInternal : public QPSolverInternal{
-  friend class CplexSolver;
-public:
-  /** \brief Default constructor */
-  explicit CplexInternal();
+  /** Internal class for CplexSolver
+      @copydoc QPSolver_doc
+  */
+  class CplexInternal : public QPSolverInternal{
+    friend class CplexSolver;
+  public:
+    /** \brief Default constructor */
+    explicit CplexInternal();
   
-  /// Clone
-  virtual CplexInternal* clone() const;
+    /// Clone
+    virtual CplexInternal* clone() const;
   
-  /// Constructor using sparsity patterns
-  explicit CplexInternal(const std::vector<CCSSparsity>& st);
+    /// Constructor using sparsity patterns
+    explicit CplexInternal(const std::vector<CCSSparsity>& st);
 
-  /// Destructor
-  virtual ~CplexInternal();
+    /// Destructor
+    virtual ~CplexInternal();
   
-  /// Free Cplex memory
-  void freeCplex();
+    /// Free Cplex memory
+    void freeCplex();
 
-  // Initialize the solver
-  virtual void init();
+    // Initialize the solver
+    virtual void init();
 
-  // Solve the QP
-  virtual void evaluate();
+    // Solve the QP
+    virtual void evaluate();
     
-  // OPTIONS 
-  /** Which algorithm to use
-   * 0 -> Automatic (default)
-   * 1 -> Primal simplex
-   * 2 -> Dual simplex
-   * 3 -> Network optimizer
-   * 4 -> Barrier 
-   * 5 -> Sifting
-   * 6 -> Concurent
-   * 7 -> Crossover
-   */
-  /// Stores which QP algorithm to use
-  int qp_method_;
-  /// Print to file (for later use)
-  bool dump_to_file_;
-  /// Indicates if we have to warm-start
-  bool is_warm_;
-  /// Accuracy
-  double tol_;
-  /// Number of variables
-  int NUMCOLS_;
-  /// Number of constrains (altogether)
-  int NUMROWS_;
-  /// Nature of problem (always minimization)
-  int objsen_;
+    // OPTIONS 
+    /** Which algorithm to use
+     * 0 -> Automatic (default)
+     * 1 -> Primal simplex
+     * 2 -> Dual simplex
+     * 3 -> Network optimizer
+     * 4 -> Barrier 
+     * 5 -> Sifting
+     * 6 -> Concurent
+     * 7 -> Crossover
+     */
+    /// Stores which QP algorithm to use
+    int qp_method_;
+
+    /// Print to file (for later use)
+    bool dump_to_file_;
+
+    /// Indicates if we have to warm-start
+    bool is_warm_;
+
+    /// Accuracy
+    double tol_;
+
+    /// Nature of problem (always minimization)
+    int objsen_;
   
-  /// Linear term of objective
-  double* obj_;
+    /// Determines relation >,<,= in the lin. constraints
+    std::vector<char> sense_;
 
-  /// Determines relation >,<,= in the lin. constraints
-  std::vector<char> sense_;
+    /// Coefficients of matrix A (constraint Jacobian)
+    std::vector<int> matcnt_;
 
-  /// Coefficients of matrix A (constraint Jacobian)
-  std::vector<int> matcnt_;
+    /// Right-hand side of constraints
+    std::vector<double> rhs_;
 
-  /// Right-hand side of constraints
-  std::vector<double> rhs_;
-
-  /// Range of constraints
-  std::vector<double> rngval_;
-
-  /// Simple bounds on x
-  double  *lb_;
-  double  *ub_;
+    /// Range of constraints
+    std::vector<double> rngval_;
   
-  /// Coefficients of matrix H (objective Hessian)
-  std::vector<int> qmatcnt_;
+    /// Coefficients of matrix H (objective Hessian)
+    std::vector<int> qmatcnt_;
   
-  /// Storage for basis info of primal variables
-  std::vector<int> cstat_;
-  /// Storage for basis info of slack variables
-  std::vector<int> rstat_;
+    /// Storage for basis info of primal variables
+    std::vector<int> cstat_;
 
-  /// CPLEX-environment
-  CPXENVptr env_;
-  CPXLPptr lp_;
+    /// Storage for basis info of slack variables
+    std::vector<int> rstat_;
 
-};
+    /// CPLEX-environment
+    CPXENVptr env_;
+    CPXLPptr lp_;
+
+  };
 } // end namespace CasADi
 
 #endif //CPLEX_INTERNAL_HPP

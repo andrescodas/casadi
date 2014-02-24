@@ -46,14 +46,6 @@ namespace CasADi{
     addOption("warm_start",      OT_BOOLEAN,            false, "Use warm start with simplex methods (affects only the simplex methods).");
     addOption("convex",          OT_BOOLEAN,             true, "Indicates if the QP is convex or not (affects only the barrier method).");
   
-    const CCSSparsity& A = st_[QP_STRUCT_A];
-    const CCSSparsity& H = st_[QP_STRUCT_H];
-  
-    // Initializing members
-    // Number of vars
-    NUMCOLS_ = H.size1();
-    // Number of constraints
-    NUMROWS_ = A.size1();
     // Setting warm-start flag
     is_warm_ = false;
 
@@ -70,7 +62,7 @@ namespace CasADi{
   
     qp_method_     = getOptionEnumValue("qp_method");
     dump_to_file_  = getOption("dump_to_file");
-    tol_ = getOption("tol");
+    tol_           = getOption("tol");
     //  dump_filename_ = getOption("dump_filename");
   
     int status;
@@ -134,14 +126,14 @@ namespace CasADi{
 
     // Allocation of data
     // Type of constraint
-    sense_.resize(NUMROWS_);
+    sense_.resize(nc_);
     // Right-hand side of constraints
-    rhs_.resize(NUMROWS_);
+    rhs_.resize(nc_);
     // Range value for lower AND  upper bounded constraints
-    rngval_.resize(NUMROWS_);
+    rngval_.resize(nc_);
     // Basis for primal variables
-    cstat_.resize(NUMCOLS_);
-    rstat_.resize(NUMROWS_);
+    cstat_.resize(n_);
+    rstat_.resize(nc_);
 
     // Matrix A, count the number of elements per column
     const CCSSparsity& A_sp = input(QP_SOLVER_A).sparsity();
@@ -152,31 +144,12 @@ namespace CasADi{
     const CCSSparsity& H_sp = input(QP_SOLVER_H).sparsity();
     qmatcnt_.resize(H_sp.size2());
     transform(H_sp.colind().begin()+1,H_sp.colind().end(),H_sp.colind().begin(),qmatcnt_.begin(),minus<int>());  
-  
-    // Linear term
-    if (!isDense(input(QP_SOLVER_G))){
-      casadi_error("input(QP_SOLVER_G) must be dense.");
-    }
-    if (!isDense(input(QP_SOLVER_LBA))){
-      casadi_error("input(QP_SOLVER_LBA) must be dense.");
-    }
-    if (!isDense(input(QP_SOLVER_UBA))){
-      casadi_error("input(QP_SOLVER_UBA) must be dense.");
-    }
-    if (!isDense(input(QP_SOLVER_LBX))){
-      casadi_error("input(QP_SOLVER_LBX) must be dense.");
-    }
-    if (!isDense(input(QP_SOLVER_UBX))){
-      casadi_error("input(QP_SOLVER_UBX) must be dense.");
-    }
-  
+    
     casadi_assert(lp_==0);
     lp_ = CPXcreateprob(env_, &status, "QP from CasADi");
   }
 
   void CplexInternal::evaluate(){
-    const CCSSparsity& A_sp = input(QP_SOLVER_A).sparsity();
-    const CCSSparsity& H_sp = input(QP_SOLVER_H).sparsity();
 
     if (inputs_check_) checkInputs();
 
@@ -187,49 +160,52 @@ namespace CasADi{
       status = CPXsetintparam(env_, CPX_PARAM_QPMETHOD, 1);
     }
 
-    obj_ = input(QP_SOLVER_G).ptr();
-    lb_ = input(QP_SOLVER_LBX).ptr();
-    ub_ = input(QP_SOLVER_UBX).ptr();
-
     // Looping over constraints
-    for(int i = 0; i < NUMROWS_; ++i){
+    const vector<double>& lba = input(QP_SOLVER_LBA).data();
+    const vector<double>& uba = input(QP_SOLVER_UBA).data();
+
+    for(int i = 0; i < nc_; ++i){
       // CPX_INFBOUND
   
       // Equality
-      if (input(QP_SOLVER_UBA).elem(i) - input(QP_SOLVER_LBA).elem(i) < 1E-20){
+      if(uba[i] - lba[i] < 1e-20){
         sense_[i] = 'E';
-        rhs_[i] = input(QP_SOLVER_LBA).elem(i);
+        rhs_[i] = lba[i];
         rngval_[i] = 0.;
       }
       // Ineq - no lower bound
-      else if (input(QP_SOLVER_LBA).elem(i) < -CPX_INFBOUND){
+      else if (lba[i] < -CPX_INFBOUND){
         sense_[i] = 'L';
-        rhs_[i] = input(QP_SOLVER_UBA).elem(i);
-        //rngval_[i] = input(QP_SOLVER_UBA).elem(i) - input(QP_SOLVER_LBA).elem(i);
+        rhs_[i] = uba[i];
         rngval_[i] = 0.;
       }
       // Ineq - no upper bound
-      else if (input(QP_SOLVER_UBA).elem(i) > CPX_INFBOUND){
+      else if (uba[i] > CPX_INFBOUND){
         sense_[i] = 'G';
-        rhs_[i] = input(QP_SOLVER_LBA).elem(i);
+        rhs_[i] = lba[i];
         rngval_[i] = 0.;
       }
       // Inew both upper and lower bounds
       else{
         sense_[i] = 'R';
-        rhs_[i] = input(QP_SOLVER_LBA).elem(i);
-        rngval_[i] = input(QP_SOLVER_UBA).elem(i) - input(QP_SOLVER_LBA).elem(i);
+        rhs_[i] = lba[i];
+        rngval_[i] = uba[i] - lba[i];
       }
     }
 
     // Copying objective, constraints, and bounds.
+    const CCSSparsity& A_sp = input(QP_SOLVER_A).sparsity();
     const int* matbeg = getPtr(A_sp.colind());
     const int* matind = getPtr(A_sp.row());
     const double* matval = input(QP_SOLVER_A).ptr();
-    status = CPXcopylp (env_, lp_, NUMCOLS_, NUMROWS_, objsen_, obj_, rhs_.data(), sense_.data(), 
-                        matbeg, getPtr(matcnt_), matind, matval, lb_, ub_, rngval_.data()); 
+    const double* obj = input(QP_SOLVER_G).ptr();
+    const double* lb = input(QP_SOLVER_LBX).ptr();
+    const double* ub = input(QP_SOLVER_UBX).ptr();
+    status = CPXcopylp (env_, lp_, n_, nc_, objsen_, obj, rhs_.data(), sense_.data(), 
+                        matbeg, getPtr(matcnt_), matind, matval, lb, ub, rngval_.data()); 
 
     // Preparing coefficient matrix Q
+    const CCSSparsity& H_sp = input(QP_SOLVER_H).sparsity();
     const int* qmatbeg = getPtr(H_sp.colind());
     const int* qmatind = getPtr(H_sp.row());
     const double* qmatval = input(QP_SOLVER_H).ptr();
@@ -241,12 +217,14 @@ namespace CasADi{
     }
 
     // Warm-starting if possible
+    const double* x0 = input(QP_SOLVER_X0).ptr();
+    const double* lam_x0 = input(QP_SOLVER_LAM_X0).ptr();
     if (qp_method_ != 0 && qp_method_ != 4 && is_warm_){
       // TODO: Initialize slacks and dual variables of bound constraints
-      CPXcopystart(env_, lp_, cstat_.data(), rstat_.data(), input(QP_SOLVER_X0).ptr(), NULL, NULL, input(QP_SOLVER_LAM_X0).ptr());
+      CPXcopystart(env_, lp_, getPtr(cstat_), getPtr(rstat_), x0, NULL, NULL, lam_x0);
     }
     else{
-      status = CPXcopystart(env_, lp_, NULL, NULL, input(QP_SOLVER_X0).ptr(), NULL, NULL, input(QP_SOLVER_LAM_X0).ptr());
+      status = CPXcopystart(env_, lp_, NULL, NULL, x0, NULL, NULL, lam_x0);
     }
 
     // Optimize...
@@ -259,12 +237,12 @@ namespace CasADi{
     int solstat; 
   
     std::vector<double> slack;
-    slack.resize(NUMROWS_);
+    slack.resize(nc_);
     status = CPXsolution (env_, lp_, &solstat,
                           output(QP_SOLVER_COST).ptr(), 
                           output(QP_SOLVER_X).ptr(), 
                           output(QP_SOLVER_LAM_A).ptr(),
-                          slack.data(),
+                          getPtr(slack),
                           output(QP_SOLVER_LAM_X).ptr()
                           ); 
   
@@ -273,13 +251,13 @@ namespace CasADi{
     } 
     // Retrieving the basis
     if (qp_method_ != 0 && qp_method_ != 4){
-      status = CPXgetbase(env_, lp_, cstat_.data(), rstat_.data());
+      status = CPXgetbase(env_, lp_, getPtr(cstat_), getPtr(rstat_));
     }
 
     // Flip the sign of the multipliers
-    for (int k=0;k<output(QP_SOLVER_LAM_A).size();++k) output(QP_SOLVER_LAM_A).data()[k]= - output(QP_SOLVER_LAM_A).data()[k];
-    for (int k=0;k<output(QP_SOLVER_LAM_X).size();++k) output(QP_SOLVER_LAM_X).data()[k]= - output(QP_SOLVER_LAM_X).data()[k];
-  
+    for(vector<double>::iterator it=output(QP_SOLVER_LAM_A).begin(); it!=output(QP_SOLVER_LAM_A).end(); ++it) *it = -*it;
+    for(vector<double>::iterator it=output(QP_SOLVER_LAM_X).begin(); it!=output(QP_SOLVER_LAM_X).end(); ++it) *it = -*it;
+
     int solnstat = CPXgetstat (env_, lp_);
     stringstream errormsg; // NOTE: Why not print directly to cout and cerr?
     if(verbose()){
