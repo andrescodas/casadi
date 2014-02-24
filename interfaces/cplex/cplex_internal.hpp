@@ -42,7 +42,7 @@ public:
   virtual CplexInternal* clone() const;
   
   /// Constructor using sparsity patterns
-  explicit CplexInternal(const std::vector<CRSSparsity>& st);
+  explicit CplexInternal(const std::vector<CCSSparsity>& st);
 
   /// Destructor
   virtual ~CplexInternal();
@@ -55,12 +55,7 @@ public:
 
   // Solve the QP
   virtual void evaluate();
-
-  /// Converts CasADi sparsity to Cplex sparsity
-  static void toCplexSparsity(const CRSSparsity& sp_trans, std::vector<int> &matbeg, std::vector<int>& matcnt, std::vector<int>& matind);
-  
-protected:
-  
+    
   // OPTIONS 
   /** Which algorithm to use
    * 0 -> Automatic (default)
@@ -94,16 +89,11 @@ protected:
   std::vector<char> sense_;
 
   /// Coefficients of matrix A (constraint Jacobian)
-  std::vector<int> matbeg_;
   std::vector<int> matcnt_;
-  std::vector<int> matind_;
-  std::vector<double> matval_;
-
-  /// Transposed sparsity pattern mapping from A to AT
-  std::vector<int> AT_nonzero_mapping_;
 
   /// Right-hand side of constraints
   std::vector<double> rhs_;
+
   /// Range of constraints
   std::vector<double> rngval_;
 
@@ -112,9 +102,7 @@ protected:
   double  *ub_;
   
   /// Coefficients of matrix H (objective Hessian)
-  std::vector<int> qmatbeg_;
   std::vector<int> qmatcnt_;
-  std::vector<int> qmatind_;
   
   /// Storage for basis info of primal variables
   std::vector<int> cstat_;
