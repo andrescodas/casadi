@@ -172,7 +172,7 @@ bool IpoptUserClass::intermediate_callback(AlgorithmMode mode, Index iter, Numbe
   // Copied from Ipopt source: To Ipopt, the equality constraints are presented with right
   // hand side zero, so we correct for the original right hand side.
   const Index* c_pos = tnlp_adapter->P_c_g_->ExpandedPosIndices();
-  Index n_c_no_fixed = tnlp_adapter->P_c_g_->NRows();
+  Index n_c_no_fixed = tnlp_adapter->P_c_g_->NCols();
   for (Index i=0; i<n_c_no_fixed; i++) {
     g_[c_pos[i]] += tnlp_adapter->c_rhs_[i];
   }

@@ -479,15 +479,13 @@ namespace CasADi{
       double time1 = clock();
       if (values == NULL) {
         int nz=0;
-        vector<int> colind,row;
-        hessLag_.output().sparsity().getSparsityCCS(colind,row);
+        const vector<int>& colind = hessLag_.output().colind();
+        const vector<int>& row = hessLag_.output().row();
         for(int cc=0; cc<colind.size()-1; ++cc)
-          for(int el=colind[cc]; el<colind[cc+1]; ++el){
-            if(row[el]<=cc){
-              iRow[nz] = cc;
-              jCol[nz] = row[el];
-              nz++;
-            }
+          for(int el=colind[cc]; el<colind[cc+1] && row[el]<=cc; ++el){
+            iRow[nz] = row[el];
+            jCol[nz] = cc;
+            nz++;
           }
       } else {
         // Pass the argument to the function
