@@ -75,8 +75,8 @@ class ControlTests(casadiTestCase):
           A_total = DMatrix.eye(n*n*K) - vertcat([AA[-n*n:,:],AA[:-n*n,:]])
           
           
-          Pf = solve(A_total,flatten(vertcat([Vss[-n:,:],Vss[:-n,:]])),CSparse)
-          P = Pf.reshape((K*n,n))
+          Pf = solve(A_total,flatten(vertcat([Vss[-n:,:],Vss[:-n,:]])),CSparse) ## FIXME? #554
+          P = Pf.reshape((K*n,n)) ## FIXME?, #554
           #P = (P+P.T)/2
           
           refsol = MXFunction([As,Vs],[P])

@@ -58,14 +58,14 @@ namespace CasADi{
     casadi_assert_message(!pos_def_,"pos_def option set to True: Solver only handles the indefinite case.");
     casadi_assert_message(const_dim_,"const_dim option set to False: Solver only handles the True case.");
     
-    n_ = A_[0].size2();
+    n_ = A_[0].size1();
     
     
-    MX As = msym("A",n_,K_*n_);
-    MX Vs = msym("V",n_,K_*n_);
+    MX As = msym("A",K_*n_,n_);
+    MX Vs = msym("V",K_*n_,n_);
     
-    std::vector< MX > Vss = horzsplit(Vs,n_);
-    std::vector< MX > Ass = horzsplit(As,n_);
+    std::vector< MX > Vss = vertsplit(Vs,n_);
+    std::vector< MX > Ass = vertsplit(As,n_);
     
     for (int k=0;k<K_;++k) {
       Vss[k]=(Vss[k]+trans(Vss[k]))/2;
@@ -78,15 +78,15 @@ namespace CasADi{
     
     MX AA = blkdiag(AA_list);
     
-    MX A_total = DMatrix::eye(n_*n_*K_)-horzcat(AA(range(K_*n_*n_),range(K_*n_*n_-n_*n_,K_*n_*n_)),AA(range(K_*n_*n_),range(K_*n_*n_-n_*n_)));
+    MX A_total = DMatrix::eye(n_*n_*K_)-vertcat(AA(range(K_*n_*n_-n_*n_,K_*n_*n_),range(K_*n_*n_)),AA(range(K_*n_*n_-n_*n_),range(K_*n_*n_)));
 
     std::vector<MX> Vss_shift;
     Vss_shift.push_back(Vss.back());
     Vss_shift.insert(Vss_shift.end(),Vss.begin(),Vss.begin()+K_-1);
     
-    MX Pf = trans(solve(trans(A_total),vec(horzcat(Vss_shift)),getOption("linear_solver")));
+    MX Pf = solve(A_total,flatten(vertcat(Vss_shift)),getOption("linear_solver")); // # FIXME? #554
           
-    MX P = reshape(Pf,n_,K_*n_);
+    MX P = trans(reshape(trans(Pf),n_,K_*n_)); // FIXME? #554
     
     std::vector<MX> v_in;
     v_in.push_back(As);

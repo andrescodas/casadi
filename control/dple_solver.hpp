@@ -45,16 +45,16 @@ namespace CasADi{
 
   /// Input arguments of a dple solver [dpleIn]
   enum DPLEInput{
-    /// A matrices (horzcat when const_dim, blkdiag otherwise) [a]
+    /// A matrices (vertcat when const_dim, blkdiag otherwise) [a]
     DPLE_A,
-    /// V matrices (horzcat when const_dim, blkdiag otherwise) [v]
+    /// V matrices (vertcat when const_dim, blkdiag otherwise) [v]
     DPLE_V,
     DPLE_NUM_IN
   };
 
   /// Output arguments of a dple solver [dpleOut]
   enum DPLEOutput{
-    /// Lyapunov matrix (horzcat when const_dim, blkdiag otherwise) (cholesky of P if pos_def) [p]
+    /// Lyapunov matrix (vertcat when const_dim, blkdiag otherwise) (cholesky of P if pos_def) [p]
     DPLE_P,
     /// Number of arguments.
     DPLE_NUM_OUT

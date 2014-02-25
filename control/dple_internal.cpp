@@ -43,6 +43,9 @@ namespace CasADi{
     addOption("const_dim",OT_BOOLEAN,true,"Assume constant dimension of P");
     addOption("pos_def",OT_BOOLEAN,false,"Assume P positive definite");
     
+    addOption("error_unstable",OT_BOOLEAN,false,"Throw an exception when it is detected that Product(A_i,i=N..1) has eigenvalues greater than 1-eps_unstable");
+    addOption("eps_unstable",OT_REAL,1e-4,"A margin for unstability detection");
+    
     if (nfwd_==0 && nadj_==0) {
       input_.scheme = SCHEME_DPLEInput;
       output_.scheme = SCHEME_DPLEOutput;
@@ -58,6 +61,8 @@ namespace CasADi{
     
     const_dim_ = getOption("const_dim");
     pos_def_ = getOption("pos_def");
+    error_unstable_ = getOption("error_unstable");
+    eps_unstable_ = getOption("eps_unstable");
     
     // Dimension sanity checks
     casadi_assert_message(A_.size()==V_.size(),"A and V arguments must be of same length, but got " << A_.size() << " and " << V_.size() << ".");
@@ -65,13 +70,13 @@ namespace CasADi{
     for (int k=0;k<K_;++k) {
       casadi_assert_message(V_[k]==trans(V_[k]),"V_i must be symmetric but got " << V_[k].dimString() << " for i = " << k << ".");
 
-      casadi_assert_message(A_[k].size2()==V_[k].size2(),"First dimension of A (" << A_[k].size2() << ") must match dimension of symmetric V_i (" << V_[k].size2() << ")" << " for i = " << k << ".");
+      casadi_assert_message(A_[k].size1()==V_[k].size1(),"First dimension of A (" << A_[k].size1() << ") must match dimension of symmetric V_i (" << V_[k].size1() << ")" << " for i = " << k << ".");
     }
     
     if (const_dim_) {
-      int n = A_[0].size2();
+      int n = A_[0].size1();
        for (int k=1;k<K_;++k) {
-         casadi_assert_message(A_[k].size2()==n,"You have set const_dim option, but found an A_i with dimension ( " << A_[k].dimString() << " ) deviating from n = " << n << " at i = " << k << ".");
+         casadi_assert_message(A_[k].size1()==n,"You have set const_dim option, but found an A_i with dimension ( " << A_[k].dimString() << " ) deviating from n = " << n << " at i = " << k << ".");
       }
     }
 
@@ -80,8 +85,8 @@ namespace CasADi{
     
     for (int i=0;i<nfwd_+1;++i) {
       if (const_dim_) {
-        input(DPLE_NUM_IN*i+DPLE_A)  = DMatrix::zeros(horzcat(A_));
-        input(DPLE_NUM_IN*i+DPLE_V)  = DMatrix::zeros(horzcat(V_));
+        input(DPLE_NUM_IN*i+DPLE_A)  = DMatrix::zeros(vertcat(A_));
+        input(DPLE_NUM_IN*i+DPLE_V)  = DMatrix::zeros(vertcat(V_));
       } else {
         input(DPLE_NUM_IN*i+DPLE_A)  = DMatrix::zeros(blkdiag(A_));
         input(DPLE_NUM_IN*i+DPLE_V)  = DMatrix::zeros(blkdiag(V_));
@@ -89,7 +94,7 @@ namespace CasADi{
     }
     for (int i=0;i<nadj_;++i) {
       if (const_dim_) {
-        input(DPLE_NUM_IN*(1+nfwd_)+DPLE_NUM_OUT*i+DPLE_P)  = DMatrix::zeros(horzcat(A_));
+        input(DPLE_NUM_IN*(1+nfwd_)+DPLE_NUM_OUT*i+DPLE_P)  = DMatrix::zeros(vertcat(A_));
       } else {
         input(DPLE_NUM_IN*(1+nfwd_)+DPLE_NUM_OUT*i+DPLE_P)  = DMatrix::zeros(blkdiag(A_));
       }
@@ -98,20 +103,20 @@ namespace CasADi{
     // Allocate outputs
     std::vector<CCSSparsity> P; 
     for (int k=0;k<K_;++k) {
-      P.push_back(sp_dense(V_[k].size2(),V_[k].size2()));
+      P.push_back(sp_dense(V_[k].size1(),V_[k].size1()));
     }
     setNumOutputs(DPLE_NUM_OUT*(1+nfwd_) + DPLE_NUM_IN*nadj_);
     for (int i=0;i<nfwd_+1;++i) {
       if (const_dim_) {
-        output(DPLE_NUM_OUT*i+DPLE_P) = DMatrix::zeros(horzcat(P));
+        output(DPLE_NUM_OUT*i+DPLE_P) = DMatrix::zeros(vertcat(P));
       } else {
         output(DPLE_NUM_OUT*i+DPLE_P) = DMatrix::zeros(blkdiag(P));
       }
     }
     for (int i=0;i<nadj_;++i) {
       if (const_dim_) {
-        output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*i+DPLE_A)  = DMatrix::zeros(horzcat(A_));
-        output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*i+DPLE_V)  = DMatrix::zeros(horzcat(V_));
+        output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*i+DPLE_A)  = DMatrix::zeros(vertcat(A_));
+        output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*i+DPLE_V)  = DMatrix::zeros(vertcat(V_));
       } else {
         output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*i+DPLE_A)  = DMatrix::zeros(blkdiag(A_));
         output(DPLE_NUM_OUT*(nfwd_+1)+DPLE_NUM_IN*i+DPLE_V)  = DMatrix::zeros(blkdiag(V_));
