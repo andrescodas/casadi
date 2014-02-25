@@ -1942,8 +1942,8 @@ class MXtests(casadiTestCase):
     v = [[fs[i].output(j) for j in range(3)] for i in range(3)]
     
     self.checkarray(v[0][0],DMatrix([0,1]))
-    self.checkarray(v[0][1],DMatrix([[0,0],[2,0]]))
-    self.checkarray(v[1][0],DMatrix([3,6]))
+    self.checkarray(v[0][1],DMatrix([[0,0],[5,0]]))
+    self.checkarray(v[1][0],DMatrix([2,3]))
     self.checkarray(blockcat(v),f.input())
 
   def test_mxnulloutput(self):

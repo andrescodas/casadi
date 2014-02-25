@@ -76,9 +76,9 @@ namespace CasADi{
     return vertsplit(x,range(0,x.size1(),incr));
   }
   
-  std::vector< std::vector<MX > > blocksplit(const MX& x, const std::vector<int>& vert_offset, const std::vector<int>& horz_offset) {
-    std::vector<MX > rows = vertsplit(x,vert_offset);
-    std::vector< std::vector<MX > > ret;
+  std::vector< std::vector<MX> > blocksplit(const MX& x, const std::vector<int>& vert_offset, const std::vector<int>& horz_offset) {
+    std::vector<MX> rows = vertsplit(x,vert_offset);
+    std::vector< std::vector<MX> > ret;
     for (int i=0;i<rows.size();++i) {
       ret.push_back(horzsplit(rows[i],horz_offset));
     }
@@ -936,10 +936,24 @@ namespace CasADi{
   }
 
   MX blockcat(const std::vector< std::vector<MX > > &v) {
-    std::vector< MX > ret;
-    for(int i=0; i<v.size(); ++i)
-      ret.push_back(horzcat(v[i]));
-    return vertcat(ret);
+    // Quick return if no block rows
+    if(v.empty()) return MX::sparse(0,0);
+
+    // Make sure same number of block columns
+    int ncols = v.front().size();
+    for(vector<vector<MX> >::const_iterator it=v.begin(); it!=v.end(); ++it){
+      casadi_assert_message(it->size()==ncols, "blockcat: Inconsistent number of blocl columns");
+    }
+
+    // Quick return if no block columns
+    if(v.front().empty()) return MX::sparse(0,0);
+
+    // Horizontally concatenate all columns for each row, then vertically concatenate rows
+    std::vector<MX> rows;
+    for(vector<vector<MX> >::const_iterator it=v.begin(); it!=v.end(); ++it){
+      rows.push_back(horzcat(*it));
+    }
+    return vertcat(rows);
   }
   
   MX blockcat(const MX &A,const MX &B,const MX &C,const MX &D) {
