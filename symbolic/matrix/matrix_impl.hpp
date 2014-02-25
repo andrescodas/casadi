@@ -839,27 +839,27 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::set(T val, Sparsity sp){
+  void Matrix<T>::set(T val, SparsityType sp){
     std::fill(data().begin(),data().end(),val);
   }
     
   template<class T>
-  void Matrix<T>::get(T& val, Sparsity sp) const{
+  void Matrix<T>::get(T& val, SparsityType sp) const{
     getArray(&val,1,DENSE);
   }
 
   template<class T>
-  void Matrix<T>::set(const std::vector<T>& val, Sparsity sp){
+  void Matrix<T>::set(const std::vector<T>& val, SparsityType sp){
     setArray(val.empty() ? 0 : &val.front(),val.size(),sp);
   }
 
   template<class T>
-  void Matrix<T>::get(std::vector<T>& val, Sparsity sp) const{
+  void Matrix<T>::get(std::vector<T>& val, SparsityType sp) const{
     getArray(val.empty() ? 0 : &val.front(),val.size(),sp);
   }
 
   template<class T>
-  void Matrix<T>::set(const Matrix<T>& val, Sparsity sp){
+  void Matrix<T>::set(const Matrix<T>& val, SparsityType sp){
     sparsity().set(getPtr(data()),getPtr(val.data()),val.sparsity());
   }
 
@@ -905,24 +905,24 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::get(Matrix<T>& val, Sparsity sp) const{
+  void Matrix<T>::get(Matrix<T>& val, SparsityType sp) const{
     val.set(*this,sp);
   }
 
   template<class T>
-  void Matrix<T>::set(const T* val, Sparsity sp){
+  void Matrix<T>::set(const T* val, SparsityType sp){
     int len = sp==SPARSE ? size() : sp==DENSE || sp==DENSETRANS ? numel() : sp==SPARSESYM ? sizeU() : -1;
     setArray(val,len,sp);
   }
 
   template<class T>
-  void Matrix<T>::get(T* val, Sparsity sp) const{
+  void Matrix<T>::get(T* val, SparsityType sp) const{
     int len = sp==SPARSE ? size() : sp==DENSE || sp==DENSETRANS ? numel() : sp==SPARSESYM ? sizeU() : -1;
     getArray(val,len,sp);
   }
 
   template<class T>
-  void Matrix<T>::getArray(T* val, int len, Sparsity sp) const{
+  void Matrix<T>::getArray(T* val, int len, SparsityType sp) const{
     // Get references to data for quick access
     const std::vector<T> &data = this->data();
     const int size1 = this->size1();
@@ -982,7 +982,7 @@ namespace CasADi{
      Set stride to zero for unstrided acces
   */
   template<class T>
-  void Matrix<T>::getStridedArray(T* val, int len, int stride1, int stride2, Sparsity sp) const{
+  void Matrix<T>::getStridedArray(T* val, int len, int stride1, int stride2, SparsityType sp) const{
     if (stride1==0 || stride2==0 || (sp==DENSE && stride2==1 && stride1==size1())) return getArray(val, len, sp);
 
     // Get references to data for quick access
@@ -1019,7 +1019,7 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::setArray(const T* val, int len, Sparsity sp){
+  void Matrix<T>::setArray(const T* val, int len, SparsityType sp){
     // Get references to data for quick access
     std::vector<T> &data = this->data();
     const int size1 = this->size1();
