@@ -197,13 +197,13 @@ octave_value toSparse() {
   Array<int> Ar(nz);
   Array<int> Ac(nz);
   
-  std::vector<int> vr = (*$self).sparsity().getRow();
+  std::vector<int> vc = (*$self).sparsity().getCol();
   Array<double> mydata(nz);
   const std::vector<double> &cdata = (*$self).data();
   
-  for (int k=0;k<nz;k++) {
-    Ar(k)=vr[k];
-    Ac(k)=(*$self).sparsity().col()[k];
+  for(int k=0; k<nz; ++k){
+    Ac(k)=vc[k];
+    Ar(k)=(*$self).sparsity().row()[k];
     mydata(k)=cdata[k];
   }
   
