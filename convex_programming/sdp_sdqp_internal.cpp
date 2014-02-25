@@ -61,16 +61,12 @@ namespace CasADi {
 
     MX f_sdqp = msym("f",input(SDQP_SOLVER_F).sparsity());
     MX g_sdqp = msym("g",input(SDQP_SOLVER_G).sparsity());
-  
-    cout << "a" << endl;
 
     std::vector<MX> fi(n_+1);
     MX znp = DMatrix(n_+1,n_+1);
     for (int k=0;k<n_;++k) {
       MX gk = vertcat(g_socp(ALL,k),DMatrix(1,1));
-      cout << "a1" << endl;
       MX fk = -blockcat(znp,gk,trans(gk),DMatrix(1,1));
-      cout << "a2" << endl;
       // TODO: replace with ALL
       fi.push_back(blkdiag(f_sdqp(range(f_sdqp.size2()*k,f_sdqp.size2()*(k+1)),range(f_sdqp.size2())),fk));
     }
@@ -79,13 +75,10 @@ namespace CasADi {
     fin(n_+1,n_) = en_socp;
   
     fi.push_back(blkdiag(DMatrix(f_sdqp.size2(),f_sdqp.size2()),-fin));
-    cout << "b" << endl;
   
     MX h0 = vertcat(h_socp,DMatrix(1,1));
     MX g = blockcat(f_socp*DMatrix::eye(n_+1),h0,trans(h0),f_socp);
 
-    cout << "c" << endl;
-  
     g = blkdiag(g_sdqp,g);
   
     IOScheme mappingIn("g_socp","h_socp","f_sdqp","g_sdqp");
