@@ -983,7 +983,7 @@ namespace CasADi{
   */
   template<class T>
   void Matrix<T>::getStridedArray(T* val, int len, int stride1, int stride2, Sparsity sp) const{
-    if (stride1==0 || stride2==0 || (stride2==1 && stride1==size1())) return getArray(val, len, sp);
+    if (stride1==0 || stride2==0 || (sp==DENSE && stride2==1 && stride1==size1())) return getArray(val, len, sp);
 
     // Get references to data for quick access
     const std::vector<T> &data = this->data();
