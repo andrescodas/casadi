@@ -477,6 +477,7 @@ namespace CasADi{
       stream << toScalar();
     }
   
+    stream << std::flush;
     stream.precision(precision);
     stream.width(width);
     stream.flags(flags); 
@@ -519,6 +520,7 @@ namespace CasADi{
     }
     stream << "]"; 
     
+    stream << std::flush;
     stream.precision(precision);
     stream.width(width);
     stream.flags(flags); 
@@ -576,6 +578,7 @@ namespace CasADi{
       }
     }
         
+    stream << std::flush;
     stream.precision(precision);
     stream.width(width);
     stream.flags(flags);
@@ -594,6 +597,7 @@ namespace CasADi{
         }
       }
     }
+    stream << std::flush;
   }
 
   template<class T>
@@ -615,7 +619,7 @@ namespace CasADi{
   void Matrix<T>::repr(std::ostream &stream) const{
     stream << className() << "(";
     print(stream);
-    stream << ")";
+    stream << ")" << std::flush;
   }
 
   template<class T>
