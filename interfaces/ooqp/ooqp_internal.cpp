@@ -275,20 +275,19 @@ namespace CasADi {
       casadi_error("Fatal error: " << errFlag(ierr));
     }
 
-    // Save solution
+    // Save primal solution
     output(QP_SOLVER_COST).set(objectiveValue);
     vector<double>& x = output(QP_SOLVER_X).data();
-    vector<double>& lam_x = output(QP_SOLVER_LAM_X).data();
     for(int i=0; i<n_; ++i){
       int ii = x_index_[i];
       if(ii<0){
         x[i] = p_[-1-ii];
-        lam_x[i] = numeric_limits<double>::quiet_NaN(); // Not calculated
       } else {
         x[i] = x_[ii];
-        lam_x[i] = phi_[ii]-gamma_[ii];
       }
     }
+
+    // Save dual solution (linear bounds)
     vector<double>& lam_a = output(QP_SOLVER_LAM_A).data();
     for(int j=0; j<nc_; ++j){
       int jj = c_index_[j];
@@ -300,6 +299,27 @@ namespace CasADi {
         lam_a[j] = pi_[-1+jj]-lambda_[-1+jj];
       }
     }
+
+    // Save dual solution (simple bounds)
+    vector<double>& lam_x = output(QP_SOLVER_LAM_X).data();
+    for(int i=0; i<n_; ++i){
+      int ii = x_index_[i];
+      if(ii<0){
+        // The dual solution for the fixed parameters follows from the KKT conditions
+        lam_x[i] = -g[-1-ii];
+        for(int el=H_colind[i]; el<H_colind[i+1]; ++el){
+          int j=H_row[el];
+          lam_x[i] -= H[el]*x[j];
+        }
+        for(int el=A_colind[i]; el<A_colind[i+1]; ++el){
+          int j=A_row[el];
+          lam_x[i] -= A[el]*lam_a[j];
+        }
+      } else {
+        lam_x[i] = phi_[ii]-gamma_[ii];
+      }
+    }
+
   }
 
   const char* OOQPInternal::errFlag(int flag){
