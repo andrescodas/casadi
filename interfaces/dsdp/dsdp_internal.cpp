@@ -98,7 +98,6 @@ namespace CasADi {
   void DSDPInternal::init(){
     // Initialize the base classes
     SDPSolverInternal::init();
-
     log("DSDPInternal::init","Enter");
 
     // Fill the data structures that hold DSDP-style sparse symmetric matrix
@@ -110,16 +109,15 @@ namespace CasADi {
       values_[i].resize(nb_);
       for (int j=0;j<nb_;++j) {
         CCSSparsity CAij = mapping_.output(i*nb_+j).sparsity();
-        pattern_[i][j].resize(CAij.sizeL());
+        pattern_[i][j].resize(CAij.sizeU());
         values_[i][j].resize(pattern_[i][j].size());
         int nz=0;
-        vector<int> rowind,col;
-        CAij.getSparsityCRS(rowind,col);
-        for(int r=0; r<rowind.size()-1; ++r) {
-          for(int el=rowind[r]; el<rowind[r+1]; ++el){
-            if(r>=col[el]){
-              pattern_[i][j][nz++] = r*(r + 1)/2 + col[el];
-            }
+        const vector<int>& colind = CAij.colind();
+        const vector<int>& row = CAij.row();
+        for(int cc=0; cc<colind.size()-1; ++cc) {
+          int rr;
+          for(int el=colind[cc]; el<colind[cc+1] && (rr=row[el])<=cc; ++el){ // upper triangular part (= lower triangular part for row-major)
+            pattern_[i][j][nz++] = cc*(cc + 1)/2 + rr; // DSDP is row-major --> indices swapped 
           }
         }
         mapping_.output(i*nb_+j).get(values_[i][j],SPARSESYM);
