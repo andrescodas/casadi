@@ -49,10 +49,6 @@ except:
 #  pass
 
 nsolvers = []
-try:
-  nsolvers.append((LapackQRNullspace,{}))
-except:
-  pass
   
 def nullspacewrapper(sp):
   a = ssym("a",sp)
