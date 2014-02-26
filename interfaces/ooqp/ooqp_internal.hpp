@@ -83,6 +83,9 @@ namespace CasADi{
 
     // Print level
     int print_level_;
+    
+    // Tolerances
+    double mutol_, artol_;
   };
 
 } // namespace CasADi

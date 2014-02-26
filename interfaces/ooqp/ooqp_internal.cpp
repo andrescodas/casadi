@@ -31,6 +31,11 @@
 // OOQP headers
 #include <cQpGenSparse.h>
 #include <Status.h>
+#include <GondzioSolver.h>
+
+// A variable that controls the printlevel of OOQP
+// This is the only possible way to access it using the C++ interface
+extern int gOoqpPrintLevel;
 
 using namespace std;
 namespace CasADi {
@@ -47,9 +52,13 @@ namespace CasADi {
   void OOQPInternal::init(){
     // Initialize the base classes
     QPSolverInternal::init();
+    
+    std::cout << "nc: " << nc_ << std::endl;
 
     // Read options
     print_level_ = getOption("print_level");
+    mutol_ = getOption("mutol");
+    artol_ = getOption("artol");
     
     // Allocate memory for problem
     c_.resize(n_);
@@ -253,21 +262,46 @@ namespace CasADi {
     
     // Solve the QP
     double objectiveValue;
-    int ierr;
-    qpsolvesp(getPtr(c_), nx,
-              getPtr(irowQ_),  nnzQ, getPtr(jcolQ_), getPtr(dQ_),
-              getPtr(xlow_), getPtr(ixlow_),
-              getPtr(xupp_), getPtr(ixupp_),
-              getPtr(irowA_), nnzA, getPtr(jcolA_), getPtr(dA_),
-              getPtr(bA_), nA,
-              getPtr(irowC_), nnzC, getPtr(jcolC_), getPtr(dC_),
-              getPtr(clow_), nC, getPtr(iclow_),
-              getPtr(cupp_), getPtr(icupp_),
-              getPtr(x_), getPtr(gamma_), getPtr(phi_),
+    int ierr=0;
+    {
+      // All OOQP related allocations in evaluate
+
+      std::vector<int> krowQ(nx+1); 
+      std::vector<int> krowA(nA+1); 
+      std::vector<int> krowC(nC+1); 
+
+      int status_code = 0;
+      makehb( getPtr(irowQ_), nnzQ, getPtr(krowQ), nx, &ierr );
+      if( ierr == 0 ) makehb( getPtr(irowA_), nnzA, getPtr(krowA), nA, &ierr );
+      if( ierr == 0 ) makehb( getPtr(irowC_), nnzC, getPtr(krowC), nC, &ierr );
+
+      if( ierr == 0 ) {
+	      QpGenContext ctx;
+
+        QpGenHbGondzioSetup( getPtr(c_), nx, getPtr(krowQ), getPtr(jcolQ_), getPtr(dQ_),
+        getPtr(xlow_), getPtr(ixlow_), getPtr(xupp_), getPtr(ixupp_),
+        getPtr(krowA), nA, getPtr(jcolA_), getPtr(dA_), getPtr(bA_),
+        getPtr(krowC), nC, getPtr(jcolC_), getPtr(dC_),
+        getPtr(clow_), getPtr(iclow_), getPtr(cupp_), getPtr(icupp_), &ctx,
+        &ierr );
+        if( ierr == 0 ) {
+          Solver * solver = (Solver *) ctx.solver;
+          gOoqpPrintLevel = print_level_;
+          solver->monitorSelf();
+          solver->setMuTol(mutol_);
+          solver->setMuTol(mutol_);
+
+          QpGenFinish( &ctx, getPtr(x_), getPtr(gamma_), getPtr(phi_),
               getPtr(y_),
               getPtr(z_), getPtr(lambda_), getPtr(pi_),
               &objectiveValue,
-              print_level_, &ierr);
+              &ierr );
+        }
+
+        QpGenCleanup( &ctx );
+      }
+
+    }
 
     if(ierr>0){
       casadi_warning("Unable to solve problem: " << errFlag(ierr));
