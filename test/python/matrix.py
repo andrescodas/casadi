@@ -1020,6 +1020,28 @@ class Matrixtests(casadiTestCase):
     self.assertEqual(c_.size(),a.size()*b.size())
     
     self.checkarray(c_,numpy.kron(a,b))
+    
+  def test_flatten_kron(self):
+    A = ssym("A",2,3)
+    B = ssym("B",4,5)
+    P = ssym("P",A.size2(),B.size1())
+
+    f = SXFunction([flatten(P),A,B],[flatten(mul([A,P,B]))])
+    f.init()
+
+    J = f.jacobian()
+    J.init()
+    J.setInput(numpy.random.rand(*flatten(P).shape),0)
+    J.setInput(numpy.random.rand(*A.shape),1)
+    J.setInput(numpy.random.rand(*B.shape),2)
+
+    J.evaluate()
+
+    res =  J.output()
+
+    ref =  kron(J.input(1),J.input(2).T)
+
+    self.checkarray(res,ref)
         
 if __name__ == '__main__':
     unittest.main()
