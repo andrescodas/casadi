@@ -677,6 +677,7 @@ class FXtests(casadiTestCase):
           z.set(z2)
 
         def fwd(self,(x,y),(z,),seeds,sens):
+          assert(max_fwd)
           z0 = 3*y
           z1 = x+z0
           z2 = sin(z1)
@@ -689,6 +690,7 @@ class FXtests(casadiTestCase):
             dz.set(dz2)
         
         def adj(self,(x,y),(z,),seeds,sens):
+          assert(max_adj)
           z0 = 3*y
           z1 = x+z0
           z2 = sin(z1)
@@ -845,6 +847,7 @@ class FXtests(casadiTestCase):
           z.set(z3)
         
         def fwd(self,(x,y),(z,),seeds,sens):
+          assert(max_fwd)
           x0 = x[0]
           x1 = x[1]
           
@@ -866,6 +869,7 @@ class FXtests(casadiTestCase):
           
             dz.set(dz3)
         def adj(self,(x,y),(z,),seeds,sens):
+          assert(max_adj)
           x0 = x[0]
           x1 = x[1]
           
@@ -951,6 +955,7 @@ class FXtests(casadiTestCase):
             Y.set([x**2+y,x*y])
           
          def fwd(self,(X,),(Y,),seeds,sens):
+            assert(max_fwd)
             x = X[0]
             y = X[1]
             Y.set([x**2+y,x*y])
@@ -960,6 +965,7 @@ class FXtests(casadiTestCase):
               Zdot.set([2*x*xdot+ydot,y*xdot+x*ydot])
             
          def adj(self,(X,),(Y,),seeds,sens):
+            assert(max_adj)
             x = X[0]
             y = X[1]
             Y.set([x**2+y,x*y])
