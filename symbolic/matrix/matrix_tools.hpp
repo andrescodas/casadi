@@ -1038,14 +1038,14 @@ namespace CasADi{
   
   template<class T>
   Matrix<T> nullspace(const Matrix<T>& A) {
-    int n = A.size2();
-    int m = A.size1();
+    int n = A.size1();
+    int m = A.size2();
     
     Matrix<T> X = A;
     
-    casadi_assert_message(m>=n,"nullspace(A): expecting a flat matrix (more rows than cols), but got " << A.dimString() << ".");
+    casadi_assert_message(m>=n,"nullspace(A): expecting a flat matrix (more columns than rows), but got " << A.dimString() << ".");
     
-    Matrix<T> seed = DMatrix::eye(m)(range(n,m),range(m));  // NOTE: Slice more efficient than range
+    Matrix<T> seed = DMatrix::eye(m)(Slice(0,m),Slice(n,m));
 
     std::vector< Matrix<T> > us;
     std::vector< Matrix<T> > betas;
@@ -1053,24 +1053,24 @@ namespace CasADi{
     Matrix<T> beta;
     
     for (int i=0;i<n;++i) {
-      Matrix<T> x = X(range(i,m),i);
+      Matrix<T> x = X(i,Slice(i,m));
       Matrix<T> u = Matrix<T>(x);
-      Matrix<T> sigma = sqrt(sumRows(x*x));
+      Matrix<T> sigma = sqrt(sumCols(x*x));
       const Matrix<T>& x0 = x(0,0);
       u(0,0) = 1;
       
       Matrix<T> b = -copysign(sigma,x0);
       
-      u(range(1,m-i),0)*= 1/(x0-b);
+      u(Slice(0),Slice(1,m-i))*= 1/(x0-b);
       beta = 1-x0/b;
       
-      X(range(i,m),range(i,n))-= beta*mul(u,mul(trans(u),X(range(i,m),range(i,n))));
+      X(Slice(i,n),Slice(i,m))-= beta*mul(mul(X(Slice(i,n),Slice(i,m)),trans(u)),u);
       us.push_back(u);
       betas.push_back(beta);
     }
     
     for (int i=n-1;i>=0;--i) {
-      seed(range(m-n),range(i,m)) -= betas[i]*mul(mul(seed(range(m-n),range(i,m)),us[i]),trans(us[i]));
+      seed(Slice(i,m),Slice(0,m-n)) -= betas[i]*mul(trans(us[i]),mul(us[i],seed(Slice(i,m),Slice(0,m-n))));
     }
     
     return seed;
