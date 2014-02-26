@@ -33,7 +33,7 @@
 namespace CasADi{
 
   /** Sparsity format for getting and setting inputs and outputs */
-  enum Sparsity{SPARSE,SPARSESYM,DENSE,DENSESYM,DENSETRANS};
+  enum SparsityType{SPARSE,SPARSESYM,DENSE,DENSESYM,DENSETRANS};
 
   /** \brief Matrix base class
       This is a common base class for MX and Matrix<>, introducing a uniform syntax and implementing
@@ -82,7 +82,7 @@ namespace CasADi{
     int size2() const;
 
     /** \brief Get the number if non-zeros for a given sparsity pattern */
-    int size(Sparsity sp) const;
+    int size(SparsityType sp) const;
     
     /** \brief Get string representation of dimensions.
         The representation is (nrow x ncol = numel | size)
@@ -292,7 +292,7 @@ namespace CasADi{
   }
 
   template<typename MatType>
-  int GenericMatrix<MatType>::size(Sparsity sp) const{
+  int GenericMatrix<MatType>::size(SparsityType sp) const{
     if(sp==SPARSE){
       return size();
     } else if(sp==SPARSESYM){

@@ -586,22 +586,22 @@ namespace CasADi{
     CCSSparsity& sparsityRef();
     
     /** \brief  Set the non-zero elements, scalar */
-    void set(T val, Sparsity sp=SPARSE);
+    void set(T val, SparsityType sp=SPARSE);
     
     /** \brief  Get the non-zero elements, scalar */
-    void get(T& val, Sparsity sp=SPARSE) const;
+    void get(T& val, SparsityType sp=SPARSE) const;
 
     /** \brief  Set the non-zero elements, vector */
-    void set(const std::vector<T>& val, Sparsity sp=SPARSE);
+    void set(const std::vector<T>& val, SparsityType sp=SPARSE);
 
     /** \brief  Get the non-zero elements, vector */
-    void get(std::vector<T>& val, Sparsity sp=SPARSE) const;
+    void get(std::vector<T>& val, SparsityType sp=SPARSE) const;
 
     /** \brief  Set the non-zero elements, Matrix */
-    void set(const Matrix<T>& val, Sparsity sp=SPARSE);
+    void set(const Matrix<T>& val, SparsityType sp=SPARSE);
 
     /** \brief  Get the non-zero elements, Matrix */
-    void get(Matrix<T>& val, Sparsity sp=SPARSE) const;
+    void get(Matrix<T>& val, SparsityType sp=SPARSE) const;
 
 #ifdef SWIG
     %rename(get) getStridedArray;
@@ -609,10 +609,10 @@ namespace CasADi{
 #endif
 
     /** \brief  Get the non-zero elements, array */
-    void getArray(T* val, int len, Sparsity sp=SPARSE) const;
+    void getArray(T* val, int len, SparsityType sp=SPARSE) const;
 
     /** \brief  Set the non-zero elements, array */
-    void setArray(const T* val, int len, Sparsity sp=SPARSE);
+    void setArray(const T* val, int len, SparsityType sp=SPARSE);
 
     /** \brief  Get the non-zero elements, array, sparse and correct length */
     void getArray(T* val) const;
@@ -621,14 +621,14 @@ namespace CasADi{
     void setArray(const T* val);
     
     /** \brief  Get the non-zero elements, strided array */
-    void getStridedArray(T* val, int len, int stride1, int stride2, Sparsity sp=SPARSE) const;
+    void getStridedArray(T* val, int len, int stride1, int stride2, SparsityType sp=SPARSE) const;
     
 #ifndef SWIG
     /** \brief  Legacy - use getArray instead */
-    void get(T* val, Sparsity sp=SPARSE) const;
+    void get(T* val, SparsityType sp=SPARSE) const;
 
     /** \brief  Legacy - use setArray instead */
-    void set(const T* val, Sparsity sp=SPARSE);
+    void set(const T* val, SparsityType sp=SPARSE);
 
     /** Bitwise set, reinterpreting the data as a bvec_t array */
     void setZeroBV();
