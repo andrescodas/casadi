@@ -501,9 +501,9 @@ class LinearSolverTests(casadiTestCase):
 
   @requires("CSparseCholesky")
   def test_cholesky2(self):
-    random.seed(0)
+    numpy.random.seed(0)
     n = 10
-    L = c.diag(range(n))
+    L = c.diag(range(1,n+1))
     M = mul(L,L.T)
 
     print L
