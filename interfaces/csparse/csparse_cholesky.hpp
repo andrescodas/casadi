@@ -84,7 +84,7 @@ public:
   #ifdef SWIG
   %callback("%s_cb");
   #endif
-  static LinearSolver creator(const CCSSparsity& sp){ return CSparseCholesky(sp);}
+  static LinearSolver creator(const CCSSparsity& sp, int rhs){ return CSparseCholesky(sp, rhs);}
   #ifdef SWIG
   %nocallback;
   #endif

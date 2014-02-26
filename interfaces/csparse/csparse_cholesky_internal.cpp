@@ -98,7 +98,7 @@ namespace CasADi{
     Lp [n] = S_->cp [n] ; 
     CCSSparsity ret(n, n, row, colind); // BUG?
 
-    return transpose? ret : trans(ret);
+    return transpose? trans(ret) : ret;
   
   }
   
@@ -116,7 +116,7 @@ namespace CasADi{
     std::copy(L->x,L->x+nz,data.begin());
     DMatrix ret(CCSSparsity(n, m, colind, row),data); 
     
-    return transpose? ret : trans(ret);
+    return transpose? trans(ret) : ret;
   }
   
   void CSparseCholeskyInternal::prepare(){
@@ -169,15 +169,20 @@ namespace CasADi{
   void CSparseCholeskyInternal::solve(double* x, int nrhs, bool transpose){
     casadi_assert(prepared_);
     casadi_assert(L_!=0);
-    casadi_assert(transpose);
-  
+
     double *t = &temp_.front();
-  
     for(int k=0; k<nrhs; ++k){
-      cs_ipvec (L_->pinv, x, t, AT_.n) ;   // t = P1\b
-      cs_lsolve (L_->L, t) ;               // t = L\t 
-      cs_ltsolve (L_->L, t) ;              // t = U\t 
-      cs_ipvec (S_->q, t, x, AT_.n) ;      // x = P2\t 
+      if (transpose) {
+        cs_pvec (S_->q, x, t, AT_.n) ;   // t = P1\b
+        cs_ltsolve (L_->L, t) ;               // t = L\t 
+        cs_lsolve (L_->L, t) ;              // t = U\t 
+        cs_pvec (L_->pinv, t, x, AT_.n) ;      // x = P2\t 
+      } else {
+        cs_ipvec (L_->pinv, x, t, AT_.n) ;   // t = P1\b
+        cs_lsolve (L_->L, t) ;               // t = L\t 
+        cs_ltsolve (L_->L, t) ;              // t = U\t 
+        cs_ipvec (S_->q, t, x, AT_.n) ;      // x = P2\t 
+      }
       x += ncol();
     }
   }

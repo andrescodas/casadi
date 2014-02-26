@@ -470,17 +470,34 @@ class LinearSolverTests(casadiTestCase):
 
   @requires("CSparseCholesky")
   def test_cholesky(self):
-    random.seed(1)
+    numpy.random.seed(0)
     n = 10
-    L = self.randDMatrix(n,n,sparsity=0.2) +  c.diag(range(n))
+    L = self.randDMatrix(n,n,sparsity=0.2) +  1.5*c.diag(range(1,n+1))
+    L = L[sp_tril(n)]
     M = mul(L,L.T)
+    b = self.randDMatrix(n,1)
+    
+    M.sparsity().spy()
 
     S = CSparseCholesky(M.sparsity())
-
+    
     S.init()
+    S.setInput(M)
+    S.prepare()
+    
+    self.checkarray(M,M.T)
+    
+    C = S.getFactorization()
+    self.checkarray(mul(C,C.T),M)
+    self.checkarray(C,L)
+    
+    print C
+    
     S.getFactorizationSparsity().spy()
 
-    S.setInput(M,0)
+    C = solve(M,b,CSparseCholesky)
+    self.checkarray(mul(M,C),b)
+    
 
   @requires("CSparseCholesky")
   def test_cholesky2(self):
@@ -495,6 +512,11 @@ class LinearSolverTests(casadiTestCase):
 
     S.init()
     S.getFactorizationSparsity().spy()
+    S.setInput(M)
+    S.prepare()
 
+    C = S.getFactorization()
+    self.checkarray(mul(C,C.T),M)
+    
 if __name__ == '__main__':
     unittest.main()
