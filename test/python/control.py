@@ -61,40 +61,49 @@ class ControlTests(casadiTestCase):
           solver.setOption(options)
           solver.setOption("ad_mode","forward")
           solver.init()
-          solver.setInput(vertcat(A_),DPLE_A)
-          solver.setInput(vertcat(V_),DPLE_V)
+          solver.setInput(horzcat(A_),DPLE_A)
+          solver.setInput(horzcat(V_),DPLE_V)
           
-          As = msym("A",K*n,n)
-          Vs = msym("V",K*n,n)
-          
-          Vss = vertcat([(i+i.T)/2 for i in vertsplit(Vs,n) ])
-          
-          
-          AA = blkdiag([c.kron(i,i) for i in vertsplit(As,n)])
-
-          A_total = DMatrix.eye(n*n*K) - vertcat([AA[-n*n:,:],AA[:-n*n,:]])
-          
-          
-          Pf = solve(A_total,flatten(vertcat([Vss[-n:,:],Vss[:-n,:]])),CSparse) ## FIXME? #554
-          P = Pf.reshape((K*n,n)) ## FIXME?, #554
-          #P = (P+P.T)/2
-          
-          refsol = MXFunction([As,Vs],[P])
-          refsol.init()
-          
-          refsol.setInput(vertcat(A_),DPLE_A)
-          refsol.setInput(vertcat(V_),DPLE_V)
-          
-          solver.evaluate()
-          X = list(vertsplit(solver.output(),n))
-          
-          a0 = (mul([blkdiag(A_),blkdiag(X),blkdiag(A_).T])+blkdiag(V_))
+          As = msym("A",n,K*n)
+          Vs = msym("V",n,K*n)
           
           def sigma(a):
             return a[1:] + [a[0]]
             
-          a1 = blkdiag(sigma(X))
+          def isigma(a):
+            return [a[-1]] + a[:-1]
+          
+          Vss = horzcat([(i+i.T)/2 for i in isigma(list(horzsplit(Vs,n))) ])
+          
+          
+          AA = blkdiag([c.kron(i,i) for i in horzsplit(As,n)])
 
+          A_total = DMatrix.eye(n*n*K) - vertcat([AA[-n*n:,:],AA[:-n*n,:]])
+          
+          
+          Pf = solve(A_total,vec(Vss),CSparse)
+          P = Pf.reshape((n,K*n))
+          
+          refsol = MXFunction([As,Vs],[P])
+          refsol.init()
+          
+          refsol.setInput(horzcat(A_),DPLE_A)
+          refsol.setInput(horzcat(V_),DPLE_V)
+          
+          solver.evaluate()
+          X = list(horzsplit(solver.output(),n))
+          refsol.evaluate()
+          Xref = list(horzsplit(refsol.output(),n))
+          
+          a0 = (mul([blkdiag(A_),blkdiag(X),blkdiag(A_).T])+blkdiag(V_))
+          a0ref = (mul([blkdiag(A_),blkdiag(Xref),blkdiag(A_).T])+blkdiag(V_))
+          
+
+            
+          a1 = blkdiag(sigma(X))
+          a1ref = blkdiag(sigma(Xref))
+
+          self.checkarray(a0ref,a1ref)
           self.checkarray(a0,a1)
 
           self.checkfx(solver,refsol,sens_der=False,hessian=False,evals=1)
