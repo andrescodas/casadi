@@ -51,9 +51,9 @@ SDPSolverInternal::SDPSolverInternal(const std::vector<CCSSparsity> &st) : st_(s
   nc_ = A.size1();
   n_ = A.size2();
   
-  casadi_assert_message(F.size2()==m_,"SDPSolverInternal: Supplied F sparsity: number of columns (" << F.size2() <<  ")  must match m (" << m_ << ")");
+  casadi_assert_message(F.size1()==m_,"SDPSolverInternal: Supplied F sparsity: number of rows (" << F.size1() <<  ")  must match m (" << m_ << ")");
   
-  casadi_assert_message(F.size1()%n_==0,"SDPSolverInternal: Supplied F sparsity: number of rows (" << F.size2() <<  ")  must be an integer multiple of n (" << n_ << "), but got remainder " << F.size1()%n_);
+  casadi_assert_message(F.size2()%n_==0,"SDPSolverInternal: Supplied F sparsity: number of columns (" << F.size2() <<  ")  must be an integer multiple of n (" << n_ << "), but got remainder " << F.size2()%n_);
   
   // Input arguments
   setNumInputs(SDP_SOLVER_NUM_IN);
@@ -67,7 +67,7 @@ SDPSolverInternal::SDPSolverInternal(const std::vector<CCSSparsity> &st) : st_(s
   input(SDP_SOLVER_UBA) = DMatrix::inf(nc_);
 
   for (int i=0;i<n_;i++) {
-    CCSSparsity s = input(SDP_SOLVER_F)(range(i*m_,(i+1)*m_),ALL).sparsity();
+    CCSSparsity s = input(SDP_SOLVER_F)(ALL,Slice(i*m_,(i+1)*m_)).sparsity();
     casadi_assert_message(s==s.transpose(),"SDPSolverInternal: Each supplied Fi must be symmetric. But got " << s.dimString() <<  " for i = " << i << ".");
   }
   
@@ -87,7 +87,7 @@ void SDPSolverInternal::init() {
   // Find aggregate sparsity pattern
   CCSSparsity aggregate = input(SDP_SOLVER_G).sparsity();
   for (int i=0;i<n_;++i) {
-    aggregate = aggregate + input(SDP_SOLVER_F)(range(i*m_,(i+1)*m_),ALL).sparsity();
+    aggregate = aggregate + input(SDP_SOLVER_F)(ALL,Slice(i*m_,(i+1)*m_)).sparsity();
   }
   
   // Detect block diagonal structure in this sparsity pattern
@@ -121,12 +121,12 @@ void SDPSolverInternal::init() {
     in.push_back(F);
     std::vector<SXMatrix> out((n_+1)*nb_);
     for (int j=0;j<nb_;++j) {
-      out[j] = G(p,p)(range(r[j],r[j+1]),range(r[j],r[j+1]));
+      out[j] = G(p,p)(Slice(r[j],r[j+1]),Slice(r[j],r[j+1]));
     }
     for (int i=0;i<n_;++i) {
-      SXMatrix Fi = F(range(i*m_,(i+1)*m_),ALL)(p,p);
+      SXMatrix Fi = F(ALL,Slice(i*m_,(i+1)*m_))(p,p);
       for (int j=0;j<nb_;++j) {
-        out[(i+1)*nb_+j] = Fi(range(r[j],r[j+1]),range(r[j],r[j+1]));
+        out[(i+1)*nb_+j] = Fi(Slice(r[j],r[j+1]),Slice(r[j],r[j+1]));
       }
     }
     mapping_ = SXFunction(in,out);

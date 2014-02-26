@@ -56,12 +56,12 @@ QCQPSolverInternal::QCQPSolverInternal(const std::vector<CCSSparsity> &st) : st_
     "We need H square & symmetric" << std::endl
   );
   
-  casadi_assert_message(P.size2()==n_,"Got incompatible dimensions. Number of colums in P (" << P.size2() << ") must match n (" << n_ << ").");
+  casadi_assert_message(P.size1()==n_,"Got incompatible dimensions. Number of rows in P (" << P.size1() << ") must match n (" << n_ << ").");
 
-  casadi_assert_message(P.size1() % n_ == 0,"Got incompatible dimensions. Number of rows in P (" << P.size1() << ") must be a multiple of n (" << n_ << ").");
+  casadi_assert_message(P.size2() % n_ == 0,"Got incompatible dimensions. Number of cols in P (" << P.size2() << ") must be a multiple of n (" << n_ << ").");
   
   
-  nq_ = P.size1() / n_;
+  nq_ = P.size2() / n_;
 
   // Sparsity
   CCSSparsity x_sparsity = sp_dense(n_,1);
@@ -82,7 +82,7 @@ QCQPSolverInternal::QCQPSolverInternal(const std::vector<CCSSparsity> &st) : st_
   input(QCQP_SOLVER_UBX) = DMatrix(x_sparsity,       std::numeric_limits<double>::infinity());
 
   for (int i=0;i<nq_;++i) {
-    DMatrix Pi = input(QCQP_SOLVER_P)(range(i*n_,(i+1)*n_),ALL);
+    DMatrix Pi = input(QCQP_SOLVER_P)(ALL,Slice(i*n_,(i+1)*n_));
     casadi_assert_message(Pi.sparsity()==trans(Pi.sparsity()),"We need Pi square & symmetric but got " << Pi.dimString() << " for i = " << i << ".");
   }
   
