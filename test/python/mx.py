@@ -2238,7 +2238,7 @@ class MXtests(casadiTestCase):
     f.setInput(range(1,4*3/2+1))
     f.evaluate()
     
-    self.checkarray(f.output(),DMatrix([[1,0,0],[0,3,0],[0,0,6]]))
+    self.checkarray(f.output(),DMatrix([[1,0,0],[0,4,0],[0,0,6]]))
     self.checkarray(IMatrix(f.output().sparsity(),1),IMatrix(sp_tril(3).T,1))
     
     
