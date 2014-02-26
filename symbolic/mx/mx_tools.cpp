@@ -1035,17 +1035,10 @@ namespace CasADi{
   }
 
   MX solve(const MX& A, const MX& b, linearSolverCreator lsolver, const Dictionary& dict) {
-    if(false){ // BUG? Does not work - why?
-      LinearSolver mysolver = lsolver(A.sparsity(),1);
-      mysolver.setOption(dict);
-      mysolver.init();
-      return mysolver.solve(A,b,false);
-    } else {
-      LinearSolver mysolver = lsolver(A.sparsity().transpose(),1);
-      mysolver.setOption(dict);
-      mysolver.init();
-      return mysolver.solve(trans(A),b,true);
-    }
+    LinearSolver mysolver = lsolver(A.sparsity(),b.size2());
+    mysolver.setOption(dict);
+    mysolver.init();
+    return mysolver.solve(A,b,false);
   }
   
   MX pinv(const MX& A, linearSolverCreator lsolver, const Dictionary& dict) {

@@ -518,5 +518,27 @@ class LinearSolverTests(casadiTestCase):
     C = S.getFactorization()
     self.checkarray(mul(C,C.T),M)
     
+  def test_large_sparse(self):
+    numpy.random.seed(1)
+    n = 10
+    A = self.randDMatrix(n,n,sparsity=0.5)
+    b = self.randDMatrix(n,3)
+    
+    As = msym("A",A.sparsity())
+    bs = msym("B",b.sparsity())
+    for Solver, options in lsolvers:
+      print Solver.creator
+      C = solve(A,b,Solver,options)
+      
+      self.checkarray(mul(A,C),b)
+      
+      f = MXFunction([As,bs],[solve(As,bs,Solver,options)])
+      f.init()
+      f.setInput(A,0)
+      f.setInput(b,1)
+      f.evaluate()
+      
+      self.checkarray(mul(A,f.output()),b)
+      
 if __name__ == '__main__':
     unittest.main()
