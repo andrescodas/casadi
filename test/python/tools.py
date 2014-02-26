@@ -673,20 +673,35 @@ class Toolstests(casadiTestCase):
       )
     ])
     self.assertEqual(V.size,14)
-    
+
     self.assertTrue(isinstance(V.cat,MX)) 
-    if CasadiOptions.getSimplificationOnTheFly():   
-      self.assertTrue(isEqual(V["x"],x))
-      self.assertTrue(isEqual(V["y",0],y0))
-      self.assertTrue(isEqual(V["y",1],y1))
+    def isEqualV(a,b):
+      ft = MXFunction([x,m],[a-b])
+      ft.init()
+      for i in range(ft.getNumInputs()):
+        ft.setInput(numpy.random.rand(*ft.input(i).shape),i)
+      ft.evaluate()
+      self.checkarray(ft.output(),DMatrix.zeros(*ft.output().shape))
+    
+    isEqualV(V["x"],x)
+    isEqualV(V["y",0],y0)
+    isEqualV(V["y",1],y1)
     self.assertEqual(V["y",0,'a'].shape,(1,1))
     
     with self.assertRaises(Exception):
       V["y",0] = msym("x",4) # shape mismatch
     abc = msym("abc",2)
     V["y",0] = abc
-    if CasadiOptions.getSimplificationOnTheFly():
-      self.assertTrue(isEqual(V["y",0],abc))
+    
+    def isEqualV(a,b):
+      ft = MXFunction([x,m,abc],[a-b])
+      ft.init()
+      for i in range(ft.getNumInputs()):
+        ft.setInput(numpy.random.rand(*ft.input(i).shape),i)
+      ft.evaluate()
+      self.checkarray(ft.output(),DMatrix.zeros(*ft.output().shape))
+      
+    isEqualV(V["y",0],abc)
 
     states = struct_ssym([
                 entry('x'),
