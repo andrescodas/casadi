@@ -526,7 +526,8 @@ class SDPtests(casadiTestCase):
       sol.init()
       sol.setInput(0,"lbg")
       sol.setInput(0,"ubg")
-      sol.setInput(1,"x0")
+      V(sol.input("x0"))["x"] = -1
+      V(sol.input("x0"))["L"] = 0.1
 
       sol.evaluate()
 
