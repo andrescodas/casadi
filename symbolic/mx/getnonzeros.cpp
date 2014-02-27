@@ -32,7 +32,7 @@ using namespace std;
 
 namespace CasADi{
 
-  GetNonzeros::GetNonzeros(const CCSSparsity& sp, const MX& y){
+  GetNonzeros::GetNonzeros(const Sparsity& sp, const MX& y){
     setSparsity(sp);
     setDependencies(y);
   }
@@ -181,12 +181,12 @@ namespace CasADi{
     int nadj = adjSeed.size();
 
     // Output sparsity
-    const CCSSparsity& osp = sparsity();
+    const Sparsity& osp = sparsity();
     const vector<int>& orow = osp.row();
     vector<int> ocol = osp.getCol();
     
     // Input sparsity
-    const CCSSparsity& isp = dep().sparsity();
+    const Sparsity& isp = dep().sparsity();
     const vector<int>& irow = isp.row();
     vector<int> icol = isp.getCol();
 
@@ -249,7 +249,7 @@ namespace CasADi{
       if(r_nz.size()==0){
         res = MX::sparse(osp.shape());
       } else {
-        CCSSparsity f_sp(osp.size1(),osp.size2(),r_colind,r_row);
+        Sparsity f_sp(osp.size1(),osp.size2(),r_colind,r_row);
         res = arg->getGetNonzeros(f_sp,r_nz);
       }
     }
@@ -292,7 +292,7 @@ namespace CasADi{
         if(*k>=0 && r_ind[nz[*k]]<0){
           
           // Create a new pattern which includes both the the previous seed and the addition
-          CCSSparsity sp = asens0.sparsity().patternUnion(dep().sparsity());
+          Sparsity sp = asens0.sparsity().patternUnion(dep().sparsity());
           asens0 = asens0->getSetSparse(sp);
 
           // Recalculate the nz locations in the adjoint sensitivity corresponding to the inputs
@@ -350,7 +350,7 @@ namespace CasADi{
     }
   }
 
-  MX GetNonzeros::getGetNonzeros(const CCSSparsity& sp, const std::vector<int>& nz) const{
+  MX GetNonzeros::getGetNonzeros(const Sparsity& sp, const std::vector<int>& nz) const{
     // Get all the nonzeros
     vector<int> nz_all = getAll();
 

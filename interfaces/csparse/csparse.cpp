@@ -28,7 +28,7 @@ namespace CasADi{
   CSparse::CSparse(){
   }
 
-  CSparse::CSparse(const CCSSparsity& sp, int nrhs){
+  CSparse::CSparse(const Sparsity& sp, int nrhs){
     assignNode(new CSparseInternal(sp,nrhs));
   }
  

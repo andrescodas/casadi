@@ -26,7 +26,7 @@
 #include "slice.hpp"
 #include "submatrix.hpp"
 #include "nonzeros.hpp"
-#include "ccs_sparsity.hpp"
+#include "sparsity.hpp"
 #include "../casadi_math.hpp"
 #include "../casadi_exception.hpp"
 

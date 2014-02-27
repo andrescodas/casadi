@@ -42,7 +42,7 @@ namespace CasADi{
     virtual OOQPInternal* clone() const{ return new OOQPInternal(*this);}
   
     /** \brief  Create a new Solver */
-    explicit OOQPInternal(const std::vector<CCSSparsity>& st);
+    explicit OOQPInternal(const std::vector<Sparsity>& st);
 
     /** \brief  Destructor */
     virtual ~OOQPInternal();

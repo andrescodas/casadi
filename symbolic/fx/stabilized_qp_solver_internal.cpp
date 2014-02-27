@@ -31,12 +31,12 @@ using namespace std;
 namespace CasADi{
 
   // Constructor
-  StabilizedQPSolverInternal::StabilizedQPSolverInternal(const std::vector<CCSSparsity> &st) : st_(st) {
+  StabilizedQPSolverInternal::StabilizedQPSolverInternal(const std::vector<Sparsity> &st) : st_(st) {
 
     // Get structure
     casadi_assert_message(st_.size()==QP_STRUCT_NUM,"Problem structure mismatch");
-    const CCSSparsity& A = st_[QP_STRUCT_A];
-    const CCSSparsity& H = st_[QP_STRUCT_H];
+    const Sparsity& A = st_[QP_STRUCT_A];
+    const Sparsity& H = st_[QP_STRUCT_H];
   
     // Dimensions
     n_ = H.size2();
@@ -54,8 +54,8 @@ namespace CasADi{
                           "We need H square & symmetric" << std::endl);
 
     // IO sparsities
-    CCSSparsity x_sparsity = sp_dense(n_,1);
-    CCSSparsity a_sparsity = sp_dense(nc_,1);
+    Sparsity x_sparsity = sp_dense(n_,1);
+    Sparsity a_sparsity = sp_dense(nc_,1);
   
     // Input arguments
     setNumInputs(STABILIZED_QP_SOLVER_NUM_IN);

@@ -739,7 +739,7 @@ namespace CasADi{
     
       if(it->op == OP_INPUT){
         // Fetch input
-        const CCSSparsity& sp_input = input(it->arg.front()).sparsity();
+        const Sparsity& sp_input = input(it->arg.front()).sparsity();
         swork[it->res.front()] = arg[it->arg.front()].setSparse(sp_input,true);
         for(int d=0; d<nfdir; ++d){
           dwork[it->res.front()][d] = fseed[d][it->arg.front()].setSparse(sp_input,true);

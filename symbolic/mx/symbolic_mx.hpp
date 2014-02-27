@@ -39,7 +39,7 @@ namespace CasADi{
     explicit SymbolicMX(const std::string& name, int nrow=1, int ncol=1);
 
     /** \brief  Constructors */
-    explicit SymbolicMX(const std::string& name, const CCSSparsity & sp);
+    explicit SymbolicMX(const std::string& name, const Sparsity & sp);
 
     /// Destructor
     virtual ~SymbolicMX(){}

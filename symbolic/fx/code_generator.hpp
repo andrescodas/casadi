@@ -37,10 +37,10 @@ namespace CasADi{
     void addInclude(const std::string& new_include, bool relative_path = false);
 
     /// Add an include file optionally using a relative path "..." instead of an absolute path <...>
-    int addSparsity(const CCSSparsity& sp);
+    int addSparsity(const Sparsity& sp);
 
     /** \brief Get the index of an existing sparsity pattern */
-    int getSparsity(const CCSSparsity& sp) const;
+    int getSparsity(const Sparsity& sp) const;
 
     /** \brief Get or add a constant */
     int getConstant(const std::vector<double>& v, bool allow_adding=false);

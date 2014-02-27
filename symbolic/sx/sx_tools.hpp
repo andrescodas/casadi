@@ -56,19 +56,19 @@ The SX expression graph has much less overhead, but is also more restricted than
   SXMatrix ssym(const std::string& name, const std::pair<int,int> & rc); 
 
   /** \brief Create a vector of length p with with matrices with symbolic variables of given sparsity */
-  std::vector<SXMatrix> ssym(const std::string& name, const CCSSparsity& sp, int p);
+  std::vector<SXMatrix> ssym(const std::string& name, const Sparsity& sp, int p);
 
   /** \brief Create a vector of length p with nrow-by-ncol matrices with symbolic variables */
   std::vector<SXMatrix> ssym(const std::string& name, int nrow, int ncol, int p);
 
   /** \brief Create a vector of length r of vectors of length p with matrices with symbolic variables with given sparsity */
-  std::vector<std::vector<SXMatrix> > ssym(const std::string& name, const CCSSparsity& sp, int p, int r);
+  std::vector<std::vector<SXMatrix> > ssym(const std::string& name, const Sparsity& sp, int p, int r);
   
   /** \brief Create a vector of length r of vectors of length p with nrow-by-ncol matrices with symbolic variables */
   std::vector<std::vector<SXMatrix> > ssym(const std::string& name, int nrow, int ncol, int p, int r);
 
   /** \brief Create an matrix with symbolic variables, given a sparsity pattern */
-  SXMatrix ssym(const std::string& name, const CCSSparsity& sp);
+  SXMatrix ssym(const std::string& name, const Sparsity& sp);
 
   /** \brief Create a symbolic matrix out of a numeric one */
   SXMatrix ssym(const Matrix<double>& x);
@@ -255,7 +255,7 @@ SXMatrix blockmatrix(SXMatrix array[n]){
 }
 
 template<> inline
-SXMatrix GenericMatrix<SXMatrix>::sym(const std::string& name, const CCSSparsity& sp){ return ssym(name,sp);}
+SXMatrix GenericMatrix<SXMatrix>::sym(const std::string& name, const Sparsity& sp){ return ssym(name,sp);}
 
 #endif
 

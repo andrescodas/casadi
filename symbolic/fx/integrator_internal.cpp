@@ -890,9 +890,9 @@ namespace CasADi{
     integrator.setOption(dictionary());
   }
 
-  CCSSparsity IntegratorInternal::spJacF(){
+  Sparsity IntegratorInternal::spJacF(){
     // Start with the sparsity pattern of the ODE part
-    CCSSparsity ret = f_.jacSparsity(DAE_X,DAE_ODE).transpose();
+    Sparsity ret = f_.jacSparsity(DAE_X,DAE_ODE).transpose();
     
     // Add diagonal to get interdependencies
     ret = ret.patternUnion(sp_diag(nx_));
@@ -901,17 +901,17 @@ namespace CasADi{
     if(nz_==0) return ret;
 
     // Add contribution from algebraic variables and equations
-    CCSSparsity jac_ode_z = f_.jacSparsity(DAE_Z,DAE_ODE).transpose();
-    CCSSparsity jac_alg_x = f_.jacSparsity(DAE_X,DAE_ALG).transpose();
-    CCSSparsity jac_alg_z = f_.jacSparsity(DAE_Z,DAE_ALG).transpose();
+    Sparsity jac_ode_z = f_.jacSparsity(DAE_Z,DAE_ODE).transpose();
+    Sparsity jac_alg_x = f_.jacSparsity(DAE_X,DAE_ALG).transpose();
+    Sparsity jac_alg_z = f_.jacSparsity(DAE_Z,DAE_ALG).transpose();
     ret = vertcat(ret,jac_ode_z);
     ret.appendColumns(vertcat(jac_alg_x,jac_alg_z));
     return ret;
   }
 
-  CCSSparsity IntegratorInternal::spJacG(){
+  Sparsity IntegratorInternal::spJacG(){
     // Start with the sparsity pattern of the ODE part
-    CCSSparsity ret = g_.jacSparsity(RDAE_RX,RDAE_ODE).transpose();
+    Sparsity ret = g_.jacSparsity(RDAE_RX,RDAE_ODE).transpose();
     
     // Add diagonal to get interdependencies
     ret = ret.patternUnion(sp_diag(nrx_));
@@ -920,9 +920,9 @@ namespace CasADi{
     if(nrz_==0) return ret;
 
     // Add contribution from algebraic variables and equations
-    CCSSparsity jac_ode_z = g_.jacSparsity(RDAE_RZ,RDAE_ODE).transpose();
-    CCSSparsity jac_alg_x = g_.jacSparsity(RDAE_RX,RDAE_ALG).transpose();
-    CCSSparsity jac_alg_z = g_.jacSparsity(RDAE_RZ,RDAE_ALG).transpose();
+    Sparsity jac_ode_z = g_.jacSparsity(RDAE_RZ,RDAE_ODE).transpose();
+    Sparsity jac_alg_x = g_.jacSparsity(RDAE_RX,RDAE_ALG).transpose();
+    Sparsity jac_alg_z = g_.jacSparsity(RDAE_RZ,RDAE_ALG).transpose();
     ret = vertcat(ret,jac_ode_z);
     ret.appendColumns(vertcat(jac_alg_x,jac_alg_z));
     return ret;

@@ -29,7 +29,7 @@ namespace CasADi{
   LapackLUDense::LapackLUDense(){
   }
 
-  LapackLUDense::LapackLUDense(const CCSSparsity& sparsity, int nrhs){
+  LapackLUDense::LapackLUDense(const Sparsity& sparsity, int nrhs){
     assignNode(new LapackLUDenseInternal(sparsity,nrhs));
   }
  
@@ -41,7 +41,7 @@ namespace CasADi{
     return static_cast<const LapackLUDenseInternal*>(FX::operator->());
   }
 
-  LapackLUDenseInternal::LapackLUDenseInternal(const CCSSparsity& sparsity, int nrhs) : LinearSolverInternal(sparsity,nrhs){
+  LapackLUDenseInternal::LapackLUDenseInternal(const Sparsity& sparsity, int nrhs) : LinearSolverInternal(sparsity,nrhs){
     // Equilibriate the matrix
     addOption("equilibration",OT_BOOLEAN,true);
     addOption("allow_equilibration_failure",OT_BOOLEAN,false);

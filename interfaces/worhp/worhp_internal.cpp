@@ -341,7 +341,7 @@ namespace CasADi{
     if (exact_hessian_ /*worhp_w_.HM.NeedStructure*/) { // not initialized
 
       // Get the sparsity pattern of the Hessian
-      const CCSSparsity& spHessLag = this->spHessLag();
+      const Sparsity& spHessLag = this->spHessLag();
       const vector<int>& colind = spHessLag.colind();
       const vector<int>& row = spHessLag.row();
 
@@ -387,7 +387,7 @@ namespace CasADi{
 
     if (worhp_w_.HM.NeedStructure) {
       // Get the sparsity pattern of the Hessian
-      const CCSSparsity& spHessLag = this->spHessLag();
+      const Sparsity& spHessLag = this->spHessLag();
       const vector<int>& colind = spHessLag.colind();
       const vector<int>& row = spHessLag.row();
 

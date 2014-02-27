@@ -34,7 +34,7 @@ using namespace std;
 namespace CasADi{
 
 // Constructor
-SOCPSolverInternal::SOCPSolverInternal(const std::vector<CCSSparsity> &st) : st_(st) {
+SOCPSolverInternal::SOCPSolverInternal(const std::vector<Sparsity> &st) : st_(st) {
   addOption("ni",OT_INTEGERVECTOR, GenericType(), "Provide the size of each SOC constraint. Must sum up to N.");
   addOption("print_problem",OT_BOOLEAN,false,"Print out problem statement for debugging.");
 
@@ -52,8 +52,8 @@ void SOCPSolverInternal::init() {
   
   m_ = ni_.size();
   
-  const CCSSparsity& A = st_[SOCP_STRUCT_A];
-  const CCSSparsity& G = st_[SOCP_STRUCT_G];
+  const Sparsity& A = st_[SOCP_STRUCT_A];
+  const Sparsity& G = st_[SOCP_STRUCT_G];
   
   N_ = std::accumulate(ni_.begin(), ni_.end(), 0);
   casadi_assert_message(N_==G.size2(),"SOCPSolverInternal: Supplied G sparsity: number of cols (" << G.size2() <<  ")  must match sum of vector provided with option 'ni' (" << N_ << ").");

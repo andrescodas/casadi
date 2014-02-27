@@ -36,7 +36,7 @@ QCQPQPInternal* QCQPQPInternal::clone() const{
   return node;
 }
   
-QCQPQPInternal::QCQPQPInternal(const std::vector<CCSSparsity> &st) : QPSolverInternal(st) {
+QCQPQPInternal::QCQPQPInternal(const std::vector<Sparsity> &st) : QPSolverInternal(st) {
 
   addOption("qcqp_solver",       OT_QCQPSOLVER, GenericType(), "The QCQPSolver used to solve the QPs.");
   addOption("qcqp_solver_options",       OT_DICTIONARY, GenericType(), "Options to be passed to the QCQPSOlver");

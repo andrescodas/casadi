@@ -47,8 +47,8 @@ class ADtests(casadiTestCase):
     inp[4,0]=z
     inp[5,0]=w
     
-    sp = CCSSparsity(1,6,[0, 1, 1, 2, 2, 3, 4],[0, 0, 0, 0]).T
-    spT = CCSSparsity(6,1,[0, 4],[0, 2, 4, 5]).T
+    sp = Sparsity(1,6,[0, 1, 1, 2, 2, 3, 4],[0, 0, 0, 0]).T
+    spT = Sparsity(6,1,[0, 4],[0, 2, 4, 5]).T
     
     self.sxinputs = {
        "column" : {

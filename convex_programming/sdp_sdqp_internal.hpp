@@ -38,7 +38,7 @@ namespace CasADi{
   public:
 
     /** \brief Constructor */
-    explicit SDPSDQPInternal(const std::vector<CCSSparsity> &st);
+    explicit SDPSDQPInternal(const std::vector<Sparsity> &st);
 
     /** \brief Clone */
     virtual SDPSDQPInternal* clone() const{ return new SDPSDQPInternal(*this);}

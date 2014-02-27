@@ -23,7 +23,7 @@
 #ifndef SPARSITY_TOOLS_HPP
 #define SPARSITY_TOOLS_HPP
 
-#include "ccs_sparsity.hpp"
+#include "sparsity.hpp"
 
 namespace CasADi{
 
@@ -48,46 +48,46 @@ namespace CasADi{
   /**
      \brief Create a dense rectangular sparsity pattern
   **/
-  CCSSparsity sp_dense(int nrow, int ncol=1);
+  Sparsity sp_dense(int nrow, int ncol=1);
   
   /**
      \brief Create a dense sparsity pattern
   **/
-  CCSSparsity sp_dense(const std::pair<int,int> &nm );
+  Sparsity sp_dense(const std::pair<int,int> &nm );
 
   /**
      \brief Create a sparse sparsity pattern
   **/
-  CCSSparsity sp_sparse(int nrow, int ncol=1);
+  Sparsity sp_sparse(int nrow, int ncol=1);
   
   /**
      \brief Create a dense sparsity pattern
   **/
-  CCSSparsity sp_sparse(const std::pair<int,int> &nm);
+  Sparsity sp_sparse(const std::pair<int,int> &nm);
   
   /**
      \brief Create the sparsity pattern for a unit vector of length n and a nonzero on position el
   **/
-  CCSSparsity sp_unit(int n, int el);
+  Sparsity sp_unit(int n, int el);
 
   /**
      \brief Create a upper triangular square sparsity pattern
      
      \see upperSparsity
   **/
-  CCSSparsity sp_triu(int n);
+  Sparsity sp_triu(int n);
 
   /**
      \brief Create a lower triangular square sparsity pattern
      
      \see lowerSparsity
   **/
-  CCSSparsity sp_tril(int n);
+  Sparsity sp_tril(int n);
 
   /**
      \brief Create diagonal square sparsity pattern
   **/
-  CCSSparsity sp_diag(int n);
+  Sparsity sp_diag(int n);
   
   /**
      \brief Create a single band in a square sparsity pattern
@@ -96,7 +96,7 @@ namespace CasADi{
      * sp_band(n,-1) has a band below the diagonal \n
      * \param p indicate
      **/
-  CCSSparsity sp_band(int n, int p);
+  Sparsity sp_band(int n, int p);
   
   /**
      \brief Create banded square sparsity pattern
@@ -104,12 +104,12 @@ namespace CasADi{
      * sp_band(n,0) is equivalent to sp_diag(n) \n
      * sp_band(n,1) is tri-diagonal matrix \n
      **/
-  CCSSparsity sp_banded(int n, int p);
+  Sparsity sp_banded(int n, int p);
   
   /** \brief Construct a block sparsity pattern from (row,col) vectors
       
    */
-  CCSSparsity sp_rowcol(const std::vector<int>& row, const std::vector<int>& col, int nrow, int ncol);
+  Sparsity sp_rowcol(const std::vector<int>& row, const std::vector<int>& col, int nrow, int ncol);
   
   
   /** \brief Get the indices of all non-zero elements as they would appear in a Dense matrix  
@@ -119,76 +119,76 @@ namespace CasADi{
       k = getNZDense(A)
       A[k] will contain the elements of A that are non-zero in B         
   */
-  std::vector<int> getNZDense(const CCSSparsity& sp);
+  std::vector<int> getNZDense(const Sparsity& sp);
   
   /** \ brief Reshape the sparsity pattern keeping the relative location of the nonzeros
    */
-  CCSSparsity reshape(const CCSSparsity& a, int nrow, int ncol);
+  Sparsity reshape(const Sparsity& a, int nrow, int ncol);
 
   /** \ brief Vectorize the pattern */
-  CCSSparsity vec(const CCSSparsity& a);
+  Sparsity vec(const Sparsity& a);
   
-  CCSSparsity flatten(const CCSSparsity& a);
+  Sparsity flatten(const Sparsity& a);
   
   /** \ brief Return the transpose of the sparsity pattern
    */
-  CCSSparsity trans(const CCSSparsity& a);
+  Sparsity trans(const Sparsity& a);
   
   /**
    * \brief Return the upper part of the sparsity pattern
    * \param includeDiagonal specify wether the diagonal must be part of the result
    * \see sp_triu
    */
-  CCSSparsity upperSparsity(const CCSSparsity& a, bool includeDiagonal = true);
+  Sparsity upperSparsity(const Sparsity& a, bool includeDiagonal = true);
 
   /**
    * \brief Return the lower part of the sparsity pattern
    * \param includeDiagonal specify wether the diagonal must be part of the result
    * \see sp_tril
    */
-  CCSSparsity lowerSparsity(const CCSSparsity& a, bool includeDiagonal = true);
+  Sparsity lowerSparsity(const Sparsity& a, bool includeDiagonal = true);
   
   /** \brief Return the non-zero entries that make up the upper part of the provided matrix */
-  std::vector<int> upperNZ(const CCSSparsity& a);
+  std::vector<int> upperNZ(const Sparsity& a);
 
   /** \brief Return the non-zero entries that make up the lower part of the provided matrix */
-  std::vector<int> lowerNZ(const CCSSparsity& a);
+  std::vector<int> lowerNZ(const Sparsity& a);
   
   /**
      \brief Create a sparsity pattern given the nonzeros in sparse triplet form
   **/
-  CCSSparsity sp_triplet(int nrow, int ncol, const std::vector<int>& row, const std::vector<int>& col, std::vector<int>& mapping, bool invert_mapping=false);
+  Sparsity sp_triplet(int nrow, int ncol, const std::vector<int>& row, const std::vector<int>& col, std::vector<int>& mapping, bool invert_mapping=false);
   
   /**
      \brief Create a sparsity pattern given the nonzeros in sparse triplet form (no nonzero mapping)
      rows_are_sorted==true means that the row entries already in increasing order for each col and without any duplicates
   **/
-  CCSSparsity sp_triplet(int nrow, int ncol, const std::vector<int>& row, const std::vector<int>& col);
+  Sparsity sp_triplet(int nrow, int ncol, const std::vector<int>& row, const std::vector<int>& col);
   
   
   /** \brief Get the sparsity resulting from a matrix multiplication
    */
-  CCSSparsity mul(const  CCSSparsity& a, const  CCSSparsity &b);
+  Sparsity mul(const  Sparsity& a, const  Sparsity &b);
   
   /** \brief Concatenate a list of sparsities vertically
   * Alternative terminology: vertical stack, vstack, vertical append, [a;b]
   */
-  CCSSparsity horzcat(const std::vector<CCSSparsity > &v);
+  Sparsity horzcat(const std::vector<Sparsity > &v);
 
   /** \brief Concatenate a list of sparsities horizontally
   * Alternative terminology: horizontal stack, hstack, horizontal append, [a b]
   */
-  CCSSparsity vertcat(const std::vector<CCSSparsity > &v);
+  Sparsity vertcat(const std::vector<Sparsity > &v);
 
   /** \brief   Construct a Sparsity with given blocks on the diagonal */
-  CCSSparsity blkdiag(const std::vector< CCSSparsity > &v);
+  Sparsity blkdiag(const std::vector< Sparsity > &v);
 
   #ifndef SWIG
-  CCSSparsity horzcat(const CCSSparsity &x, const CCSSparsity &y);
+  Sparsity horzcat(const Sparsity &x, const Sparsity &y);
 
-  CCSSparsity vertcat(const CCSSparsity &x, const CCSSparsity &y);
+  Sparsity vertcat(const Sparsity &x, const Sparsity &y);
   
-  CCSSparsity blkdiag(const CCSSparsity &x, const CCSSparsity &y);
+  Sparsity blkdiag(const Sparsity &x, const Sparsity &y);
   #endif // SWIG
   
   /** \brief Represent a sparsity pattern as an array of integers, the most compact way of representing a sparsity pattern
@@ -200,21 +200,21 @@ namespace CasADi{
   /// @{
   
   /// Compress a sparsity pattern
-  std::vector<int> sp_compress(const CCSSparsity& a);
+  std::vector<int> sp_compress(const Sparsity& a);
   
   /// Decompress a sparsity pattern
-  CCSSparsity sp_compress(const std::vector<int>& v);
+  Sparsity sp_compress(const std::vector<int>& v);
   
 #ifndef SWIG
   /// Decompress a sparsity pattern (array version)
-  CCSSparsity sp_compress(const int* v);
+  Sparsity sp_compress(const int* v);
 #endif // SWIG  
 
   /// Obtain the structural rank of a sparsity-pattern
-  int rank(const CCSSparsity& a);
+  int rank(const Sparsity& a);
   
   /// Check whether the sparsity-pattern inidcates structural singularity
-  bool isSingular(const CCSSparsity& a);
+  bool isSingular(const Sparsity& a);
 
   /// @}
 

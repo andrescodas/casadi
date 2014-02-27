@@ -33,16 +33,16 @@ using namespace std;
 namespace CasADi{
 
 // Constructor
-SDPSolverInternal::SDPSolverInternal(const std::vector<CCSSparsity> &st) : st_(st) {
+SDPSolverInternal::SDPSolverInternal(const std::vector<Sparsity> &st) : st_(st) {
   addOption("calc_p",OT_BOOLEAN, true, "Indicate if the P-part of primal solution should be allocated and calculated. You may want to avoid calculating this variable for problems with n large, as is always dense (m x m).");
   addOption("calc_dual",OT_BOOLEAN, true, "Indicate if dual should be allocated and calculated. You may want to avoid calculating this variable for problems with n large, as is always dense (m x m).");
   addOption("print_problem",OT_BOOLEAN,false,"Print out problem statement for debugging.");
 
   casadi_assert_message(st_.size()==SDP_STRUCT_NUM,"Problem structure mismatch");
   
-  const CCSSparsity& A = st_[SDP_STRUCT_A];
-  const CCSSparsity& G = st_[SDP_STRUCT_G];
-  const CCSSparsity& F = st_[SDP_STRUCT_F];
+  const Sparsity& A = st_[SDP_STRUCT_A];
+  const Sparsity& G = st_[SDP_STRUCT_G];
+  const Sparsity& F = st_[SDP_STRUCT_F];
   
   casadi_assert_message(G==G.transpose(),"SDPSolverInternal: Supplied G sparsity must symmetric but got " << G.dimString());
   
@@ -67,7 +67,7 @@ SDPSolverInternal::SDPSolverInternal(const std::vector<CCSSparsity> &st) : st_(s
   input(SDP_SOLVER_UBA) = DMatrix::inf(nc_);
 
   for (int i=0;i<n_;i++) {
-    CCSSparsity s = input(SDP_SOLVER_F)(ALL,Slice(i*m_,(i+1)*m_)).sparsity();
+    Sparsity s = input(SDP_SOLVER_F)(ALL,Slice(i*m_,(i+1)*m_)).sparsity();
     casadi_assert_message(s==s.transpose(),"SDPSolverInternal: Each supplied Fi must be symmetric. But got " << s.dimString() <<  " for i = " << i << ".");
   }
   
@@ -85,7 +85,7 @@ void SDPSolverInternal::init() {
   print_problem_ = getOption("print_problem");
 
   // Find aggregate sparsity pattern
-  CCSSparsity aggregate = input(SDP_SOLVER_G).sparsity();
+  Sparsity aggregate = input(SDP_SOLVER_G).sparsity();
   for (int i=0;i<n_;++i) {
     aggregate = aggregate + input(SDP_SOLVER_F)(ALL,Slice(i*m_,(i+1)*m_)).sparsity();
   }

@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
   row[4] = 2; row[5] = 4; row[6] = 0; row[7] = 2;
   row[8] = 0; row[9] = 3; row[10]= 3; row[11]= 4;
   colind[0] = 0; colind[1] = 3; colind[2] = 6; colind[3] = 8; colind[4] = 10; colind[5] = 12;
-  CCSSparsity spA(nrow,ncol,colind,row);
+  Sparsity spA(nrow,ncol,colind,row);
   
   // Create a solver instance
   CSparse linear_solver(spA);

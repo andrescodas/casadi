@@ -108,7 +108,7 @@ class Misctests(casadiTestCase):
     self.message("Copy constructor for refcounted classes")
     x = sp_diag(4)
 
-    y = CCSSparsity(x)
+    y = Sparsity(x)
         
     x.resize(2,8)
     
@@ -339,7 +339,7 @@ class Misctests(casadiTestCase):
     b = pickle.loads(s)
     self.assertTrue(a==b)
 
-    a = CCSSparsity()
+    a = Sparsity()
     s = pickle.dumps(a)
     b = pickle.loads(s)
     self.assertTrue(a.isNull())
@@ -383,7 +383,7 @@ class Misctests(casadiTestCase):
     
 
     
-pickle.dump(CCSSparsity(),file("temp.txt","w"))
+pickle.dump(Sparsity(),file("temp.txt","w"))
     
 if __name__ == '__main__':
     unittest.main()

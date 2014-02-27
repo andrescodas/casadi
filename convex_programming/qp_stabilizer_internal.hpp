@@ -37,7 +37,7 @@ namespace CasADi{
   public:
 
     /** \brief Constructor */
-    explicit QPStabilizerInternal(const std::vector<CCSSparsity> &st);
+    explicit QPStabilizerInternal(const std::vector<Sparsity> &st);
 
     /** \brief Destructor */
     virtual ~QPStabilizerInternal();

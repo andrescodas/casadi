@@ -31,7 +31,7 @@ using namespace std;
 
 namespace CasADi{
 
-  ConstantMX::ConstantMX(const CCSSparsity& sp){
+  ConstantMX::ConstantMX(const Sparsity& sp){
     setSparsity(sp);
   }
 
@@ -91,7 +91,7 @@ namespace CasADi{
     return !isZero();
   }
 
-  ConstantMX* ConstantMX::create(const CCSSparsity& sp, int val){
+  ConstantMX* ConstantMX::create(const Sparsity& sp, int val){
     switch(val){
     case 0: return new Constant<CompiletimeConst<0> >(sp);
     case 1: return new Constant<CompiletimeConst<1> >(sp);
@@ -100,7 +100,7 @@ namespace CasADi{
     }
   }
 
-  ConstantMX* ConstantMX::create(const CCSSparsity& sp, double val){
+  ConstantMX* ConstantMX::create(const Sparsity& sp, double val){
     int intval(val);
     if(intval-val==0){
       return create(sp,intval);

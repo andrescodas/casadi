@@ -38,7 +38,7 @@ SDPSOCPInternal* SDPSOCPInternal::clone() const{
   return node;
 }
   
-SDPSOCPInternal::SDPSOCPInternal(const std::vector<CCSSparsity> &st) : SOCPSolverInternal(st) {
+SDPSOCPInternal::SDPSOCPInternal(const std::vector<Sparsity> &st) : SOCPSolverInternal(st) {
 
   addOption("sdp_solver",       OT_SDPSOLVER, GenericType(), "The SDPSolver used to solve the SOCPs.");
   addOption("sdp_solver_options",       OT_DICTIONARY, GenericType(), "Options to be passed to the SDPSOlver");

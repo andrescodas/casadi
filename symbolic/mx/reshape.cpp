@@ -32,7 +32,7 @@ using namespace std;
 
 namespace CasADi{
 
-  Reshape::Reshape(const MX& x, CCSSparsity sp){
+  Reshape::Reshape(const MX& x, Sparsity sp){
     casadi_assert(x.size()==sp.size());
     setDependencies(x);
     setSparsity(sp);
@@ -116,7 +116,7 @@ namespace CasADi{
     stream << "  for(i=0; i<" << size() << "; ++i) " << res.front() << "[i] = " << arg.front() << "[i];" << endl;
   }
 
-  MX Reshape::getReshape(const CCSSparsity& sp) const{ 
+  MX Reshape::getReshape(const Sparsity& sp) const{ 
     return reshape(dep(0),sp);
   }
 

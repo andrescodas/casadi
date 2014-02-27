@@ -36,7 +36,7 @@ SOCPQCQPInternal* SOCPQCQPInternal::clone() const{
   return node;
 }
   
-SOCPQCQPInternal::SOCPQCQPInternal(const std::vector<CCSSparsity> &st) : QCQPSolverInternal(st) {
+SOCPQCQPInternal::SOCPQCQPInternal(const std::vector<Sparsity> &st) : QCQPSolverInternal(st) {
 
   addOption("socp_solver",       OT_SOCPSOLVER, GenericType(), "The SOCPSolver used to solve the QCQPs.");
   addOption("socp_solver_options",       OT_DICTIONARY, GenericType(), "Options to be passed to the SOCPSOlver");
@@ -139,7 +139,7 @@ void SOCPQCQPInternal::init(){
   QCQPSolverInternal::init();
   
   // Collection of sparsities that will make up SOCP_SOLVER_G
-  std::vector<CCSSparsity> socp_g;
+  std::vector<Sparsity> socp_g;
 
   // Allocate Cholesky solvers
   cholesky_.push_back(CSparseCholesky(st_[QCQP_STRUCT_H]));

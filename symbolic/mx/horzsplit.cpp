@@ -34,7 +34,7 @@ namespace CasADi{
 
   Horzsplit::Horzsplit(const MX& x, const std::vector<int>& offset) : offset_(offset){
     setDependencies(x);
-    setSparsity(CCSSparsity(1, 1, true));
+    setSparsity(Sparsity(1, 1, true));
     
     // Add trailing elemement if needed
     if(offset_.back()!=x.size2()){
@@ -67,7 +67,7 @@ namespace CasADi{
       row.resize(colind.back());
       copy(row_x.begin()+colind_x[first_col],row_x.begin()+colind_x[last_col],row.begin());
       
-      CCSSparsity sp(nrow,ncol,colind,row);
+      Sparsity sp(nrow,ncol,colind,row);
       output_sparsity_.push_back(sp);
     }
   }

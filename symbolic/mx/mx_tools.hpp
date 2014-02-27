@@ -142,7 +142,7 @@ namespace CasADi{
   * inspect the trace of it. sp_z diagonal will be more efficient then.
   *
   */
-  MX mul(const MX &x, const MX &y, const CCSSparsity& sp_z=CCSSparsity());
+  MX mul(const MX &x, const MX &y, const Sparsity& sp_z=Sparsity());
 
   /** \brief  Take the matrix product of n MX objects */
   MX mul(const std::vector< MX > &x);
@@ -179,7 +179,7 @@ namespace CasADi{
   MX reshape(const MX &x, std::pair<int,int> rc);
 
   //! \brief Reshape the MX
-  MX reshape(const MX &x, const CCSSparsity& sp);
+  MX reshape(const MX &x, const Sparsity& sp);
 
   /** \brief Returns a vectorized version of the MX
       Vectorizing is an expensive operation, unlike vec
@@ -267,7 +267,7 @@ namespace CasADi{
   /** \brief create a clipped view into a matrix
       Create a sparse matrix from a dense matrix A, with sparsity pattern sp
   **/
-  //MX clip(const MX& A, const CCSSparsity& sp);
+  //MX clip(const MX& A, const Sparsity& sp);
 
   /** \brief  Make the matrix dense if not already*/
   void makeDense(MX& x);
@@ -295,7 +295,7 @@ namespace CasADi{
 
   /** \brief  Create a parent MX on which a bunch of MX's (sizes given as argument) will depend
    */
-  std::pair<MX, std::vector<MX> > createParent(const std::vector<CCSSparsity> &deps);
+  std::pair<MX, std::vector<MX> > createParent(const std::vector<Sparsity> &deps);
 
   /** Count number of nodes */
   int countNodes(const MX& A);
@@ -342,16 +342,16 @@ namespace CasADi{
   MX msym(const Matrix<double>& x);
 
   /** \brief Create a matrix symbolic variable of given sparsity */
-  MX msym(const std::string& name, const CCSSparsity& sp);
+  MX msym(const std::string& name, const Sparsity& sp);
 
   /** \brief Create a vector of length p with with matrix symbolic variables of given sparsity */
-  std::vector<MX> msym(const std::string& name, const CCSSparsity& sp, int p);
+  std::vector<MX> msym(const std::string& name, const Sparsity& sp, int p);
 
   /** \brief Create a vector of length p with nrow-by-ncol matrix symbolic variables */
   std::vector<MX> msym(const std::string& name, int nrow, int ncol, int p);
 
   /** \brief Create a vector of length r of vectors of length p with matrix symbolic variables with given sparsity*/
-  std::vector<std::vector<MX> > msym(const std::string& name, const CCSSparsity& sp, int p, int r);
+  std::vector<std::vector<MX> > msym(const std::string& name, const Sparsity& sp, int p, int r);
 
   /** \brief Create a vector of length r of vectors of length p with nrow-by-ncol matrices with symbolic variables */
   std::vector<std::vector<MX> > msym(const std::string& name, int nrow, int ncol, int p, int r);
@@ -399,7 +399,7 @@ namespace CasADi{
 #endif // SWIG
 
   template<> inline
-  MX GenericMatrix<MX>::sym(const std::string& name, const CCSSparsity& sp){ return msym(name,sp);}
+  MX GenericMatrix<MX>::sym(const std::string& name, const Sparsity& sp){ return msym(name,sp);}
 
   /** \brief Extract shared subexpressions from an set of expressions */
   void extractShared(std::vector<MX>& ex, 

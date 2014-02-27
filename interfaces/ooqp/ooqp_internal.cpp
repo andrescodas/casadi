@@ -40,7 +40,7 @@ extern int gOoqpPrintLevel;
 using namespace std;
 namespace CasADi {
   
-  OOQPInternal::OOQPInternal(const std::vector<CCSSparsity>& st) : QPSolverInternal(st){
+  OOQPInternal::OOQPInternal(const std::vector<Sparsity>& st) : QPSolverInternal(st){
     addOption("print_level",OT_INTEGER,0,"Print level. OOQP listens to print_level 0, 10 and 100");
     addOption("mutol",OT_REAL,1e-8,"tolerance as provided with setMuTol to OOQP");
     addOption("artol",OT_REAL,1e-8,"tolerance as provided with setArTol to OOQP");

@@ -120,9 +120,9 @@ namespace CasADi{
     }
 
     // Allocate a QP solver
-    CCSSparsity H_sparsity = exact_hessian_ ? hessLag().output().sparsity() : sp_dense(nx_,nx_);
+    Sparsity H_sparsity = exact_hessian_ ? hessLag().output().sparsity() : sp_dense(nx_,nx_);
     H_sparsity = H_sparsity + sp_diag(nx_);
-    CCSSparsity A_sparsity = jacG().isNull() ? CCSSparsity(0,nx_,false) : jacG().output().sparsity();
+    Sparsity A_sparsity = jacG().isNull() ? Sparsity(0,nx_,false) : jacG().output().sparsity();
 
     StabilizedQPSolverCreator stabilized_qp_solver_creator = getOption("stabilized_qp_solver");
     stabilized_qp_solver_ = stabilized_qp_solver_creator(qpStruct("h",H_sparsity,"a",A_sparsity));

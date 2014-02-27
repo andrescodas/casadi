@@ -139,7 +139,7 @@ namespace CasADi{
     return dep_.size();
   }
 
-  void MXNode::setSparsity(const CCSSparsity& sparsity){
+  void MXNode::setSparsity(const Sparsity& sparsity){
     sparsity_ = sparsity;
   }
 
@@ -178,7 +178,7 @@ namespace CasADi{
     dep_ = dep;
   }
 
-  const CCSSparsity& MXNode::sparsity(int oind) const{
+  const Sparsity& MXNode::sparsity(int oind) const{
     casadi_assert_message(oind==0, "Index out of bounds");
     return sparsity_;
   }
@@ -325,19 +325,19 @@ namespace CasADi{
     }
   }
 
-  MX MXNode::getReshape(const CCSSparsity& sp) const{
+  MX MXNode::getReshape(const Sparsity& sp) const{
     return MX::create(new Reshape(shared_from_this<MX>(),sp));
   }
   
   
-  MX MXNode::getMultiplication(const MX& y,const CCSSparsity& sp_z) const{
+  MX MXNode::getMultiplication(const MX& y,const Sparsity& sp_z) const{
     // Get reference to transposed first argument
     MX trans_x = trans(shared_from_this<MX>());
 
     // Form result of the right sparsity
     MX z;
     if (sp_z.isNull()) {
-      CCSSparsity sp_z_ = y.sparsity().patternProduct(trans_x.sparsity());
+      Sparsity sp_z_ = y.sparsity().patternProduct(trans_x.sparsity());
       z = MX::zeros(sp_z_);
     } else {
       z = MX::zeros(sp_z);
@@ -360,7 +360,7 @@ namespace CasADi{
     }
   }
 
-  MX MXNode::getGetNonzeros(const CCSSparsity& sp, const std::vector<int>& nz) const{
+  MX MXNode::getGetNonzeros(const Sparsity& sp, const std::vector<int>& nz) const{
     if(nz.size()==0){
       return MX::zeros(sp);
     } else {
@@ -426,7 +426,7 @@ namespace CasADi{
     }
   }
 
-  MX MXNode::getSetSparse(const CCSSparsity& sp) const{
+  MX MXNode::getSetSparse(const Sparsity& sp) const{
     return MX::create(new SetSparse(shared_from_this<MX>(),sp));
   }
   
@@ -473,9 +473,9 @@ namespace CasADi{
         return getBinary(op,y,false,false);
       } else {
         // Get the sparsity pattern of the result (ignoring structural zeros giving rise to nonzero result)
-        const CCSSparsity& x_sp = sparsity();
-        const CCSSparsity& y_sp = y.sparsity();
-        CCSSparsity r_sp = x_sp.patternCombine(y_sp, operation_checker<F0XChecker>(op), operation_checker<FX0Checker>(op));
+        const Sparsity& x_sp = sparsity();
+        const Sparsity& y_sp = y.sparsity();
+        Sparsity r_sp = x_sp.patternCombine(y_sp, operation_checker<F0XChecker>(op), operation_checker<FX0Checker>(op));
 
         // Project the arguments to this sparsity
         MX xx = shared_from_this<MX>().setSparse(r_sp);
@@ -642,7 +642,7 @@ namespace CasADi{
       }
     } else {
       // Project to pattern intersection
-      CCSSparsity sp = sparsity().patternIntersection(y.sparsity());
+      Sparsity sp = sparsity().patternIntersection(y.sparsity());
       MX xx = shared_from_this<MX>().setSparse(sp);
       MX yy = y.setSparse(sp);
       return xx->getInnerProd(yy);

@@ -34,7 +34,7 @@ using namespace std;
 namespace CasADi{
 
   
-  NullspaceInternal::NullspaceInternal(const CCSSparsity& A_sp) : A_sp_(A_sp) {
+  NullspaceInternal::NullspaceInternal(const Sparsity& A_sp) : A_sp_(A_sp) {
     addOption("dense",        OT_BOOLEAN,       true, "Indicates that dense matrices can be assumed");
   
   }
@@ -54,7 +54,7 @@ namespace CasADi{
     
     casadi_assert(m_<=n_);
     
-    CCSSparsity dense;
+    Sparsity dense;
     if (dense_) {
       dense = sp_dense(n_,n_-m_);
     }

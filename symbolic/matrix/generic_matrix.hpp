@@ -26,7 +26,7 @@
 #include "slice.hpp"
 #include "submatrix.hpp"
 #include "nonzeros.hpp"
-#include "ccs_sparsity.hpp"
+#include "sparsity.hpp"
 #include "sparsity_tools.hpp"
 #include "../casadi_math.hpp"
 
@@ -51,7 +51,7 @@ namespace CasADi{
       The storage format is Compressed Column Storage (CCS), similar to that used for sparse matrices in Matlab, \n
       but unlike this format, we do allow for elements to be structurally non-zero but numerically zero.\n
   
-      The sparsity pattern, which is reference counted and cached, can be accessed with CCSSparsity& sparsity()\n
+      The sparsity pattern, which is reference counted and cached, can be accessed with Sparsity& sparsity()\n
   
       \author Joel Andersson 
       \date 2012    
@@ -113,10 +113,10 @@ namespace CasADi{
     bool vector() const;
 
     /** \brief Get the sparsity pattern */
-    const CCSSparsity& sparsity() const;
+    const Sparsity& sparsity() const;
 
     /** \brief Access the sparsity, make a copy if there are multiple references to it */
-    CCSSparsity& sparsityRef();
+    Sparsity& sparsityRef();
 
 #ifndef SWIG
     /** \brief  Get vector nonzero or slice of nonzeros */
@@ -132,7 +132,7 @@ namespace CasADi{
     const MatType operator()(const RR& rr) const{ return static_cast<const MatType*>(this)->sub(rr,0);}
 
     /** \brief  Get Sparsity slice */
-    const MatType operator()(const CCSSparsity& sp) const{ return static_cast<const MatType*>(this)->sub(sp); }
+    const MatType operator()(const Sparsity& sp) const{ return static_cast<const MatType*>(this)->sub(sp); }
     
     /** \brief  Get Matrix element or slice */
     template<typename RR, typename CC>
@@ -143,7 +143,7 @@ namespace CasADi{
     SubMatrix<MatType,RR,int> operator()(const RR& rr){ return SubMatrix<MatType,RR,int>(static_cast<MatType&>(*this),rr,0); }
 
     /** \brief  Access Sparsity slice */
-    SubMatrix<MatType,CCSSparsity,int> operator()(const CCSSparsity& sp){ return SubMatrix<MatType,CCSSparsity,int>(static_cast<MatType&>(*this),sp,0); }
+    SubMatrix<MatType,Sparsity,int> operator()(const Sparsity& sp){ return SubMatrix<MatType,Sparsity,int>(static_cast<MatType&>(*this),sp,0); }
       
     /** \brief  Access Matrix element or slice */
     template<typename RR, typename CC>
@@ -154,19 +154,19 @@ namespace CasADi{
     static MatType sym(const std::string& name, int nrow=1, int ncol=1);
 
     /** \brief Create a vector of length p with with matrices with symbolic variables of given sparsity */
-    static std::vector<MatType > sym(const std::string& name, const CCSSparsity& sp, int p);
+    static std::vector<MatType > sym(const std::string& name, const Sparsity& sp, int p);
 
     /** \brief Create a vector of length p with nrow-by-ncol matrices with symbolic variables */
     static std::vector<MatType > sym(const std::string& name, int nrow, int ncol, int p);
 
     /** \brief Create an matrix with symbolic variables, given a sparsity pattern */
-    static MatType sym(const std::string& name, const CCSSparsity& sp);
+    static MatType sym(const std::string& name, const Sparsity& sp);
     
     /** \brief Matrix-matrix multiplication.
      * Attempts to identify quick returns on matrix-level and 
      * delegates to MatType::mul_full if no such quick returns are found.
      */
-    MatType mul_smart(const MatType& y, const CCSSparsity& sp_z) const;
+    MatType mul_smart(const MatType& y, const Sparsity& sp_z) const;
     
   };
 
@@ -174,12 +174,12 @@ namespace CasADi{
   // Implementations
 
   template<typename MatType>
-  const CCSSparsity& GenericMatrix<MatType>::sparsity() const{
+  const Sparsity& GenericMatrix<MatType>::sparsity() const{
     return static_cast<const MatType*>(this)->sparsity();
   }
 
   template<typename MatType>
-  CCSSparsity& GenericMatrix<MatType>::sparsityRef(){
+  Sparsity& GenericMatrix<MatType>::sparsityRef(){
     return static_cast<MatType*>(this)->sparsityRef();
   }
 
@@ -259,7 +259,7 @@ namespace CasADi{
   }
 
   template<typename MatType>
-  MatType GenericMatrix<MatType>::mul_smart(const MatType& y, const CCSSparsity &sp_z) const {
+  MatType GenericMatrix<MatType>::mul_smart(const MatType& y, const Sparsity &sp_z) const {
     const MatType& x = *static_cast<const MatType*>(this);
   
     if (!(x.scalar() || y.scalar())) {
@@ -313,7 +313,7 @@ namespace CasADi{
   MatType GenericMatrix<MatType>::sym(const std::string& name, int nrow, int ncol){ return sym(name,sp_dense(nrow,ncol));}
 
   template<typename MatType>
-  std::vector<MatType> GenericMatrix<MatType>::sym(const std::string& name, const CCSSparsity& sp, int p){
+  std::vector<MatType> GenericMatrix<MatType>::sym(const std::string& name, const Sparsity& sp, int p){
     std::vector<MatType> ret(p);
     std::stringstream ss;
     for(int k=0; k<p; ++k){
@@ -328,7 +328,7 @@ namespace CasADi{
   std::vector<MatType > GenericMatrix<MatType>::sym(const std::string& name, int nrow, int ncol, int p){ return sym(name,sp_dense(nrow,ncol),p);}
 
   template<typename MatType>
-  MatType GenericMatrix<MatType>::sym(const std::string& name, const CCSSparsity& sp){ throw CasadiException("\"sym\" not defined for instantiation");}
+  MatType GenericMatrix<MatType>::sym(const std::string& name, const Sparsity& sp){ throw CasadiException("\"sym\" not defined for instantiation");}
 
 } // namespace CasADi
 

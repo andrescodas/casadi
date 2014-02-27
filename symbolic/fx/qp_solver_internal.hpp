@@ -33,7 +33,7 @@ namespace CasADi{
   public:
 
     // Constructor
-    QPSolverInternal(const std::vector<CCSSparsity> &st);
+    QPSolverInternal(const std::vector<Sparsity> &st);
     
     // Destructor
     virtual ~QPSolverInternal() = 0;
@@ -59,7 +59,7 @@ namespace CasADi{
   protected:
 
     /// Problem structure
-    std::vector<CCSSparsity> st_;
+    std::vector<Sparsity> st_;
     
     /// Number of decision variables
     int n_;

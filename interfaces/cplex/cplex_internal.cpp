@@ -34,7 +34,7 @@ namespace CasADi{
 
   using namespace std;
 
-  CplexInternal::CplexInternal(const std::vector<CCSSparsity>& st) : QPSolverInternal(st){
+  CplexInternal::CplexInternal(const std::vector<Sparsity>& st) : QPSolverInternal(st){
     // Options available
     addOption("qp_method",    OT_STRING, "automatic", "Determines which CPLEX algorithm to use.","automatic|primal_simplex|dual_simplex|network|barrier|sifting|concurrent|crossover");
     addOption("dump_to_file",   OT_BOOLEAN,        false, "Dumps QP to file in CPLEX format.");
@@ -136,12 +136,12 @@ namespace CasADi{
     rstat_.resize(nc_);
 
     // Matrix A, count the number of elements per column
-    const CCSSparsity& A_sp = input(QP_SOLVER_A).sparsity();
+    const Sparsity& A_sp = input(QP_SOLVER_A).sparsity();
     matcnt_.resize(A_sp.size2());
     transform(A_sp.colind().begin()+1,A_sp.colind().end(),A_sp.colind().begin(),matcnt_.begin(),minus<int>());  
 
     // Matrix H, count the number of elements per column
-    const CCSSparsity& H_sp = input(QP_SOLVER_H).sparsity();
+    const Sparsity& H_sp = input(QP_SOLVER_H).sparsity();
     qmatcnt_.resize(H_sp.size2());
     transform(H_sp.colind().begin()+1,H_sp.colind().end(),H_sp.colind().begin(),qmatcnt_.begin(),minus<int>());  
     
@@ -194,7 +194,7 @@ namespace CasADi{
     }
 
     // Copying objective, constraints, and bounds.
-    const CCSSparsity& A_sp = input(QP_SOLVER_A).sparsity();
+    const Sparsity& A_sp = input(QP_SOLVER_A).sparsity();
     const int* matbeg = getPtr(A_sp.colind());
     const int* matind = getPtr(A_sp.row());
     const double* matval = input(QP_SOLVER_A).ptr();
@@ -205,7 +205,7 @@ namespace CasADi{
                         matbeg, getPtr(matcnt_), matind, matval, lb, ub, rngval_.data()); 
 
     // Preparing coefficient matrix Q
-    const CCSSparsity& H_sp = input(QP_SOLVER_H).sparsity();
+    const Sparsity& H_sp = input(QP_SOLVER_H).sparsity();
     const int* qmatbeg = getPtr(H_sp.colind());
     const int* qmatind = getPtr(H_sp.row());
     const double* qmatval = input(QP_SOLVER_H).ptr();

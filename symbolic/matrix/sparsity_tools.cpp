@@ -30,23 +30,23 @@ using namespace std;
 
 namespace CasADi{
   
-  CCSSparsity sp_dense(int nrow, int ncol) {
-    return CCSSparsity(nrow,ncol,true);
+  Sparsity sp_dense(int nrow, int ncol) {
+    return Sparsity(nrow,ncol,true);
   }
 
-  CCSSparsity sp_sparse(int nrow, int ncol) {
-    return CCSSparsity(nrow,ncol,false);
+  Sparsity sp_sparse(int nrow, int ncol) {
+    return Sparsity(nrow,ncol,false);
   }
 
-  CCSSparsity sp_dense(const std::pair<int,int> &nm) {
-    return CCSSparsity(nm.first,nm.second,true);
+  Sparsity sp_dense(const std::pair<int,int> &nm) {
+    return Sparsity(nm.first,nm.second,true);
   }
 
-  CCSSparsity sp_sparse(const std::pair<int,int> &nm) {
-    return CCSSparsity(nm.first,nm.second,false);
+  Sparsity sp_sparse(const std::pair<int,int> &nm) {
+    return Sparsity(nm.first,nm.second,false);
   }
 
-  CCSSparsity sp_triu(int n) {
+  Sparsity sp_triu(int n) {
     casadi_assert_message(n>=0,"sp_triu expects a positive integer as argument");
     int nrow=n, ncol=n;
     std::vector<int> colind, row;
@@ -64,10 +64,10 @@ namespace CasADi{
     }
 
     // Return the pattern
-    return CCSSparsity(nrow,ncol,colind,row);
+    return Sparsity(nrow,ncol,colind,row);
   }
 
-  CCSSparsity sp_tril(int n) {
+  Sparsity sp_tril(int n) {
     casadi_assert_message(n>=0,"sp_tril expects a positive integer as argument");
     int nrow=n, ncol=n;
     std::vector<int> colind, row;
@@ -85,10 +85,10 @@ namespace CasADi{
     }
 
     // Return the pattern
-    return CCSSparsity(nrow,ncol,colind,row);
+    return Sparsity(nrow,ncol,colind,row);
   }
 
-  CCSSparsity sp_diag(int n){
+  Sparsity sp_diag(int n){
     casadi_assert_message(n>=0, "sp_diag expects a positive integer as argument");
   
     // Construct sparsity pattern
@@ -101,10 +101,10 @@ namespace CasADi{
     }
     colind.back() = el;
 
-    return CCSSparsity(n,n,colind,row);
+    return Sparsity(n,n,colind,row);
   }
 
-  CCSSparsity sp_band(int n, int p) {
+  Sparsity sp_band(int n, int p) {
     casadi_assert_message(n>=0, "sp_band expects a positive integer as argument");
     casadi_assert_message((p<0? -p : p)<n, "sp_band: position of band schould be smaller then size argument");
   
@@ -124,20 +124,20 @@ namespace CasADi{
       colind[i]=max(min(i+offset,nc),0);
     }
   
-    return CCSSparsity(n,n,colind,row);
+    return Sparsity(n,n,colind,row);
   
   }
 
-  CCSSparsity sp_banded(int n, int p) {
+  Sparsity sp_banded(int n, int p) {
     // This is not an efficient implementation
-    CCSSparsity ret = CCSSparsity(n,n);
+    Sparsity ret = Sparsity(n,n);
     for (int i=-p;i<=p;++i) {
       ret = ret + sp_band(n,i);
     }
     return ret;
   }
 
-  CCSSparsity sp_rowcol(const std::vector<int>& row, const std::vector<int>& col, int nrow, int ncol) {
+  Sparsity sp_rowcol(const std::vector<int>& row, const std::vector<int>& col, int nrow, int ncol) {
     std::vector<int> all_rows, all_cols;
     all_rows.reserve(row.size()*col.size());
     all_cols.reserve(row.size()*col.size());
@@ -152,7 +152,7 @@ namespace CasADi{
     return sp_triplet(nrow,ncol,all_rows,all_cols);
   }
 
-  std::vector<int> getNZDense(const CCSSparsity &sp) {
+  std::vector<int> getNZDense(const Sparsity &sp) {
     std::vector<int> ret(sp.size());
     std::vector<int> col = sp.getCol();
     const std::vector<int> &row = sp.row();
@@ -163,44 +163,44 @@ namespace CasADi{
     return ret;
   }
 
-  CCSSparsity reshape(const CCSSparsity& a, int nrow, int ncol){
+  Sparsity reshape(const Sparsity& a, int nrow, int ncol){
     return a.reshape(nrow,ncol);
   }
 
-  CCSSparsity vec(const CCSSparsity& a){ 
+  Sparsity vec(const Sparsity& a){ 
     return reshape(a,a.numel(),1);
   }
 
-  CCSSparsity flatten(const CCSSparsity& a){
+  Sparsity flatten(const Sparsity& a){
     return reshape(trans(a),a.numel(),1);
   }
 
-  CCSSparsity trans(const CCSSparsity& a) {
+  Sparsity trans(const Sparsity& a) {
     return a.transpose();
   }
 
-  CCSSparsity upperSparsity(const CCSSparsity& a, bool includeDiagonal){
+  Sparsity upperSparsity(const Sparsity& a, bool includeDiagonal){
     return a.upper(includeDiagonal);
   }
 
-  CCSSparsity lowerSparsity(const CCSSparsity& a, bool includeDiagonal){
+  Sparsity lowerSparsity(const Sparsity& a, bool includeDiagonal){
     return a.lower(includeDiagonal);
   }
 
-  std::vector<int> upperNZ(const CCSSparsity& a) {
+  std::vector<int> upperNZ(const Sparsity& a) {
     return a.upperNZ();
   }
 
-  std::vector<int> lowerNZ(const CCSSparsity& a) {
+  std::vector<int> lowerNZ(const Sparsity& a) {
     return a.lowerNZ();
   }
 
-  CCSSparsity sp_triplet(int nrow, int ncol, const std::vector<int>& row, const std::vector<int>& col, std::vector<int>& mapping, bool invert_mapping){
+  Sparsity sp_triplet(int nrow, int ncol, const std::vector<int>& row, const std::vector<int>& col, std::vector<int>& mapping, bool invert_mapping){
     // Assert dimensions
     casadi_assert_message(col.size()==row.size(),"inconsistent lengths");
 
     // Create the return sparsity pattern and access vectors
-    CCSSparsity ret = CCSSparsity(nrow,ncol);
+    Sparsity ret = Sparsity(nrow,ncol);
     vector<int> &r_colind = ret.colindRef();
     vector<int> &r_row = ret.rowRef();
     r_row.reserve(row.size());
@@ -341,13 +341,13 @@ namespace CasADi{
   }
 
 
-  CCSSparsity sp_triplet(int nrow, int ncol, const std::vector<int>& row, const std::vector<int>& col){
+  Sparsity sp_triplet(int nrow, int ncol, const std::vector<int>& row, const std::vector<int>& col){
     std::vector<int> mapping;
     return sp_triplet(nrow,ncol,row,col,mapping,false);
   }
 
 
-  CCSSparsity mul(const  CCSSparsity& a, const  CCSSparsity &b) {
+  Sparsity mul(const  Sparsity& a, const  Sparsity &b) {
     return (mul(DMatrix(a,1),DMatrix(b,1))).sparsity();
   }
 
@@ -361,7 +361,7 @@ namespace CasADi{
     return ret;
   }
   
-  std::vector<int> sp_compress(const CCSSparsity& a){
+  std::vector<int> sp_compress(const Sparsity& a){
     // Get the sparsity pattern
     int nrow = a.size1();
     int ncol = a.size2();
@@ -378,7 +378,7 @@ namespace CasADi{
     return ret;
   }
   
-  CCSSparsity sp_compress(const std::vector<int>& v){
+  Sparsity sp_compress(const std::vector<int>& v){
     // Check consistency
     casadi_assert(v.size() >= 2);
     //int nrow = v[0];
@@ -391,7 +391,7 @@ namespace CasADi{
     return sp_compress(&v.front());
   }
   
-  CCSSparsity sp_compress(const int* v){
+  Sparsity sp_compress(const int* v){
     // Get sparsity pattern
     int nrow = v[0];
     int ncol = v[1];
@@ -400,55 +400,55 @@ namespace CasADi{
     const int *row = v + 2 + ncol+1;
     
     // Construct sparsity pattern
-    return CCSSparsity(nrow, ncol, vector<int>(colind,colind+ncol+1),vector<int>(row,row+nnz));
+    return Sparsity(nrow, ncol, vector<int>(colind,colind+ncol+1),vector<int>(row,row+nnz));
   }
   
-  int rank(const CCSSparsity& a) {
+  int rank(const Sparsity& a) {
     std::vector<int> rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock;
     a.dulmageMendelsohn(rowperm, colperm, rowblock, colblock, coarse_rowblock, coarse_colblock);
     return coarse_colblock.at(3);
   }
 
-  bool isSingular(const CCSSparsity& a) {
+  bool isSingular(const Sparsity& a) {
     casadi_assert_message(a.size2()==a.size1(),"isSingular: only defined for square matrices, but got " << a.dimString());
     return rank(a)!=a.size2();
   }
 
-  CCSSparsity sp_unit(int n, int el){
-    CCSSparsity ret = sp_sparse(1,n);
+  Sparsity sp_unit(int n, int el){
+    Sparsity ret = sp_sparse(1,n);
     ret.getNZ(0,el);
     return ret;
   }
   
-  CCSSparsity horzcat(const std::vector<CCSSparsity> & sp) {
-    CCSSparsity ret = sp[0];
+  Sparsity horzcat(const std::vector<Sparsity> & sp) {
+    Sparsity ret = sp[0];
     for(int i=1; i<sp.size(); ++i) {
       ret.appendColumns(sp[i]);
     }
     return ret;
   }
   
-  CCSSparsity horzcat(const CCSSparsity & a, const CCSSparsity & b) {
-    CCSSparsity ret = a;
+  Sparsity horzcat(const Sparsity & a, const Sparsity & b) {
+    Sparsity ret = a;
     ret.appendColumns(b);
     return ret;
   }
 
-  CCSSparsity vertcat(const std::vector<CCSSparsity> & sp) {
-    CCSSparsity ret = trans(sp[0]);
+  Sparsity vertcat(const std::vector<Sparsity> & sp) {
+    Sparsity ret = trans(sp[0]);
     for(int i=1; i<sp.size(); ++i) {
       ret.appendColumns(trans(sp[i]));
     }
     return trans(ret);
   }
   
-  CCSSparsity vertcat(const CCSSparsity & a, const CCSSparsity & b) {
-    CCSSparsity ret = trans(a);
+  Sparsity vertcat(const Sparsity & a, const Sparsity & b) {
+    Sparsity ret = trans(a);
     ret.appendColumns(trans(b));
     return trans(ret);
   }
   
-  CCSSparsity blkdiag(const std::vector< CCSSparsity > &v) {
+  Sparsity blkdiag(const std::vector< Sparsity > &v) {
     int n = 0;
     int m = 0;
     
@@ -470,12 +470,12 @@ namespace CasADi{
       nz+= v[i].size();
     }
     
-    return CCSSparsity(m,n,colind,row);
+    return Sparsity(m,n,colind,row);
   }
   
-  CCSSparsity blkdiag(const CCSSparsity &a, const CCSSparsity &b) {
+  Sparsity blkdiag(const Sparsity &a, const Sparsity &b) {
     
-    std::vector<CCSSparsity> v;
+    std::vector<Sparsity> v;
     v.push_back(a);
     v.push_back(b);
     

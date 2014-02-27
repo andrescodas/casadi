@@ -33,7 +33,7 @@ OUTPUTSCHEME(LinsolOutput)
 using namespace std;
 namespace CasADi{
 
-  LinearSolverInternal::LinearSolverInternal(const CCSSparsity& sparsity, int nrhs){
+  LinearSolverInternal::LinearSolverInternal(const Sparsity& sparsity, int nrhs){
     // Make sure arguments are consistent
     casadi_assert(!sparsity.isNull());
     casadi_assert_message(sparsity.size2()==sparsity.size1(),"LinearSolverInternal::init: the matrix must be square but got " << sparsity.dimString());  
@@ -213,8 +213,8 @@ namespace CasADi{
   void LinearSolverInternal::propagateSparsityGen(DMatrixPtrV& input, DMatrixPtrV& output, std::vector<int>& itmp, std::vector<double>& rtmp, bool fwd, bool transpose){
 
     // Sparsities
-    const CCSSparsity& r_sp = input[0]->sparsity();
-    const CCSSparsity& A_sp = input[1]->sparsity();
+    const Sparsity& r_sp = input[0]->sparsity();
+    const Sparsity& A_sp = input[1]->sparsity();
     const std::vector<int>& A_colind = A_sp.colind();
     const std::vector<int>& A_row = A_sp.row();
     int nrhs = r_sp.size2();
@@ -284,7 +284,7 @@ namespace CasADi{
 
   void LinearSolverInternal::spSolve(bvec_t* X, const bvec_t* B, bool transpose) const{
 
-    const CCSSparsity& A_sp = input(LINSOL_A).sparsity();
+    const Sparsity& A_sp = input(LINSOL_A).sparsity();
     const std::vector<int>& A_colind = A_sp.colind();
     const std::vector<int>& A_row = A_sp.row();
     int nb = rowblock_.size()-1; // number of blocks

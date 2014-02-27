@@ -33,7 +33,7 @@ class LPSolverInternal : public FXInternal{
   public:
         
     // Constructor
-    LPSolverInternal(const std::vector<CCSSparsity> &st);
+    LPSolverInternal(const std::vector<Sparsity> &st);
     
     // Destructor
     virtual ~LPSolverInternal() = 0;
@@ -53,7 +53,7 @@ class LPSolverInternal : public FXInternal{
   protected:
   
     /// Problem structure
-    std::vector<CCSSparsity> st_;
+    std::vector<Sparsity> st_;
     
     /// Number of decision variables
     int n_;

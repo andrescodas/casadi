@@ -199,11 +199,11 @@ if (!ret) {
 %my_value_output_typemaps(CasADi::Matrix< double >);
 %my_value_output_typemaps(CasADi::Matrix< int >);
 %my_value_output_typemaps(CasADi::MX);
-%my_value_output_typemaps(CasADi::CCSSparsity);
+%my_value_output_typemaps(CasADi::Sparsity);
 //%my_value_output_typemaps(CasADi::MXFunction);
 
 #ifdef SWIGPYTHON
-%outputRefOwn(CasADi::CCSSparsity)
+%outputRefOwn(CasADi::Sparsity)
 %outputRefOwn(std::vector< CasADi::SX >)
 
 %outputRefOwn(std::vector< int >)

@@ -767,7 +767,7 @@ namespace CasADi{
         int nv = 0;
       
         // Loop over the cols
-        const CCSSparsity& spHessLag = this->spHessLag();
+        const Sparsity& spHessLag = this->spHessLag();
         const vector<int>& colind = spHessLag.colind();
         for(int i=0; i<colind.size()-1; ++i){
           // If the col contains any non-zeros, the corresponding variable appears nonlinearily
@@ -790,7 +790,7 @@ namespace CasADi{
       int el = 0;
     
       // Loop over the cols
-      const CCSSparsity& spHessLag = this->spHessLag();
+      const Sparsity& spHessLag = this->spHessLag();
       const vector<int>& colind = spHessLag.colind();
       for(int i=0; i<colind.size()-1; ++i){
         // If the col contains any non-zeros, the corresponding variable appears nonlinearily

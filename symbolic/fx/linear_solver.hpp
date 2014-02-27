@@ -66,7 +66,7 @@ enum LinsolOutput{
     LinearSolver();
   
     /// Create a linear solver given a sparsity pattern (creates a dummy solver only)
-    explicit LinearSolver(const CCSSparsity& sp, int nrhs=1);
+    explicit LinearSolver(const Sparsity& sp, int nrhs=1);
 
     /// Access functions of the node
     LinearSolverInternal* operator->();

@@ -74,7 +74,7 @@ namespace CasADi{
     std::vector<int> mapping;
   
     // Get the sparsity pattern - does bounds checking
-    CCSSparsity sp = sparsity().sub(jj,ii,mapping);
+    Sparsity sp = sparsity().sub(jj,ii,mapping);
 
     // Create return object
     Matrix<T> ret(sp);
@@ -140,8 +140,8 @@ namespace CasADi{
   }
 
   template<class T>
-  const Matrix<T> Matrix<T>::sub(const CCSSparsity& sp, int dummy) const {
-    casadi_assert_message(size1()==sp.size1() && size2()==sp.size2(),"sub(CCSSparsity sp): shape mismatch. This matrix has shape " << size1() << " x " << size2() << ", but supplied sparsity index has shape " << sp.size1() << " x " << sp.size2() << "." );
+  const Matrix<T> Matrix<T>::sub(const Sparsity& sp, int dummy) const {
+    casadi_assert_message(size1()==sp.size1() && size2()==sp.size2(),"sub(Sparsity sp): shape mismatch. This matrix has shape " << size1() << " x " << size2() << ", but supplied sparsity index has shape " << sp.size1() << " x " << sp.size2() << "." );
     Matrix<T> ret(sp);
 
     std::vector<unsigned char> mapping; // Mapping that will be filled by patternunion
@@ -220,7 +220,7 @@ namespace CasADi{
       casadi_error("setSub[.,i,jj] out of bounds. Your jj contains " << *std::min_element(jj.begin(),jj.end()) << " up to " << *std::max_element(jj.begin(),jj.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
-    CCSSparsity result_sparsity = repmat(i,jj.size(),1).sparsity();
+    Sparsity result_sparsity = repmat(i,jj.size(),1).sparsity();
   
   
     casadi_assert_message(result_sparsity == m.sparsity(),"setSub(Imatrix" << i.dimString() << ",Ivector(length=" << jj.size() << "),Matrix<T>)::Dimension mismatch. The sparsity of repmat(IMatrix," << jj.size() << ",1) = " << result_sparsity.dimString()  << " must match the sparsity of Matrix<T> = "  << m.dimString() << ".");
@@ -250,7 +250,7 @@ namespace CasADi{
       casadi_error("setSub[.,ii,j] out of bounds. Your ii contains " << *std::min_element(ii.begin(),ii.end()) << " up to " << *std::max_element(ii.begin(),ii.end()) << ", which is outside of the matrix shape " << dimString() << ".");
     }
   
-    CCSSparsity result_sparsity = repmat(j,1,ii.size()).sparsity();
+    Sparsity result_sparsity = repmat(j,1,ii.size()).sparsity();
   
   
     casadi_assert_message(result_sparsity == m.sparsity(),"setSub(Ivector(length=" << ii.size() << "),Imatrix" << j.dimString() << ",Matrix<T>)::Dimension mismatch. The sparsity of repmat(Imatrix,1," << ii.size() << ") = " << result_sparsity.dimString() << " must match the sparsity of Matrix<T> = " << m.dimString() << ".");
@@ -285,8 +285,8 @@ namespace CasADi{
   }
 
   template<class T>
-  void Matrix<T>::setSub(const Matrix<T>& m, const CCSSparsity& sp, int dummy) {
-    casadi_assert_message(size2()==sp.size2() && size1()==sp.size1(),"sub(CCSSparsity sp): shape mismatch. This matrix has shape " << size2() << " x " << size1() << ", but supplied sparsity index has shape " << sp.size2() << " x " << sp.size1() << "." );
+  void Matrix<T>::setSub(const Matrix<T>& m, const Sparsity& sp, int dummy) {
+    casadi_assert_message(size2()==sp.size2() && size1()==sp.size1(),"sub(Sparsity sp): shape mismatch. This matrix has shape " << size2() << " x " << size1() << ", but supplied sparsity index has shape " << sp.size2() << " x " << sp.size1() << "." );
     // TODO: optimize this for speed
     Matrix<T> elm;
     if (m.scalar()) {
@@ -387,7 +387,7 @@ namespace CasADi{
   
     if(size2()!=ncol || size1()!=nrow){
       // Also resize
-      sparsity_ = CCSSparsity(nrow,ncol,true);
+      sparsity_ = Sparsity(nrow,ncol,true);
       std::fill(data().begin(),data().end(),val);
       data().resize(ncol*nrow, val);
     } else {
@@ -410,12 +410,12 @@ namespace CasADi{
       }
       
       // Save the new sparsity pattern
-      sparsity_ = CCSSparsity(nrow,ncol,true);
+      sparsity_ = Sparsity(nrow,ncol,true);
     }
   }
 
   template<class T>
-  Matrix<T>::Matrix() : sparsity_(CCSSparsity(0,0,false)){
+  Matrix<T>::Matrix() : sparsity_(Sparsity(0,0,false)){
   }
 
   template<class T>
@@ -423,11 +423,11 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T>::Matrix(const std::vector<T>& x) : sparsity_(CCSSparsity(x.size(),1,true)), data_(x){
+  Matrix<T>::Matrix(const std::vector<T>& x) : sparsity_(Sparsity(x.size(),1,true)), data_(x){
   }
 
   template<class T>
-  Matrix<T>::Matrix(const std::vector<T>& x, int nrow, int ncol) : sparsity_(CCSSparsity(nrow,ncol,true)), data_(x){
+  Matrix<T>::Matrix(const std::vector<T>& x, int nrow, int ncol) : sparsity_(Sparsity(nrow,ncol,true)), data_(x){
     casadi_assert_message(x.size() == nrow*ncol, "Dimension mismatch." << std::endl << "You supplied a vector of length " << x.size() << ", but " << nrow << " x " << ncol << " = " << nrow*ncol);
   }
 
@@ -439,16 +439,16 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T>::Matrix(int nrow, int ncol) : sparsity_(CCSSparsity(nrow,ncol,false)){
+  Matrix<T>::Matrix(int nrow, int ncol) : sparsity_(Sparsity(nrow,ncol,false)){
   }
 
   template<class T>
-  Matrix<T>::Matrix(int nrow, int ncol, const T& val) : sparsity_(CCSSparsity(nrow,ncol,true)), data_(std::vector<T>(nrow*ncol, val)){
+  Matrix<T>::Matrix(int nrow, int ncol, const T& val) : sparsity_(Sparsity(nrow,ncol,true)), data_(std::vector<T>(nrow*ncol, val)){
   }
 
   template<class T>
   void Matrix<T>::makeEmpty(int nrow, int ncol){
-    sparsity_ = CCSSparsity(nrow,ncol,false);
+    sparsity_ = Sparsity(nrow,ncol,false);
     data().clear();
   }
 
@@ -660,16 +660,16 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::clear(){
-    sparsity_ = CCSSparsity(0,0,false);
+    sparsity_ = Sparsity(0,0,false);
     data().clear();
   }
 
   template<class T>
-  Matrix<T>::Matrix(double val) : sparsity_(CCSSparsity(1,1,true)), data_(std::vector<T>(1,val)) {
+  Matrix<T>::Matrix(double val) : sparsity_(Sparsity(1,1,true)), data_(std::vector<T>(1,val)) {
   }
 
   template<class T>
-  Matrix<T>::Matrix(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row, const std::vector<T>& d) : sparsity_(CCSSparsity(nrow,ncol,colind,row)), data_(d){
+  Matrix<T>::Matrix(int nrow, int ncol, const std::vector<int>& colind, const std::vector<int>& row, const std::vector<T>& d) : sparsity_(Sparsity(nrow,ncol,colind,row)), data_(d){
     if(data_.size() != sparsity_.size())
       data_.resize(sparsity_.size()); // Why not throw an error?
     sanityCheck(true);
@@ -691,7 +691,7 @@ namespace CasADi{
     }
 
     // Form matrix
-    sparsity_ = CCSSparsity(nrow,ncol,true);
+    sparsity_ = Sparsity(nrow,ncol,true);
     data().resize(nrow*ncol);
     typename std::vector<T>::iterator it=begin();
     for(int cc=0; cc<ncol; ++cc){
@@ -702,11 +702,11 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T>::Matrix(const CCSSparsity& sparsity, const T& val) : sparsity_(sparsity), data_(std::vector<T>(sparsity.size(),val)){
+  Matrix<T>::Matrix(const Sparsity& sparsity, const T& val) : sparsity_(sparsity), data_(std::vector<T>(sparsity.size(),val)){
   }
 
   template<class T>
-  Matrix<T>::Matrix(const CCSSparsity& sparsity, const std::vector<T>& d) : sparsity_(sparsity), data_(d) {
+  Matrix<T>::Matrix(const Sparsity& sparsity, const std::vector<T>& d) : sparsity_(sparsity), data_(d) {
     casadi_assert_message(sparsity.size()==d.size(),"Size mismatch." << std::endl << "You supplied a sparsity of " << sparsity.dimString() << ", but the supplied vector is of length " << d.size());
   }
 
@@ -804,7 +804,7 @@ namespace CasADi{
   Matrix<T> Matrix<T>::__mpower__(const Matrix<T>& b) const { if (b.numel()==1) return (*this).__pow__(b); throw CasadiException("mpower: Not implemented");}
 
   template<class T>
-  CCSSparsity& Matrix<T>::sparsityRef(){
+  Sparsity& Matrix<T>::sparsityRef(){
     sparsity_.makeUnique();
     return sparsity_;
   }
@@ -1310,12 +1310,12 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::mul(const Matrix<T> &y, const CCSSparsity& sp_z) const {
+  Matrix<T> Matrix<T>::mul(const Matrix<T> &y, const Sparsity& sp_z) const {
     return this->mul_smart(y, sp_z);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::mul_full(const Matrix<T> &y, const CCSSparsity& sp_z) const{
+  Matrix<T> Matrix<T>::mul_full(const Matrix<T> &y, const Sparsity& sp_z) const{
     // First factor
     const Matrix<T>& x = *this;
   
@@ -1329,7 +1329,7 @@ namespace CasADi{
   
     if (sp_z.isNull()) {
       // Create the sparsity pattern for the matrix-matrix product
-      CCSSparsity spres = y.sparsity().patternProduct(x_trans.sparsity());
+      Sparsity spres = y.sparsity().patternProduct(x_trans.sparsity());
 
       // Create the return object
       ret = Matrix<T>::zeros(spres);
@@ -1582,7 +1582,7 @@ namespace CasADi{
 
     // Create the new sparsity pattern and the mapping
     std::vector<int> mapping;
-    CCSSparsity s = sparsity().transpose(mapping);
+    Sparsity s = sparsity().transpose(mapping);
 
     // create the return matrix
     Matrix<T> ret(s);
@@ -1690,9 +1690,9 @@ namespace CasADi{
     }
 
     // Get the sparsity pattern of the result (ignoring structural zeros giving rise to nonzero result)
-    const CCSSparsity& x_sp = x.sparsity();
-    const CCSSparsity& y_sp = y.sparsity();
-    CCSSparsity r_sp = x_sp.patternCombine(y_sp, operation_checker<F0XChecker>(op), operation_checker<FX0Checker>(op));
+    const Sparsity& x_sp = x.sparsity();
+    const Sparsity& y_sp = y.sparsity();
+    Sparsity r_sp = x_sp.patternCombine(y_sp, operation_checker<F0XChecker>(op), operation_checker<FX0Checker>(op));
 
     // Return value
     Matrix<T> r(r_sp);
@@ -1759,7 +1759,7 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::zeros(const CCSSparsity& sp){
+  Matrix<T> Matrix<T>::zeros(const Sparsity& sp){
     return Matrix<T>(sp,0);
   }
 
@@ -1774,7 +1774,7 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::ones(const CCSSparsity& sp){
+  Matrix<T> Matrix<T>::ones(const Sparsity& sp){
     return Matrix<T>(sp,1);
   }
 
@@ -1789,13 +1789,13 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::repmat(const T& x, const CCSSparsity& sp){
+  Matrix<T> Matrix<T>::repmat(const T& x, const Sparsity& sp){
     return Matrix<T>(sp,x);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::repmat(const Matrix<T>& x, const CCSSparsity& sp){
-    casadi_assert_message(x.scalar(),"repmat(Matrix<T> x,CCSSparsity sp) only defined for scalar x");
+  Matrix<T> Matrix<T>::repmat(const Matrix<T>& x, const Sparsity& sp){
+    casadi_assert_message(x.scalar(),"repmat(Matrix<T> x,Sparsity sp) only defined for scalar x");
     return Matrix<T>(sp,x.toScalar());
   }
 
@@ -1819,11 +1819,11 @@ namespace CasADi{
 
   template<class T>
   Matrix<T> Matrix<T>::eye(int n){
-    return Matrix<T>(CCSSparsity::createDiagonal(n),1);
+    return Matrix<T>(Sparsity::createDiagonal(n),1);
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::inf(const CCSSparsity& sp){
+  Matrix<T> Matrix<T>::inf(const Sparsity& sp){
     casadi_assert_message(std::numeric_limits<T>::has_infinity,"Datatype cannot represent infinity");
     return Matrix<T>(sp,std::numeric_limits<T>::infinity());
   }
@@ -1840,7 +1840,7 @@ namespace CasADi{
   }
 
   template<class T>
-  Matrix<T> Matrix<T>::nan(const CCSSparsity& sp){
+  Matrix<T> Matrix<T>::nan(const Sparsity& sp){
     casadi_assert_message(std::numeric_limits<T>::has_quiet_NaN,"Datatype cannot represent not-a-number");
     return Matrix<T>(sp,std::numeric_limits<T>::quiet_NaN());
   }

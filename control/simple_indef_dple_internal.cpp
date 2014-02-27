@@ -37,7 +37,7 @@ OUTPUTSCHEME(DPLEOutput)
 using namespace std;
 namespace CasADi{
 
-  SimpleIndefDpleInternal::SimpleIndefDpleInternal(const std::vector< CCSSparsity > & A, const std::vector< CCSSparsity > &V) : DpleInternal(A,V) {
+  SimpleIndefDpleInternal::SimpleIndefDpleInternal(const std::vector< Sparsity > & A, const std::vector< Sparsity > &V) : DpleInternal(A,V) {
   
     // set default options
     setOption("name","unnamed_simple_indef_dple_solver"); // name of the function 

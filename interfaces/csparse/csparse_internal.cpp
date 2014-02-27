@@ -26,7 +26,7 @@
 using namespace std;
 namespace CasADi{
 
-  CSparseInternal::CSparseInternal(const CCSSparsity& sparsity, int nrhs)  : LinearSolverInternal(sparsity,nrhs){
+  CSparseInternal::CSparseInternal(const Sparsity& sparsity, int nrhs)  : LinearSolverInternal(sparsity,nrhs){
     N_ = 0;
     S_ = 0;
   }

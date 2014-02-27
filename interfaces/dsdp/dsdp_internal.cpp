@@ -41,7 +41,7 @@ namespace CasADi {
     return node;
   }
   
-  DSDPInternal::DSDPInternal(const std::vector<CCSSparsity> &st) : SDPSolverInternal(st){
+  DSDPInternal::DSDPInternal(const std::vector<Sparsity> &st) : SDPSolverInternal(st){
     casadi_assert_message(double(m_)*(double(m_)+1)/2 < std::numeric_limits<int>::max(),"Your problem size m is too large to be handled by DSDP.");
 
     addOption("gapTol",OT_REAL,1e-8,"Convergence criterion based on distance between primal and dual objective");
@@ -108,7 +108,7 @@ namespace CasADi {
       pattern_[i].resize(nb_);
       values_[i].resize(nb_);
       for (int j=0;j<nb_;++j) {
-        CCSSparsity CAij = mapping_.output(i*nb_+j).sparsity();
+        Sparsity CAij = mapping_.output(i*nb_+j).sparsity();
         pattern_[i][j].resize(CAij.sizeU());
         values_[i][j].resize(pattern_[i][j].size());
         int nz=0;

@@ -42,7 +42,7 @@ namespace CasADi{
     virtual CplexInternal* clone() const;
   
     /// Constructor using sparsity patterns
-    explicit CplexInternal(const std::vector<CCSSparsity>& st);
+    explicit CplexInternal(const std::vector<Sparsity>& st);
 
     /// Destructor
     virtual ~CplexInternal();

@@ -72,12 +72,12 @@ namespace CasADi{
     int nadj = adjSeed.size();
 
     // Output sparsity
-    const CCSSparsity &osp = sparsity();
+    const Sparsity &osp = sparsity();
     const vector<int>& orow = osp.row();
     vector<int> ocol = osp.getCol();
     
     // Input sparsity (first input same as output)
-    const CCSSparsity &isp = dep(1).sparsity();
+    const Sparsity &isp = dep(1).sparsity();
     const vector<int>& irow = isp.row();
     vector<int> icol = isp.getCol();
           
@@ -175,7 +175,7 @@ namespace CasADi{
         if(*k>=0 && nz[*k]>=0 && r_ind[nz[*k]]<0){
           
           // Create a new pattern which includes both the the previous seed and the addition/assignment
-          CCSSparsity sp = res.sparsity().patternUnion(osp);
+          Sparsity sp = res.sparsity().patternUnion(osp);
           res = res->getSetSparse(sp);
 
           // Recalculate the nz locations in the arguments corresponding to the inputs
@@ -248,7 +248,7 @@ namespace CasADi{
       // If anything to set/add
       if(!r_nz.empty()){
         // Create a sparsity pattern from vectors
-        CCSSparsity f_sp(isp.size1(),isp.size2(),r_colind,r_row);
+        Sparsity f_sp(isp.size1(),isp.size2(),r_colind,r_row);
         asens += aseed->getGetNonzeros(f_sp,r_nz);
         if(!Add){
           aseed = MX::zeros(f_sp)->getSetNonzeros(aseed,r_nz);

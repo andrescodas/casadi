@@ -31,7 +31,7 @@ namespace CasADi{
   
   }
   
-  SimpleIndefDpleSolver::SimpleIndefDpleSolver(const std::vector< CCSSparsity > & A, const std::vector< CCSSparsity > &V) {
+  SimpleIndefDpleSolver::SimpleIndefDpleSolver(const std::vector< Sparsity > & A, const std::vector< Sparsity > &V) {
     assignNode(new SimpleIndefDpleInternal(A,V));
   }
 

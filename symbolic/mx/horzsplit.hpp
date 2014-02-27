@@ -42,7 +42,7 @@ namespace CasADi{
     virtual int getNumOutputs() const{ return output_sparsity_.size(); }
         
     /** \brief  Get the sparsity of output oind */
-    virtual const CCSSparsity& sparsity(int oind) const{ return output_sparsity_.at(oind);}
+    virtual const Sparsity& sparsity(int oind) const{ return output_sparsity_.at(oind);}
 
     /// Clone function
     virtual Horzsplit* clone() const;
@@ -77,7 +77,7 @@ namespace CasADi{
     
     // Sparsity pattern of the outputs
     std::vector<int> offset_;
-    std::vector<CCSSparsity> output_sparsity_;
+    std::vector<Sparsity> output_sparsity_;
   };
 
 } // namespace CasADi

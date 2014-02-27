@@ -351,18 +351,18 @@ namespace CasADi{
 
     //@{
     /// Get, if necessary generate, the sparsity of a Jacobian block
-    CCSSparsity& jacSparsity(int iind=0, int oind=0, bool compact=false, bool symmetric=false);
-    CCSSparsity& jacSparsity(const std::string &iind, int oind=0, bool compact=false, bool symmetric=false) { return jacSparsity(inputSchemeEntry(iind),oind,compact,symmetric); }
-    CCSSparsity& jacSparsity(int iind, const std::string &oind, bool compact=false, bool symmetric=false) { return jacSparsity(iind,outputSchemeEntry(oind),compact,symmetric); }
-    CCSSparsity& jacSparsity(const std::string &iind, const std::string &oind, bool compact=false, bool symmetric=false) { return jacSparsity(inputSchemeEntry(iind),outputSchemeEntry(oind),compact,symmetric); }
+    Sparsity& jacSparsity(int iind=0, int oind=0, bool compact=false, bool symmetric=false);
+    Sparsity& jacSparsity(const std::string &iind, int oind=0, bool compact=false, bool symmetric=false) { return jacSparsity(inputSchemeEntry(iind),oind,compact,symmetric); }
+    Sparsity& jacSparsity(int iind, const std::string &oind, bool compact=false, bool symmetric=false) { return jacSparsity(iind,outputSchemeEntry(oind),compact,symmetric); }
+    Sparsity& jacSparsity(const std::string &iind, const std::string &oind, bool compact=false, bool symmetric=false) { return jacSparsity(inputSchemeEntry(iind),outputSchemeEntry(oind),compact,symmetric); }
     //@}
     
     //@{
     /// Generate the sparsity of a Jacobian block
-    void setJacSparsity(const CCSSparsity& sp, int iind, int oind, bool compact=false);
-    void setJacSparsity(const CCSSparsity& sp, const std::string &iind, int oind, bool compact=false) { setJacSparsity(sp,inputSchemeEntry(iind),oind,compact); }
-    void setJacSparsity(const CCSSparsity& sp, int iind, const std::string &oind, bool compact=false) { setJacSparsity(sp,iind,outputSchemeEntry(oind),compact); }
-    void setJacSparsity(const CCSSparsity& sp, const std::string &iind, const std::string &oind, bool compact=false) { setJacSparsity(sp,inputSchemeEntry(iind),outputSchemeEntry(oind),compact); }
+    void setJacSparsity(const Sparsity& sp, int iind, int oind, bool compact=false);
+    void setJacSparsity(const Sparsity& sp, const std::string &iind, int oind, bool compact=false) { setJacSparsity(sp,inputSchemeEntry(iind),oind,compact); }
+    void setJacSparsity(const Sparsity& sp, int iind, const std::string &oind, bool compact=false) { setJacSparsity(sp,iind,outputSchemeEntry(oind),compact); }
+    void setJacSparsity(const Sparsity& sp, const std::string &iind, const std::string &oind, bool compact=false) { setJacSparsity(sp,inputSchemeEntry(iind),outputSchemeEntry(oind),compact); }
     //@}
     
     /** \brief Export / Generate C code for the function */

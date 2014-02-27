@@ -21,7 +21,7 @@
  */
 
 %{
-#include "symbolic/matrix/ccs_sparsity.hpp"
+#include "symbolic/matrix/sparsity.hpp"
 #include "symbolic/matrix/slice.hpp"
 #include "symbolic/matrix/generic_expression.hpp"
 #include "symbolic/matrix/generic_matrix.hpp"
@@ -42,7 +42,7 @@
 %include "typemaps.i"
 #endif
 
-%include "symbolic/matrix/ccs_sparsity.hpp"
+%include "symbolic/matrix/sparsity.hpp"
 %include "symbolic/matrix/slice.hpp"
 
 %include "symbolic/matrix/generic_expression.hpp"
@@ -67,7 +67,7 @@
 
 
 #ifdef SWIGPYTHON
-%extend CasADi::CCSSparsity{
+%extend CasADi::Sparsity{
     %pythoncode %{
         @property
         def shape(self):

@@ -38,7 +38,7 @@ namespace CasADi{
   public:
 
     /** \brief Constructor */
-    explicit DSDPInternal(const std::vector<CCSSparsity> &st);
+    explicit DSDPInternal(const std::vector<Sparsity> &st);
 
     /** \brief Clone */
     virtual DSDPInternal* clone() const;

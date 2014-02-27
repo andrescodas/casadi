@@ -31,7 +31,7 @@ namespace CasADi{
   class SymbolicQRInternal : public LinearSolverInternal{
   public:
     // Constructor
-    SymbolicQRInternal(const CCSSparsity& sparsity, int nrhs);
+    SymbolicQRInternal(const Sparsity& sparsity, int nrhs);
         
     // Destructor
     virtual ~SymbolicQRInternal();
