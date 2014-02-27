@@ -26,6 +26,7 @@ import unittest
 from types import *
 from helpers import *
 import random
+import time
 
 dplesolvers = []
 try:
@@ -42,6 +43,9 @@ except:
   
 print dplesolvers
 
+CasadiOptions.setCatchErrorsPython(False)
+
+@run_only(['dple_large'])
 class ControlTests(casadiTestCase):
   
   @memory_heavy()
@@ -59,7 +63,6 @@ class ControlTests(casadiTestCase):
           
           solver = Solver([sp_dense(n,n) for i in range(K)],[sp_dense(n,n) for i in range(K)])
           solver.setOption(options)
-          solver.setOption("ad_mode","forward")
           solver.init()
           solver.setInput(horzcat(A_),DPLE_A)
           solver.setInput(horzcat(V_),DPLE_V)
@@ -125,20 +128,21 @@ class ControlTests(casadiTestCase):
           solver = Solver([sp_dense(n,n) for i in range(K)],[sp_dense(n,n) for i in range(K)])
           solver.setOption(options)
           solver.init()
-          solver.setInput(vertcat(A_),DPLE_A)
-          solver.setInput(vertcat(V_),DPLE_V)
+          solver.setInput(horzcat(A_),DPLE_A)
+          solver.setInput(horzcat(V_),DPLE_V)
           
+          t0 = time.time()
           solver.evaluate()
-          X = list(vertsplit(solver.output(),n))
-          
-          a0 = (mul([blkdiag(A_),blkdiag(X),blkdiag(A_).T])+blkdiag(V_))
-          
+          print "eval [ms]: ", (time.time()-t0)*1000
+          X = list(horzsplit(solver.output(),n))
+
           def sigma(a):
             return a[1:] + [a[0]]
             
-          a1 = blkdiag(sigma(X))
-
-          self.checkarray(a0,a1,digits=7)
+          for a,v,x,xp in zip(A_,V_,X,sigma(X)):
+            self.checkarray(xp/(mul([a,x,a.T])+v),DMatrix.ones((n,n)),digits=7)
+          
+       
       
       
 
