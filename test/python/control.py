@@ -137,7 +137,7 @@ class ControlTests(casadiTestCase):
             return a[1:] + [a[0]]
             
           for a,v,x,xp in zip(A_,V_,X,sigma(X)):
-            self.checkarray(xp/(mul([a,x,a.T])+v),DMatrix.ones((n,n)),digits=4 if n==32 else 7)
+            self.checkarray(xp,mul([a,x,a.T])+v,digits=7)
           
        
       

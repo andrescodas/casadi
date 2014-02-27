@@ -130,7 +130,7 @@ namespace CasADi{
  
           sp = Sparsity(np*K_,np*K_,row_ind,col);
         }
-        LinearSolver solver = linear_solver_creator(trans(sp),1);
+        LinearSolver solver = linear_solver_creator(sp,1);
         solver.init();
         
         dpse_solvers_[i].resize(n_*(n_+1)/2,solver);
@@ -373,9 +373,9 @@ namespace CasADi{
         if (K_==1) {
           for (int ll=0;ll<np;++ll) {
             for (int m=0;m<np;++m) {
-              A[m*np+ll] = -T_[partindex(r,r,0,ll/n2,m/n2)]*T_[partindex(l,l,0,ll%n2,m%n2)];
+              A[ll*np+m] = -T_[partindex(r,r,0,ll/n2,m/n2)]*T_[partindex(l,l,0,ll%n2,m%n2)];
               if (ll==m) {
-                A[m*np+ll]+= 1;
+                A[ll*np+m]+= 1;
               }
             }
           }
@@ -385,21 +385,23 @@ namespace CasADi{
           for (k=0;k<K_-1;++k) {
             for (int ll=0;ll<np;++ll) {
               for (int m=0;m<np;++m) {
-                A[np*(np+1)*k+m*(np+1)+ll+1] = -T_[partindex(r,r,k,ll/n2,m/n2)]*T_[partindex(l,l,k,ll%n2,m%n2)];
+                A[np*(np+1)*((k+1)%K_)+ll*(np+1)+m] = -T_[partindex(r,r,k,ll/n2,m/n2)]*T_[partindex(l,l,k,ll%n2,m%n2)];
+                //A[np*(np+1)*k+m*(np+1)+ll+1] = -T_[partindex(r,r,k,ll/n2,m/n2)]*T_[partindex(l,l,k,ll%n2,m%n2)];
               }
             }
           }
 
           for (int ll=0;ll<np;++ll) {
             for (int m=0;m<np;++m) {
-              A[np*(np+1)*(K_-1)+m*(np+1)+ll] = -T_[partindex(r,r,k,ll/n2,m/n2)]*T_[partindex(l,l,k,ll%n2,m%n2)];
+              A[np*(np+1)*((k+1)%K_)+ll*(np+1)+m+1] = -T_[partindex(r,r,k,ll/n2,m/n2)]*T_[partindex(l,l,k,ll%n2,m%n2)];
+              //A[np*(np+1)*(K_-1)+m*(np+1)+ll] = -T_[partindex(r,r,k,ll/n2,m/n2)]*T_[partindex(l,l,k,ll%n2,m%n2)];
             }
           }
         }
         // ********** STOP ***************
         // Solve Discrete Periodic Sylvester Equation Solver
         solver.prepare();
-        solver.solve(false);
+        solver.solve(true);
 
         // Extract solution and store it in X
         std::vector<double> & sol = solver.output().data();
@@ -626,7 +628,7 @@ namespace CasADi{
           // ********** STOP ***************
           
           // Critical observation: Prepare step is not needed
-          solver.solve(false);
+          solver.solve(true);
           
           // Extract solution and store it in dX
           std::vector<double> & sol = solver.output().data();
@@ -729,7 +731,7 @@ namespace CasADi{
           }
           // ********** STOP ***************
           
-          solver.solve(true);
+          solver.solve(false);
           
           
           // for k in range(p): V_bar[r][l][k]+=M_bar[k]
