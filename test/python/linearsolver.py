@@ -173,6 +173,7 @@ class LinearSolverTests(casadiTestCase):
       f.evaluate()
       
       self.checkarray(f.output(),DMatrix([1.5,-0.5]))
+      self.checkarray(mul(A_,f.output()),b_)
 
   def test_pseudo_inverse(self):
     numpy.random.seed(0)
@@ -237,7 +238,7 @@ class LinearSolverTests(casadiTestCase):
       C = solve(A,b,Solver,options)
       
       self.checkarray(C,DMatrix([1.5,-0.5]))
-      
+      self.checkarray(mul(A,DMatrix([1.5,-0.5])),b)
     
   def test_simple_trans(self):
     A = DMatrix([[3,1],[7,2]])
@@ -522,7 +523,7 @@ class LinearSolverTests(casadiTestCase):
     numpy.random.seed(1)
     n = 10
     A = self.randDMatrix(n,n,sparsity=0.5)
-    b = self.randDMatrix(n,3)
+    b = self.randDMatrix(n,3,sparsity=0.5)
     
     As = msym("A",A.sparsity())
     bs = msym("B",b.sparsity())
@@ -539,6 +540,30 @@ class LinearSolverTests(casadiTestCase):
       f.evaluate()
       
       self.checkarray(mul(A,f.output()),b)
+      
+  @known_bug()
+  def test_large_sparse(self):
+    numpy.random.seed(1)
+    n = 10
+    A = self.randDMatrix(n,n,sparsity=0.5)
+    b = self.randDMatrix(n,3)
+    
+    As = msym("A",A.sparsity())
+    bs = msym("B",b.sparsity())
+    for Solver, options in lsolvers:
+      print Solver.creator
+      C = solve(A,b,Solver,options)
+      
+      self.checkarray(mul(A,C),b)
+      
+      for As_,A_ in [(full(As),full(A)),(full(As).T,full(A).T),(full(As.T),full(A.T)),(As.T,A.T)]:
+        f = MXFunction([As,bs],[solve(As_,bs,Solver,options)])
+        f.init()
+        f.setInput(A_,0)
+        f.setInput(b,1)
+        f.evaluate()
+
+        self.checkarray(mul(A,f.output()),b)
       
 if __name__ == '__main__':
     unittest.main()
