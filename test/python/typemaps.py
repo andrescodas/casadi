@@ -872,5 +872,29 @@ class typemaptests(casadiTestCase):
     
     self.checkarray(DMatrix(sum(DMatrix([1,2,3]))),DMatrix(6))
     
+  def test_sxmatrix(self):
+
+    def val(a):
+      f = SXFunction([],[a])
+      f.init()
+      f.evaluate()
+      return f.output()
+      
+    a = numpy.array([[SX(1),2],[3,4]])
+    print val(SXMatrix(a))
+    print val(SXMatrix(a.T))
+
+    self.checkarray(val(SXMatrix(a)),DMatrix([[1,2],[3,4]]))
+    self.checkarray(val(SXMatrix(a.T).T),DMatrix([[1,2],[3,4]]))
+
+
+    a = numpy.matrix([[SX(1),2],[3,4]])
+    
+    print val(SXMatrix(a))
+    print DMatrix([[1,2],[3,4]])
+
+    self.checkarray(val(SXMatrix(a)),DMatrix([[1,2],[3,4]]))
+    self.checkarray(val(SXMatrix(a.T).T),DMatrix([[1,2],[3,4]]))
+    
 if __name__ == '__main__':
     unittest.main()
