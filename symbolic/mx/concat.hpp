@@ -28,11 +28,48 @@
 #include <stack>
 
 namespace CasADi{
+  /** \brief Concatenation: Join multiple expressions stacking the nonzeros
+      \author Joel Andersson
+      \date 2014
+  */
+  class Concat : public MXNode{
+  public:
+    
+    /// Constructor
+    Concat(const std::vector<MX>& x);
+    
+    /// Destructor
+    virtual ~Concat() = 0;
+
+    /// Evaluate the function numerically
+    virtual void evaluateD(const DMatrixPtrV& input, DMatrixPtrV& output, std::vector<int>& itmp, std::vector<double>& rtmp);
+
+    /// Evaluate the function symbolically (SX)
+    virtual void evaluateSX(const SXMatrixPtrV& input, SXMatrixPtrV& output, std::vector<int>& itmp, std::vector<SX>& rtmp);
+
+    /// Evaluate the function (template)
+    template<typename T, typename MatV, typename MatVV> 
+    void evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp);    
+
+    /// Propagate sparsity
+    virtual void propagateSparsity(DMatrixPtrV& input, DMatrixPtrV& output, bool fwd);
+
+    /** \brief Generate code for the operation */
+    virtual void generateOperation(std::ostream &stream, const std::vector<std::string>& arg, const std::vector<std::string>& res, CodeGenerator& gen) const;
+
+    /// Get the nonzeros of matrix
+    virtual MX getGetNonzeros(const Sparsity& sp, const std::vector<int>& nz) const;
+
+    /** \brief Check if two nodes are equivalent up to a given depth */
+    virtual bool isEqual(const MXNode* node, int depth) const{ return sameOpAndDeps(node,depth);}
+  };
+    
+
   /** \brief Horizontal concatenation
       \author Joel Andersson
       \date 2013
   */
-  class Horzcat : public MXNode{
+  class Horzcat : public Concat{
   public:
 
     /// Constructor
@@ -44,36 +81,14 @@ namespace CasADi{
     /// Destructor
     virtual ~Horzcat(){}
     
-    /// Evaluate the function numerically
-    virtual void evaluateD(const DMatrixPtrV& input, DMatrixPtrV& output, std::vector<int>& itmp, std::vector<double>& rtmp);
-
-    /// Evaluate the function symbolically (SX)
-    virtual void evaluateSX(const SXMatrixPtrV& input, SXMatrixPtrV& output, std::vector<int>& itmp, std::vector<SX>& rtmp);
-
-    /// Evaluate the function symbolically (MX)
-    virtual void evaluateMX(const MXPtrV& input, MXPtrV& output, const MXPtrVV& fwdSeed, MXPtrVV& fwdSens, const MXPtrVV& adjSeed, MXPtrVV& adjSens, bool output_given);
-
-    /// Propagate sparsity
-    virtual void propagateSparsity(DMatrixPtrV& input, DMatrixPtrV& output, bool fwd);
-
     /// Print a part of the expression */
     virtual void printPart(std::ostream &stream, int part) const;
     
-    /** \brief Generate code for the operation */
-    virtual void generateOperation(std::ostream &stream, const std::vector<std::string>& arg, const std::vector<std::string>& res, CodeGenerator& gen) const;
-
-    /// Evaluate the function (template)
-    template<typename T, typename MatV, typename MatVV> 
-    void evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp);    
+    /// Evaluate the function symbolically (MX)
+    virtual void evaluateMX(const MXPtrV& input, MXPtrV& output, const MXPtrVV& fwdSeed, MXPtrVV& fwdSens, const MXPtrVV& adjSeed, MXPtrVV& adjSens, bool output_given);
     
     /** \brief Get the operation */
     virtual int getOp() const{ return OP_HORZCAT;}
-
-    /// Get the nonzeros of matrix
-    virtual MX getGetNonzeros(const Sparsity& sp, const std::vector<int>& nz) const;
-
-    /** \brief Check if two nodes are equivalent up to a given depth */
-    virtual bool isEqual(const MXNode* node, int depth) const{ return sameOpAndDeps(node,depth);}
   };
 
 } // namespace CasADi
