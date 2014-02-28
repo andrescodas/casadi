@@ -20,35 +20,29 @@
  *
  */
 
-#ifndef HORZSPLIT_HPP
-#define HORZSPLIT_HPP
+#ifndef CONCAT_HPP
+#define CONCAT_HPP
 
-#include "multiple_output.hpp"
+#include "mx_node.hpp"
 #include <map>
 #include <stack>
 
 namespace CasADi{
-  /** \brief Vertical split, x -> x0, x1,...
+  /** \brief Horizontal concatenation
       \author Joel Andersson
       \date 2013
   */
-  class Horzsplit : public MultipleOutput{
+  class Horzcat : public MXNode{
   public:
 
     /// Constructor
-    Horzsplit(const MX& x, const std::vector<int>& offset);
-
-    /** \brief  Number of outputs */
-    virtual int getNumOutputs() const{ return output_sparsity_.size(); }
-        
-    /** \brief  Get the sparsity of output oind */
-    virtual const Sparsity& sparsity(int oind) const{ return output_sparsity_.at(oind);}
+    Horzcat(const std::vector<MX>& x);
 
     /// Clone function
-    virtual Horzsplit* clone() const;
+    virtual Horzcat* clone() const;
       
     /// Destructor
-    virtual ~Horzsplit(){}
+    virtual ~Horzcat(){}
     
     /// Evaluate the function numerically
     virtual void evaluateD(const DMatrixPtrV& input, DMatrixPtrV& output, std::vector<int>& itmp, std::vector<double>& rtmp);
@@ -73,13 +67,15 @@ namespace CasADi{
     void evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp);    
     
     /** \brief Get the operation */
-    virtual int getOp() const{ return OP_HORZSPLIT;}
-    
-    // Sparsity pattern of the outputs
-    std::vector<int> offset_;
-    std::vector<Sparsity> output_sparsity_;
+    virtual int getOp() const{ return OP_HORZCAT;}
+
+    /// Get the nonzeros of matrix
+    virtual MX getGetNonzeros(const Sparsity& sp, const std::vector<int>& nz) const;
+
+    /** \brief Check if two nodes are equivalent up to a given depth */
+    virtual bool isEqual(const MXNode* node, int depth) const{ return sameOpAndDeps(node,depth);}
   };
 
 } // namespace CasADi
 
-#endif // HORZSPLIT_HPP
+#endif // CONCAT_HPP

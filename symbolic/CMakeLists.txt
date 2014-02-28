@@ -59,8 +59,8 @@ SET(CASADI_SRCS
   mx/call_fx.hpp             mx/call_fx.cpp             # FX function evaluation
   mx/norm.hpp                mx/norm.cpp                # 1-norm, 2-norm and infinity-norm
   mx/transpose.hpp           mx/transpose.cpp           # Transpose
-  mx/horzcat.hpp             mx/horzcat.cpp             # Vertical concatenation
-  mx/horzsplit.hpp           mx/horzsplit.cpp           # Vertical split
+  mx/concat.hpp              mx/concat.cpp              # Concatenation
+  mx/split.hpp               mx/split.cpp               # Split (inverse of concatenation)
   mx/reshape.hpp             mx/reshape.cpp             # Reshape
   mx/subref.hpp              mx/subref.cpp              # Submatrix reference
   mx/subassign.hpp           mx/subassign.cpp           # Submatrix assignment

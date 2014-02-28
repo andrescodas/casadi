@@ -41,8 +41,8 @@
 #include "inverse.hpp"
 #include "inner_prod.hpp"
 #include "norm.hpp"
-#include "horzcat.hpp"
-#include "horzsplit.hpp"
+#include "concat.hpp"
+#include "split.hpp"
 #include "assertion.hpp"
 
 // Template implementations
