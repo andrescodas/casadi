@@ -436,9 +436,9 @@ class CasadiStructureDerivable:
       except:
         raise Exception("Call to Structure has weird argument: expecting DMatrix-like")
     if not(a.shape[1] == self.size):
-       raise Exception("Expecting n x %d DMatrix. Got %s" % (self.size,a.dimString()))
+       raise Exception("Expecting n x %d DMatrix. Got %s" % (self.size,a.dimString()))  
     s = struct([entry("t",struct=self,repeat=a.shape[0])])
-    numbers = DMatrixStruct(s,data=a,dataVectorCheck=False)
+    numbers = DMatrixStruct(s,data=DataReferenceRepeated(a,a.shape[0]))
     p = numbers.prefix["t"]
     p.castmaster = True
     return p  
@@ -456,7 +456,7 @@ class CasadiStructureDerivable:
     if not(a.shape[1] == a.shape[0] and a.shape[0]==self.size):
        raise Exception("Expecting square DMatrix of size %s. Got %s" % (self.size,a.dimString()))
     s = struct([entry("t",shapestruct=(self,self))])
-    numbers = DMatrixStruct(s,data=a,dataVectorCheck=False)
+    numbers = DMatrixStruct(s,data=DataReferenceSquared(a,a.shape[0]))
     p = numbers.prefix["t"]
     p.castmaster = True
     return p  
@@ -472,7 +472,7 @@ class CasadiStructureDerivable:
     if not(a.shape[1]==self.size and a.shape[0] % self.size == 0):
        raise Exception("Expecting N x square DMatrix. Got %s" % (self.size,a.dimString()))
     s = struct([entry("t",shapestruct=(self,self),repeat=a.shape[0] / self.size)])
-    numbers = DMatrixStruct(s,data=a,dataVectorCheck=False)
+    numbers = DMatrixStruct(s,data=DataReferenceSquaredRepeated(a,self.size,a.shape[0] / self.size))
     p = numbers.prefix["t"]
     p.castmaster = True
     return p  
@@ -615,13 +615,19 @@ class Prefixer:
   def __getattr__(self,name):
     # When attributes are not found, delegate to self()
     # This allows for e.g. sin(x) and x+1 to work
-    t = self.struct.master
+    if isinstance(self.struct.master,DataReference):
+      t = self.struct.master.a
+    else:
+      t = self.struct.master
     if not(isinstance(t,list) or isinstance(t,dict) or isinstance(t,tuple)):
       return getattr(t,name)
       
   def cast(self):
     if self.castmaster:
-      return self.struct.master
+      if isinstance(self.struct.master,DataReference):
+        return self.struct.master.a
+      else:
+        return self.struct.master
     else:
       return self()
         
@@ -776,7 +782,10 @@ class Structured(object):
     
   @property
   def cat(self):
-    return self.master
+    if isinstance(self.master,DataReference):
+      return self.master.a
+    else:
+      return self.master
     
   def __str__(self,compact=False):
     if compact is False:
@@ -897,27 +906,25 @@ class MatrixStruct(CasadiStructured,MasterGettable,MasterSettable):
   def description(self):
     return "Mutable " + self.mtype.__name__
     
-  def __init__(self,struct,mtype,data=None,order=None,dataVectorCheck=True):
+  def __init__(self,struct,mtype,data=None,order=None):
     CasadiStructured.__init__(self,struct,order=None)
     if any(e.expr is None for e in self.entries):
       raise Exception("struct_SX does only accept entries with an 'expr' argument.")
 
     self.mtype = mtype
-    if isinstance(data,mtype):
+    if isinstance(data,mtype) or isinstance(data,DataReference):
       self.master = data
     elif data is None:
       self.master = mtype.nan(self.size,1)
     else:
+      print type(data), data.__class__
       self.master = mtype(data)
       
-    if dataVectorCheck:
-      if self.master.shape[0]!=self.size:
-        raise Exception("MatrixStruct: dimension error. Expecting %d-by-1, but got %s" % (self.size,self.master.dimString()))
-      if self.master.shape[1]!=1 and self.master.shape[0]>0:
-        raise Exception("MatrixStruct: dimension error. Expecting %d-by-1, but got %s" % (self.size,self.master.dimString()))
-    else:
-      if self.master.size()!=self.size:
-        raise Exception("MatrixStruct: dimension error. Expecting %d entries, but got %s" % (self.size,self.master.dimString()))
+    if self.master.shape[0]!=self.size:
+      raise Exception("MatrixStruct: dimension error. Expecting %d-by-1, but got %s" % (self.size,self.master.dimString()))
+    if self.master.shape[1]!=1 and self.master.shape[0]>0:
+      raise Exception("MatrixStruct: dimension error. Expecting %d-by-1, but got %s" % (self.size,self.master.dimString()))
+        
     for e in self.entries:
       self[e.name] = e.expr
       
@@ -930,15 +937,15 @@ class DMatrixStruct(MatrixStruct):
   def __setstate__(self,state):
     cs = CasadiStructure.__new__(CasadiStructure)
     cs.__setstate__({"args": state["args"],"kwargs": state["kwargs"]})
-    self.__init__(cs,data=state["master"],dataVectorCheck=False)
+    self.__init__(cs,data=state["master"])
         
   def __getstate__(self):
     d = self.struct.__getstate__()
     d["master"] = self.master
     return d
     
-  def __init__(self,struct,data=None,dataVectorCheck=True):
-    MatrixStruct.__init__(self,struct,DMatrix,data=data,dataVectorCheck=dataVectorCheck)
+  def __init__(self,struct,data=None):
+    MatrixStruct.__init__(self,struct,DMatrix,data=data)
     
   def __DMatrix__(self):
     return self.cat
@@ -1250,7 +1257,60 @@ class DelegaterConstructor:
 index  = DelegaterConstructor(IndexDelegater)
 indexf = DelegaterConstructor(FlatIndexDelegater)
 
+class DataReference:
+  @property
+  def shape(self):
+    return self.v.shape
+  
+class DataReferenceRepeated(DataReference):
+  def __init__(self,a,n):
+    assert(a.dense())
+    self.a = a
+    self.n = n
+    self.v = a.T.reshape((n*a.size2(),1))
+    
+  def __setitem__(self,a,b):
+    self.v.__setitem__(a,b)
+    self.a.set(self.v.data(),DENSETRANS)
 
+  def __getitem__(self,a):
+    return self.v.__getitem__(a)
+
+class DataReferenceSquared(DataReference):
+  def __init__(self,a,n):
+    assert(a.dense())
+    self.a = a
+    self.v = a
+    self.n = n
+    
+  def __setitem__(self,a,b):
+    self.a.__setitem__(a,b)
+
+  def __getitem__(self,a):
+    return self.a.__getitem__(a)
+
+  @property
+  def shape(self):
+    return (self.n*self.n,1)
+    
+class DataReferenceSquaredRepeated(DataReference):
+  def __init__(self,a,n,N):
+    assert(a.dense())
+    self.a = a
+    self.n = n
+    self.N = N
+    self.v = horzcat([i for i in vertsplit(a,N) ]).reshape((n*n*N,1))
+    
+  def __setitem__(self,a,b):
+    self.v.__setitem__(a,b)
+    print "setitem", a, b
+    for i in range(self.N):
+      print self.v.data()[i*self.n*self.n:(i+1)*self.n*self.n]
+      self.a[i*self.n:(i+1)*self.n,:] = self.v[i*self.n*self.n:(i+1)*self.n*self.n].reshape((self.n,self.n))
+
+  def __getitem__(self,a):
+    return self.v.__getitem__(a)
+    
 def struct_load(filename):
     import pickle
     return pickle.load(file(filename,"rb"))

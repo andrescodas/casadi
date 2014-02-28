@@ -857,7 +857,7 @@ class Toolstests(casadiTestCase):
     a[:,"x"] = range(12)
     
     self.checkarray(a[4,"x"],DMatrix([4]))
-    self.checkarray(d,DMatrix([[0,4,8],[0,0,0],[0,0,0],[1,5,9],[0,0,0],[0,0,0],[2,6,10],[0,0,0],[0,0,0],[3,7,11],[0,0,0],[0,0,0]]))
+    self.checkarray(d,horzcat([range(12),DMatrix.zeros(12),DMatrix.zeros(12)]))
 
   def test_structure_squared_dmatrix(self):
     self.message("squared dmatrix")
@@ -868,11 +868,22 @@ class Toolstests(casadiTestCase):
     a["x","y"] = 2
     a["y","x"] = 1
     
+    self.checkarray(a["x","y"],DMatrix([2]))
+    self.checkarray(a["y","x"],DMatrix([1]))
+    
     self.checkarray(d,DMatrix([[0,2,0],[1,0,0],[0,0,0]]))
 
   def test_structure_squared_repeated_dmatrix(self):
     self.message("squared repeated dmatrix")
     s = struct(["x","y","z"])
+    
+    d = DMatrix([[0,2,0],[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,2,0],[1,0,0],[0,0,0]])
+    a = s.squared_repeated(d)
+    self.checkarray(a[0,"x","y"],DMatrix([2]))
+    self.checkarray(a[0,"y","x"],DMatrix([1]))
+    self.checkarray(a[-1,"x","y"],DMatrix([2]))
+    self.checkarray(a[-1,"y","x"],DMatrix([1]))
+    
     d = DMatrix.zeros(9,3)
     a = s.squared_repeated(d)
     
@@ -880,7 +891,7 @@ class Toolstests(casadiTestCase):
     a[0,"y","x"] = 1
     a[-1,"x","y"] = 2
     a[-1,"y","x"] = 1
-    self.checkarray(d,DMatrix([[0,0,0],[1,0,1],[0,0,0],[2,0,2],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]))
+    self.checkarray(d,DMatrix([[0,2,0],[1,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,2,0],[1,0,0],[0,0,0]]))
 
   def test_typemaps(self):
     self.message("typemaps")
@@ -888,6 +899,7 @@ class Toolstests(casadiTestCase):
     d = DMatrix.zeros(3,3)
     a = s.squared(d)
     
+    print type(a)
     print sin(a)
     print a+1
     
