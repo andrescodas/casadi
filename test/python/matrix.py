@@ -1042,6 +1042,10 @@ class Matrixtests(casadiTestCase):
     ref =  kron(J.input(1),J.input(2).T)
 
     self.checkarray(res,ref)
+    
+  def test_repmat(self):
+    a = DMatrix([[1,2],[3,4],[5,6]])
+    self.checkarray(repmat(a,2,3),kron(DMatrix.ones(2,3),a))
         
 if __name__ == '__main__':
     unittest.main()

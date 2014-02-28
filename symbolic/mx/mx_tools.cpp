@@ -328,10 +328,10 @@ namespace CasADi{
       return A;
   
     // First concatenate horizontally
-    MX col = vertcat(std::vector<MX >(m, A));
+    MX col = horzcat(std::vector<MX >(m, A));
   
     // Then vertically
-    return horzcat(std::vector<MX >(n, col));
+    return vertcat(std::vector<MX >(n, col));
   }
 
   /**

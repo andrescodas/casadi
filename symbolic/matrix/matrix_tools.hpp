@@ -1280,10 +1280,10 @@ namespace CasADi{
   template<class T>
   Matrix<T> repmat(const Matrix<T> &A, int n, int m){
     // First concatenate horizontally
-    Matrix<T> col = vertcat(std::vector<Matrix<T> >(m, A));
+    Matrix<T> col = horzcat(std::vector<Matrix<T> >(m, A));
   
     // Then vertically
-    return horzcat(std::vector<Matrix<T> >(n, col));
+    return vertcat(std::vector<Matrix<T> >(n, col));
   }
 
   template<class T>

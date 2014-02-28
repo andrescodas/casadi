@@ -2241,7 +2241,9 @@ class MXtests(casadiTestCase):
     self.checkarray(f.output(),DMatrix([[1,0,0],[0,4,0],[0,0,6]]))
     self.checkarray(IMatrix(f.output().sparsity(),1),IMatrix(sp_tril(3).T,1))
     
-    
+  def test_repmat(self):
+    a = DMatrix([[1,2],[3,4],[5,6]])
+    self.checkarray(repmat(a,2,3),kron(DMatrix.ones(2,3),a))
     
 if __name__ == '__main__':
     unittest.main()
