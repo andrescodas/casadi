@@ -32,9 +32,74 @@ using namespace std;
 
 namespace CasADi{
 
-  Horzsplit::Horzsplit(const MX& x, const std::vector<int>& offset) : offset_(offset){
+  Split::Split(const MX& x, const std::vector<int>& offset) : offset_(offset){
     setDependencies(x);
     setSparsity(Sparsity(1, 1, true));
+
+  }
+
+  Split::~Split(){
+  }
+  
+  void Split::evaluateD(const DMatrixPtrV& input, DMatrixPtrV& output, std::vector<int>& itmp, std::vector<double>& rtmp){
+    evaluateGen<double,DMatrixPtrV,DMatrixPtrVV>(input,output,itmp,rtmp);
+  }
+
+  void Split::evaluateSX(const SXMatrixPtrV& input, SXMatrixPtrV& output, std::vector<int>& itmp, std::vector<SX>& rtmp){
+    evaluateGen<SX,SXMatrixPtrV,SXMatrixPtrVV>(input,output,itmp,rtmp);
+  }
+
+  template<typename T, typename MatV, typename MatVV>
+  void Split::evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp){
+    // Number of derivatives
+    int nx = offset_.size()-1;
+    const vector<int>& x_colind = dep().sparsity().colind();
+
+    const MatV& arg = input;
+    MatV& res = output;
+    for(int i=0; i<nx; ++i){
+      int nz_first = x_colind[offset_[i]];
+      int nz_last = x_colind[offset_[i+1]];
+      if(res[i]!=0){
+        copy(arg[0]->begin()+nz_first, arg[0]->begin()+nz_last, res[i]->begin());
+      }
+    }
+  }
+
+  void Split::propagateSparsity(DMatrixPtrV& input, DMatrixPtrV& output, bool fwd){
+    int nx = offset_.size()-1;
+    const vector<int>& x_colind = dep().sparsity().colind();
+    for(int i=0; i<nx; ++i){
+      if(output[i]!=0){
+        bvec_t *arg_ptr = get_bvec_t(input[0]->data()) + x_colind[offset_[i]];
+        vector<double>& res_i = output[i]->data();
+        bvec_t *res_i_ptr = get_bvec_t(res_i);
+        for(int k=0; k<res_i.size(); ++k){
+          if(fwd){        
+            *res_i_ptr++ = *arg_ptr++;
+          } else {
+            *arg_ptr++ |= *res_i_ptr;          
+            *res_i_ptr++ = 0;
+          }
+        }
+      }
+    }
+  }
+
+  void Split::generateOperation(std::ostream &stream, const std::vector<std::string>& arg, const std::vector<std::string>& res, CodeGenerator& gen) const{
+    int nx = res.size();
+    const vector<int>& x_colind = dep().sparsity().colind();
+    for(int i=0; i<nx; ++i){
+      int nz_first = x_colind[offset_[i]];
+      int nz_last = x_colind[offset_[i+1]];
+      int nz = nz_last-nz_first;
+      if(res.at(i).compare("0")!=0){
+        stream << "  for(i=0; i<" << nz << "; ++i) " << res.at(i) << "[i] = " << arg.at(0) << "[i+" << nz_first << "];" << endl;
+      }
+    }
+  }
+
+  Horzsplit::Horzsplit(const MX& x, const std::vector<int>& offset) : Split(x,offset){
     
     // Add trailing elemement if needed
     if(offset_.back()!=x.size2()){
@@ -74,51 +139,6 @@ namespace CasADi{
 
   Horzsplit* Horzsplit::clone() const{
     return new Horzsplit(*this);
-  }
-
-  void Horzsplit::evaluateD(const DMatrixPtrV& input, DMatrixPtrV& output, std::vector<int>& itmp, std::vector<double>& rtmp){
-    evaluateGen<double,DMatrixPtrV,DMatrixPtrVV>(input,output,itmp,rtmp);
-  }
-
-  void Horzsplit::evaluateSX(const SXMatrixPtrV& input, SXMatrixPtrV& output, std::vector<int>& itmp, std::vector<SX>& rtmp){
-    evaluateGen<SX,SXMatrixPtrV,SXMatrixPtrVV>(input,output,itmp,rtmp);
-  }
-
-  template<typename T, typename MatV, typename MatVV>
-  void Horzsplit::evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp){
-    // Number of derivatives
-    int nx = offset_.size()-1;
-    const vector<int>& x_colind = dep().sparsity().colind();
-
-    const MatV& arg = input;
-    MatV& res = output;
-    for(int i=0; i<nx; ++i){
-      int nz_first = x_colind[offset_[i]];
-      int nz_last = x_colind[offset_[i+1]];
-      if(res[i]!=0){
-        copy(arg[0]->begin()+nz_first, arg[0]->begin()+nz_last, res[i]->begin());
-      }
-    }
-  }
-
-  void Horzsplit::propagateSparsity(DMatrixPtrV& input, DMatrixPtrV& output, bool fwd){
-    int nx = offset_.size()-1;
-    const vector<int>& x_colind = dep().sparsity().colind();
-    for(int i=0; i<nx; ++i){
-      if(output[i]!=0){
-        bvec_t *arg_ptr = get_bvec_t(input[0]->data()) + x_colind[offset_[i]];
-        vector<double>& res_i = output[i]->data();
-        bvec_t *res_i_ptr = get_bvec_t(res_i);
-        for(int k=0; k<res_i.size(); ++k){
-          if(fwd){        
-            *res_i_ptr++ = *arg_ptr++;
-          } else {
-            *arg_ptr++ |= *res_i_ptr;          
-            *res_i_ptr++ = 0;
-          }
-        }
-      }
-    }
   }
 
   void Horzsplit::printPart(std::ostream &stream, int part) const{
@@ -164,19 +184,6 @@ namespace CasADi{
           }
         }
         *adjSens[d][0] += horzcat(v);
-      }
-    }
-  }
-
-  void Horzsplit::generateOperation(std::ostream &stream, const std::vector<std::string>& arg, const std::vector<std::string>& res, CodeGenerator& gen) const{
-    int nx = res.size();
-    const vector<int>& x_colind = dep().sparsity().colind();
-    for(int i=0; i<nx; ++i){
-      int nz_first = x_colind[offset_[i]];
-      int nz_last = x_colind[offset_[i+1]];
-      int nz = nz_last-nz_first;
-      if(res.at(i).compare("0")!=0){
-        stream << "  for(i=0; i<" << nz << "; ++i) " << res.at(i) << "[i] = " << arg.at(0) << "[i+" << nz_first << "];" << endl;
       }
     }
   }
