@@ -107,13 +107,22 @@ namespace CasADi {
     const vector<double>& uba = input(QP_SOLVER_UBA).data();
     const vector<double>& g = input(QP_SOLVER_G).data();
 
+    // Parameter contribution to the objective
+    double objParam = 0;
+
     // Get the number of free variables and their types
     int nx = 0, np=0;
     for(int i=0; i<n_; ++i){
       if(lbx[i]==ubx[i]){
-        // Parameter
+        // Save parameter
         p_[np] = lbx[i];
+
+        // Add contribution to objective
+        objParam += g[i]*p_[np];
+        
+        // Save index
         x_index_[i] = -1-np++;
+
       } else {
         // True free variable
         if(lbx[i]==-numeric_limits<double>::infinity()){
@@ -142,23 +151,37 @@ namespace CasADi {
     int nnzQ = 0;
     // Loop over the columns of the quadratic term
     for(int cc=0; cc<n_; ++cc){
-      // Skip if parameter
-      if(x_index_[cc]<0) continue;
 
       // Loop over nonzero elements of the column
       for(int el=H_colind[cc]; el<H_colind[cc+1]; ++el){
-        int rr=H_row[el];
 
         // Only upper triangular part
+        int rr=H_row[el];
         if(rr>cc) break;
-        
-        // Skip if parameter
-        if(x_index_[rr]<0) continue;
 
-        // Add to sparsity pattern
-        irowQ_[nnzQ] = x_index_[cc]; // row-major --> indices swapped
-        jcolQ_[nnzQ] = x_index_[rr]; // row-major --> indices swapped
-        dQ_[nnzQ++] = H[el];
+        // Get variable types
+        int icc=x_index_[cc];
+        int irr=x_index_[rr];
+      
+        if(icc<0){ 
+          if(irr<0){
+            // Add contribution to objective
+            objParam += icc==irr ? H[el]*sq(p_[-1-icc])/2 : H[el]*p_[-1-irr]*p_[-1-icc];
+          } else {
+            // Add contribution to gradient term
+            c_[irr] += H[el]*p_[-1-icc];            
+          }
+        } else {
+          if(irr<0){
+            // Add contribution to gradient term
+            c_[icc] += H[el]*p_[-1-irr];
+          } else {
+            // Add to sparsity pattern
+            irowQ_[nnzQ] = icc; // row-major --> indices swapped
+            jcolQ_[nnzQ] = irr; // row-major --> indices swapped
+            dQ_[nnzQ++] = H[el];
+          }
+        }
       }
     }
 
@@ -309,8 +332,10 @@ namespace CasADi {
       casadi_error("Fatal error: " << errFlag(ierr));
     }
 
+    // Save optimal cost
+    output(QP_SOLVER_COST).set(objectiveValue + objParam);
+
     // Save primal solution
-    output(QP_SOLVER_COST).set(objectiveValue);
     vector<double>& x = output(QP_SOLVER_X).data();
     for(int i=0; i<n_; ++i){
       int ii = x_index_[i];
@@ -340,7 +365,7 @@ namespace CasADi {
       int ii = x_index_[i];
       if(ii<0){
         // The dual solution for the fixed parameters follows from the KKT conditions
-        lam_x[i] = -g[-1-ii];
+        lam_x[i] = -g[i];
         for(int el=H_colind[i]; el<H_colind[i+1]; ++el){
           int j=H_row[el];
           lam_x[i] -= H[el]*x[j];
@@ -353,7 +378,6 @@ namespace CasADi {
         lam_x[i] = phi_[ii]-gamma_[ii];
       }
     }
-
   }
 
   const char* OOQPInternal::errFlag(int flag){
