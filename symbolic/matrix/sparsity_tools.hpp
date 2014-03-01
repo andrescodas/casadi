@@ -191,6 +191,12 @@ namespace CasADi{
   Sparsity blkdiag(const Sparsity &x, const Sparsity &y);
   #endif // SWIG
   
+  /** \brief Split up a sparsity pattern horizontally */
+  std::vector<Sparsity> horzsplit(const Sparsity& sp, const std::vector<int>& output_offset);
+
+  /** \brief Split up a sparsity pattern vertically */
+  std::vector<Sparsity> vertsplit(const Sparsity& sp, const std::vector<int>& output_offset);
+
   /** \brief Represent a sparsity pattern as an array of integers, the most compact way of representing a sparsity pattern
       The format:
       * The first two entries are the number of rows (nrow) and columns (ncol)

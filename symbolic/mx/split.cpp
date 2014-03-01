@@ -106,35 +106,8 @@ namespace CasADi{
       offset_.push_back(x.size2());
     }
 
-    // Get the sparsity of the input
-    const vector<int>& colind_x = x.sparsity().colind();
-    const vector<int>& row_x = x.sparsity().row();
-    
-    // Sparsity pattern as vectors
-    vector<int> colind, row;
-    int ncol, nrow = x.size1();
-
-    // Get the sparsity patterns of the outputs
-    int nx = offset_.size()-1;
-    output_sparsity_.clear();
-    output_sparsity_.reserve(nx);
-    for(int i=0; i<nx; ++i){
-      int first_col = offset_[i];
-      int last_col = offset_[i+1];
-      ncol = last_col - first_col;
-
-      // Construct the sparsity pattern
-      colind.resize(ncol+1);
-      copy(colind_x.begin()+first_col, colind_x.begin()+last_col+1, colind.begin());
-      for(vector<int>::iterator it=colind.begin()+1; it!=colind.end(); ++it) *it -= colind[0];
-      colind[0] = 0;
-
-      row.resize(colind.back());
-      copy(row_x.begin()+colind_x[first_col],row_x.begin()+colind_x[last_col],row.begin());
-      
-      Sparsity sp(nrow,ncol,colind,row);
-      output_sparsity_.push_back(sp);
-    }
+    // Split up the sparsity pattern
+    output_sparsity_ = horzsplit(x.sparsity(),offset_);
   }
 
   Horzsplit* Horzsplit::clone() const{
