@@ -58,17 +58,44 @@ namespace CasADi{
   }
 
   MX vertcat(const vector<MX>& comp){
-    vector<MX> v(comp.size());
-    for(int i=0; i<v.size(); ++i)
-      v[i] = trans(comp[i]);
-    return trans(horzcat(v));
+    // Check if vector
+    bool is_vector = true;
+    for(vector<MX>::const_iterator it=comp.begin(); it!=comp.end(); ++it){
+      // Rewrite with horzcat and transpose if not a vector
+      if(!it->isNull() && !(it->size1()==0 && it->size2()==0) && !it->vector()){
+        vector<MX> v(comp.size());
+        for(int i=0; i<v.size(); ++i)
+          v[i] = trans(comp[i]);
+        return trans(horzcat(v));
+      }
+    }
+
+    // Vector if reached this point
+    return MXNode::getVertcat(comp);
   }
   
   std::vector<MX> vertsplit(const MX& x, const std::vector<int>& offset){
-    std::vector<MX> ret = horzsplit(trans(x),offset);
-    MX (*transMX)(const MX& x) = trans; 
-    std::transform(ret.begin(),ret.end(),ret.begin(),transMX);
-    return ret;
+    if(x.vector()){
+      // Consistency check
+      casadi_assert(offset.size()>=1);
+      casadi_assert(offset.front()==0);
+      casadi_assert(offset.back()<=x.size1());
+      casadi_assert(isMonotone(offset));
+    
+      // Trivial return if possible
+      if(offset.size()==1 && offset.back()==x.size1()){
+        return vector<MX>(0);
+      } else if(offset.size()==1 || (offset.size()==2 && offset.back()==x.size1())){
+        return vector<MX>(1,x);
+      } else {
+        return x->getVertsplit(offset);
+      }      
+    } else {
+      std::vector<MX> ret = horzsplit(trans(x),offset);
+      MX (*transMX)(const MX& x) = trans; 
+      std::transform(ret.begin(),ret.end(),ret.begin(),transMX);
+      return ret;
+    }
   }
   
   std::vector<MX> vertsplit(const MX& x, int incr){
