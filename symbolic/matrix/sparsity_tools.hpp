@@ -173,12 +173,12 @@ namespace CasADi{
   /** \brief Concatenate a list of sparsities vertically
   * Alternative terminology: vertical stack, vstack, vertical append, [a;b]
   */
-  Sparsity horzcat(const std::vector<Sparsity > &v);
+  Sparsity vertcat(const std::vector<Sparsity > &v);
 
   /** \brief Concatenate a list of sparsities horizontally
   * Alternative terminology: horizontal stack, hstack, horizontal append, [a b]
   */
-  Sparsity vertcat(const std::vector<Sparsity > &v);
+  Sparsity horzcat(const std::vector<Sparsity > &v);
 
   /** \brief   Construct a Sparsity with given blocks on the diagonal */
   Sparsity blkdiag(const std::vector< Sparsity > &v);
@@ -193,8 +193,8 @@ namespace CasADi{
   
   /** \brief Represent a sparsity pattern as an array of integers, the most compact way of representing a sparsity pattern
       The format:
-      * The first two entries are the number of cols (ncol) and rows (nrow)
-      * The next ncol+1 entries are the col offsets (colind). Note that the last element colind[ncol] gives the number of nonzeros
+      * The first two entries are the number of rows (nrow) and columns (ncol)
+      * The next ncol+1 entries are the col offsets (colind). Note that the last element, colind[ncol], gives the number of nonzeros
       * The last colind[ncol] entries are the row indices
       **/
   /// @{

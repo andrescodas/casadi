@@ -421,11 +421,15 @@ namespace CasADi{
   }
   
   Sparsity horzcat(const std::vector<Sparsity> & sp) {
-    Sparsity ret = sp[0];
-    for(int i=1; i<sp.size(); ++i) {
-      ret.appendColumns(sp[i]);
+    if(sp.empty()){
+      return Sparsity();
+    } else {
+      Sparsity ret = sp[0];
+      for(int i=1; i<sp.size(); ++i) {
+        ret.appendColumns(sp[i]);
+      }
+      return ret;
     }
-    return ret;
   }
   
   Sparsity horzcat(const Sparsity & a, const Sparsity & b) {
@@ -435,17 +439,33 @@ namespace CasADi{
   }
 
   Sparsity vertcat(const std::vector<Sparsity> & sp) {
-    Sparsity ret = trans(sp[0]);
-    for(int i=1; i<sp.size(); ++i) {
-      ret.appendColumns(trans(sp[i]));
+    if(sp.empty()){
+      return Sparsity();
+    } else if(sp[0].vector()){
+      Sparsity ret = sp[0];
+      for(int i=1; i<sp.size(); ++i) {
+        ret.append(sp[i]);
+      }
+      return ret;
+    } else {
+      Sparsity ret = trans(sp[0]);
+      for(int i=1; i<sp.size(); ++i) {
+        ret.appendColumns(trans(sp[i]));
+      }
+      return trans(ret);
     }
-    return trans(ret);
   }
   
   Sparsity vertcat(const Sparsity & a, const Sparsity & b) {
-    Sparsity ret = trans(a);
-    ret.appendColumns(trans(b));
-    return trans(ret);
+    if(a.vector()){
+      Sparsity ret = a;
+      ret.append(b);
+      return ret;
+    } else {
+      Sparsity ret = trans(a);
+      ret.appendColumns(trans(b));
+      return trans(ret);
+    }
   }
   
   Sparsity blkdiag(const std::vector< Sparsity > &v) {
