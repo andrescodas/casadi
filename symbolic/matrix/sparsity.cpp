@@ -371,25 +371,52 @@ namespace CasADi{
   }
 
   void Sparsity::append(const Sparsity& sp){
-    if(sp.empty()){
+    if(sp.size1()==0 && sp.size2()==0){
+      // Appending pattern is empty
       return;
-    } else if(empty()){
+    } else if(size1()==0 && size2()==0){
+      // This is empty
       *this = sp;
-    }  else {
-      casadi_assert_message(size2()==sp.size2(),"Mismatching number of columns");
-      if(vector()){
+    } else {
+      casadi_assert_message(size2()==sp.size2(),"Sparsity::append: Dimension mismatch. You attempt to append a shape " << sp.dimString() << " to a shape " << dimString() << ". The number of columns must match.");
+      if(sp.size1()==0){
+        // No rows to add
+        return;
+      } else if(size1()==0){
+        // No rows before
+        *this = sp;
+      } else if(vector()){
+        // Append to vector (efficient)
         makeUnique();
         (*this)->append(*sp);
       } else {
+        // Append to matrix (inefficient)
         *this = vertcat(*this,sp);
       }
     }
   }
 
   void Sparsity::appendColumns(const Sparsity& sp){
-    casadi_assert(this!=&sp); // NOTE: this case needs to be handled
-    makeUnique();
-    (*this)->appendColumns(sp);
+    if(sp.size1()==0 && sp.size2()==0){
+      // Appending pattern is empty
+      return;
+    } else if(size1()==0 && size2()==0){
+      // This is empty
+      *this = sp;
+    } else {
+      casadi_assert_message(size1()==sp.size1(),"Sparsity::appendColumns: Dimension mismatch. You attempt to append a shape " << sp.dimString() << " to a shape " << dimString() << ". The number of rows must match.");
+      if(sp.size2()==0){
+        // No columns to add
+        return;
+      } else if(size2()==0){
+        // No columns before
+        *this = sp;
+      } else {
+        // Append to matrix (efficient)
+        makeUnique();
+        (*this)->appendColumns(*sp);
+      }
+    }
   }
 
   Sparsity::CachingMap& Sparsity::getCache(){

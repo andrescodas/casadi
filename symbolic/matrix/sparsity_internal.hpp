@@ -238,11 +238,11 @@ namespace CasADi{
     /// Erase rows and/or columns - does bounds checking
     std::vector<int> erase(const std::vector<int>& jj, const std::vector<int>& ii);
 
-    /// Append another sparsity patten vertically
+    /// Append another sparsity patten vertically (vectors only)
     void append(const SparsityInternal& sp);
 
     /// Append another sparsity patten horizontally
-    void appendColumns(const Sparsity& sp);
+    void appendColumns(const SparsityInternal& sp);
 
     /// Reserve space
     void reserve(int nnz, int ncol);

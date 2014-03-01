@@ -2503,12 +2503,13 @@ namespace CasADi{
   void SparsityInternal::append(const SparsityInternal& sp){
     // NOTE: Works also if this == &sp
 
-    // Get old size
+    // Get current number of non-zeros
     int sz = row_.size();
 
     // Add row indices
     row_.resize(sz + sp.row_.size());
-    for(int i=sz; i<row_.size(); ++i) row_[i] = sp.row_[i-sz] + nrow_;
+    for(int i=sz; i<row_.size(); ++i)
+      row_[i] = sp.row_[i-sz] + nrow_;
     
     // Update column indices
     colind_[1] = row_.size();
@@ -2517,24 +2518,23 @@ namespace CasADi{
     nrow_ += sp.nrow_;
   }
 
-  void SparsityInternal::appendColumns(const Sparsity& sp){
-    // Assert dimensions
-    casadi_assert_message(nrow_==sp.size1(),"SparsityInternal::appendColumns: Dimension mismatch. You attempt to append a shape " << sp.dimString() << " to a shape " << dimString() << ". The number of rows must match.");
+  void SparsityInternal::appendColumns(const SparsityInternal& sp){
+    // NOTE: Works also if this == &sp
   
     // Get current number of non-zeros
-    int sz = size();
+    int sz = row_.size();
   
     // Add row indices
-    row_.insert(row_.end(),sp.row().begin(),sp.row().end());
+    row_.resize(sz + sp.row_.size());
+    for(int i=sz; i<row_.size(); ++i) row_[i] = sp.row_[i-sz];
   
     // Add column indices
-    colind_.pop_back();
-    colind_.insert(colind_.end(),sp.colind().begin(),sp.colind().end());
-    for(int i = ncol_; i<colind_.size(); ++i)
-      colind_[i] += sz;
+    colind_.resize(ncol_ + sp.ncol_ + 1);
+    for(int i = ncol_+1; i<colind_.size(); ++i)
+      colind_[i] = sp.colind_[i-ncol_] + sz;
   
     // Update dimensions
-    ncol_ += sp.size2();
+    ncol_ += sp.ncol_;
   }
 
   void SparsityInternal::enlargeColumns(int ncol, const std::vector<int>& ii){
