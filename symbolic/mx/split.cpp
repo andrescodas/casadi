@@ -53,13 +53,12 @@ namespace CasADi{
   void Split::evaluateGen(const MatV& input, MatV& output, std::vector<int>& itmp, std::vector<T>& rtmp){
     // Number of derivatives
     int nx = offset_.size()-1;
-    const vector<int>& x_colind = dep().sparsity().colind();
 
     const MatV& arg = input;
     MatV& res = output;
     for(int i=0; i<nx; ++i){
-      int nz_first = x_colind[offset_[i]];
-      int nz_last = x_colind[offset_[i+1]];
+      int nz_first = offset_[i];
+      int nz_last = offset_[i+1];
       if(res[i]!=0){
         copy(arg[0]->begin()+nz_first, arg[0]->begin()+nz_last, res[i]->begin());
       }
@@ -68,10 +67,9 @@ namespace CasADi{
 
   void Split::propagateSparsity(DMatrixPtrV& input, DMatrixPtrV& output, bool fwd){
     int nx = offset_.size()-1;
-    const vector<int>& x_colind = dep().sparsity().colind();
     for(int i=0; i<nx; ++i){
       if(output[i]!=0){
-        bvec_t *arg_ptr = get_bvec_t(input[0]->data()) + x_colind[offset_[i]];
+        bvec_t *arg_ptr = get_bvec_t(input[0]->data()) + offset_[i];
         vector<double>& res_i = output[i]->data();
         bvec_t *res_i_ptr = get_bvec_t(res_i);
         for(int k=0; k<res_i.size(); ++k){
@@ -88,10 +86,9 @@ namespace CasADi{
 
   void Split::generateOperation(std::ostream &stream, const std::vector<std::string>& arg, const std::vector<std::string>& res, CodeGenerator& gen) const{
     int nx = res.size();
-    const vector<int>& x_colind = dep().sparsity().colind();
     for(int i=0; i<nx; ++i){
-      int nz_first = x_colind[offset_[i]];
-      int nz_last = x_colind[offset_[i+1]];
+      int nz_first = offset_[i];
+      int nz_last = offset_[i+1];
       int nz = nz_last-nz_first;
       if(res.at(i).compare("0")!=0){
         stream << "  for(i=0; i<" << nz << "; ++i) " << res.at(i) << "[i] = " << arg.at(0) << "[i+" << nz_first << "];" << endl;
@@ -108,6 +105,12 @@ namespace CasADi{
 
     // Split up the sparsity pattern
     output_sparsity_ = horzsplit(x.sparsity(),offset_);
+
+    // Have offset_ refer to the nonzero offsets instead of column offsets
+    const vector<int>& x_colind = x.sparsity().colind();
+    for(vector<int>::iterator it=offset_.begin(); it!=offset_.end(); ++it){
+      *it = x_colind[*it];
+    }
   }
 
   Horzsplit* Horzsplit::clone() const{
