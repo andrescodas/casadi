@@ -131,12 +131,18 @@ namespace CasADi{
     Sparsity diag(std::vector<int>& OUTPUT) const;
 #endif // SWIG
     
+    /// @{
     /// Access a member function or object
     SparsityInternal* operator->();
-
-    /// Const access a member function or object
     const SparsityInternal* operator->() const;
+    /// @}
   
+    /// Reference to internal structure
+    /// @{
+    SparsityInternal& operator*();
+    const SparsityInternal& operator*() const;
+    /// @}
+    
     /// Check if the node is pointing to the right type of object
     virtual bool checkNode() const;
 

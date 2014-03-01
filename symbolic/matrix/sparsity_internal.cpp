@@ -2500,6 +2500,23 @@ namespace CasADi{
     colind_.reserve(ncol+1);
   }
 
+  void SparsityInternal::append(const SparsityInternal& sp){
+    // NOTE: Works also if this == &sp
+
+    // Get old size
+    int sz = row_.size();
+
+    // Add row indices
+    row_.resize(sz + sp.row_.size());
+    for(int i=sz; i<row_.size(); ++i) row_[i] = sp.row_[i-sz] + nrow_;
+    
+    // Update column indices
+    colind_[1] = row_.size();
+
+    // Update dimensions
+    nrow_ += sp.nrow_;
+  }
+
   void SparsityInternal::appendColumns(const Sparsity& sp){
     // Assert dimensions
     casadi_assert_message(nrow_==sp.size1(),"SparsityInternal::appendColumns: Dimension mismatch. You attempt to append a shape " << sp.dimString() << " to a shape " << dimString() << ". The number of rows must match.");
@@ -2510,7 +2527,7 @@ namespace CasADi{
     // Add row indices
     row_.insert(row_.end(),sp.row().begin(),sp.row().end());
   
-    // Add col indices
+    // Add column indices
     colind_.pop_back();
     colind_.insert(colind_.end(),sp.colind().begin(),sp.colind().end());
     for(int i = ncol_; i<colind_.size(); ++i)

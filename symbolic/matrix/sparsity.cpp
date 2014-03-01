@@ -98,6 +98,15 @@ namespace CasADi{
   const SparsityInternal* Sparsity::operator->() const{
     return static_cast<const SparsityInternal*>(SharedObject::operator->());
   }
+
+  SparsityInternal& Sparsity::operator*(){
+    makeUnique();
+    return *static_cast<SparsityInternal*>(get());
+  }
+
+  const SparsityInternal& Sparsity::operator*() const{
+    return *static_cast<const SparsityInternal*>(get());
+  }
   
   bool Sparsity::checkNode() const{
     return dynamic_cast<const SparsityInternal*>(get())!=0;
@@ -362,8 +371,19 @@ namespace CasADi{
   }
 
   void Sparsity::append(const Sparsity& sp){
-    // TODO: Rewrite more efficiently
-    *this = vertcat(*this,sp);
+    if(sp.empty()){
+      return;
+    } else if(empty()){
+      *this = sp;
+    }  else {
+      casadi_assert_message(size2()==sp.size2(),"Mismatching number of columns");
+      if(vector()){
+        makeUnique();
+        (*this)->append(*sp);
+      } else {
+        *this = vertcat(*this,sp);
+      }
+    }
   }
 
   void Sparsity::appendColumns(const Sparsity& sp){
@@ -515,7 +535,7 @@ namespace CasADi{
   }
 
   bool Sparsity::isTranspose(const Sparsity& y) const{
-    return (*this)->isTranspose(*static_cast<const SparsityInternal*>(y.get()));
+    return (*this)->isTranspose(*y);
   }
 
   std::size_t Sparsity::hash() const{
