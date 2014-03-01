@@ -86,11 +86,17 @@ namespace CasADi{
     // Inner product
     OP_INNER_PROD,
 
-    // Vertical concatenation
+    // Horizontal concatenation
     OP_HORZCAT,
 
-    // Vertical split
+    // Vertical concatenation of vectors
+    OP_VERTCAT,
+
+    // Horizontal split
     OP_HORZSPLIT,
+
+    // Vertical split of vectors
+    OP_VERTSPLIT,
 
     // Reshape an expression
     OP_RESHAPE,

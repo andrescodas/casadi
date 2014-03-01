@@ -68,7 +68,6 @@ namespace CasADi{
     std::vector<Sparsity> output_sparsity_;
   };
 
-
   /** \brief Horizontal split, x -> x0, x1,...
       \author Joel Andersson
       \date 2013
@@ -83,7 +82,7 @@ namespace CasADi{
     virtual ~Horzsplit(){}
 
     /// Clone function
-    virtual Horzsplit* clone() const;
+    virtual Horzsplit* clone() const{ return new Horzsplit(*this);}
           
     /// Evaluate the function symbolically (MX)
     virtual void evaluateMX(const MXPtrV& input, MXPtrV& output, const MXPtrVV& fwdSeed, MXPtrVV& fwdSens, const MXPtrVV& adjSeed, MXPtrVV& adjSens, bool output_given);
@@ -92,8 +91,33 @@ namespace CasADi{
     virtual void printPart(std::ostream &stream, int part) const;
         
     /** \brief Get the operation */
-    virtual int getOp() const{ return OP_HORZSPLIT;}
+    virtual int getOp() const{ return OP_HORZSPLIT;}    
+  };
+
+  /** \brief Vertical split of vectors, x -> x0, x1,...
+      \author Joel Andersson
+      \date 2014
+  */
+  class Vertsplit : public Split{
+  public:
     
+    /// Constructor
+    Vertsplit(const MX& x, const std::vector<int>& offset);
+
+    /// Destructor
+    virtual ~Vertsplit(){}
+
+    /// Clone function
+    virtual Vertsplit* clone() const{ return new Vertsplit(*this);}
+          
+    /// Evaluate the function symbolically (MX)
+    virtual void evaluateMX(const MXPtrV& input, MXPtrV& output, const MXPtrVV& fwdSeed, MXPtrVV& fwdSens, const MXPtrVV& adjSeed, MXPtrVV& adjSens, bool output_given);
+
+    /// Print a part of the expression */
+    virtual void printPart(std::ostream &stream, int part) const;
+        
+    /** \brief Get the operation */
+    virtual int getOp() const{ return OP_VERTSPLIT;}
   };
 
 } // namespace CasADi

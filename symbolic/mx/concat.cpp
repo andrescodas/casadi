@@ -138,10 +138,6 @@ namespace CasADi{
     setSparsity(sp);
   }
 
-  Horzcat* Horzcat::clone() const{
-    return new Horzcat(*this);
-  }
-
   void Horzcat::printPart(std::ostream &stream, int part) const{
     if(part==0){
       stream << "horzcat(";
@@ -169,7 +165,7 @@ namespace CasADi{
     // Quick return?
     if(nadj==0) return;
 
-    // Get offsets for each col
+    // Get offsets for each column
     vector<int> col_offset(ndep()+1,0);
     for(int i=0; i<ndep(); ++i){
       int ncol = dep(i).sparsity().size2();
@@ -187,5 +183,60 @@ namespace CasADi{
     }
   }
 
+  Vertcat::Vertcat(const std::vector<MX>& x) : Concat(x){
+    // Construct the sparsity
+    casadi_assert(!x.empty());
+    Sparsity sp = x.front().sparsity();
+    for(vector<MX>::const_iterator i=x.begin()+1; i!=x.end(); ++i){
+      sp.append(i->sparsity());
+    }
+
+    setSparsity(sp);
+  }
+
+  void Vertcat::printPart(std::ostream &stream, int part) const{
+    if(part==0){
+      stream << "vertcat(";
+    } else if(part==ndep()){
+      stream << ")";
+    } else {
+      stream << ",";
+    }
+  }
+
+  void Vertcat::evaluateMX(const MXPtrV& input, MXPtrV& output, const MXPtrVV& fwdSeed, MXPtrVV& fwdSens, const MXPtrVV& adjSeed, MXPtrVV& adjSens, bool output_given){
+    int nfwd = fwdSens.size();
+    int nadj = adjSeed.size();
+
+    // Non-differentiated output
+    if(!output_given){
+      *output[0] = vertcat(getVector(input));
+    }
+    
+    // Forward sensitivities
+    for(int d = 0; d<nfwd; ++d){
+      *fwdSens[d][0] = vertcat(getVector(fwdSeed[d]));
+    }
+    
+    // Quick return?
+    if(nadj==0) return;
+
+    // Get offsets for each row
+    vector<int> row_offset(ndep()+1,0);
+    for(int i=0; i<ndep(); ++i){
+      int nrow = dep(i).sparsity().size1();
+      row_offset[i+1] = row_offset[i] + nrow;
+    }
+
+    // Adjoint sensitivities
+    for(int d=0; d<nadj; ++d){
+      MX& aseed = *adjSeed[d][0];
+      vector<MX> s = vertsplit(aseed,row_offset);
+      aseed = MX();
+      for(int i=0; i<ndep(); ++i){
+        *adjSens[d][i] += s[i];
+      }
+    }
+  }
 
 } // namespace CasADi

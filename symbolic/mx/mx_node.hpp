@@ -267,11 +267,17 @@ namespace CasADi{
     /// Get an IMatrix representation of a GetNonzeros or SetNonzeros node
     virtual Matrix<int> mapping() const;
 
-    /// Create a vertical concatenation node
+    /// Create a horizontal concatenation node
     static MX getHorzcat(const std::vector<MX>& x);
 
-    /// Create a vertical split node
+    /// Create a horizontal split node
     std::vector<MX> getHorzsplit(const std::vector<int>& output_offset) const;
+
+    /// Create a vertical concatenation node (vectors only)
+    static MX getVertcat(const std::vector<MX>& x);
+
+    /// Create a vertical split node (vectors only)
+    std::vector<MX> getVertsplit(const std::vector<int>& output_offset) const;
 
     /// Transpose
     virtual MX getTranspose() const;

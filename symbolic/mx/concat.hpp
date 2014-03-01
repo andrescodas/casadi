@@ -76,7 +76,7 @@ namespace CasADi{
     Horzcat(const std::vector<MX>& x);
 
     /// Clone function
-    virtual Horzcat* clone() const;
+    virtual Horzcat* clone() const{ return new Horzcat(*this);}
       
     /// Destructor
     virtual ~Horzcat(){}
@@ -89,6 +89,32 @@ namespace CasADi{
     
     /** \brief Get the operation */
     virtual int getOp() const{ return OP_HORZCAT;}
+  };
+
+  /** \brief Vertical concatenation of vectors
+      \author Joel Andersson
+      \date 2014
+  */
+  class Vertcat : public Concat{
+  public:
+
+    /// Constructor
+    Vertcat(const std::vector<MX>& x);
+
+    /// Clone function
+    virtual Vertcat* clone() const{ return new Vertcat(*this);}
+      
+    /// Destructor
+    virtual ~Vertcat(){}
+    
+    /// Print a part of the expression */
+    virtual void printPart(std::ostream &stream, int part) const;
+    
+    /// Evaluate the function symbolically (MX)
+    virtual void evaluateMX(const MXPtrV& input, MXPtrV& output, const MXPtrVV& fwdSeed, MXPtrVV& fwdSens, const MXPtrVV& adjSeed, MXPtrVV& adjSens, bool output_given);
+    
+    /** \brief Get the operation */
+    virtual int getOp() const{ return OP_VERTCAT;}
   };
 
 } // namespace CasADi
