@@ -805,7 +805,7 @@ namespace CasADi{
 
   template<class T>
   Sparsity& Matrix<T>::sparsityRef(){
-    sparsity_.makeUnique();
+    sparsity_.makeUnique(); // NOTE: Remove?
     return sparsity_;
   }
 
@@ -1857,7 +1857,26 @@ namespace CasADi{
 
   template<class T>
   void Matrix<T>::append(const Matrix<T>& y){
-    *this = vertcat(*this,y);
+    // Quick return if expr is empty
+    if(size2()==0 && size1()==0){
+      *this=y;
+      return;
+    }
+
+    // Quick return if empty
+    if(y.size2()==0 && y.size1()==0) return;
+
+    // Appending can be done efficeintly if vectors
+    if(vector()){
+      // Append the sparsity pattern vertically
+      sparsityRef().append(y.sparsity());
+  
+      // Add the non-zeros at the end
+      data().insert(end(),y.begin(),y.end());
+    } else {
+      // Fall back on vertical concatenation
+      *this = vertcat(*this,y);
+    }
   }
 
   template<class T>
@@ -1875,7 +1894,7 @@ namespace CasADi{
     // Append the sparsity pattern
     sparsityRef().appendColumns(y.sparsity());
   
-    // Add the non-zeros
+    // Add the non-zeros at the end
     data().insert(end(),y.begin(),y.end());
   }
 
