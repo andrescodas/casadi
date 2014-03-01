@@ -126,6 +126,14 @@ namespace CasADi{
     int nfwd = fwdSens.size();
     int nadj = adjSeed.size();
     int nx = offset_.size()-1;
+
+    // Get column offsets
+    vector<int> col_offset;
+    col_offset.reserve(offset_.size());
+    col_offset.push_back(0);
+    for(std::vector<Sparsity>::const_iterator it=output_sparsity_.begin(); it!=output_sparsity_.end(); ++it){
+      col_offset.push_back(col_offset.back() + it->size2());
+    }
     
     // Non-differentiated output and forward sensitivities
     int first_d = output_given ? 0 : -1;
@@ -133,14 +141,14 @@ namespace CasADi{
       const MXPtrV& arg = d<0 ? input : fwdSeed[d];
       MXPtrV& res = d<0 ? output : fwdSens[d];
       MX& x = *arg[0];
-      vector<MX> y = horzsplit(x,offset_);
+      vector<MX> y = horzsplit(x,col_offset);
       for(int i=0; i<nx; ++i){
         if(res[i]!=0){
           *res[i] = y[i];
         }
       }
     }
-        
+
     // Adjoint sensitivities
     for(int d=0; d<nadj; ++d){
       if(adjSens[d][0]!=0){
@@ -151,9 +159,7 @@ namespace CasADi{
             v.push_back(*x_i);
             *x_i = MX();
           } else {
-            int first_col = offset_[i];
-            int last_col = offset_[i+1];
-            v.push_back(MX::sparse(dep().size1(),last_col-first_col));
+            v.push_back(MX::sparse(output_sparsity_[i].shape()));
           }
         }
         *adjSens[d][0] += horzcat(v);
