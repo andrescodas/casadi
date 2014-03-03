@@ -541,7 +541,6 @@ class LinearSolverTests(casadiTestCase):
       
       self.checkarray(mul(A,f.output()),b)
       
-  @known_bug()
   def test_large_sparse(self):
     numpy.random.seed(1)
     n = 10
@@ -556,14 +555,14 @@ class LinearSolverTests(casadiTestCase):
       
       self.checkarray(mul(A,C),b)
       
-      for As_,A_ in [(full(As),full(A)),(full(As).T,full(A).T),(full(As.T),full(A.T)),(As.T,A.T)]:
+      for As_,A_ in [(As,A),(full(As),full(A)),(full(As).T,full(A).T),(full(As.T),full(A.T)),(As.T,A.T)]:
         f = MXFunction([As,bs],[solve(As_,bs,Solver,options)])
         f.init()
-        f.setInput(A_,0)
+        f.setInput(A,0)
         f.setInput(b,1)
         f.evaluate()
 
-        self.checkarray(mul(A,f.output()),b)
+        self.checkarray(mul(A_,f.output()),b)
       
 if __name__ == '__main__':
     unittest.main()
