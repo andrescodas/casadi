@@ -53,8 +53,6 @@ namespace CasADi {
     // Initialize the base classes
     QPSolverInternal::init();
     
-    std::cout << "nc: " << nc_ << std::endl;
-
     // Read options
     print_level_ = getOption("print_level");
     mutol_ = getOption("mutol");
@@ -282,11 +280,38 @@ namespace CasADi {
       cout << "l = " << printBounds(xlow_,ixlow_,nx,"-") << endl;
       cout << "u = " << printBounds(xupp_,ixupp_,nx,"") << endl;
     }
+
+    // Reset the solution
+    fill(x_.begin(),x_.end(),0);
+    fill(gamma_.begin(),gamma_.end(),0);
+    fill(phi_.begin(),phi_.end(),0);
+    fill(y_.begin(),y_.end(),0);
+    fill(z_.begin(),z_.end(),0);
+    fill(lambda_.begin(),lambda_.end(),0);
+    fill(pi_.begin(),pi_.end(),0);
     
     // Solve the QP
     double objectiveValue;
-    int ierr=0;
-    {
+
+    int ierr;
+    if(false){ // Use C interface
+      // TODO: Change to qpsolvehb, see OOQP users guide
+      qpsolvesp(getPtr(c_), nx,
+                getPtr(irowQ_),  nnzQ, getPtr(jcolQ_), getPtr(dQ_),
+                getPtr(xlow_), getPtr(ixlow_),
+                getPtr(xupp_), getPtr(ixupp_),
+                getPtr(irowA_), nnzA, getPtr(jcolA_), getPtr(dA_),
+                getPtr(bA_), nA,
+                getPtr(irowC_), nnzC, getPtr(jcolC_), getPtr(dC_),
+                getPtr(clow_), nC, getPtr(iclow_),
+                getPtr(cupp_), getPtr(icupp_),
+                getPtr(x_), getPtr(gamma_), getPtr(phi_),
+                getPtr(y_),
+                getPtr(z_), getPtr(lambda_), getPtr(pi_),
+                &objectiveValue,
+                print_level_, &ierr);
+    } else { // Use C++ interface
+      ierr=0;
       // All OOQP related allocations in evaluate
 
       std::vector<int> krowQ(nx+1); 
@@ -297,9 +322,9 @@ namespace CasADi {
       makehb( getPtr(irowQ_), nnzQ, getPtr(krowQ), nx, &ierr );
       if( ierr == 0 ) makehb( getPtr(irowA_), nnzA, getPtr(krowA), nA, &ierr );
       if( ierr == 0 ) makehb( getPtr(irowC_), nnzC, getPtr(krowC), nC, &ierr );
-
+      
       if( ierr == 0 ) {
-	      QpGenContext ctx;
+        QpGenContext ctx;
 
         QpGenHbGondzioSetup( getPtr(c_), nx, getPtr(krowQ), getPtr(jcolQ_), getPtr(dQ_),
         getPtr(xlow_), getPtr(ixlow_), getPtr(xupp_), getPtr(ixupp_),
@@ -307,8 +332,8 @@ namespace CasADi {
         getPtr(krowC), nC, getPtr(jcolC_), getPtr(dC_),
         getPtr(clow_), getPtr(iclow_), getPtr(cupp_), getPtr(icupp_), &ctx,
         &ierr );
-        if( ierr == 0 ) {
-          Solver * solver = (Solver *) ctx.solver;
+        if(ierr == 0){
+          Solver* solver = static_cast<Solver *>(ctx.solver);
           gOoqpPrintLevel = print_level_;
           solver->monitorSelf();
           solver->setMuTol(mutol_);
@@ -318,12 +343,11 @@ namespace CasADi {
               getPtr(y_),
               getPtr(z_), getPtr(lambda_), getPtr(pi_),
               &objectiveValue,
-              &ierr );
+                       &ierr );
         }
-
+        
         QpGenCleanup( &ctx );
       }
-
     }
 
     if(ierr>0){
