@@ -248,7 +248,10 @@ PyObject* arrayView() {
   dims[0] = $self->size2();
   dims[1] = $self->size1();
   std::vector<double> &v = $self->data();
-  return PyArray_Transpose((PyArrayObject*) PyArray_New(&PyArray_Type, 2, dims, NPY_DOUBLE, NULL, &v[0], 0, NPY_ARRAY_CARRAY, NULL),NULL);
+  PyArrayObject* temp = (PyArrayObject*) PyArray_New(&PyArray_Type, 2, dims, NPY_DOUBLE, NULL, &v[0], 0, NPY_ARRAY_CARRAY, NULL);
+  PyObject* ret = PyArray_Transpose(temp,NULL);
+  Py_DECREF(temp); 
+  return ret;
 }
 #endif // WITH_NUMPY
     
