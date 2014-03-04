@@ -217,7 +217,7 @@ class MXEvaluationArtist(DotArtist):
     s = self.s
     graph = self.graph
     sp = s.sparsity()
-    row = sp.getRow()
+    row = sp.row()
     
     
     deps = getDeps(s)
