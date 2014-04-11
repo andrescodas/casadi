@@ -73,7 +73,7 @@ namespace casadi{
   template const Sparsity  casadi_limits<Sparsity>::zero;
   template const WeakRef   casadi_limits<WeakRef>::zero;
 
-  template class std::numeric_limits<SXElement>;
+  //template class std::numeric_limits<SXElement>;
 
   INSTANTIATE_IOSCHEME_HELPERS(SX)
   INSTANTIATE_IOSCHEME_HELPERS(MX)
