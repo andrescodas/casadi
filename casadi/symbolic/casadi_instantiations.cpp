@@ -72,6 +72,9 @@ namespace casadi{
   // Becuase we use Matrix<Sparsity>, Matrix<WeakRef> ...
   template const Sparsity  casadi_limits<Sparsity>::zero;
   template const WeakRef   casadi_limits<WeakRef>::zero;
+  template void Matrix<WeakRef>::repr(std::ostream &) const;
+  template void Matrix<WeakRef>::print(std::ostream &) const;
+  template<> Matrix<WeakRef>::Matrix(const Matrix<WeakRef>&);
 
 
   INSTANTIATE_IOSCHEME_HELPERS(SX)
