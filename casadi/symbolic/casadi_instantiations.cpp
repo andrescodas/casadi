@@ -32,6 +32,8 @@
 
 #include "function/schemes_helpers.hpp"
 
+#include "matrix/sparse_storage_impl.hpp"
+
 using namespace std;
 namespace casadi{
 
@@ -70,9 +72,8 @@ namespace casadi{
   template class casadi_limits<double>;
   template class casadi_limits<int>;
 
-  // Becuase we use Matrix<Sparsity>, Matrix<WeakRef> ...
-  template class SparseStorage<Sparsity>;
-  template class SparseStorage<WeakRef>;
+  template class CASADI_SYMBOLIC_EXPORT SparseStorage<Sparsity>;
+  template class CASADI_SYMBOLIC_EXPORT SparseStorage<WeakRef>;
 
 
   INSTANTIATE_IOSCHEME_HELPERS(SX)

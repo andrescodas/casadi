@@ -207,9 +207,5 @@ namespace casadi{
 
 } // namespace casadi
 
-#ifdef casadi_symbolic_implementation
-#include "sparse_storage_impl.hpp"
-#endif
-
 #endif // SPARSE_STORAGE_HPP
 
